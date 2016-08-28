@@ -35,11 +35,11 @@ jdk:
   - openjdk6
 matrix:
   fast_finish: true
-  allow_failures:
-    - rvm: jruby-9.0.5.0
-    - rvm: jruby-head
-    - rvm: ruby-head
-    - rvm: jruby-head
+#  allow_failures:
+#    - rvm: jruby-9.0.5.0
+#    - rvm: jruby-head
+#    - rvm: ruby-head
+#    - rvm: jruby-head
 bundler_args: --jobs 3 --retry 3
 notifications:
   email: false
