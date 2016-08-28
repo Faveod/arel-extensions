@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'rubygems'
-require 'active_record'
+require 'activerecord'
 
 $:.unshift "#{File.dirname(__FILE__)}../../lib"
 require 'arel-extensions'
