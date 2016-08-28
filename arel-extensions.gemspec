@@ -21,10 +21,12 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.add_dependency('arel')
+  s.add_dependency('arel', '~> 6.0')
 
   s.add_development_dependency('minitest')
   s.add_development_dependency('rdoc', '~> 4.0')
   s.add_development_dependency('rake')
-  s.add_development_dependency('activerecord')
+  s.add_development_dependency('activesupport', '~> 4.0')
+  s.add_development_dependency('activemodel', '~> 4.0')
+  s.add_development_dependency('activerecord', '~> 4.0')
 end
