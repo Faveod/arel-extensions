@@ -2,8 +2,8 @@ language: ruby
 sudo: false
 cache: bundler
 before_install:
-- sudo apt-get update -qq
-- sudo apt-get install -qq sqlite3
+# - sudo apt-get update -qq
+# - sudo apt-get install -qq sqlite3
 addons:
   mariadb: '10.0'
 services:
