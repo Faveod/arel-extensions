@@ -1,0 +1,6 @@
+require 'arel-extensions/visitors/to_sql'
+require 'arel-extensions/visitors/mysql'
+require 'arel-extensions/visitors/oracle'
+require 'arel-extensions/visitors/postgresql'
+require 'arel-extensions/visitors/sqlite'
+require 'arel-extensions/visitors/mssql'
