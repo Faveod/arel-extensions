@@ -4,7 +4,7 @@ require "arel-extensions"
 
 Gem::Specification.new do |s|
   s.name        = "arel-extensions"
-  s.version     = ArelExtensions::VERSION.dup
+  s.version     = '0.8.0'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Yann Azoury", "Mathilde Pechdi", "Félix Bellanger"]
   s.email       = ["yann.azoury@faveod.com", "mathilde.pechdimaldjian@gmail.com", "felix.bellanger@faveod.com"]
