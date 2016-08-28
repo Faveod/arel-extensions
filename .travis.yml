@@ -14,8 +14,9 @@ before_script:
   - psql -c 'create database arext_test;' -U postgres
 script:
   - "bundle exec rake test"
+#  - "bundle exec rake test:sqlite3"
   - "gem build arel-extensions.gemspec"
-  - "ruby test/real_db_test.rb"
+#  - "ruby test/real_db_test.rb"
 env:
   global:
     - JRUBY_OPTS='--dev -J-Xmx1024M'
