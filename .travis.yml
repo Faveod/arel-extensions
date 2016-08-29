@@ -41,42 +41,42 @@ jdk:
 matrix:
   fast_finish: true
   exclude:
-    - jdk: openjdk7
-      rvm: rbx-2
-    - jdk: oraclejdk7
-      rvm: rbx-2
-    - jdk: oraclejdk8
-      rvm: rbx-2
-    - jdk: openjdk7
-      rvm: 2.0.0
-    - jdk: oraclejdk7
-      rvm: 2.0.0
-    - jdk: oraclejdk8
-      rvm: 2.0.0
-    - jdk: openjdk7
-      rvm: 2.1
-    - jdk: oraclejdk7
-      rvm: 2.1
-    - jdk: oraclejdk8
-      rvm: 2.1
-    - jdk: openjdk7
-      rvm: 2.2.5
-    - jdk: oraclejdk7
-      rvm: 2.2.5
-    - jdk: oraclejdk8
-      rvm: 2.2.5
-    - jdk: openjdk7
-      rvm: 2.3.1
-    - jdk: oraclejdk7
-      rvm: 2.3.1
-    - jdk: oraclejdk8
-      rvm: 2.3.1
-    - jdk: openjdk7
-      rvm: ruby-head
-    - jdk: oraclejdk7
-      rvm: ruby-head
-    - jdk: oraclejdk8
-      rvm: ruby-head
+    - rvm: rbx-2
+      jdk: openjdk7
+    - rvm: rbx-2
+      jdk: oraclejdk7
+    - rvm: rbx-2
+      jdk: oraclejdk8
+    - rvm: 2.0.0
+      jdk: openjdk7
+    - rvm: 2.0.0
+      jdk: oraclejdk7
+    - rvm: 2.0.0
+      jdk: oraclejdk8
+    - rvm: 2.1
+      jdk: openjdk7
+    - rvm: 2.1
+      jdk: oraclejdk7
+    - rvm: 2.1
+      jdk: oraclejdk8
+    - rvm: 2.2.5
+      jdk: openjdk7
+    - rvm: 2.2.5
+      jdk: oraclejdk7
+    - rvm: 2.2.5
+      jdk: oraclejdk8
+    - rvm: 2.3.1
+      jdk: openjdk7
+    - rvm: 2.3.1
+      jdk: oraclejdk7
+    - rvm: 2.3.1
+      jdk: oraclejdk8
+    - rvm: ruby-head
+      jdk: openjdk7
+    - rvm: ruby-head
+      jdk: oraclejdk7
+    - rvm: ruby-head
+      jdk: oraclejdk8
   allow_failures:
 #    - rvm: jruby-9.0.5.0
 #    - rvm: jruby-head
@@ -85,6 +85,6 @@ matrix:
     - rvm: ruby-head
       gemfile: gemfiles/rails3.gemfile
 #    - rvm: jruby-head
-bundler_args: --jobs 3 --retry 3
+bundler_args: --jobs 2 --retry 2
 notifications:
   email: false

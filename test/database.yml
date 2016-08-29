@@ -2,6 +2,10 @@ sqlite:
   adapter: sqlite3
   database: ":memory:"
   timeout: 500
+jdbc-sqlite:
+  adapter: jdbc-sqlite3
+  database: ":memory:"
+  timeout: 500
 mysql:
   adapter: mysql2
   database: arext_test
