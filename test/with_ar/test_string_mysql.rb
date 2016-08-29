@@ -25,7 +25,7 @@ module ArelExtensions
           t.column :comments, :text
           t.column :created_at, :date
           t.column :updated_at, :date
-          t.column :score, :floor
+          t.column :score, :decimal
         end
         @cnx.create_table :products do |t|
           t.column :price, :decimal
