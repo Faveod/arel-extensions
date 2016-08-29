@@ -12,3 +12,5 @@ group :development, :test do
 	gem 'rdoc'
 	gem 'rake'
 end
+
+gemspec :path => "../"

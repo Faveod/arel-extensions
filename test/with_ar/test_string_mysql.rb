@@ -4,15 +4,20 @@ require 'date'
 module ArelExtensions
   module WthAr
 
-    describe 'the sqlite visitor can do string operations' do
+    describe 'the mysql visitor can do string operations' do
 
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
-        ActiveRecord::Base.establish_connection(ENV['DB'] || :sqlite)
+        ActiveRecord::Base.establish_connection(ENV['DB'] || :mysql)
         ActiveRecord::Base.default_timezone = :utc
         class User < ActiveRecord::Base
         end
-        @cnx = ActiveRecord::Base.connection
+        begin 
+          @cnx = ActiveRecord::Base.connection
+        rescue => e
+          ActiveRecord::Base.establish_connection(ENV['DB'] || :sqlite)
+          @cnx = ActiveRecord::Base.connection
+        end
         @cnx.drop_table(:users) rescue nil 
         @cnx.create_table :users do |t|
           t.column :age, :integer

@@ -6,7 +6,9 @@ module ArelExtensions
     describe 'the sqlite visitor can do maths' do
 
       before do
-        ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
+        ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
+        ActiveRecord::Base.establish_connection(ENV['DB'] || :sqlite)
+        ActiveRecord::Base.default_timezone = :utc
         Arel::Table.engine = ActiveRecord::Base
         @cnx = ActiveRecord::Base.connection
         @cnx.drop_table(:users) rescue nil 
