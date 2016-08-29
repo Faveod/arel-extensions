@@ -45,38 +45,26 @@ matrix:
       jdk: openjdk7
     - rvm: rbx-2
       jdk: oraclejdk7
-    - rvm: rbx-2
-      jdk: oraclejdk8
     - rvm: 2.0.0
       jdk: openjdk7
     - rvm: 2.0.0
       jdk: oraclejdk7
-    - rvm: 2.0.0
-      jdk: oraclejdk8
     - rvm: 2.1
       jdk: openjdk7
     - rvm: 2.1
       jdk: oraclejdk7
-    - rvm: 2.1
-      jdk: oraclejdk8
     - rvm: 2.2.5
       jdk: openjdk7
     - rvm: 2.2.5
       jdk: oraclejdk7
-    - rvm: 2.2.5
-      jdk: oraclejdk8
     - rvm: 2.3.1
       jdk: openjdk7
     - rvm: 2.3.1
       jdk: oraclejdk7
-    - rvm: 2.3.1
-      jdk: oraclejdk8
     - rvm: ruby-head
       jdk: openjdk7
     - rvm: ruby-head
       jdk: oraclejdk7
-    - rvm: ruby-head
-      jdk: oraclejdk8
   allow_failures:
 #    - rvm: jruby-9.0.5.0
 #    - rvm: jruby-head

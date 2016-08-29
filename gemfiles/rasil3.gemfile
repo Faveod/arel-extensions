@@ -4,6 +4,7 @@ gem 'arel', '~> 5.0'
 
 group :development, :test do
 	gem "sqlite3", :platform => [:ruby, :mswin, :mingw]
+	gem "mysql2", :platform => [:ruby, :mswin, :mingw]
 	# for JRuby
 	gem "jdbc-sqlite3", :platform => :jruby
 	gem 'activesupport', '~> 3.2'
