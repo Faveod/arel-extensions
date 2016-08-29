@@ -7,8 +7,8 @@ before_install:
 #addons:
 #  mariadb: '10.0'
 gemfile:
-  - Gemfile
   - gemfiles/rails3.gemfile
+  - gemfiles/rails4.gemfile
   - gemfiles/rails5.gemfile
 services:
   - mysql

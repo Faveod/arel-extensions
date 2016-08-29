@@ -4,7 +4,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "arel_extensions"
-  s.version     = '0.8.1'
+  s.version     = '0.8.2'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Yann Azoury", "Mathilde Pechdi", "Félix Bellanger"]
   s.email       = ["yann.azoury@faveod.com", "mathilde.pechdimaldjian@gmail.com", "felix.bellanger@faveod.com"]
@@ -23,10 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency('arel', '~> 6.0')
 
-  s.add_development_dependency('minitest')
+  s.add_development_dependency('minitest', '~> 5.9')
   s.add_development_dependency('rdoc', '~> 4.0')
-  s.add_development_dependency('rake')
-  s.add_development_dependency('activesupport', '~> 4.0')
-  s.add_development_dependency('activemodel', '~> 4.0')
-  s.add_development_dependency('activerecord', '~> 4.0')
+  s.add_development_dependency('rake', '~> 11')
 end

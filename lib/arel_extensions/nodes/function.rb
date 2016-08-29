@@ -12,6 +12,15 @@ module ArelExtensions
       def expr
        	@expressions.first
       end
+
+      def left
+        @expressions.first
+      end
+
+      def right
+        @expressions.last
+      end
+
     end
   end
 end

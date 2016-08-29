@@ -10,8 +10,6 @@ module ArelExtensions
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
         ActiveRecord::Base.default_timezone = :utc
-        class User < ActiveRecord::Base
-        end
         @cnx = ActiveRecord::Base.connection
         @cnx.drop_table(:users) rescue nil 
         @cnx.create_table :users do |t|
@@ -24,6 +22,8 @@ module ArelExtensions
         end
         @cnx.create_table :products do |t|
           t.column :price, :decimal
+        end
+        class User < ActiveRecord::Base
         end
         d = Date.new(2016, 5,23)
         @lucas = User.create! :age => 5, :name => "Lucas", :created_at => d, :score => 20.16

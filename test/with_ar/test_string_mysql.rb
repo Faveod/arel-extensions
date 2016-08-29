@@ -8,13 +8,14 @@ module ArelExtensions
 
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
-        ActiveRecord::Base.establish_connection(ENV['DB'] || :mysql)
+        ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-mysql" : :mysql))
         ActiveRecord::Base.default_timezone = :utc
         class User < ActiveRecord::Base
         end
         begin 
           @cnx = ActiveRecord::Base.connection
         rescue => e
+          puts e.inspect
           ActiveRecord::Base.establish_connection(ENV['DB'] || :sqlite)
           @cnx = ActiveRecord::Base.connection
         end
