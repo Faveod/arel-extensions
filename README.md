@@ -98,4 +98,17 @@ Examples :
 
 ## BULK INSERT / UPSERT
 
-TODO
+Arel Extensions improves InsertManager by adding bulk_insert method, which allows to insert multiple rows in one insert.
+
+
+```
+@cols = ['id', 'name', 'comments', 'created_at']
+@data = [
+   	[23, 'name1', "sdfdsfdsfsdf", '2016-01-01'],
+   	[25, 'name2', "sdfds234sfsdf", '2016-01-01']
+]
+
+insert_manager = Arel::InsertManager.new(User).into(User.arel_table)
+insert_manager.bulk_insert(@cols, @data)
+User.connection.execute(insert_manager.to_sql)
+```

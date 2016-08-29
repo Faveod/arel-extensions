@@ -6,6 +6,10 @@ before_install:
 # - sudo apt-get install -qq sqlite3
 #addons:
 #  mariadb: '10.0'
+gemfile:
+  - Gemfile
+  - gemfiles/rails3.gemfile
+  - gemfiles/rails5.gemfile
 services:
   - mysql
   - postgresql

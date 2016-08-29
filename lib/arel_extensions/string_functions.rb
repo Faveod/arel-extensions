@@ -19,7 +19,7 @@ module ArelExtensions
 
     #SOUNDEX function returns a character string containing the phonetic representation of char.
     def soundex
-      ArelExtensions::Nodes::Soundex.new self
+      ArelExtensions::Nodes::Soundex.new [self]
     end
 
     def imatches others, escape = nil
