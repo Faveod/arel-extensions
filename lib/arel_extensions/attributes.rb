@@ -1,9 +1,9 @@
-require 'arel-extensions/comparators'
-require 'arel-extensions/date_duration'
-require 'arel-extensions/math'
-require 'arel-extensions/math_functions'
-require 'arel-extensions/null_functions'
-require 'arel-extensions/string_functions'
+require 'arel_extensions/comparators'
+require 'arel_extensions/date_duration'
+require 'arel_extensions/math'
+require 'arel_extensions/math_functions'
+require 'arel_extensions/null_functions'
+require 'arel_extensions/string_functions'
 
 module ArelExtensions
   module Attributes

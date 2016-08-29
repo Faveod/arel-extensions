@@ -3,7 +3,7 @@ require 'rubygems'
 require 'active_record'
 
 $:.unshift "#{File.dirname(__FILE__)}../../lib"
-require 'arel-extensions'
+require 'arel_extensions'
 
 # change here your target
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:") # requires compilation with extensions enabled

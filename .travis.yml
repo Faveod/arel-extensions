@@ -15,7 +15,7 @@ before_script:
 script:
   - "bundle exec rake test"
 #  - "bundle exec rake test:sqlite3"
-  - "gem build arel-extensions.gemspec"
+  - "gem build arel_extensions.gemspec"
 #  - "ruby test/real_db_test.rb"
 env:
   global:
@@ -33,7 +33,7 @@ jdk:
   - openjdk7
   - oraclejdk7
   - oraclejdk8
-  - openjdk6
+#  - openjdk6
 matrix:
   fast_finish: true
 #  allow_failures:

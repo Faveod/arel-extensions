@@ -26,18 +26,18 @@ Arel::Nodes::Function.class_eval do
   include Arel::Expressions
 end
 
-require 'arel-extensions/version'
-require 'arel-extensions/attributes'
-require 'arel-extensions/visitors'
-require 'arel-extensions/nodes'
-require 'arel-extensions/comparators'
-require 'arel-extensions/date_duration'
-require 'arel-extensions/null_functions'
-require 'arel-extensions/math'
-require 'arel-extensions/math_functions'
-require 'arel-extensions/string_functions'
+require 'arel_extensions/version'
+require 'arel_extensions/attributes'
+require 'arel_extensions/visitors'
+require 'arel_extensions/nodes'
+require 'arel_extensions/comparators'
+require 'arel_extensions/date_duration'
+require 'arel_extensions/null_functions'
+require 'arel_extensions/math'
+require 'arel_extensions/math_functions'
+require 'arel_extensions/string_functions'
 
-require 'arel-extensions/insert_manager'
+require 'arel_extensions/insert_manager'
 
 module Arel
   def self.rand

@@ -63,7 +63,7 @@ module ArelExtensions
         case object
         when Arel::Attributes::Attribute, Arel::Nodes::Node, ActiveSupport::Duration
           object
-        when Fixnum
+        when Fixnum, Integer
           object.days
         when DateTime, Time, Date
           raise(ArgumentError, "#{object.class} can not be converted to Fixnum")
@@ -91,7 +91,7 @@ module ArelExtensions
 
       def convert_number(object)
         case object
-        when Arel::Attributes::Attribute, Arel::Nodes::Node, Fixnum
+        when Arel::Attributes::Attribute, Arel::Nodes::Node, Fixnum, Integer
           object
         when String
           object.to_i

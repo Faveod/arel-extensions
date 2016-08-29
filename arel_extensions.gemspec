@@ -1,14 +1,14 @@
 # # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-# require "arel-extensions"
+# require "arel_extensions"
 
 Gem::Specification.new do |s|
-  s.name        = "arel-extensions"
+  s.name        = "arel_extensions"
   s.version     = '0.8.0'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Yann Azoury", "Mathilde Pechdi", "Félix Bellanger"]
   s.email       = ["yann.azoury@faveod.com", "mathilde.pechdimaldjian@gmail.com", "felix.bellanger@faveod.com"]
-  s.homepage    = "https://gitlab.com/keeguon/arel-extensions"
+  s.homepage    = "https://github.com/Faveod/arel-extensions"
   s.description = "Adds new features to Arel"
   s.summary     = "Extending Arel"
   s.license     = %q{MIT}

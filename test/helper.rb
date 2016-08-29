@@ -4,7 +4,7 @@ require 'fileutils'
 require 'arel'
 require 'active_record'
 
-require 'arel-extensions'
+require 'arel_extensions'
 
 require 'support/fake_record'
 Arel::Table.engine = FakeRecord::Base.new
