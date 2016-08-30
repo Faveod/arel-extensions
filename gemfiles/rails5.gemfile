@@ -15,7 +15,8 @@ group :development, :test do
 	gem 'activemodel', '~> 5'
 	gem 'activerecord', '~> 5'
 	gem 'rdoc'
-	gem 'rake'
+	gem 'rake', '~> 11'
+	gem 'bundler'
 end
 
 gemspec :path => "../"

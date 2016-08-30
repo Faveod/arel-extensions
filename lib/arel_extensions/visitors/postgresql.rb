@@ -157,7 +157,7 @@ module ArelExtensions
      end
 
 
-    remove_method :visit_Arel_Nodes_Regexp
+    remove_method(:visit_Arel_Nodes_Regexp) rescue nil
     def visit_Arel_Nodes_Regexp o, collector
       collector = visit o.left, collector
       collector << " ~ "
@@ -165,7 +165,7 @@ module ArelExtensions
       collector
     end
 
-    remove_method :visit_Arel_Nodes_NotRegexp
+    remove_method(:visit_Arel_Nodes_NotRegexp) rescue nil
     def visit_Arel_Nodes_NotRegexp o, collector
       collector = visit o.left, collector
       collector << " !~ "

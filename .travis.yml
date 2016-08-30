@@ -65,6 +65,10 @@ matrix:
       jdk: openjdk7
     - rvm: ruby-head
       jdk: oraclejdk7
+    - rvm: 2.0.0
+      gemfile: gemfiles/rails5.gemfile
+    - rvm: 2.1
+      gemfile: gemfiles/rails5.gemfile
   allow_failures:
 #    - rvm: jruby-9.0.5.0
 #    - rvm: jruby-head

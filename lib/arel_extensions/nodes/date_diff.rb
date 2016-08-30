@@ -38,7 +38,7 @@ module ArelExtensions
 
       def initialize expr
         col = expr.first
-        @date_type = col.relation.engine.connection.schema_cache.columns_hash(col.relation.table_name)[col.name.to_s].type
+        @date_type = Arel::Table.engine.connection.schema_cache.columns_hash(col.relation.table_name)[col.name.to_s].type
         tab = expr.map do |arg|
           convert(arg)
         end

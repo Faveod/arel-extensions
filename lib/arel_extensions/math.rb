@@ -5,7 +5,7 @@ module ArelExtensions
      #Date and integer adds or subtracts a specified time interval from a date.
       def +(other)
         return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) if self.is_a?(ArelExtensions::Nodes::Concat)
-        arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
+        arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
         if arg == :integer || arg == :decimal || arg == :float
           if other.is_a?(String)
             other = other.to_i
@@ -21,7 +21,7 @@ module ArelExtensions
       #function returns the time between two dates
       #function returns the susbration between two int
       def -(other)
-        arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
+        arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
         if (arg == :date || arg == :datetime)
           case other
           when Arel::Attributes::Attribute

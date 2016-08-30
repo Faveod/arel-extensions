@@ -20,3 +20,7 @@ postgres:
   adapter: postgresql
   database: arext_test
   username: postgres
+jdbc-postgres:
+  adapter: jdbcpostgresql
+  database: arext_test
+  username: postgres
