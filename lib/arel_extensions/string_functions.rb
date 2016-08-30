@@ -53,15 +53,15 @@ module ArelExtensions
 
     #Function returns a string after removing left, right or the both prefixes or suffixes int argument
     def trim other
-      ArelExtensions::Nodes::Trim.new self,other
+      ArelExtensions::Nodes::Trim.new [self, other]
     end
 
     def ltrim other
-      ArelExtensions::Nodes::Ltrim.new self,other
+      ArelExtensions::Nodes::Ltrim.new [self, other]
     end
 
     def rtrim other
-      ArelExtensions::Nodes::Rtrim.new self, other
+      ArelExtensions::Nodes::Rtrim.new [self, other]
     end
 
   end

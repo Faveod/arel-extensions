@@ -1,26 +1,18 @@
 module ArelExtensions
   module Nodes
-    class Trim < Arel::Nodes::Function
+    class Trim < Function
 
-      def initialize  left,right, aliaz = nil
-        tab = Array.new
-        tab << left
-        tab << right
-        super(tab, aliaz)
+      def initialize expr
+        tab = expr.map { |arg|
+          convert_to_node(arg)
+        }
+        return super(tab)
       end
 
-      def left
-        @expressions.first
+      def +(other)
+        return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
       end
 
-      def right
-        @expressions[1]
-      end
-
-
-      def as other
-        Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
-      end
     end
   end
 end

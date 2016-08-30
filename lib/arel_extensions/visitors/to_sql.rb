@@ -90,6 +90,46 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Soundex o, collector
+        collector << "SOUNDEX("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_Trim o, collector
+        collector << "TRIM("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_Ltrim o, collector
+        collector << "LTRIM("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
+
+      def visit_ArelExtensions_Nodes_Rtrim o, collector
+        collector << "RTRIM("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
 
   	  #comparators
   	  def visit_ArelExtensions_Nodes_DateDiff o, collector

@@ -2,6 +2,7 @@ language: ruby
 sudo: false
 cache: bundler
 before_install:
+  - gem install bundler
 # - sudo apt-get update -qq
 # - sudo apt-get install -qq sqlite3
 #addons:
@@ -16,7 +17,6 @@ services:
 before_script:
   - mysql -e 'create database arext_test;'
   - psql -c 'create database arext_test;' -U postgres
-  - gem install bundler
 script:
   - "bundle exec rake test"
 #  - "bundle exec rake test:sqlite3"

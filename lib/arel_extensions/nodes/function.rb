@@ -18,7 +18,25 @@ module ArelExtensions
       end
 
       def right
-        @expressions.last
+        @expressions[0]
+      end
+
+      protected
+      def convert_to_node(object)
+        case object
+        when Arel::Attributes::Attribute, Arel::Nodes::Node, Fixnum, Integer
+          object
+        when DateTime, Time
+          Arel::Nodes.build_quoted(Date.new(object.year, object.month, object.day), self)
+        when String
+          Arel::Nodes.build_quoted(object)
+        when Date
+          Arel::Nodes.build_quoted(object, self)
+        when ActiveSupport::Duration
+          object.to_i
+        else
+          raise(ArgumentError, "#{object.class} can not be converted to CONCAT arg")
+        end
       end
 
     end
