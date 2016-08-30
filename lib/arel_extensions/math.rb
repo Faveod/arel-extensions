@@ -25,7 +25,7 @@ module ArelExtensions
         if (arg == :date || arg == :datetime)
           case other
           when Arel::Attributes::Attribute
-            arg2 = other.relation.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s].type
+            arg2 = Arel::Table.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s].type
             if arg2 == :date || arg2 == :datetime
               ArelExtensions::Nodes::DateDiff.new self, other
             else

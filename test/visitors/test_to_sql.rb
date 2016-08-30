@@ -15,7 +15,11 @@ module ArelExtensions
       end
 
       def compile node
-        @visitor.accept(node, Arel::Collectors::SQLString.new).value
+        if Arel::VERSION.to_i > 5
+          @visitor.accept(node, Arel::Collectors::SQLString.new).value
+        else
+          @visitor.accept(node)
+        end
       end
 
       # Math Functions
