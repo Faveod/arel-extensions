@@ -132,6 +132,17 @@ module ArelExtensions
       end
 
   	  #comparators
+
+      def visit_ArelExtensions_Nodes_Coalesce o, collector
+        collector << "COALESCE("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
   	  def visit_ArelExtensions_Nodes_DateDiff o, collector
   	    collector << "DATEDIFF("
   	    collector = visit o.left, collector

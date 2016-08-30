@@ -2,26 +2,6 @@ module ArelExtensions
   module Visitors
     Arel::Visitors::SQLite.class_eval do
 
-
-      def visit_ArelExtensions_Nodes_Coalesce o, collector
-        collector << "COALESCE("
-        if(o.left.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.left, collector
-        else
-          collector << "#{o.left}"
-        end
-           o.other.each { |a|
-          collector << ","
-          if(a.is_a?(Arel::Attributes::Attribute))
-            collector = visit a, collector
-          else
-            collector << "#{a}"
-          end
-        }
-        collector << ")"
-        collector
-      end
-
       # Date operations
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << "date("

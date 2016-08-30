@@ -86,7 +86,7 @@ class ListTest < Test::Unit::TestCase
         assert_equal "Camille",User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:name].coalesce("Null","default")).as("res")).first.res
     else
       assert_equal "Camille",User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:name].coalesce("Null",20)).as("res")).first.res
-      assert_equal 20,User.where(User.arel_table[:name].eq("Test")).select((User.arel_table[:age].coalesce("Null",20)).as("res")).first.res
+      assert_equal 20,User.where(User.arel_table[:name].eq("Test")).select((User.arel_table[:age].coalesce(nil,20)).as("res")).first.res
     end
   end
 

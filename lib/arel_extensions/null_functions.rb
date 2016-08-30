@@ -7,7 +7,7 @@ module ArelExtensions
     end
     # returns the first non-null expr in the expression list. You must specify at least two expressions.
     #If all occurrences of expr evaluate to null, then the function returns null.
-    def coalesce (*args)
+    def coalesce *args
       args.unshift(self)
       ArelExtensions::Nodes::Coalesce.new args
     end

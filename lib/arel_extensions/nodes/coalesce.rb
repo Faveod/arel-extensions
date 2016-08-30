@@ -1,22 +1,14 @@
 module ArelExtensions
   module Nodes
-    class Coalesce < Arel::Nodes::Function
-      include Arel::AliasPredication
+    class Coalesce < Function
 
-      def initialize arg , aliaz = nil
-
-        super(arg, aliaz)
+      def initialize expr
+        tab = expr.map { |arg|
+          convert_to_node(arg)
+        }
+        return super(tab)
       end
-
-      def left
-        @expressions.first
-      end
-
-      def other
-        @expressions.delete_at(0)
-        @expressions
-      end
-
+      
     end
   end
 end

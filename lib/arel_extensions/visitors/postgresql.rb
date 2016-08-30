@@ -2,47 +2,6 @@ module ArelExtensions
   module Visitors
     Arel::Visitors::PostgreSQL.class_eval do
 
-      # deprecated
-      def visit_ArelExtensions_Nodes_ConcatOld o, collector
-        arg = o.left.relation.engine.columns.find{|c| c.name == o.left.name.to_s}.type
-        collector = visit o.left, collector
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector << '||'
-          collector = visit o.right, collector
-        elsif ( arg == :date || arg == :datetime)
-          collector << " + INTERVAL '#{o.right} day'"
-          collector
-        else
-          collector << " ||'"
-          collector << "#{o.right}'"
-        end
-          collector
-      end
-
-
-    def visit_ArelExtensions_Nodes_Coalesce o, collector
-      collector << "COALESCE("
-      if(o.left.is_a?(Arel::Attributes::Attribute))
-        collector = visit o.left, collector
-      else
-        collector << "#{o.left}"
-      end
-         o.other.each { |a|
-        collector << ","
-        if(a.is_a?(Arel::Attributes::Attribute))
-          collector = visit a, collector
-        else
-          if(a.is_a?(Integer))
-            collector << "#{a}"
-          else
-            collector << "'#{a}'"
-          end
-        end
-      }
-      collector << ")"
-      collector
-    end
-
       def visit_ArelExtensions_Nodes_DateDiff o, collector
 
         collector = visit o.left, collector
@@ -73,28 +32,6 @@ module ArelExtensions
       else
         collector << "'#{o.right}'"
       end
-      collector << ")"
-      collector
-    end
-
-
-    def visit_ArelExtensions_Nodes_Findis o, collector
-
-    end
-
-    def visit_ArelExtensions_Nodes_Floor o, collector
-      collector << "FLOOR("
-     if((o.expr).is_a?(Arel::Attributes::Attribute))
-      collector = visit o.expr, collector
-     end
-      collector << ")"
-      collector
-    end
-
-
-    def visit_ArelExtensions_Nodes_Length o, collector
-      collector << "LENGTH("
-      collector = visit o.expr, collector
       collector << ")"
       collector
     end

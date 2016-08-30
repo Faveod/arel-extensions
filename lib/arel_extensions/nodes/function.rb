@@ -18,7 +18,7 @@ module ArelExtensions
       end
 
       def right
-        @expressions[0]
+        @expressions[1]
       end
 
       protected
@@ -32,6 +32,8 @@ module ArelExtensions
           Arel::Nodes.build_quoted(object)
         when Date
           Arel::Nodes.build_quoted(object, self)
+        when NilClass
+          Arel.sql('NULL')
         when ActiveSupport::Duration
           object.to_i
         else

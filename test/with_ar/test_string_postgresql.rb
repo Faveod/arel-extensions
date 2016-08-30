@@ -13,7 +13,7 @@ module ArelExtensions
         begin 
           @cnx = ActiveRecord::Base.connection
         rescue => e
-          puts e.inspect
+          puts "\n#{e.inspect}"
           ActiveRecord::Base.establish_connection(ENV['DB'] || :sqlite)
           @cnx = ActiveRecord::Base.connection
         end
