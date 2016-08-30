@@ -10,19 +10,21 @@ module ArelExtensions
         ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
         ActiveRecord::Base.default_timezone = :utc
         @cnx = ActiveRecord::Base.connection
+        $sqlite ||= false
         if ActiveRecord::Base.connection.adapter_name =~ /sqlite/i
           $sqlite = true
           db = @cnx.raw_connection
+          $load_extension_disabled ||= false
           if !$load_extension_disabled
             begin
+              db.create_function("find_in_set", 1) do |func, value1, value2|
+                func.result = value1.index(value2)
+              end
               db.enable_load_extension(1)
               db.load_extension("/usr/lib/sqlite3/pcre.so")
               db.load_extension("/usr/lib/sqlite3/extension-functions.so")
               db.enable_load_extension(0)
               #function find_in_set
-              db.create_function("find_in_set", 1) do |func, value1, value2|
-                func.result = value1.index(value2)
-              end
             rescue => e
               $load_extension_disabled = true
               puts "can not load extensions #{e.inspect}"
@@ -33,48 +35,165 @@ module ArelExtensions
         @cnx.create_table :users do |t|
           t.column :age, :integer
           t.column :name, :string
+          t.column :comments, :text
           t.column :created_at, :date
           t.column :updated_at, :datetime
           t.column :score, :decimal
+        end
+        @cnx.create_table :products do |t|
+          t.column :price, :decimal
         end
       end
 
       def teardown_db
         @cnx.drop_table(:users)
+        @cnx.drop_table(:products)
       end
 
       class User < ActiveRecord::Base
       end
+      class Product < ActiveRecord::Base
+      end
+
 
       def setup
         d = Date.new(2016,05,23)
         setup_db
-        User.create :age => 5, :name => "Lucas", :created_at => d , :score => 20.16
-        User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
-        User.create :age => 20, :name => "Camille", :created_at => d, :score => 20.16
-        User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
+        u = User.create :age => 5, :name => "Lucas", :created_at => d , :score => 20.16
+        @lucas = User.where(:id => u.id)
+        u = User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
+        @sophie = User.where(:id => u.id)
+        u = User.create :age => 20, :name => "Camille", :created_at => d, :score => 20.16
+        @camille = User.where(:id => u.id)
+        u = User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
+        @arthur = User.where(:id => u.id)
         u = User.create :age => 23, :name => "Myung", :created_at => d, :score => 20.16
         @myung = User.where(:id => u.id)
-        User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16
-        User.create :age =>nil, :name => "Test", :created_at => d, :score => 1.62
-        User.create :age =>-0, :name => "Negatif", :created_at => d, :score => 0.17
+        u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16
+        @laure = User.where(:id => u.id)
+        u = User.create :age => nil, :name => "Test", :created_at => d, :score => 1.62
+        @test = User.where(:id => u.id)
+        u = User.create :age => -42, :name => "Negatif", :comments => '1,2,3', :created_at => d, :updated_at => d.to_time, :score => 0.17
+        @neg = User.where(:id => u.id)
+
+        @age = User.arel_table[:age]
+        @name = User.arel_table[:name]
+        @score = User.arel_table[:score]
+        @price = Product.arel_table[:price]
       end
 
       def teardown
         teardown_db
       end
 
+      def t(scope, node)
+        scope.select(node.as('res')).first.res
+      end
+
+      # Math Functions
+      def test_classical_arel
+        assert_equal 42.16, t(@laure, @score + 22)
+      end
+
       def test_abs
-        assert_equal 0,User.where(User.arel_table[:name].eq("Negatif")).select((User.arel_table[:age].abs).as("res")).first.res
-        assert_equal 14,User.where(User.arel_table[:name].eq("Laure")).select(((User.arel_table[:age] - 39).abs).as("res")).first.res
+        assert_equal 42, t(@neg, @age.abs)
+        assert_equal 14, t(@laure, (@age - 39).abs)
+        assert_equal 28, t(@laure, (@age - 39).abs + (@age - 39).abs)
       end
 
       def test_ceil
         if !$sqlite || !$load_extension_disabled
-          assert_equal 1,User.where(User.arel_table[:name].eq("Negatif")).select((User.arel_table[:score].ceil).as("res")).first.res
-          assert_equal 66,User.where(User.arel_table[:name].eq("Arthur")).select((User.arel_table[:score].ceil).as("res")).first.res
+          assert_equal 1, @neg.select((User.arel_table[:score].ceil).as("res")).first.res
+          assert_equal 108, @arthur.select((User.arel_table[:score].ceil + 42).as("res")).first.res
         end
       end
+
+      def test_floor
+        if !$sqlite || !$load_extension_disabled
+          assert_equal 0, t(@neg, @score.floor)
+          assert_equal 42, t(@arthur, @score.floor - 23)
+        end
+      end
+
+      def test_ceil_floor
+        if !$sqlite || !$load_extension_disabled
+          assert_equal 1, @neg.select((User.arel_table[:score].ceil).as("res")).first.res
+          assert_equal 108, @arthur.select((User.arel_table[:score].ceil + 42).as("res")).first.res
+        end
+      end
+
+      def test_rand
+        assert 42 != User.select(Arel.rand.as('res')).first.res
+        assert 0 <= User.select(Arel.rand.abs.as('res')).first.res
+        assert_equal 8, User.order(Arel.rand).limit(50).count
+      end
+
+      def test_round
+        assert_equal 1, User.where(((User.arel_table[:age]).round(0)).eq(5.0)).count
+        assert_equal 0, User.where(((User.arel_table[:age]).round(-1)).eq(6.0)).count
+        assert_equal 66, t(@arthur, @score.round)
+        assert_equal 67.6, t(@arthur, @score.round(1) + 2)
+      end
+
+      def test_sum
+        assert_equal 68, User.select((@age.sum + 1).as("res")).take(50).first.res
+        assert_equal 134, User.select((@age.sum + User.arel_table[:age].sum).as("res")).take(50).first.res
+        assert_equal 201, User.select(((@age * 3).sum).as("res")).take(50).first.res
+        assert_equal 4009, User.select(((@age * @age).sum).as("res")).take(50).first.res
+      end
+
+      # String Functions
+      def test_concat
+        assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
+        assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
+      end
+
+      def test_length
+        assert_equal 7, t(@camille, @name.length)
+        assert_equal 7, t(@camille, @name.length.round.abs)
+        assert_equal 42, t(@laure, @name.length + 37)
+      end
+
+      def test_locate
+        if !$sqlite || !$load_extension_disabled
+          assert_equal 1, t(@camille, @name.locate("C"))
+          assert_equal 0, t(@lucas, @name.locate("z"))
+          assert_equal 5, t(@lucas, @name.locate("s"))
+        end
+      end
+
+
+      def test_findinset
+        if !$sqlite || !$load_extension_disabled
+          db = ActiveRecord::Base.connection.raw_connection
+          assert_equal 3, db.get_first_value( "select find_in_set(name,'i') from users where name = 'Camille'" )
+          assert_equal "",db.get_first_value( "select find_in_set(name,'p') from users where name = 'Camille'" ).to_s
+        end
+        #number
+        #assert_equal 1,User.select(User.arel_table[:name] & ("l")).count
+        #assert_equal 3,(User.select(User.arel_table[:age] & [5,15,20]))
+        #string
+      end
+
+      def test_string_functions
+
+      end
+
+if false
+      it "should accept functions on strings" do
+        c = @table[:name]
+        compile(c.locate('test')).must_be_like %{LOCATE("users"."name", 'test')}
+        compile(c & 42).must_be_like %{FIND_IN_SET(42, "users"."name")}
+
+        compile((c >= 'test').as('new_name')).must_be_like %{("users"."name" >= 'test') AS new_name}
+        compile(c <= @table[:comments]).must_be_like %{"users"."name" <= "users"."comments"}
+        compile(c =~ /\Atest\Z/).must_be_like %{"users"."name" REGEXP '^test$'}
+        compile(c !~ /\Ate\Dst\Z/).must_be_like %{"users"."name" NOT REGEXP '^te[^0-9]st$'}
+        compile(c.imatches('%test%')).must_be_like %{"users"."name" ILIKE '%test%'}
+        compile(c.imatches_any(['%test%', 't2'])).must_be_like %{("users"."name" ILIKE '%test%' OR "users"."name" ILIKE 't2')}
+        compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
+      end
+end
 
       def test_coalesce
         if @cnx.adapter_name =~ /pgsql/i
@@ -111,18 +230,9 @@ module ArelExtensions
 
 
 
-      def test_length
-        assert_equal 7,User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:name].length).as("res")).first.res
-        assert_equal 5,User.where(User.arel_table[:name].eq("Laure")).select((User.arel_table[:name].length).as("res")).first.res
-      end
 
-      def test_locate
-        if !$sqlite || !$load_extension_disabled
-          assert_equal 1, User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:name].locate("C")).as("res")).first.res
-          assert_equal 0, User.where(User.arel_table[:name].eq("Lucas")).select((User.arel_table[:name].locate("z")).as("res")).first.res
-          assert_equal 5, User.where(User.arel_table[:name].eq("Lucas")).select((User.arel_table[:name].locate("s")).as("res")).first.res
-        end
-      end
+
+
 
       def test_isnull
         if ActiveRecord::Base.connection.adapter_name =~ /pgsql/i
@@ -134,25 +244,8 @@ module ArelExtensions
       end
 
 
-      def test_floor
-        if !$sqlite || !$load_extension_disabled
-          assert_equal 0,User.where(User.arel_table[:name].eq("Negatif")).select((User.arel_table[:score].floor).as("res")).first.res
-          assert_equal 65,User.where(User.arel_table[:name].eq("Arthur")).select((User.arel_table[:score].floor).as("res")).first.res
-        end
-      end
 
 
-      def test_findinset
-        if !$sqlite || !$load_extension_disabled
-          db = ActiveRecord::Base.connection.raw_connection
-          assert_equal 3, db.get_first_value( "select find_in_set(name,'i') from users where name = 'Camille'" )
-          assert_equal "",db.get_first_value( "select find_in_set(name,'p') from users where name = 'Camille'" ).to_s
-        end
-        #number
-        #assert_equal 1,User.select(User.arel_table[:name] & ("l")).count
-        #assert_equal 3,(User.select(User.arel_table[:age] & [5,15,20]))
-        #string
-      end
 
 
       def test_math_plus
@@ -187,12 +280,6 @@ module ArelExtensions
 
 
 
-      def test_rand
-        assert_equal 5,User.where(User.arel_table[:score].eq(20.16)).select(User.arel_table[:id]).order(Arel.rand).take(50).count
-        #test_alias  :random  :rand
-        assert_equal 8,User.select(User.arel_table[:name]).order(Arel.rand).take(50).count
-      end
-
 
       def test_regexp_not_regex
         if !$sqlite || !$load_extension_disabled
@@ -207,10 +294,7 @@ module ArelExtensions
       end
 
 
-      def test_round
-        assert_equal 1, User.where(((User.arel_table[:age]).round(0)).eq(5.0)).count
-        assert_equal 0, User.where(((User.arel_table[:age]).round(-1)).eq(6.0)).count
-      end
+
 
 
       def test_Soundex
@@ -220,13 +304,7 @@ module ArelExtensions
         end
       end
 
-      def test_Sum
-        #.take(50) because of limit by ORDER BY
-        assert_equal 110,User.select((User.arel_table[:age].sum + 1).as("res")).take(50).first.res
-        assert_equal 218,User.select((User.arel_table[:age].sum + User.arel_table[:age].sum).as("res")).take(50).first.res
-        assert_equal 327,User.select(((User.arel_table[:age] * 3).sum).as("res")).take(50).first.res
-        assert_equal 2245,User.select(((User.arel_table[:age] * User.arel_table[:age]).sum).as("res")).take(50).first.res
-      end
+
 
 
       def test_trim
