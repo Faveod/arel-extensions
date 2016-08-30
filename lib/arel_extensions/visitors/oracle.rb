@@ -51,11 +51,7 @@ module ArelExtensions
 
   def visit_ArelExtensions_Nodes_Coalesce o, collector
     collector << "COALESCE("
-    if(o.left.is_a?(Arel::Attributes::Attribute))
-      collector = visit o.left, collector
-    else
-      collector << "#{o.left}"
-    end
+    collector = visit o.left, collector
        o.other.each { |a|
       collector << ","
       if(a.is_a?(Arel::Attributes::Attribute))

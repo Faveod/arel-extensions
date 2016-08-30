@@ -62,17 +62,17 @@ module ArelExtensions
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
-            return Arel::Nodes.build_quoted((v.value >= 0 ? 'INTERVAL ' : 'INTERVAL -') + v.inspect)
+            Arel.sql((v.value >= 0 ? 'INTERVAL ' : 'INTERVAL -') + v.inspect.sub(/s\Z/, ''))
           elsif @date_type == :datetime
-            return Arel::Nodes.build_quoted((v.value >= 0 ? 'INTERVAL ' : 'INTERVAL -') + v.inspect)
+            Arel.sql((v.value >= 0 ? 'INTERVAL ' : 'INTERVAL -') + v.inspect.sub(/s\Z/, ''))
           end
         else
-          return v
+          v
         end
       end
 
-      def postgresql_value
-        v = self.expressions.last
+      def postgresql_value(v=nil)
+        v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
             return Arel::Nodes.build_quoted((v.value >= 0 ? '+' : '-') + v.inspect)

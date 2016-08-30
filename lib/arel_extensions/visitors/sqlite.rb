@@ -2,6 +2,31 @@ module ArelExtensions
   module Visitors
     Arel::Visitors::SQLite.class_eval do
 
+      #String functions
+      def visit_ArelExtensions_Nodes_IMatches o, collector
+        collector = visit o.left.lower, collector
+        collector << ' LIKE '
+        collector = visit o.right.lower(o.right), collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+
+      def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
+        collector = visit o.left.lower, collector
+        collector << ' NOT LIKE '
+        collector = visit o.right.lower(o.right), collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+
       # Date operations
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << "date("

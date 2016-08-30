@@ -2,7 +2,44 @@ module ArelExtensions
   module Visitors
     Arel::Visitors::MySQL.class_eval do
 
+      #String functions
+      def visit_ArelExtensions_Nodes_Concat o, collector
+        collector << "CONCAT("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::MySQL::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
 
+      def visit_ArelExtensions_Nodes_Trim o, collector
+          collector << 'TRIM(' # BOTH
+          collector = visit o.right, collector
+          collector << " FROM "
+          collector = visit o.left, collector
+          collector << ")"
+          collector
+      end
+
+      def visit_ArelExtensions_Nodes_Ltrim o , collector
+          collector << 'TRIM(LEADING '
+          collector = visit o.right, collector
+          collector << " FROM "
+          collector = visit o.left, collector
+          collector << ")"
+          collector
+      end
+
+
+      def visit_ArelExtensions_Nodes_Rtrim o , collector
+        collector << 'TRIM(TRAILING '
+        collector = visit o.right, collector
+        collector << " FROM "
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         collector << "DATEDIFF("
         collector = visit o.left, collector
@@ -44,15 +81,6 @@ module ArelExtensions
       end
 
      #****************************************************************#
-      def visit_ArelExtensions_Nodes_Concat o, collector
-        collector << "CONCAT("
-        o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MySQL::COMMA unless i == 0
-          collector = visit arg, collector
-        }
-        collector << ")"
-        collector
-      end
 
       def visit_ArelExtensions_Nodes_Isnull o, collector
           collector << "IFNULL("
@@ -88,48 +116,7 @@ module ArelExtensions
        end
 
 
-      def visit_ArelExtensions_Nodes_Trim o , collector
-          collector << 'TRIM(BOTH '
-          if(o.right.is_a?(Arel::Attributes::Attribute))
-            collector = visit o.right, collector
-          else
-            collector << "'#{o.right}'"
-          end
-          collector << " FROM "
-          collector = visit o.left, collector
 
-          collector << ")"
-          collector
-      end
-
-      def visit_ArelExtensions_Nodes_Ltrim o , collector
-          collector << 'TRIM(LEADING '
-          if(o.right.is_a?(Arel::Attributes::Attribute))
-            collector = visit o.right, collector
-          else
-            collector << "'#{o.right}'"
-          end
-          collector << " FROM "
-          collector = visit o.left, collector
-
-          collector << ")"
-          collector
-      end
-
-
-      def visit_ArelExtensions_Nodes_Rtrim o , collector
-        collector << 'TRIM(TRAILING '
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.right, collector
-        else
-          collector << "'#{o.right}'"
-        end
-        collector << " FROM "
-        collector = visit o.left, collector
-
-        collector << ")"
-        collector
-      end
 
       def visit_ArelExtensions_Nodes_Wday o, collector
         collector << "(WEEKDAY("

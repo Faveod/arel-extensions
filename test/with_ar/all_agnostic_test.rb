@@ -31,6 +31,10 @@ module ArelExtensions
             end
           end
         end
+        if File.exist?("init/#{ENV['DB']}.sql")
+          sql = File.read("init/#{ENV['DB']}.sql")
+          @cnx.execute(sql) unless sql.blank?
+        end
         @cnx.drop_table(:users) rescue nil 
         @cnx.create_table :users do |t|
           t.column :age, :integer
@@ -38,11 +42,11 @@ module ArelExtensions
           t.column :comments, :text
           t.column :created_at, :date
           t.column :updated_at, :datetime
-          t.column :score, :decimal
+          t.column :score, :decimal, :precision => 20, :scale => 10
         end
         @cnx.drop_table(:products) rescue nil
         @cnx.create_table :products do |t|
-          t.column :price, :decimal
+          t.column :price, :decimal, :precision => 20, :scale => 10
         end
       end
 
@@ -60,7 +64,7 @@ module ArelExtensions
       def setup
         d = Date.new(2016,05,23)
         setup_db
-        u = User.create :age => 5, :name => "Lucas", :created_at => d , :score => 20.16
+        u = User.create :age => 5, :name => "Lucas", :created_at => d, :score => 20.16
         @lucas = User.where(:id => u.id)
         u = User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
         @sophie = User.where(:id => u.id)
@@ -105,8 +109,8 @@ module ArelExtensions
 
       def test_ceil
         if !$sqlite || !$load_extension_disabled
-          assert_equal 1, @neg.select((User.arel_table[:score].ceil).as("res")).first.res
-          assert_equal 108, @arthur.select((User.arel_table[:score].ceil + 42).as("res")).first.res
+          assert_equal 1, t(@neg, @score.ceil)
+          assert_equal 108, t(@arthur, @age.ceil + 42)
         end
       end
 
@@ -114,13 +118,6 @@ module ArelExtensions
         if !$sqlite || !$load_extension_disabled
           assert_equal 0, t(@neg, @score.floor)
           assert_equal 42, t(@arthur, @score.floor - 23)
-        end
-      end
-
-      def test_ceil_floor
-        if !$sqlite || !$load_extension_disabled
-          assert_equal 1, t(@neg, @score.ceil)
-          assert_equal 108, @arthur.select((User.arel_table[:score].ceil + 42).as("res")).first.res
         end
       end
 
@@ -158,12 +155,11 @@ module ArelExtensions
 
       def test_locate
         if !$sqlite || !$load_extension_disabled
-          assert_equal 1, t(@camille, @name.locate("C"))
-          assert_equal 0, t(@lucas, @name.locate("z"))
-          assert_equal 5, t(@lucas, @name.locate("s"))
+          assert_equal 0, t(@camille, @name.locate("C"))
+          assert_equal -1, t(@lucas, @name.locate("z"))
+          assert_equal 4, t(@lucas, @name.locate("s"))
         end
       end
-
 
       def test_find_in_set
         if !$sqlite || !$load_extension_disabled
@@ -180,10 +176,19 @@ module ArelExtensions
       def test_regexp_not_regex
         if !$sqlite || !$load_extension_disabled
           assert_equal 1, User.where(@name =~ '^M').count
-          assert_equal 6, User.where(@name != '^L').count
+          assert_equal 6, User.where(@name !~ '^L').count
           assert_equal 1, User.where(@name =~ /^M/).count
-          assert_equal 6, User.where(@name != /^L/).count
+          assert_equal 6, User.where(@name !~ /^L/).count
         end
+      end
+
+      def test_imatches
+        puts User.where(@name.imatches('%M')).to_sql
+        puts User.select("LOWER('%M') AS res").map(&:res).inspect
+        puts User.select("LOWER(name) AS res").map(&:res).inspect
+        assert_equal 1, User.where(@name.imatches('%m')).count
+        assert_equal 4, User.where(@name.imatches_any(['%L', 'e%'])).count
+        assert_equal 6, User.where(@name.idoes_not_match('%L')).count
       end
 
       def test_replace
@@ -192,40 +197,23 @@ module ArelExtensions
       end
 
       def test_soundex
-        if !$sqlite || !$load_extension_disabled
+        if (!$sqlite || !$load_extension_disabled) && (ENV['DB'] != 'postgresql')
           assert_equal "C540", t(@camille, @name.soundex)
-          assert_equal 8, User.where((User.arel_table[:name].soundex).eq(User.arel_table[:name].soundex)).count
+          assert_equal 8, User.where(@name.soundex.eq(@name.soundex)).count
         end
       end
 
-
-      def test_string_functions
-
-      end
-
-
       def test_trim
         assert_equal "Myun", t(@myung, @name.rtrim("g"))
-        assert_equal "yung",User.where(User.arel_table[:name].eq("Myung")).select(User.arel_table[:name].ltrim("M").as("res")).first.res
-        assert_equal "yung",User.where(User.arel_table[:name].eq("Myung")).select((User.arel_table[:name] + "M").trim("M").as("res")).first.res
-        assert_equal "",User.where(User.arel_table[:name].eq("Myung")).select(User.arel_table[:name].rtrim(User.arel_table[:name]).as("res")).first.res
-
+        assert_equal "yung", t(@myung, @name.ltrim("M"))
+        assert_equal "yung", t(@myung, (@name + "M").trim("M"))
+        assert_equal "", t(@myung, @name.rtrim(@name))
       end
-
-
-if false
-      it "should accept functions on strings" do
-        c = @table[:name]
-        compile(c.imatches('%test%')).must_be_like %{"users"."name" ILIKE '%test%'}
-        compile(c.imatches_any(['%test%', 't2'])).must_be_like %{("users"."name" ILIKE '%test%' OR "users"."name" ILIKE 't2')}
-        compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
-      end
-end
 
       def test_coalesce
         if @cnx.adapter_name =~ /pgsql/i
-            assert_equal 100,User.where(User.arel_table[:name].eq("Test")).select((User.arel_table[:age].coalesce(100)).as("res")).first.res
-            assert_equal "Camille",User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:name].coalesce("Null","default")).as("res")).first.res
+          assert_equal 100, @test.select((User.arel_table[:age].coalesce(100)).as("res")).first.res
+          assert_equal "Camille", @camille.select((User.arel_table[:name].coalesce("Null","default")).as("res")).first.res
         else
           assert_equal "Camille",User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:name].coalesce("Null",20)).as("res")).first.res
           assert_equal 20,User.where(User.arel_table[:name].eq("Test")).select((User.arel_table[:age].coalesce(nil,20)).as("res")).first.res
