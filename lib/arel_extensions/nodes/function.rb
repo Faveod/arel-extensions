@@ -41,6 +41,21 @@ module ArelExtensions
         end
       end
 
+      def convert_to_number(object)
+        case object
+        when Arel::Attributes::Attribute, Arel::Nodes::Node
+          object
+        when Fixnum, Integer
+          object.to_i.abs
+        when DateTime, Date, Time, String, ActiveSupport::Duration
+          object.to_i.abs
+        when NilClass
+          0
+        else
+          raise(ArgumentError, "#{object.class} can not be converted to NUMBER arg")
+        end
+      end
+
     end
   end
 end

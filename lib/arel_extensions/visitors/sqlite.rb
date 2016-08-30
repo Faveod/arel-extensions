@@ -21,7 +21,6 @@ module ArelExtensions
         collector
       end
 
-
       def visit_ArelExtensions_Nodes_Duration o, collector
         #visit left for period
         if(o.left == "d")

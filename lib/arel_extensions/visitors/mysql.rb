@@ -6,8 +6,17 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         collector << "DATEDIFF("
         collector = visit o.left, collector
-        collector << ","
+        collector << Arel::Visitors::MySQL::COMMA
         collector = visit o.right, collector
+        collector << ")"
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_DateAdd o, collector
+        collector << "DATE_ADD("
+        collector = visit o.left, collector
+        collector << Arel::Visitors::MySQL::COMMA
+        collector = visit o.mysql_value(o.right), collector
         collector << ")"
         collector
       end
@@ -40,26 +49,6 @@ module ArelExtensions
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::MySQL::COMMA unless i == 0
           collector = visit arg, collector
-        }
-        collector << ")"
-        collector
-      end
-
-
-      def visit_ArelExtensions_Nodes_Coalesce o, collector
-        collector << "COALESCE("
-        if(o.left.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.left, collector
-        else
-          collector << "#{o.left}"
-        end
-           o.other.each { |a|
-          collector << ","
-          if(a.is_a?(Arel::Attributes::Attribute))
-            collector = visit a, collector
-          else
-            collector << "#{a}"
-          end
         }
         collector << ")"
         collector
@@ -99,19 +88,6 @@ module ArelExtensions
        end
 
 
-      def visit_ArelExtensions_Nodes_Soundex o, collector
-        collector << "SOUNDEX("
-       if((o.expr).is_a?(Arel::Attributes::Attribute))
-        collector = visit o.expr, collector
-      else
-          collector << "'#{o.expr}'"
-       end
-        collector << ")"
-        collector
-      end
-
-
-
       def visit_ArelExtensions_Nodes_Trim o , collector
           collector << 'TRIM(BOTH '
           if(o.right.is_a?(Arel::Attributes::Attribute))
@@ -142,7 +118,7 @@ module ArelExtensions
 
 
       def visit_ArelExtensions_Nodes_Rtrim o , collector
-          collector << 'TRIM(TRAILING '
+        collector << 'TRIM(TRAILING '
         if(o.right.is_a?(Arel::Attributes::Attribute))
           collector = visit o.right, collector
         else

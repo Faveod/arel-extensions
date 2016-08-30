@@ -58,6 +58,32 @@ module ArelExtensions
         end
       end
 
+      def mysql_value(v=nil)
+        v ||= self.expressions.last
+        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+          if @date_type == :date
+            return Arel::Nodes.build_quoted((v.value >= 0 ? 'INTERVAL ' : 'INTERVAL -') + v.inspect)
+          elsif @date_type == :datetime
+            return Arel::Nodes.build_quoted((v.value >= 0 ? 'INTERVAL ' : 'INTERVAL -') + v.inspect)
+          end
+        else
+          return v
+        end
+      end
+
+      def postgresql_value
+        v = self.expressions.last
+        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+          if @date_type == :date
+            return Arel::Nodes.build_quoted((v.value >= 0 ? '+' : '-') + v.inspect)
+          elsif @date_type == :datetime
+            return Arel::Nodes.build_quoted((v.value >= 0 ? '+' : '-') + v.inspect)
+          end
+        else
+          return v
+        end
+      end
+
       private
       def convert(object)
         case object

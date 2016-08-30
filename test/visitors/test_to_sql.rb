@@ -23,7 +23,6 @@ module ArelExtensions
       end
 
       # Math Functions
-
       it "should not break Arel functions" do
         compile(@price + 42).must_be_like %{("products"."price" + 42)}
       end

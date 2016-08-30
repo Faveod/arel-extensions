@@ -8,7 +8,7 @@ module ArelExtensions
 
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
-        ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-postgres" : :postgres))
+        ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-postgresql" : :postgresql))
         ActiveRecord::Base.default_timezone = :utc
         begin 
           @cnx = ActiveRecord::Base.connection

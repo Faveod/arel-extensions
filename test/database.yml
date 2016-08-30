@@ -16,11 +16,11 @@ jdbc-mysql:
   database: arext_test
   username: travis
   encoding: utf8
-postgres:
+postgresql:
   adapter: postgresql
   database: arext_test
   username: postgres
-jdbc-postgres:
+jdbc-postgresql:
   adapter: jdbcpostgresql
   database: arext_test
   username: postgres

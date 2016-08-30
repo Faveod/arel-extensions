@@ -94,7 +94,7 @@
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
-    <th class="tg-ffjm" rowspan="11"><br><br><br><br><br><br><br><br><br>String <br>functions</th>
+    <th class="tg-ffjm" rowspan="12"><br><br><br><br><br><br><br><br><br>String <br>functions</th>
     <td class="tg-yw4l">CONCAT<br>column + "string"</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
@@ -153,8 +153,8 @@
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-3oug">require pcre.so</td>
-    <td class="tg-j6lv">REGEXP_LIKE()</td>
-    <td class="tg-j6lv">LIKE()<br></td>
+    <td class="tg-j6lv">REGEXP_LIKE</td>
+    <td class="tg-j6lv">LIKE</td>
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
@@ -162,9 +162,18 @@
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔<br></td>
     <td class="tg-3oug">require pcre.so</td>
-    <td class="tg-j6lv">NOT REGEXP_LIKE()</td>
-    <td class="tg-j6lv">NOT LIKE()</td>
+    <td class="tg-j6lv">NOT REGEXP_LIKE </td>
+    <td class="tg-j6lv">NOT LIKE</td>
     <td class="tg-baqh">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">ILIKE (in Arel6)<br/>column.imatches('%pattern')</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="tg-baqh">✔</td>
+    <td class="tg-baqh">✔</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
   </tr>
   <tr>
     <td class="tg-yw4l">TRIM (leading)<br>column.trim("LEADING","M")</td>
@@ -194,7 +203,7 @@
     <td class="tg-j6lv">TRIM()</td>
   </tr>
   <tr>
-    <th class="tg-4rp9" rowspan="6"><br><br><br><br><br><br><br>Date <br>functions<br></th>
+    <th class="tg-4rp9" rowspan="6"><br><br><br><br><br><br><br>Date <br>functions</th>
     <td class="tg-yw4l">DATEADD<br>column + 2.year<br></td>
     <td class="tg-j6lv">DATE_ADD()<br></td>
     <td class="tg-baqh">✔</td>
@@ -249,7 +258,7 @@
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
-    <th class="tg-72dn" rowspan="8"><br><br><br><br><br><br>Comparators<br>functions<br></th>
+    <th class="tg-72dn" rowspan="8"><br><br><br><br><br><br>Comparators<br>functions</th>
     <td class="tg-yw4l">COALESCE<br>column.coalesce(var)</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
@@ -259,8 +268,8 @@
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">ISNULL<br>column.isnull(var)</td>
-    <td class="tg-j6lv">IFNULL()<br></td>
+    <td class="tg-yw4l">ISNULL<br>column.isnull()</td>
+    <td class="tg-j6lv">IFNULL()</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-j6lv">NVC()</td>
@@ -268,7 +277,7 @@
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">==<br>column == integer<br></td>
+    <td class="tg-yw4l">==<br>column == integer</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
@@ -277,7 +286,7 @@
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">!=<br>column != integer<br></td>
+    <td class="tg-yw4l">!=<br>column != integer</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
@@ -286,7 +295,7 @@
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">&gt;<br>column &gt; integer<br></td>
+    <td class="tg-yw4l">&gt;<br>column &gt; integer</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>

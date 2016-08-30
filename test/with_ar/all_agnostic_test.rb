@@ -40,6 +40,7 @@ module ArelExtensions
           t.column :updated_at, :datetime
           t.column :score, :decimal
         end
+        @cnx.drop_table(:products) rescue nil
         @cnx.create_table :products do |t|
           t.column :price, :decimal
         end
@@ -73,12 +74,13 @@ module ArelExtensions
         @laure = User.where(:id => u.id)
         u = User.create :age => nil, :name => "Test", :created_at => d, :score => 1.62
         @test = User.where(:id => u.id)
-        u = User.create :age => -42, :name => "Negatif", :comments => '1,2,3', :created_at => d, :updated_at => d.to_time, :score => 0.17
+        u = User.create :age => -42, :name => "Negatif", :comments => '1,22,3,42,2', :created_at => d, :updated_at => d.to_time, :score => 0.17
         @neg = User.where(:id => u.id)
 
         @age = User.arel_table[:age]
         @name = User.arel_table[:name]
         @score = User.arel_table[:score]
+        @comments = User.arel_table[:comments]
         @price = Product.arel_table[:price]
       end
 
@@ -117,7 +119,7 @@ module ArelExtensions
 
       def test_ceil_floor
         if !$sqlite || !$load_extension_disabled
-          assert_equal 1, @neg.select((User.arel_table[:score].ceil).as("res")).first.res
+          assert_equal 1, t(@neg, @score.ceil)
           assert_equal 108, @arthur.select((User.arel_table[:score].ceil + 42).as("res")).first.res
         end
       end
@@ -129,15 +131,15 @@ module ArelExtensions
       end
 
       def test_round
-        assert_equal 1, User.where(((User.arel_table[:age]).round(0)).eq(5.0)).count
-        assert_equal 0, User.where(((User.arel_table[:age]).round(-1)).eq(6.0)).count
+        assert_equal 1, User.where(@age.round(0).eq(5.0)).count
+        assert_equal 0, User.where(@age.round(-1).eq(6.0)).count
         assert_equal 66, t(@arthur, @score.round)
         assert_equal 67.6, t(@arthur, @score.round(1) + 2)
       end
 
       def test_sum
         assert_equal 68, User.select((@age.sum + 1).as("res")).take(50).first.res
-        assert_equal 134, User.select((@age.sum + User.arel_table[:age].sum).as("res")).take(50).first.res
+        assert_equal 134, User.select((@age.sum + @age.sum).as("res")).take(50).first.res
         assert_equal 201, User.select(((@age * 3).sum).as("res")).take(50).first.res
         assert_equal 4009, User.select(((@age * @age).sum).as("res")).take(50).first.res
       end
@@ -163,32 +165,57 @@ module ArelExtensions
       end
 
 
-      def test_findinset
+      def test_find_in_set
         if !$sqlite || !$load_extension_disabled
-          db = ActiveRecord::Base.connection.raw_connection
-          assert_equal 3, db.get_first_value( "select find_in_set(name,'i') from users where name = 'Camille'" )
-          assert_equal "",db.get_first_value( "select find_in_set(name,'p') from users where name = 'Camille'" ).to_s
+          assert 4, t(@neg, @comments & 2)
+          assert 2, t(@neg, @comments & 6)
         end
-        #number
-        #assert_equal 1,User.select(User.arel_table[:name] & ("l")).count
-        #assert_equal 3,(User.select(User.arel_table[:age] & [5,15,20]))
-        #string
       end
+
+      def test_string_comparators
+        assert 1, t(@neg, @name >= 'test')
+        assert 1, t(@neg, @name <= @comments)
+      end
+
+      def test_regexp_not_regex
+        if !$sqlite || !$load_extension_disabled
+          assert_equal 1, User.where(@name =~ '^M').count
+          assert_equal 6, User.where(@name != '^L').count
+          assert_equal 1, User.where(@name =~ /^M/).count
+          assert_equal 6, User.where(@name != /^L/).count
+        end
+      end
+
+      def test_replace
+        assert_equal "LucaX", t(@lucas, @name.replace("s","X"))
+        assert_equal "replace", t(@lucas, @name.replace(@name,"replace"))
+      end
+
+      def test_soundex
+        if !$sqlite || !$load_extension_disabled
+          assert_equal "C540", t(@camille, @name.soundex)
+          assert_equal 8, User.where((User.arel_table[:name].soundex).eq(User.arel_table[:name].soundex)).count
+        end
+      end
+
 
       def test_string_functions
 
       end
 
+
+      def test_trim
+        assert_equal "Myun", t(@myung, @name.rtrim("g"))
+        assert_equal "yung",User.where(User.arel_table[:name].eq("Myung")).select(User.arel_table[:name].ltrim("M").as("res")).first.res
+        assert_equal "yung",User.where(User.arel_table[:name].eq("Myung")).select((User.arel_table[:name] + "M").trim("M").as("res")).first.res
+        assert_equal "",User.where(User.arel_table[:name].eq("Myung")).select(User.arel_table[:name].rtrim(User.arel_table[:name]).as("res")).first.res
+
+      end
+
+
 if false
       it "should accept functions on strings" do
         c = @table[:name]
-        compile(c.locate('test')).must_be_like %{LOCATE("users"."name", 'test')}
-        compile(c & 42).must_be_like %{FIND_IN_SET(42, "users"."name")}
-
-        compile((c >= 'test').as('new_name')).must_be_like %{("users"."name" >= 'test') AS new_name}
-        compile(c <= @table[:comments]).must_be_like %{"users"."name" <= "users"."comments"}
-        compile(c =~ /\Atest\Z/).must_be_like %{"users"."name" REGEXP '^test$'}
-        compile(c !~ /\Ate\Dst\Z/).must_be_like %{"users"."name" NOT REGEXP '^te[^0-9]st$'}
         compile(c.imatches('%test%')).must_be_like %{"users"."name" ILIKE '%test%'}
         compile(c.imatches_any(['%test%', 't2'])).must_be_like %{("users"."name" ILIKE '%test%' OR "users"."name" ILIKE 't2')}
         compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
@@ -205,18 +232,18 @@ end
         end
       end
 
-      def test_Comparator
-        assert_equal 2,User.where(User.arel_table[:age] < 6 ).count
-        assert_equal 2,User.where(User.arel_table[:age] <=10 ).count
-        assert_equal 3,User.where(User.arel_table[:age] > 20 ).count
-        assert_equal 4,User.where(User.arel_table[:age] >=20 ).count
-        assert_equal 1,User.where(User.arel_table[:age] > 5 ).where(User.arel_table[:age] < 20 ).count
+      def test_comparator
+        assert_equal 2, User.where(@age < 6).count
+        assert_equal 2, User.where(@age <= 10).count
+        assert_equal 3, User.where(@age > 20).count
+        assert_equal 4, User.where(@age >= 20).count
+        assert_equal 1, User.where(@age > 5).where(User.arel_table[:age] < 20 ).count
       end
 
       def test_date_duration
         #Year
-        assert_equal 2016,User.where(User.arel_table[:name].eq("Lucas")).select((User.arel_table[:created_at].year).as("res")).first.res.to_i
-        assert_equal 0,User.where(User.arel_table[:created_at].year.eq("2012")).count
+        assert_equal 2016, @lucas.select((User.arel_table[:created_at].year).as("res")).first.res.to_i
+        assert_equal 0, User.where(User.arel_table[:created_at].year.eq("2012")).count
         #Month
         assert_equal 5,User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:created_at].month).as("res")).first.res.to_i
         assert_equal 8,User.where(User.arel_table[:created_at].month.eq("05")).count
@@ -229,11 +256,6 @@ end
       end
 
 
-
-
-
-
-
       def test_isnull
         if ActiveRecord::Base.connection.adapter_name =~ /pgsql/i
           assert_equal 100,User.where(User.arel_table[:name].eq("Test")).select((User.arel_table[:age].isnull(100)).as("res")).first.res
@@ -242,10 +264,6 @@ end
           assert_equal "Test",User.where((User.arel_table[:age].isnull('default')).eq('default')).select(User.arel_table[:name]).first.name.to_s
         end
       end
-
-
-
-
 
 
       def test_math_plus
@@ -280,40 +298,6 @@ end
 
 
 
-
-      def test_regexp_not_regex
-        if !$sqlite || !$load_extension_disabled
-          assert_equal 1, User.where(User.arel_table[:name] =~ '^M').count
-          assert_equal 6, User.where(User.arel_table[:name] != '^L').count
-        end
-      end
-
-      def test_replace
-        assert_equal "LucaX",User.where(User.arel_table[:name].eq("Lucas")).select(((User.arel_table[:name]).replace("s","X")).as("res")).first.res
-        assert_equal "replace",User.where(User.arel_table[:name].eq("Lucas")).select(((User.arel_table[:name]).replace(User.arel_table[:name],"replace")).as("res")).first.res
-      end
-
-
-
-
-
-      def test_Soundex
-        if !$sqlite || !$load_extension_disabled
-          assert_equal "C540",User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:name].soundex).as("res")).first.res.to_s
-          assert_equal 8,User.where((User.arel_table[:name].soundex).eq(User.arel_table[:name].soundex)).count
-        end
-      end
-
-
-
-
-      def test_trim
-        assert_equal "Myun",User.where(User.arel_table[:name].eq("Myung")).select(User.arel_table[:name].rtrim("g").as("res")).first.res
-        assert_equal "yung",User.where(User.arel_table[:name].eq("Myung")).select(User.arel_table[:name].ltrim("M").as("res")).first.res
-        assert_equal "yung",User.where(User.arel_table[:name].eq("Myung")).select((User.arel_table[:name] + "M").trim("M").as("res")).first.res
-        assert_equal "",User.where(User.arel_table[:name].eq("Myung")).select(User.arel_table[:name].rtrim(User.arel_table[:name]).as("res")).first.res
-
-      end
 
       def test_wday
           d = Date.new(2016,06,26)
