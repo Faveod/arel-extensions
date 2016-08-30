@@ -11,6 +11,7 @@ module ArelExtensions
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
         ActiveRecord::Base.default_timezone = :utc
         @cnx = ActiveRecord::Base.connection
+        Arel::Table.engine = ActiveRecord::Base
         @cnx.drop_table(:users) rescue nil 
         @cnx.create_table :users do |t|
           t.column :age, :integer

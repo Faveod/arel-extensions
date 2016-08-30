@@ -38,7 +38,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MySql::COMMA unless i == 0
+          collector << Arel::Visitors::MySQL::COMMA unless i == 0
           collector = visit arg, collector
         }
         collector << ")"

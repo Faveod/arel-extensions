@@ -10,6 +10,7 @@ module ArelExtensions
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
         ActiveRecord::Base.default_timezone = :utc
         @cnx = ActiveRecord::Base.connection
+        Arel::Table.engine = ActiveRecord::Base
         @cnx.drop_table(:users) rescue nil 
         @cnx.create_table :users do |t|
           t.column :age, :integer
@@ -34,7 +35,7 @@ module ArelExtensions
       end
 
       it "should import large set of data" do
-        insert_manager = Arel::InsertManager.new(ActiveRecord::Base).into(@table)
+        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(ActiveRecord::Base).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         sql = insert_manager.to_sql
         sql.must_be_like %Q[INSERT INTO "users" ("id", "name", "comments", "created_at") VALUES (23, 'nom1', 'sdfdsfdsfsdf', '2016-01-01'), (25, 'nom2', 'sdfdsfdsfsdf', '2016-01-01')]

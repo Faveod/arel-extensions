@@ -26,7 +26,8 @@ module ArelExtensions
         end
       end
 
-  def visit_ArelExtensions_Nodes_Concat o, collector
+      #deprecated
+  def visit_ArelExtensions_Nodes_ConcatDep o, collector
     arg = o.left.relation.engine.columns.find{|c| c.name == o.left.name.to_s}.type
     if(o.right.is_a?(Arel::Attributes::Attribute))
       collector << "CONCAT("
@@ -99,10 +100,6 @@ module ArelExtensions
   end
 
 
-  def visit_ArelExtensions_Nodes_Findis o,collector
-
-  end
-
   def visit_ArelExtensions_Nodes_Length o, collector
     collector << "LENGTH("
     collector = visit o.expr, collector
@@ -110,19 +107,6 @@ module ArelExtensions
     collector
   end
 
-
-  def visit_ArelExtensions_Nodes_Locate o, collector
-    collector << "LOCATE("
-    if(o.val.is_a?(Arel::Attributes::Attribute))
-      collector = visit o.val, collector
-    else
-      collector << "'#{o.val}'"
-    end
-    collector << ","
-    collector = visit o.expr, collector
-    collector << ")"
-    collector
-  end
 
   def visit_ArelExtensions_Nodes_Isnull o, collector
     collector << "NVL("

@@ -5,6 +5,7 @@ module ArelExtensions
     describe 'the Oracle visitor' do
       before do
         @conn = FakeRecord::Base.new
+        Arel::Table.engine = @conn
         @visitor = Arel::Visitors::Oracle.new @conn.connection
         @table = Arel::Table.new(:users)
         @attr = @table[:id]
