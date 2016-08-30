@@ -1,4 +1,6 @@
 require 'arel_extensions/nodes'
+require 'arel_extensions/nodes/concat'
+
 module ArelExtensions
     module Math
       #function + between

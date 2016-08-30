@@ -5,13 +5,10 @@ require 'active_record'
 $:.unshift "#{File.dirname(__FILE__)}../../lib"
 require 'arel_extensions'
 
-# change here your target
-ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:") # requires compilation with extensions enabled
-#ActiveRecord::Base.establish_connection(:adapter=> "mysql2",:host=> "localhost",:username=> 'tester', :password => "testp", :database=> "tests")
-#ActiveRecord::Base.establish_connection(:adapter=>'postgresql',:host=> "localhost",:username=> 'tester',:password => "testp", :database=> "tests")
-
-
 def setup_db
+  ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
+  ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+  ActiveRecord::Base.default_timezone = :utc
   @cnx = ActiveRecord::Base.connection
   if ActiveRecord::Base.connection.adapter_name =~ /sqlite/i
     $sqlite = true
@@ -38,7 +35,7 @@ def setup_db
       t.column :name, :string
       t.column :created_at, :date
       t.column :updated_at, :date
-      t.column :score, :floor
+      t.column :score, :decimal
   end
 end
 
