@@ -1,19 +1,22 @@
 module ArelExtensions
   module Nodes
     class Concat < Function
-      include ArelExtensions::Math
 
       def initialize expr
-        tab = expr.map do |arg|
+        tab = expr.map { |arg|
           convert(arg)
-        end
+        }
         return super(tab)
+      end
+
+      def +(other)
+        return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
       end
 
       private
       def convert(object)
         case object
-        when Arel::Attributes::Attribute, Arel::Nodes::Node, Fixnum
+        when Arel::Attributes::Attribute, Arel::Nodes::Node, Fixnum, Integer
           object
         when DateTime, Time
           Arel::Nodes.build_quoted(Date.new(object.year, object.month, object.day), self)
@@ -24,7 +27,7 @@ module ArelExtensions
         when ActiveSupport::Duration
           object.to_i
         else
-          raise(ArgumentError, "#{object.class} can not be converted to Date")
+          raise(ArgumentError, "#{object.class} can not be converted to CONCAT arg")
         end
       end
 

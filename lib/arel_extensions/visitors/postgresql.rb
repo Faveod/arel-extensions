@@ -2,7 +2,8 @@ module ArelExtensions
   module Visitors
     Arel::Visitors::PostgreSQL.class_eval do
 
-      def visit_ArelExtensions_Nodes_Concat o, collector
+      # deprecated
+      def visit_ArelExtensions_Nodes_ConcatOld o, collector
         arg = o.left.relation.engine.columns.find{|c| c.name == o.left.name.to_s}.type
         collector = visit o.left, collector
         if(o.right.is_a?(Arel::Attributes::Attribute))

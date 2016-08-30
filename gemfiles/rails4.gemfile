@@ -17,7 +17,6 @@ group :development, :test do
 	gem 'activerecord', '~> 4.0'
 	gem 'rdoc'
 	gem 'rake', '~> 11'
-	gem 'bundler'
 end
 
 gemspec :path => "../"
