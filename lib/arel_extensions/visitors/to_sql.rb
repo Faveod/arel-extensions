@@ -111,7 +111,7 @@ module ArelExtensions
       end
 
         # override
-      remove_method :visit_Arel_Nodes_As
+      remove_method(:visit_Arel_Nodes_As) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_As)
       def visit_Arel_Nodes_As o, collector
         if o.left.is_a?(Arel::Nodes::Binary)
           collector << '('
@@ -125,7 +125,7 @@ module ArelExtensions
         collector
       end
 
-      remove_method :visit_Arel_Nodes_Regexp
+      remove_method(:visit_Arel_Nodes_Regexp) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_Regexp)
       def visit_Arel_Nodes_Regexp o, collector
         collector = visit o.left, collector
         collector << " REGEXP "
@@ -133,7 +133,7 @@ module ArelExtensions
         collector
       end
 
-      remove_method :visit_Arel_Nodes_NotRegexp
+      remove_method(:visit_Arel_Nodes_NotRegexp) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_NotRegexp)
       def visit_Arel_Nodes_NotRegexp o, collector
         collector = visit o.left, collector
         collector << " NOT REGEXP "

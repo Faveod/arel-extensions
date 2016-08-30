@@ -51,8 +51,8 @@ module ArelExtensions
         #CEIL # require extensions
 
         # RAND
-        assert_equal 5, User.where(User.arel_table[:score].eq(20.16)).select(User.arel_table[:id]).order(Arel.rand).take(50).count
-        assert_equal 8, User.select(User.arel_table[:name]).order(Arel.rand).take(50).count
+        assert_equal 5, User.where(@table[:score].eq(20.16)).order(Arel.rand).limit(50).count
+        assert_equal 8, User.order(Arel.rand).limit(50).count
       end
 
     end

@@ -36,26 +36,13 @@ module ArelExtensions
 
      #****************************************************************#
       def visit_ArelExtensions_Nodes_Concat o, collector
-        arg = o.left.relation.engine.columns.find{|c| c.name == o.left.name.to_s}.type
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector << "CONCAT("
-          collector = visit o.left, collector
-          collector << ","
-          collector = visit o.right, collector
-          collector << ")"
-          collector
-        elsif (arg == :date || arg == :datetime)
-          collector << "DATE_ADD("
-          collector = visit o.left, collector
-          collector << ",INTERVAL #{o.right} DAY)"
-          collector
-        else
-          collector << "CONCAT("
-          collector = visit o.left, collector
-          collector << ",'"
-          collector << "#{o.right}')"
-          collector
-        end
+        collector << "CONCAT("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::MySql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
       end
 
 
