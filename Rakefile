@@ -7,8 +7,33 @@ desc "Default Task"
 task default: [ :test ]
 
 Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/test_*.rb'
-  t.verbose = true
+ 	t.libs << 'lib'
+  	t.libs << 'test'
+  	t.pattern = 'test/**/test_*.rb'
+	t.warning = true
+  	t.verbose = true
+end
+
+%w(mysql postgresql sqlite ibm_db oracle mssql).each do |adapter|
+	namespace :test do
+		Rake::TestTask.new(adapter => "#{adapter}:env") { |t|
+			t.libs << 'lib'
+		  	t.libs << 'test'
+		  	t.pattern = 'test/with_ar/*_agnostic_test.rb'
+		  	t.warning = true
+		  	t.verbose = true
+		  	t.ruby_opts = ["--dev"] if defined?(JRUBY_VERSION)
+		}
+	end
+
+	namespace adapter do
+	    task :test => "test_#{adapter}"
+	    task :isolated_test => "isolated_test_#{adapter}"
+
+	    # Set the connection environment for the adapter
+	    task(:env) { ENV['DB'] = adapter }
+	end
+
+	  # Make sure the adapter test evaluates the env setting task
+	task "test_#{adapter}" => ["#{adapter}:env", "test:#{adapter}"]
 end

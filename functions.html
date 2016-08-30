@@ -5,8 +5,9 @@
     <title>Arel Extensions Features</title>
     <style type="text/css">
     .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg th { font-weight:bold; }
     .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
-    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
     .tg .tg-baqh{text-align:center;vertical-align:top}
     .tg .tg-3oug{background-color:#fd6864;text-align:center;vertical-align:top}
     .tg .tg-by3v{font-weight:bold;font-size:14px;text-align:center}
@@ -36,8 +37,9 @@
     <th class="tg-pjz5">DB2</th>
   </tr>
   </thead>
+  <tbody>
   <tr>
-    <td class="tg-82sq" rowspan="6"><br><br><br><br><br><br><br>Math<br>functions<br></td>
+    <th class="tg-82sq" rowspan="6"><br><br><br><br><br><br><br>Math<br>functions</th>
     <td class="tg-yw4l">ABS<br>column.abs<br></td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
@@ -92,7 +94,7 @@
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
-    <td class="tg-ffjm" rowspan="11"><br><br><br><br><br><br><br><br><br>String <br>functions <br></td>
+    <th class="tg-ffjm" rowspan="11"><br><br><br><br><br><br><br><br><br>String <br>functions</th>
     <td class="tg-yw4l">CONCAT<br>column + "string"</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
@@ -192,7 +194,7 @@
     <td class="tg-j6lv">TRIM()</td>
   </tr>
   <tr>
-    <td class="tg-4rp9" rowspan="6"><br><br><br><br><br><br><br>Date <br>functions<br></td>
+    <th class="tg-4rp9" rowspan="6"><br><br><br><br><br><br><br>Date <br>functions<br></th>
     <td class="tg-yw4l">DATEADD<br>column + 2.year<br></td>
     <td class="tg-j6lv">DATE_ADD()<br></td>
     <td class="tg-baqh">✔</td>
@@ -247,7 +249,7 @@
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
-    <td class="tg-72dn" rowspan="8"><br><br><br><br><br><br>Comparators<br>functions<br></td>
+    <th class="tg-72dn" rowspan="8"><br><br><br><br><br><br>Comparators<br>functions<br></th>
     <td class="tg-yw4l">COALESCE<br>column.coalesce(var)</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
@@ -320,7 +322,7 @@
     <td class="tg-baqh">✔</td>
   </tr>
   <tr>
-    <td class="tg-9hbo" rowspan="2"><br><br>Boolean <br>functions<br></td>
+    <th class="tg-9hbo" rowspan="2">Boolean <br>functions</th>
     <td class="tg-yw4l">OR ( ⋁ )<br>column.eq(var) ⋁ column.eq(var)</td>
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
@@ -338,7 +340,18 @@
     <td class="tg-baqh">✔</td>
     <td class="tg-baqh">✔</td>
   </tr>
+  <tr>
+    <th class="bulk_insert">Bulk Insert</th>
+    <td class="tg-yw4l">insert_manager.bulk_insert(@cols, @data)</td>
+    <td class="tg-baqh">✔</td>
+    <td class="tg-baqh">✔</td>
+    <td class="tg-baqh">✔</td>
+    <td class="tg-baqh">✔</td>
+    <td class="tg-baqh">✔</td>
+    <td class="tg-baqh">✔</td>
+  </tr>
+  </tbody>
 </table>
-</table>
+
 </body>
 </html>

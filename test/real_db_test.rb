@@ -47,21 +47,20 @@ class User < ActiveRecord::Base
 
 end
 
-
 class ListTest < Minitest::Test
 
   def setup
     d = Date.new(2016,05,23)
     setup_db
-    User.create! :age => 5, :name => "Lucas", :created_at => d , :score => 20.16
-    User.create! :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
-    User.create! :age => 20, :name => "Camille", :created_at => d, :score => 20.16
-    User.create! :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
+    User.create :age => 5, :name => "Lucas", :created_at => d , :score => 20.16
+    User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
+    User.create :age => 20, :name => "Camille", :created_at => d, :score => 20.16
+    User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
     u = User.create :age => 23, :name => "Myung", :created_at => d, :score => 20.16
     @myung = User.where(:id => u.id)
-    User.create! :age => 25, :name => "Laure", :created_at => d, :score =>20.16
-    User.create! :age =>nil, :name => "Test", :created_at => d, :score => 1.62
-    User.create! :age =>-0, :name => "Negatif", :created_at => d, :score => 0.17
+    User.create :age => 25, :name => "Laure", :created_at => d, :score =>20.16
+    User.create :age =>nil, :name => "Test", :created_at => d, :score => 1.62
+    User.create :age =>-0, :name => "Negatif", :created_at => d, :score => 0.17
   end
 
   def teardown

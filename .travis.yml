@@ -21,7 +21,12 @@ script:
   - "bundle exec rake test"
 #  - "bundle exec rake test:sqlite3"
   - "gem build arel_extensions.gemspec"
-  - "bundle exec ruby test/real_db_test.rb"
+  - "bundle exec rake test:sqlite"
+  - "bundle exec rake test:mysql"
+  - "bundle exec rake test:postgresql"
+#  - "bundle exec rake test:oracle"
+
+#  - "bundle exec ruby test/real_db_test.rb" # move to other tests
 env:
   global:
     - JRUBY_OPTS='--dev -J-Xmx1024M'
@@ -72,11 +77,11 @@ matrix:
       gemfile: gemfiles/rails5.gemfile
     - rvm: rbx-2
       gemfile: gemfiles/rails5.gemfile
-  allow_failures:
-#    - rvm: jruby-9.0.5.0
-#    - rvm: jruby-head
     - rvm: ruby-head
       gemfile: gemfiles/rails4.gemfile
+  allow_failures:
+#    - rvm: jruby-9.0.5.0
+    - rvm: jruby-head
 #    - rvm: ruby-head
 #      gemfile: gemfiles/rails3.gemfile
 #    - rvm: jruby-head
