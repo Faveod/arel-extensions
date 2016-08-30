@@ -69,7 +69,7 @@ matrix:
 #    - rvm: jruby-9.0.5.0
 #    - rvm: jruby-head
     - rvm: ruby-head
-      gemfile: Gemfile
+      gemfile: gemfiles/rails4.gemfile
     - rvm: ruby-head
       gemfile: gemfiles/rails3.gemfile
 #    - rvm: jruby-head
