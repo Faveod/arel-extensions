@@ -5,7 +5,6 @@ gem 'arel', '~> 7.0'
 group :development, :test do
 	gem "sqlite3", :platform => [:ruby, :mswin, :mingw]
 	gem "mysql2", :platform => [:ruby, :mswin, :mingw]
-	gem "activerecord-mysql2-adapter", :platform => [:ruby, :mswin, :mingw]
 	gem "pg", :platform => [:ruby, :mswin, :mingw]
 
 	# for JRuby
@@ -17,9 +16,6 @@ group :development, :test do
 	gem 'activesupport', '~> 5'
 	gem 'activemodel', '~> 5'
 	gem 'activerecord', '~> 5'
-	gem 'rdoc'
-	gem 'rake', '~> 11'
-	gem 'bundler'
 end
 
 gemspec :path => "../"

@@ -1,13 +1,17 @@
 module ArelExtensions
   module Nodes
     class Locate < Function
-		include ArelExtensions::Math
 
 		def initialize expr
 			tab = expr.map do |arg|
 			  convert(arg)
 			end
 			return super(tab)
+		end
+
+
+		def +(other)
+	        return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
 		end
 
 		private

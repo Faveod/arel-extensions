@@ -9,12 +9,12 @@ jdbc-sqlite:
 mysql:
   adapter: mysql2
   database: arext_test
-  username: 
+  username: travis
   encoding: utf8
 jdbc-mysql:
   adapter: jdbcmysql
   database: arext_test
-  username:
+  username: travis
   encoding: utf8
 postgres:
   adapter: postgresql

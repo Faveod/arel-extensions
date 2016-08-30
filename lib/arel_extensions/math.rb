@@ -1,3 +1,4 @@
+require 'arel_extensions/nodes'
 module ArelExtensions
     module Math
       #function + between
