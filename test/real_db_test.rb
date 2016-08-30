@@ -1,5 +1,5 @@
-require 'test/unit'
 require 'rubygems'
+require 'minitest/autorun'
 require 'active_record'
 
 $:.unshift "#{File.dirname(__FILE__)}../../lib"
@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
 end
 
 
-class ListTest < Test::Unit::TestCase
+class ListTest < Minitest::Test
 
   def setup
     d = Date.new(2016,05,23)
