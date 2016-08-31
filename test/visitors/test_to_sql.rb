@@ -50,7 +50,7 @@ module ArelExtensions
         compile(c + 'test' + ' chain').must_be_like %{"users"."name" || 'test' || ' chain'}
         compile(c.length).must_be_like %{LENGTH("users"."name")}
         compile(c.length.round + 42).must_be_like %{(ROUND(LENGTH("users"."name")) + 42)}
-        compile(c.locate('test')).must_be_like %{LOCATE("users"."name", 'test')}
+        compile(c.locate('test')).must_be_like %{LOCATE('test', "users"."name")}
         compile(c & 42).must_be_like %{FIND_IN_SET(42, "users"."name")}
 
         compile((c >= 'test').as('new_name')).must_be_like %{("users"."name" >= 'test') AS new_name}

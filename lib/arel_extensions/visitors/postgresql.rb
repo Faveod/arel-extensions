@@ -101,18 +101,6 @@ module ArelExtensions
         collector
       end
 
-
-      def visit_ArelExtensions_Nodes_Replace o, collector
-        collector << "REPLACE("
-        collector = visit o.expr, collector
-        collector << Arel::Visitors::PostgreSQL::COMMA
-        collector = visit o.left, collector
-        collector << Arel::Visitors::PostgreSQL::COMMA
-        collector = visit o.right, collector
-        collector << ")"
-        collector
-      end
-
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector = visit o.left, collector
         collector << ' IS NULL'
