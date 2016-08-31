@@ -106,12 +106,31 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Wday o, collector
         collector << "strftime('%w',"
-        if((o.date).is_a?(Arel::Attributes::Attribute))
-          collector = visit o.date, collector
-        else
-          collector << "'#{o.date}'"
-        end
+        collector = visit o.date, collector
         collector << ")"
+        collector
+      end
+
+      def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        o.left.each_with_index do |row, idx|
+          collector << 'SELECT '
+          v = Arel::Nodes::Values.new(row, o.cols)
+          len = v.expressions.length - 1
+          v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value.as(attr.name), collector
+              else
+                collector << quote(value, attr && column_for(attr)).to_s
+                if idx == 0
+                  collector << " AS "
+                  collector << quote(attr.name)
+                end
+              end
+              collector << Arel::Visitors::SQLite::COMMA unless i == len
+          }
+          collector << ' UNION ALL ' unless idx == o.left.length - 1
+        end
         collector
       end
 

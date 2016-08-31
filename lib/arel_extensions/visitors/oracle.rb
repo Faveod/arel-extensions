@@ -26,28 +26,6 @@ module ArelExtensions
         end
       end
 
-      #deprecated
-      def visit_ArelExtensions_Nodes_ConcatDep o, collector
-        arg = o.left.relation.engine.columns.find{|c| c.name == o.left.name.to_s}.type
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector << "CONCAT("
-          collector = visit o.left, collector
-          collector << ","
-          collector = visit o.right, collector
-          collector << ")"
-        elsif ( arg === :date || arg === :datetime)
-          collector << "DATEADD("
-          collector = visit o.left, collector
-          collector << ", + interval '#{o.right}' DAY)"
-        else
-          collector << "CONCAT("
-          collector = visit o.left, collector
-          collector << ","
-          collector << "#{o.right})"
-        end
-        collector
-      end
-
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "LISTAGG("
         collector = visit o.left, collector

@@ -29,6 +29,18 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_GroupConcat o, collector
+        collector << "array_to_string(array_agg("
+        collector = visit o.left, collector
+        collector << Arel::Visitors::PostgreSQL::COMMA
+        if o.right
+          collector << Arel::Visitors::PostgreSQL::COMMA
+          collector = visit o.right, collector
+        end
+        collector << ")"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_Trim o, collector
           collector << 'TRIM(BOTH '
           collector = visit o.right, collector

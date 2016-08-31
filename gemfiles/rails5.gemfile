@@ -10,14 +10,16 @@ group :development, :test do
 	gem "sqlite3", :platform => [:ruby, :mswin, :mingw]
 	gem "mysql2", :platform => [:ruby, :mswin, :mingw]
 	gem "pg", :platform => [:ruby, :mswin, :mingw]
-
-	gem 'activerecord-oracle_enhanced-adapter', '~> 1.6.0'
+	gem 'ruby-oci8', '~> 2.1.0'
+	gem 'activerecord-oracle_enhanced-adapter', '~> 1.7.0'
 
 	# for JRuby
+	gem 'activerecord-jdbc-adapter', platform: :jruby
 	gem "jdbc-sqlite3", :platform => :jruby
 	gem "activerecord-jdbcsqlite3-adapter", :platform => :jruby
 	gem "activerecord-jdbcmysql-adapter", :platform => :jruby
 	gem "activerecord-jdbcpostgresql-adapter", :platform => :jruby
+	gem "activerecord-jdbcmssql-adapter", :platform => :jruby
 end
 
 gemspec :path => "../"
