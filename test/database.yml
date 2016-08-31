@@ -27,9 +27,11 @@ jdbc-postgresql:
 oracle:
   adapter: oracle_enhanced
   database: arext_test
+  username: travis
 jdbc-oracle:
   adapter: oracle_enhanced
   database: arext_test
+  username: travis
 ibm_db:
   adapter:  ibm_db
   host:     localhost

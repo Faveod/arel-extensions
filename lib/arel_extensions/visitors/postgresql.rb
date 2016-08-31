@@ -32,7 +32,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "array_to_string(array_agg("
         collector = visit o.left, collector
-        collector << Arel::Visitors::PostgreSQL::COMMA
+        collector << ")"
         if o.right
           collector << Arel::Visitors::PostgreSQL::COMMA
           collector = visit o.right, collector

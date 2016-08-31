@@ -36,7 +36,7 @@ module ArelExtensions
         collector << ")"
         collector
       end
-      
+
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "GROUP_CONCAT("
         collector = visit o.left, collector
@@ -95,7 +95,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Duration o, collector
         #visit left for period
-        if(o.left == "d")
+        if o.left == "d" 
           collector << "DAY("
         elsif(o.left == "m")
           collector << "MONTH("
@@ -113,12 +113,14 @@ module ArelExtensions
      #****************************************************************#
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
-          collector << "IFNULL("
-         collector = visit o.left, collector
-         collector << Arel::Visitors::MySQL::COMMA
-         collector = visit o.right, collector
-         collector << ")"
-         collector
+        collector << "IFNULL("
+        collector = visit o.left, collector
+        if o.right
+          collector << Arel::Visitors::MySQL::COMMA
+          collector = visit o.right, collector
+        end
+        collector << ")"
+        collector
       end
 
 

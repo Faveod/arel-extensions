@@ -44,7 +44,7 @@ module ArelExtensions
       def test_bulk_insert
         insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(Arel::Table.engine).into(@table)
         insert_manager.bulk_insert(@cols, @data)
-        @cnx.exec_query(insert_manager.to_sql)
+        @cnx.execute(insert_manager.to_sql)
       end
 
     end
