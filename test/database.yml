@@ -26,15 +26,13 @@ jdbc-postgresql:
   username: postgres
 oracle:
   adapter: oracle_enhanced
-  database: arext_test
+  database: xe
   username: travis
 jdbc-oracle:
   adapter: oracle_enhanced
-  database: arext_test
+  database: xe
   username: travis
 ibm_db:
   adapter:  ibm_db
-  host:     localhost
-  username: arunit
-  password: arunit
-  database: arunit
+  username: travis
+  database: arext_test
