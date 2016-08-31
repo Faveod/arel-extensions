@@ -36,6 +36,9 @@ module ArelExtensions
         if o.right
           collector << Arel::Visitors::PostgreSQL::COMMA
           collector = visit o.right, collector
+        else
+          collector << Arel::Visitors::PostgreSQL::COMMA
+          collector = visit Arel::Nodes.build_quoted(' '), collector
         end
         collector << ")"
         collector
