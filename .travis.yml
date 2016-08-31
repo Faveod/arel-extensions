@@ -1,90 +1,87 @@
 language: ruby
-sudo: false
+sudo: required
 cache: bundler
 before_install:
-  - gem install bundler
-# - sudo apt-get update -qq
-# - sudo apt-get install -qq sqlite3
-#addons:
-#  mariadb: '10.0'
+- gem install bundler
+- ".travis/oracle/download.sh"
+- ".travis/oracle/install.sh"
 gemfile:
-  - gemfiles/rails4.gemfile
-#  - gemfiles/rails3.gemfile
-  - gemfiles/rails5.gemfile
+- gemfiles/rails4.gemfile
+- gemfiles/rails5.gemfile
 services:
-  - mysql
-  - postgresql
+- mysql
+- postgresql
 before_script:
-  - mysql -e 'create database arext_test;'
-  - psql -c 'create database arext_test;' -U postgres
+- mysql -e 'create database arext_test;'
+- psql -c 'create database arext_test;' -U postgres
 script:
-  - "bundle exec rake test"
-#  - "bundle exec rake test:sqlite3"
-  - "gem build arel_extensions.gemspec"
-  - "bundle exec rake test:sqlite"
-  - "bundle exec rake test:mysql"
-  - "bundle exec rake test:postgresql"
-#  - "bundle exec rake test:oracle"
-
-#  - "bundle exec ruby test/real_db_test.rb" # move to other tests
+- bundle exec rake test
+- gem build arel_extensions.gemspec
+- bundle exec rake test:sqlite
+- bundle exec rake test:mysql
+- bundle exec rake test:postgresql
+- bundle exec rake test:oracle
 env:
   global:
-    - JRUBY_OPTS='--dev -J-Xmx1024M'
+  - JRUBY_OPTS='--dev -J-Xmx1024M'
+  - ORACLE_COOKIE=sqldev
+  - ORACLE_FILE=oracle11g/xe/oracle-xe-11.2.0-1.0.x86_64.rpm.zip
+  - ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe
+  - ORACLE_SID=XE
+  - secure: 0RUuF4l0e3J8UIIMlgb8x/aYy2pH6Wb+EWylOr2W1EQechivoFw6IEYD1EZWIOZ/uNpkQ2h/urbUqW3/HpKhZn+NYP2sQI41Xyu1TD+6HPWAHpEvLzemhQSJV6eIeLRQoVDLUmqF23nUZDtKQAwOOyJVMeqHMahJi5K7N/cfQmifs2QcBnMxPnANIcrSXxOCBoqCl6BERG9JTeKERG/lWG1I9vRIe9ISNyOPUQVVI6SfTJwhJP5NLkxSJG1q2PLPK7p6zQ684sS4zSnS5oV23yDsQWWIwxk78CVu1jnFBu8Qq3ngWsInlkHrPotjtaxmTxM8JQd4fgE5NMO2Pjnj8w7zg+sbl+3OVtareX+M9+OLdUD5xBQhecPpzflMqib2qZ0fr9tdoT8kAZJTiXtQrptZfaXleZlH74l2dO/PYxkoWMusYQnSbQl0G3AoyYH+l7YpefL4arm0s5IIiOK+ZiCoZ14pl26rYAA1iPUe5AT+hecKi+fwqhyFE7fMX+zC+AvzsQL8jrP0CXL/hmPkoFYxvcDgUoYhvOq+mmQHdOfU7ny4hH5z5d9691qceduHFvF7fNZ4pSofj03eGqfTTk+SDNeZIo6NXNlayayjV2L/DxL6d7vetxkWwipx47PI76gBAqJlxgODJuzoOtyQkPyIVsDlzI1UPoS+UbrU51w=
 rvm:
-  - 2.0.0
-  - 2.1
-  - 2.2.5
-  - 2.3.1
-  - rbx-2
-  - jruby-9.0.5.0
-  - jruby-head
-  - ruby-head
+- 2.0.0
+- 2.1
+- 2.2.5
+- 2.3.1
+- rbx-2
+- jruby-9.0.5.0
+- jruby-head
+- ruby-head
 jdk:
-  - openjdk7
-  - oraclejdk7
-  - oraclejdk8
-#  - openjdk6
+- openjdk7
+- oraclejdk7
+- oraclejdk8
 matrix:
   fast_finish: true
   exclude:
-    - rvm: rbx-2
-      jdk: openjdk7
-    - rvm: rbx-2
-      jdk: oraclejdk7
-    - rvm: 2.0.0
-      jdk: openjdk7
-    - rvm: 2.0.0
-      jdk: oraclejdk7
-    - rvm: 2.1
-      jdk: openjdk7
-    - rvm: 2.1
-      jdk: oraclejdk7
-    - rvm: 2.2.5
-      jdk: openjdk7
-    - rvm: 2.2.5
-      jdk: oraclejdk7
-    - rvm: 2.3.1
-      jdk: openjdk7
-    - rvm: 2.3.1
-      jdk: oraclejdk7
-    - rvm: ruby-head
-      jdk: openjdk7
-    - rvm: ruby-head
-      jdk: oraclejdk7
-    - rvm: 2.0.0
-      gemfile: gemfiles/rails5.gemfile
-    - rvm: 2.1
-      gemfile: gemfiles/rails5.gemfile
-    - rvm: rbx-2
-      gemfile: gemfiles/rails5.gemfile
-    - rvm: ruby-head
-      gemfile: gemfiles/rails4.gemfile
+  - rvm: rbx-2
+    jdk: openjdk7
+  - rvm: rbx-2
+    jdk: oraclejdk7
+  - rvm: 2.0.0
+    jdk: openjdk7
+  - rvm: 2.0.0
+    jdk: oraclejdk7
+  - rvm: 2.1
+    jdk: openjdk7
+  - rvm: 2.1
+    jdk: oraclejdk7
+  - rvm: 2.2.5
+    jdk: openjdk7
+  - rvm: 2.2.5
+    jdk: oraclejdk7
+  - rvm: 2.3.1
+    jdk: openjdk7
+  - rvm: 2.3.1
+    jdk: oraclejdk7
+  - rvm: ruby-head
+    jdk: openjdk7
+  - rvm: ruby-head
+    jdk: oraclejdk7
+  - rvm: 2.0.0
+    gemfile: gemfiles/rails5.gemfile
+  - rvm: 2.1
+    gemfile: gemfiles/rails5.gemfile
+  - rvm: rbx-2
+    gemfile: gemfiles/rails5.gemfile
+  - rvm: ruby-head
+    gemfile: gemfiles/rails4.gemfile
   allow_failures:
-#    - rvm: jruby-9.0.5.0
-    - rvm: jruby-head
-#    - rvm: ruby-head
-#      gemfile: gemfiles/rails3.gemfile
-#    - rvm: jruby-head
-bundler_args: --jobs 3 --retry 2
+  - rvm: jruby-9.0.5.0
+    gemfile: gemfiles/rails5.gemfile
+  - rvm: jruby-head
+    gemfile: gemfiles/rails5.gemfile
+bundler_args: "--jobs 3 --retry 2"
 notifications:
   email: false

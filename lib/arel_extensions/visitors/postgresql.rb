@@ -3,7 +3,7 @@ module ArelExtensions
     Arel::Visitors::PostgreSQL.class_eval do
 
       def visit_ArelExtensions_Nodes_Rand o, collector
-        collector << "random("
+        collector << "RANDOM("
         if(o.left != nil && o.right != nil)
           collector = visit o.left, collector
           collector << Arel::Visitors::PostgreSQL::COMMA

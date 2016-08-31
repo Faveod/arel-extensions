@@ -27,38 +27,48 @@ module ArelExtensions
       end
 
       #deprecated
-  def visit_ArelExtensions_Nodes_ConcatDep o, collector
-    arg = o.left.relation.engine.columns.find{|c| c.name == o.left.name.to_s}.type
-    if(o.right.is_a?(Arel::Attributes::Attribute))
-      collector << "CONCAT("
-      collector = visit o.left, collector
-      collector << ","
-      collector = visit o.right, collector
-      collector << ")"
-    elsif ( arg === :date || arg === :datetime)
-      collector << "DATEADD("
-      collector = visit o.left, collector
-      collector << ", + interval '#{o.right}' DAY)"
-    else
-      collector << "CONCAT("
-      collector = visit o.left, collector
-      collector << ","
-      collector << "#{o.right})"
-    end
-    collector
-  end
+      def visit_ArelExtensions_Nodes_ConcatDep o, collector
+        arg = o.left.relation.engine.columns.find{|c| c.name == o.left.name.to_s}.type
+        if(o.right.is_a?(Arel::Attributes::Attribute))
+          collector << "CONCAT("
+          collector = visit o.left, collector
+          collector << ","
+          collector = visit o.right, collector
+          collector << ")"
+        elsif ( arg === :date || arg === :datetime)
+          collector << "DATEADD("
+          collector = visit o.left, collector
+          collector << ", + interval '#{o.right}' DAY)"
+        else
+          collector << "CONCAT("
+          collector = visit o.left, collector
+          collector << ","
+          collector << "#{o.right})"
+        end
+        collector
+      end
 
+      def visit_ArelExtensions_Nodes_GroupConcat o, collector
+        collector << "LISTAGG("
+        collector = visit o.left, collector
+        if o.right
+          collector << Arel::Visitors::Oracle::COMMA
+          collector = visit o.right, collector
+        end
+        collector << ")"
+        collector
+      end
 
-  def visit_ArelExtensions_Nodes_Coalesce o, collector
-    collector << "COALESCE("
-    collector = visit o.left, collector
-    o.other.each { |a|
-      collector << Arel::Visitors::Oracle::COMMA
-      collector = visit a, collector
-    }
-    collector << ")"
-    collector
-  end
+      def visit_ArelExtensions_Nodes_Coalesce o, collector
+        collector << "COALESCE("
+        collector = visit o.left, collector
+        o.other.each { |a|
+          collector << Arel::Visitors::Oracle::COMMA
+          collector = visit a, collector
+        }
+        collector << ")"
+        collector
+      end
 
   def visit_ArelExtensions_Nodes_DateDiff o, collector
     collector << '('

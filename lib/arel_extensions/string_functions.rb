@@ -51,6 +51,10 @@ module ArelExtensions
       ArelExtensions::Nodes::Replace.new [self, left, right]
     end
 
+    def group_concat sep = nil
+      ArelExtensions::Nodes::GroupConcat.new [self, sep]
+    end
+
     #Function returns a string after removing left, right or the both prefixes or suffixes int argument
     def trim other
       ArelExtensions::Nodes::Trim.new [self, other]

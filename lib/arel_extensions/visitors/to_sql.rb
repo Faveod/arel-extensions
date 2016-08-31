@@ -53,13 +53,23 @@ module ArelExtensions
         collector
       end
 
-
       # String functions
       def visit_ArelExtensions_Nodes_Concat o, collector
         o.expressions.each_with_index { |arg, i|
           collector = visit arg, collector
           collector << ' || ' unless i == o.expressions.length - 1
         }
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_GroupConcat o, collector
+        collector << "GROUP_CONCAT("
+        collector = visit o.left, collector
+        if o.right
+          collector << Arel::Visitors::ToSql::COMMA
+          collector = visit o.right, collector
+        end
+        collector << ")"
         collector
       end
 
@@ -215,10 +225,9 @@ module ArelExtensions
         collector = infix_value o, collector, ' NOT ILIKE '
         if o.escape
           collector << ' ESCAPE '
-          visit o.escape, collector
-        else
-          collector
+          collector = visit o.escape, collector
         end
+        collector
       end
 
       def visit_ArelExtensions_Nodes_IsNull o, collector

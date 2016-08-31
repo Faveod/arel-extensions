@@ -36,6 +36,17 @@ module ArelExtensions
         collector << ")"
         collector
       end
+      
+      def visit_ArelExtensions_Nodes_GroupConcat o, collector
+        collector << "GROUP_CONCAT("
+        collector = visit o.left, collector
+        if o.right
+          collector << ' SEPARATOR '
+          collector = visit o.right, collector
+        end
+        collector << ")"
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_Trim o, collector
           collector << 'TRIM(' # BOTH
@@ -101,7 +112,7 @@ module ArelExtensions
 
      #****************************************************************#
 
-      def visit_ArelExtensions_Nodes_Isnull o, collector
+      def visit_ArelExtensions_Nodes_IsNull o, collector
           collector << "IFNULL("
          collector = visit o.left, collector
          collector << Arel::Visitors::MySQL::COMMA
