@@ -11,7 +11,7 @@ group :development, :test do
 	gem "mysql2", :platform => [:ruby, :mswin, :mingw]
 	gem "pg", :platform => [:ruby, :mswin, :mingw]
 	gem 'ruby-oci8', '~> 2.2.0', :platform => [:ruby, :mswin, :mingw] if ENV.has_key? 'ORACLE_HOME'
-	gem 'activerecord-oracle_enhanced-adapter', '~> 1.7.0'
+	gem 'activerecord-oracle_enhanced-adapter', '~> 1.7.0' if ENV.has_key? 'ORACLE_HOME'
 
 	# for JRuby
 	gem 'activerecord-jdbc-adapter', platform: :jruby
