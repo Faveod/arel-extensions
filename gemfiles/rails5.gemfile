@@ -3,19 +3,21 @@ source "https://rubygems.org"
 gem 'arel', '~> 7.0'
 
 group :development, :test do
+	gem 'activesupport', '~> 5'
+	gem 'activemodel', '~> 5'
+	gem 'activerecord', '~> 5'
+
 	gem "sqlite3", :platform => [:ruby, :mswin, :mingw]
 	gem "mysql2", :platform => [:ruby, :mswin, :mingw]
 	gem "pg", :platform => [:ruby, :mswin, :mingw]
+
+	gem 'activerecord-oracle_enhanced-adapter', '~> 1.6.0'
 
 	# for JRuby
 	gem "jdbc-sqlite3", :platform => :jruby
 	gem "activerecord-jdbcsqlite3-adapter", :platform => :jruby
 	gem "activerecord-jdbcmysql-adapter", :platform => :jruby
 	gem "activerecord-jdbcpostgresql-adapter", :platform => :jruby
-
-	gem 'activesupport', '~> 5'
-	gem 'activemodel', '~> 5'
-	gem 'activerecord', '~> 5'
 end
 
 gemspec :path => "../"
