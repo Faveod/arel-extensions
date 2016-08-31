@@ -72,10 +72,9 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "LOCATE("
-        o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
-          collector = visit arg, collector
-        }
+        collector = visit o.right, collector
+        collector << Arel::Visitors::ToSql::COMMA
+        collector = visit o.left, collector
         collector << ")"
         collector
       end
@@ -222,7 +221,7 @@ module ArelExtensions
         end
       end
 
-     def visit_ArelExtensions_Nodes_IsNull o, collector
+      def visit_ArelExtensions_Nodes_IsNull o, collector
         collector << "ISNULL("
         collector = visit o.left, collector
         collector << ")"

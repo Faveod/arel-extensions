@@ -71,9 +71,9 @@ module ArelExtensions
         collector << " - "
         collector = visit o.right, collector
         collector << (o.date_type == :date ? '::date' : '::timestamp')
+        collector << ")"
         collector
       end
-
 
       def visit_ArelExtensions_Nodes_Duration o, collector
         #visit left for period
@@ -114,14 +114,10 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector << "COALESCE("
         collector = visit o.left, collector
-        collector << Arel::Visitors::PostgreSQL::COMMA
-        collector = visit Arel::Nodes.build_quoted(true), collector
-        collector << ")"
+        collector << ' IS NULL'
         collector
       end
-
 
       def visit_ArelExtensions_Nodes_Sum o, collector
         collector << "sum("
