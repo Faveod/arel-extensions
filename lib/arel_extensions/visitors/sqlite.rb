@@ -3,10 +3,10 @@ module ArelExtensions
     Arel::Visitors::SQLite.class_eval do
 
       #String functions
-      def visit_ArelExtensions_Nodes_IMatches o, collector
-        collector = visit o.left.lower, collector
+      def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
+        collector = visit o.left, collector
         collector << ' LIKE '
-        collector = visit o.right.lower(o.right), collector
+        collector = visit o.right, collector
         if o.escape
           collector << ' ESCAPE '
           visit o.escape, collector
@@ -96,34 +96,10 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "RANDOM("
-        if(o.left != nil && o.right != nil)
-          if(o.left.is_a?(Arel::Attributes::Attribute))
-            collector = visit o.left, collector
-          else
-            collector << "'#{o.left}'"
-          end
-          collector << ","
-          collector << "'#{o.right}'"
-        end
-        collector << ")"
-        collector
-      end
-
-
-      def visit_ArelExtensions_Nodes_Replace o, collector
-        collector << "REPLACE("
-        collector = visit o.expr,collector
-        collector << ","
-        if(o.left.is_a?(Arel::Attributes::Attribute))
+        if o.left != nil && o.right != nil 
           collector = visit o.left, collector
-        else
-          collector << "'#{o.left}'"
-        end
-        collector << ","
-        if(o.right.is_a?(Arel::Attributes::Attribute))
+          collector << ","
           collector = visit o.right, collector
-        else
-          collector << "'#{o.right}'"
         end
         collector << ")"
         collector
@@ -138,7 +114,7 @@ module ArelExtensions
       def visit_Arel_Nodes_NotRegexp o, collector
         collector = visit o.left, collector
         collector << " NOT REGEXP "
-        collector << "'#{o.right}'"
+        collector = visit o.right, collector
         collector
       end
 

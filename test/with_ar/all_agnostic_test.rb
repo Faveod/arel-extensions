@@ -183,12 +183,9 @@ module ArelExtensions
       end
 
       def test_imatches
-        puts User.where(@name.imatches('%M')).to_sql
-        puts User.select("LOWER('%M') AS res").map(&:res).inspect
-        puts User.select("LOWER(name) AS res").map(&:res).inspect
-        assert_equal 1, User.where(@name.imatches('%m')).count
-        assert_equal 4, User.where(@name.imatches_any(['%L', 'e%'])).count
-        assert_equal 6, User.where(@name.idoes_not_match('%L')).count
+        assert_equal 1, User.where(@name.imatches('m%')).count
+        assert_equal 4, User.where(@name.imatches_any(['L%', '%e'])).count
+        assert_equal 6, User.where(@name.idoes_not_match('L%')).count
       end
 
       def test_replace

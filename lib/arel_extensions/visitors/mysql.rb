@@ -31,7 +31,6 @@ module ArelExtensions
           collector
       end
 
-
       def visit_ArelExtensions_Nodes_Rtrim o , collector
         collector << 'TRIM(TRAILING '
         collector = visit o.right, collector

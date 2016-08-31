@@ -65,13 +65,23 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Length o, collector
         collector << "LENGTH("
-        collector = visit o.expr, collector
+        collector = visit o.left, collector
         collector << ")"
         collector
       end
 
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "LOCATE("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_Replace o, collector
+        collector << "REPLACE("
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::ToSql::COMMA unless i == 0
           collector = visit arg, collector

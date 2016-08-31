@@ -48,7 +48,7 @@ module ArelExtensions
 
     #REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.
     def replace left, right
-      ArelExtensions::Nodes::Replace.new self, left, right
+      ArelExtensions::Nodes::Replace.new [self, left, right]
     end
 
     #Function returns a string after removing left, right or the both prefixes or suffixes int argument

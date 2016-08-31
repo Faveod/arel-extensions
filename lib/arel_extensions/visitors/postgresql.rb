@@ -91,7 +91,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Locate o, collector
-        collector << "position("
+        collector << "POSITION("
         collector = visit o.right, collector
         collector << " IN "
         collector = visit o.left, collector
