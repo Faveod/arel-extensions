@@ -113,7 +113,7 @@ module ArelExtensions
      #****************************************************************#
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector << "IFNULL("
+        collector << "ISNULL("
         collector = visit o.left, collector
         if o.right
           collector << Arel::Visitors::MySQL::COMMA

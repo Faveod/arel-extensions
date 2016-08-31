@@ -10,7 +10,7 @@ group :development, :test do
 	gem "sqlite3", :platform => [:ruby, :mswin, :mingw]
 	gem "mysql2", :platform => [:ruby, :mswin, :mingw]
 	gem "pg", :platform => [:ruby, :mswin, :mingw]
-	gem 'ruby-oci8', '~> 2.1.0', :platform => [:ruby, :mswin, :mingw]
+	gem 'ruby-oci8', '~> 2.1.0', :platform => [:ruby, :mswin, :mingw] if ENV.has_key? 'ORACLE_HOME'
 	gem 'activerecord-oracle_enhanced-adapter', '~> 1.7.0'
 
 	# for JRuby
