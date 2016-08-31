@@ -2,8 +2,8 @@ module ArelExtensions
   module NullFunctions
 
     #ISNULL function lets you return an alternative value when an expression is NULL.
-    def isnull(other)
-      ArelExtensions::Nodes::Isnull.new self, other
+    def is_null
+      ArelExtensions::Nodes::IsNull.new [self]
     end
     # returns the first non-null expr in the expression list. You must specify at least two expressions.
     #If all occurrences of expr evaluate to null, then the function returns null.

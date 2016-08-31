@@ -3,6 +3,30 @@ module ArelExtensions
     Arel::Visitors::MySQL.class_eval do
 
       #String functions
+      def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
+        collector = visit o.left, collector
+        collector << ' LIKE '
+        collector = visit o.right, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+
+      def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
+        collector = visit o.left.lower, collector
+        collector << ' NOT LIKE '
+        collector = visit o.right.lower(o.right), collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
         o.expressions.each_with_index { |arg, i|
@@ -70,11 +94,7 @@ module ArelExtensions
           collector << "YEAR("
         end
         #visit right
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.right, collector
-        else
-          collector << "#{o.right}"
-        end
+        collector = visit o.right, collector
         collector << ")"
         collector
       end
@@ -84,46 +104,27 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Isnull o, collector
           collector << "IFNULL("
          collector = visit o.left, collector
-         collector << ","
-         if(o.right.is_a?(Arel::Attributes::Attribute))
+         collector << Arel::Visitors::MySQL::COMMA
          collector = visit o.right, collector
-         else
-         collector << "'#{o.right}'"
-         end
          collector << ")"
          collector
       end
 
 
-       def visit_ArelExtensions_Nodes_Replace o, collector
-         collector << "REPLACE("
-         collector = visit o.expr,collector
-         collector << ","
-         if(o.left.is_a?(Arel::Attributes::Attribute))
-           collector = visit o.left, collector
-         else
-           collector << "'#{o.left}'"
-         end
-         collector << ","
-         if(o.right.is_a?(Arel::Attributes::Attribute))
-           collector = visit o.right, collector
-         else
-           collector << "'#{o.right}'"
-         end
-         collector << ")"
-         collector
-       end
-
-
+      def visit_ArelExtensions_Nodes_Replace o, collector
+        collector << "REPLACE("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::MySQL::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
 
 
       def visit_ArelExtensions_Nodes_Wday o, collector
         collector << "(WEEKDAY("
-        if((o.date).is_a?(Arel::Attributes::Attribute))
-          collector = visit o.date, collector
-        else
-          collector << "'#{o.date}'"
-        end
+        collector = visit o.date, collector
         collector << ") + 1) % 7"
         collector
       end

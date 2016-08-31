@@ -84,6 +84,7 @@ module ArelExtensions
         @age = User.arel_table[:age]
         @name = User.arel_table[:name]
         @score = User.arel_table[:score]
+        @created_at = User.arel_table[:created_at]
         @comments = User.arel_table[:comments]
         @price = Product.arel_table[:price]
       end
@@ -98,7 +99,7 @@ module ArelExtensions
 
       # Math Functions
       def test_classical_arel
-        assert_equal 42.16, t(@laure, @score + 22)
+        assert_in_epsilon 42.16, t(@laure, @score + 22), 0.01
       end
 
       def test_abs
@@ -110,7 +111,7 @@ module ArelExtensions
       def test_ceil
         if !$sqlite || !$load_extension_disabled
           assert_equal 1, t(@neg, @score.ceil)
-          assert_equal 108, t(@arthur, @age.ceil + 42)
+          assert_equal 63, t(@arthur, @age.ceil + 42)
         end
       end
 
@@ -131,7 +132,7 @@ module ArelExtensions
         assert_equal 1, User.where(@age.round(0).eq(5.0)).count
         assert_equal 0, User.where(@age.round(-1).eq(6.0)).count
         assert_equal 66, t(@arthur, @score.round)
-        assert_equal 67.6, t(@arthur, @score.round(1) + 2)
+        assert_in_epsilon 67.6, t(@arthur, @score.round(1) + 2), 0.01
       end
 
       def test_sum
@@ -155,9 +156,9 @@ module ArelExtensions
 
       def test_locate
         if !$sqlite || !$load_extension_disabled
-          assert_equal 0, t(@camille, @name.locate("C"))
-          assert_equal -1, t(@lucas, @name.locate("z"))
-          assert_equal 4, t(@lucas, @name.locate("s"))
+          assert_equal 1, t(@camille, @name.locate("C"))
+          assert_equal 0, t(@lucas, @name.locate("z"))
+          assert_equal 5, t(@lucas, @name.locate("s"))
         end
       end
 
@@ -208,12 +209,13 @@ module ArelExtensions
       end
 
       def test_coalesce
-        if @cnx.adapter_name =~ /pgsql/i
-          assert_equal 100, @test.select((User.arel_table[:age].coalesce(100)).as("res")).first.res
-          assert_equal "Camille", @camille.select((User.arel_table[:name].coalesce("Null","default")).as("res")).first.res
+        if ENV['DB'] == 'postgresql'
+          assert_equal 100, t(@test, @age.coalesce(100))
+          assert_equal "Camille", t(@camille, @name.coalesce(nil, "default"))
+          assert_equal 20, t(@test, @age.coalesce(nil, 20))
         else
-          assert_equal "Camille",User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:name].coalesce("Null",20)).as("res")).first.res
-          assert_equal 20,User.where(User.arel_table[:name].eq("Test")).select((User.arel_table[:age].coalesce(nil,20)).as("res")).first.res
+          assert_equal "Camille", t(@camille, @name.coalesce(nil, '20'))
+          assert_equal 20, t(@test, @age.coalesce(nil, 20))
         end
       end
 
@@ -222,15 +224,15 @@ module ArelExtensions
         assert_equal 2, User.where(@age <= 10).count
         assert_equal 3, User.where(@age > 20).count
         assert_equal 4, User.where(@age >= 20).count
-        assert_equal 1, User.where(@age > 5).where(User.arel_table[:age] < 20 ).count
+        assert_equal 1, User.where(@age > 5).where(@age < 20).count
       end
 
       def test_date_duration
         #Year
         assert_equal 2016, @lucas.select((User.arel_table[:created_at].year).as("res")).first.res.to_i
-        assert_equal 0, User.where(User.arel_table[:created_at].year.eq("2012")).count
+        assert_equal 0, User.where(@created_at.year.eq("2012")).count
         #Month
-        assert_equal 5,User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:created_at].month).as("res")).first.res.to_i
+        assert_equal 5, @camille.select((User.arel_table[:created_at].month).as("res")).first.res.to_i
         assert_equal 8,User.where(User.arel_table[:created_at].month.eq("05")).count
         #Week
         assert_equal 21,User.where(User.arel_table[:name].eq("Arthur")).select((User.arel_table[:created_at].week).as("res")).first.res.to_i
@@ -241,53 +243,45 @@ module ArelExtensions
       end
 
 
-      def test_isnull
-        if ActiveRecord::Base.connection.adapter_name =~ /pgsql/i
-          assert_equal 100,User.where(User.arel_table[:name].eq("Test")).select((User.arel_table[:age].isnull(100)).as("res")).first.res
-        else
-          assert_equal "default",User.where(User.arel_table[:name].eq("Test")).select((User.arel_table[:age].isnull('default')).as("res")).first.res
-          assert_equal "Test",User.where((User.arel_table[:age].isnull('default')).eq('default')).select(User.arel_table[:name]).first.name.to_s
-        end
+      def test_is_null
+        assert_equal "Test", User.where(@age.is_null).select(@name).first.name
       end
 
 
       def test_math_plus
-        d = Date.new(1997,06,15)
+        d = Date.new(1997, 6, 15)
         #Concat String
-        assert_equal "SophiePhan",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + "Phan").as("res")).first.res
-        assert_equal "Sophie2",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + 2 ).as("res")).first.res
-        assert_equal "Sophie1997-06-15",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + d).as("res")).first.res
-        assert_equal "Sophie15",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + User.arel_table[:age]).as("res")).first.res
-        assert_equal "SophieSophie",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + User.arel_table[:name]).as("res")).first.res
-        assert_equal "Sophie2016-05-23",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + User.arel_table[:created_at]).as("res")).first.res
+        assert_equal "SophiePhan", t(@sophie, @name + "Phan")
+        assert_equal "Sophie2", t(@sophie, @name + 2)
+        assert_equal "Sophie1997-06-15", t(@sophie, @name + d)
+        assert_equal "Sophie15", t(@sophie, @name + @age)
+        assert_equal "SophieSophie", t(@sophie, @name + @name)
+        assert_equal "Sophie2016-05-23", t(@sophie, @name + @created_at)
         #concat Integer
-        assert_equal 1, User.where((User.arel_table[:age] + 10).eq(33)).count
-        assert_equal 1, User.where((User.arel_table[:age] + "1").eq(6)).count
-        assert_equal 1, User.where((User.arel_table[:age] + User.arel_table[:age]).eq(10)).count
+        assert_equal 1, User.where((@age + 10).eq(33)).count
+        assert_equal 1, User.where((@age + "1").eq(6)).count
+        assert_equal 1, User.where((@age + @age).eq(10)).count
         #concat Date
     #    puts((User.arel_table[:created_at] + 1).as("res").to_sql.inspect)
-        assert_equal "2016-05-24", @myung.select((User.arel_table[:created_at] + 1).as("res")).first.res.to_date.to_s
-        assert_equal "2016-05-25", @myung.select((User.arel_table[:created_at] + 2.day).as("res")).first.res.to_date.to_s
+        assert_equal "2016-05-24", t(@myung, @created_at + 1).to_date.to_s
+        assert_equal "2016-05-25", t(@myung, @created_at + 2.day).to_date.to_s
       end
 
 
       def test_math_moins
         d = Date.new(2016,05,20)
         #Datediff
-        assert_equal 8,User.where((User.arel_table[:created_at] - User.arel_table[:created_at]).eq(0)).count
-        assert_equal 3,User.where(User.arel_table[:name].eq("Laure")).select((User.arel_table[:created_at] - d).as("res")).first.res.abs.to_i
+        assert_equal 8, User.where((User.arel_table[:created_at] - User.arel_table[:created_at]).eq(0)).count
+        assert_equal 3, User.where(User.arel_table[:name].eq("Laure")).select((User.arel_table[:created_at] - d).as("res")).first.res.abs.to_i
         #Substraction
-        assert_equal 0, User.where((User.arel_table[:age] - 10).eq(50)).count
-        assert_equal 0, User.where((User.arel_table[:age] - "10").eq(50)).count
+        assert_equal 0, User.where((@age - 10).eq(50)).count
+        assert_equal 0, User.where((@age - "10").eq(50)).count
       end
 
-
-
-
       def test_wday
-          d = Date.new(2016,06,26)
-          assert_equal 1,User.where(User.arel_table[:name].eq("Myung")).select((User.arel_table[:created_at].wday).as("res")).first.res.to_i
-          assert_equal 0,User.select(d.wday).as("res").first.to_i
+        d = Date.new(2016, 6, 26)
+        assert_equal 1, t(@myung, @created_at.wday).to_i
+        assert_equal 0, User.select(d.wday).as("res").first.to_i
       end
 
     end

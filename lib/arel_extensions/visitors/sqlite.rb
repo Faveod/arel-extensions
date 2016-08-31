@@ -31,7 +31,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << "date("
         collector = visit o.expressions.first, collector
-        collector << Arel::Visitors::ToSql::COMMA
+        collector << Arel::Visitors::SQLite::COMMA
         collector = visit o.sqlite_value, collector
         collector << ")"
         collector
@@ -58,11 +58,7 @@ module ArelExtensions
           collector << "strftime('%Y',"
         end
         #visit right
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.right, collector
-        else
-          collector << "#{o.right}"
-        end
+        collector = visit o.right, collector
         collector << ")"
         collector
       end
@@ -71,26 +67,15 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "instr("
         collector = visit o.expr, collector
-        collector << ","
-        if(o.val.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.val, collector
-        else
-          collector << "'#{o.val}'"
-        end
+        collector << Arel::Visitors::SQLite::COMMA
+        collector = visit o.val, collector
         collector << ")"
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Isnull o, collector
-        collector << "ifnull("
+      def visit_ArelExtensions_Nodes_IsNull o, collector
         collector = visit o.left, collector
-        collector << ","
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.right, collector
-        else
-          collector << "'#{o.right}'"
-        end
-        collector << ")"
+        collector << ' IS NULL'
         collector
       end
 
@@ -98,7 +83,7 @@ module ArelExtensions
         collector << "RANDOM("
         if o.left != nil && o.right != nil 
           collector = visit o.left, collector
-          collector << ","
+          collector << Arel::Visitors::SQLite::COMMA
           collector = visit o.right, collector
         end
         collector << ")"
@@ -107,7 +92,8 @@ module ArelExtensions
 
       def visit_Arel_Nodes_Regexp o, collector
         collector = visit o.left, collector
-        collector << " REGEXP '#{o.right}'"
+        collector << " REGEXP"
+        collector = visit o.right, collector
         collector
       end
 

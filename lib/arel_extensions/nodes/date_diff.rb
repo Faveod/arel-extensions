@@ -2,35 +2,21 @@ require 'date'
 
 module ArelExtensions
   module Nodes
-    class DateDiff < Arel::Nodes::Node #difference entre colonne date et date string/date
-      include Arel::Predications
-      include Arel::WindowPredications
-      include Arel::OrderPredications
-      include Arel::AliasPredication
+    class DateDiff < Function #difference entre colonne date et date string/date
+      attr_accessor :date_type
 
-      attr_accessor :left, :right
-
-      def initialize(left, right, aliaz = nil)
-        super()
-        @left = convert_date(left)
-        @right = convert_date(right)
-      end
-
-      def convert_date(object)
-        case object
-        when Arel::Attributes::Attribute, Arel::Nodes::Node
-          object
-        when DateTime, Time
-          Arel::Nodes.build_quoted(Date.new(object.year, object.month, object.day), self)
-        when String
-          Arel::Nodes.build_quoted(Date.parse(object), self)
+      def initialize(expr)
+        col = expr.first
+        case col
+        when Arel::Nodes::Node
+          @date_type = Arel::Table.engine.connection.schema_cache.columns_hash(col.relation.table_name)[col.name.to_s].type
         when Date
-          Arel::Nodes.build_quoted(object, self)
-        else
-          raise(ArgumentError, "#{object.class} can not be converted to Date")
+          @date_type = :date
+        when DateTime, Time
+          @date_type = :datetime
         end
+        super [convert_to_date_node(col), convert_to_date_node(expr[1])]
       end
-
     end
 
     class DateAdd < Function
@@ -58,7 +44,7 @@ module ArelExtensions
         end
       end
 
-      def mysql_value(v=nil)
+      def mysql_value(v = nil)
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
@@ -71,13 +57,13 @@ module ArelExtensions
         end
       end
 
-      def postgresql_value(v=nil)
+      def postgresql_value(v = nil)
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
-            return Arel::Nodes.build_quoted((v.value >= 0 ? '+' : '-') + v.inspect)
+            Arel.sql("INTERVAL '%s'"  + v.inspect.sub(/s\Z/, '').upcase)
           elsif @date_type == :datetime
-            return Arel::Nodes.build_quoted((v.value >= 0 ? '+' : '-') + v.inspect)
+            Arel.sql("INTERVAL '%s'"  + v.inspect.sub(/s\Z/, '').upcase)
           end
         else
           return v

@@ -222,6 +222,13 @@ module ArelExtensions
         end
       end
 
+     def visit_ArelExtensions_Nodes_IsNull o, collector
+        collector << "ISNULL("
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
+
       # Date operations
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << "DATE_ADD("

@@ -58,17 +58,19 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector = visit o.left, collector
-        collector << " + "
-        collector << "date "
-        collector = visit o.right, collector
+        collector << (o.right.value >= 0 ? ' + ' : ' - ')
+        collector = visit o.postgresql_value(o.right), collector
         collector
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
+        collector << "DATE_PART('day'"
+        collector << Arel::Visitors::PostgreSQL::COMMA
         collector = visit o.left, collector
+        collector << (o.date_type == :date ? '::date' : '::timestamp')
         collector << " - "
-        collector << "date "
         collector = visit o.right, collector
+        collector << (o.date_type == :date ? '::date' : '::timestamp')
         collector
       end
 
@@ -102,7 +104,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Replace o, collector
         collector << "REPLACE("
-        collector = visit o.expr,collector
+        collector = visit o.expr, collector
         collector << Arel::Visitors::PostgreSQL::COMMA
         collector = visit o.left, collector
         collector << Arel::Visitors::PostgreSQL::COMMA
@@ -111,11 +113,11 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Isnull o, collector
+      def visit_ArelExtensions_Nodes_IsNull o, collector
         collector << "COALESCE("
         collector = visit o.left, collector
         collector << Arel::Visitors::PostgreSQL::COMMA
-        collector = visit o.right, collector
+        collector = visit Arel::Nodes.build_quoted(true), collector
         collector << ")"
         collector
       end
@@ -129,12 +131,8 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Wday o, collector
-        collector << "date_part('dow', "
-        if((o.date).is_a?(Arel::Attributes::Attribute))
-          collector = visit o.date, collector
-        else
-          collector << "'#{o.date}'"
-        end
+        collector << "DATE_PART('dow', "
+        collector = visit o.date, collector
         collector << ")"
         collector
       end

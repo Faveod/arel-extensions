@@ -41,6 +41,21 @@ module ArelExtensions
         end
       end
 
+      def convert_to_date_node(object)
+        case object
+        when Arel::Attributes::Attribute, Arel::Nodes::Node
+          object
+        when DateTime, Time
+          Arel::Nodes.build_quoted(Date.new(object.year, object.month, object.day), self)
+        when String
+          Arel::Nodes.build_quoted(Date.parse(object), self)
+        when Date
+          Arel::Nodes.build_quoted(object, self)
+        else
+          raise(ArgumentError, "#{object.class} can not be converted to Date")
+        end
+      end
+
       def convert_to_number(object)
         case object
         when Arel::Attributes::Attribute, Arel::Nodes::Node

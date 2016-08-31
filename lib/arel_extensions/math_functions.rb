@@ -25,7 +25,7 @@ module ArelExtensions
     #function is used to round a numeric field to the number of decimals specified
     def round precision = nil
         if precision
-            ArelExtensions::Nodes::Round.new [self, Arel::Nodes.build_quoted(precision)]
+            ArelExtensions::Nodes::Round.new [self, precision]
         else
             ArelExtensions::Nodes::Round.new [self]
         end

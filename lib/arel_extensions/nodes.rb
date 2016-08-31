@@ -24,5 +24,5 @@ require 'arel_extensions/nodes/date_diff'
 require 'arel_extensions/nodes/duration'
 
 require 'arel_extensions/nodes/coalesce'
-require 'arel_extensions/nodes/isnull'
+require 'arel_extensions/nodes/is_null'
 require 'arel_extensions/nodes/wday'

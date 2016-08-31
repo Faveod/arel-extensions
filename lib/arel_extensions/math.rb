@@ -29,12 +29,12 @@ module ArelExtensions
           when Arel::Attributes::Attribute
             arg2 = Arel::Table.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s].type
             if arg2 == :date || arg2 == :datetime
-              ArelExtensions::Nodes::DateDiff.new self, other
+              ArelExtensions::Nodes::DateDiff.new [self, other]
             else
               ArelExtensions::Nodes::DateSub.new self, other
             end
           when Arel::Nodes::Node, DateTime, Time, String, Date
-            ArelExtensions::Nodes::DateDiff.new self, other
+            ArelExtensions::Nodes::DateDiff.new [self, other]
           when Fixnum
             ArelExtensions::Nodes::DateSub.new self, other
           end

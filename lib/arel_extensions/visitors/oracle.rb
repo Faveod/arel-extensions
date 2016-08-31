@@ -52,13 +52,9 @@ module ArelExtensions
   def visit_ArelExtensions_Nodes_Coalesce o, collector
     collector << "COALESCE("
     collector = visit o.left, collector
-       o.other.each { |a|
-      collector << ","
-      if(a.is_a?(Arel::Attributes::Attribute))
-        collector = visit a, collector
-      else
-        collector << "#{a}"
-      end
+    o.other.each { |a|
+      collector << Arel::Visitors::Oracle::COMMA
+      collector = visit a, collector
     }
     collector << ")"
     collector
@@ -86,11 +82,7 @@ module ArelExtensions
       collector << "YEAR("
     end
     #visit right
-    if(o.right.is_a?(Arel::Attributes::Attribute))
-      collector = visit o.right, collector
-    else
-      collector << "'#{o.right}'"
-    end
+    collector = visit o.right, collector
     collector << ")"
     collector
   end
@@ -104,25 +96,20 @@ module ArelExtensions
   end
 
 
-  def visit_ArelExtensions_Nodes_Isnull o, collector
+  def visit_ArelExtensions_Nodes_IsNull o, collector
     collector << "NVL("
     collector = visit o.left, collector
-    collector << ","
-    if(o.right.is_a?(Arel::Attributes::Attribute))
-      collector = visit o.right, collector
-    else
-      collector << "'#{o.right}'"
-    end
+    collector << Arel::Visitors::Oracle::COMMA
+    collector = visit Arel::Nodes.build_quoted(true), collector
     collector << ")"
     collector
   end
-
 
   def visit_ArelExtensions_Nodes_Rand o, collector
     collector << "dbms_random.value("
     if(o.left != nil && o.right != nil)
       collector << "'#{o.left}'"
-      collector << ","
+      collector << Arel::Visitors::Oracle::COMMA
       collector << "'#{o.right}'"
     end
     collector << ")"
@@ -132,18 +119,10 @@ module ArelExtensions
   def visit_ArelExtensions_Nodes_Replace o, collector
     collector << "REPLACE("
     collector = visit o.expr,collector
-    collector << ","
-    if(o.left.is_a?(Arel::Attributes::Attribute))
-      collector = visit o.left, collector
-    else
-      collector << "'#{o.left}'"
-    end
-    collector << ","
-    if(o.right.is_a?(Arel::Attributes::Attribute))
-      collector = visit o.right, collector
-    else
-      collector << "'#{o.right}'"
-    end
+    collector << Arel::Visitors::Oracle::COMMA
+    collector = visit o.left, collector
+    collector << Arel::Visitors::Oracle::COMMA
+    collector = visit o.right, collector
     collector << ")"
     collector
   end
