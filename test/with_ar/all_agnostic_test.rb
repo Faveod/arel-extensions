@@ -9,6 +9,7 @@ module ArelExtensions
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
           @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
+          skip "Platform not supported"
         else
           @env_db = ENV['DB']
         end
@@ -167,32 +168,29 @@ module ArelExtensions
       end
 
       def test_locate
-        if !$sqlite || !$load_extension_disabled
-          assert_equal 1, t(@camille, @name.locate("C"))
-          assert_equal 0, t(@lucas, @name.locate("z"))
-          assert_equal 5, t(@lucas, @name.locate("s"))
-        end
+        skip "Sqlite version can't load extension for locate" if $sqlite && $load_extension_disabled
+        assert_equal 1, t(@camille, @name.locate("C"))
+        assert_equal 0, t(@lucas, @name.locate("z"))
+        assert_equal 5, t(@lucas, @name.locate("s"))
       end
 
       def test_find_in_set
-        if !$sqlite || !$load_extension_disabled
-          assert_equal 5, t(@neg, @comments & 2)
-          assert_equal 0, t(@neg, @comments & 6) # not found
-        end
+        skip "Sqlite version can't load extension for find_in_set" if $sqlite && $load_extension_disabled
+        assert_equal 5, t(@neg, @comments & 2)
+        assert_equal 0, t(@neg, @comments & 6) # not found
       end
 
       def test_string_comparators
-        assert_equal (@env_db == 'postgesql' ? true : 1), t(@neg, @name >= 'Mest')
-        assert_equal (@env_db == 'postgesql' ? true : 1), t(@neg, @name <= (@name + 'Z'))
+        assert_equal (@env_db == 'postgresql' ? true : 1), t(@neg, @name >= 'Mest')
+        assert_equal (@env_db == 'postgresql' ? true : 1), t(@neg, @name <= (@name + 'Z'))
       end
 
-      def test_regexp_not_regex
-        if !$sqlite || !$load_extension_disabled
-          assert_equal 1, User.where(@name =~ '^M').count
-          assert_equal 6, User.where(@name !~ '^L').count
-          assert_equal 1, User.where(@name =~ /^M/).count
-          assert_equal 6, User.where(@name !~ /^L/).count
-        end
+      def test_regexp_not_regexp
+        skip "Sqlite version can't load extension for regexp" if $sqlite && $load_extension_disabled
+        assert_equal 1, User.where(@name =~ '^M').count
+        assert_equal 6, User.where(@name !~ '^L').count
+        assert_equal 1, User.where(@name =~ /^M/).count
+        assert_equal 6, User.where(@name !~ /^L/).count
       end
 
       def test_imatches

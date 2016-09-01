@@ -21,7 +21,6 @@ module ArelExtensions
         @expressions[1]
       end
 
-      protected
       def convert_to_node(object)
         case object
         when Arel::Attributes::Attribute, Arel::Nodes::Node, Fixnum, Integer

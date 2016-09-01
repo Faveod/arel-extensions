@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION public.pg_find_in_set(n INTEGER, s TEXT)
+CREATE OR REPLACE FUNCTION public.find_in_set(n INTEGER, s TEXT)
  RETURNS INT4
  LANGUAGE sql
 AS $function$
