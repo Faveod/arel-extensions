@@ -7,7 +7,11 @@ module ArelExtensions
     class InsertManagerTest < Minitest::Test
       def setup_db
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
-        ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+        if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
+          ActiveRecord::Base.establish_connection((RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+        else
+          ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+        end
         ActiveRecord::Base.default_timezone = :utc
         @cnx = ActiveRecord::Base.connection
         Arel::Table.engine = ActiveRecord::Base

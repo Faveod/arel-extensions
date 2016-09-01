@@ -28,10 +28,12 @@ oracle:
   adapter: oracle_enhanced
   database: xe
   username: travis
+  password: ""
 jdbc-oracle:
   adapter: oracle_enhanced
   database: xe
   username: travis
+  password: ""
 ibm_db:
   adapter:  ibm_db
   username: travis
