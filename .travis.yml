@@ -2,9 +2,9 @@ language: ruby
 sudo: required
 cache: bundler
 before_install:
-- gem install bundler
 - ".travis/oracle/download.sh"
 - ".travis/oracle/install.sh"
+- gem install bundler
 gemfile:
 - gemfiles/rails4.gemfile
 - gemfiles/rails5.gemfile

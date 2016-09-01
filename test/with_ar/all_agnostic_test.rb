@@ -37,11 +37,11 @@ module ArelExtensions
           end
         end
         if File.exist?("init/#{@env_db}.sql")
-          sql = File.read("init/#{@env_db }.sql")
+          sql = File.read("init/#{@env_db}.sql")
           @cnx.execute(sql) unless sql.blank?
         end
-        @cnx.drop_table(:users) rescue nil 
-        @cnx.create_table :users do |t|
+        @cnx.drop_table(:user_tests) rescue nil 
+        @cnx.create_table :user_tests do |t|
           t.column :age, :integer
           t.column :name, :string
           t.column :comments, :text
@@ -49,21 +49,22 @@ module ArelExtensions
           t.column :updated_at, :datetime
           t.column :score, :decimal, :precision => 20, :scale => 10
         end
-        @cnx.drop_table(:products) rescue nil
+        @cnx.drop_table(:product_tests) rescue nil
         @cnx.create_table :product_tests do |t|
           t.column :price, :decimal, :precision => 20, :scale => 10
         end
       end
 
       def teardown_db
-        @cnx.drop_table(:users)
+        @cnx.drop_table(:user_tests)
         @cnx.drop_table(:product_tests)
       end
 
       class User < ActiveRecord::Base
+        self.table_name = 'user_tests'
       end
       class Product < ActiveRecord::Base
-        table_name 'product_tests'
+        self.table_name = 'product_tests'
       end
 
 
@@ -153,7 +154,7 @@ module ArelExtensions
         assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
         assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
         if @env_db == 'postgresql'
-          assert_equal "Lucas Sophie", t(User.reorder(nil).from(User.select(:name).where(:name => ['Lucas', 'Sophie']).reorder(:name).as('users')), @name.group_concat(' '))
+          assert_equal "Lucas Sophie", t(User.reorder(nil).from(User.select(:name).where(:name => ['Lucas', 'Sophie']).reorder(:name).as('user_tests')), @name.group_concat(' '))
         else
           assert_equal "Lucas Sophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat(' '))
         end
@@ -283,7 +284,7 @@ module ArelExtensions
         d = Date.new(2016,05,20)
         #Datediff
         assert_equal 8, User.where((User.arel_table[:created_at] - User.arel_table[:created_at]).eq(0)).count
-        assert_equal 3, User.where(User.arel_table[:name].eq("Laure")).select((User.arel_table[:created_at] - d).as("res")).first.res.abs.to_i
+        assert_equal 3, @laure.select((User.arel_table[:created_at] - d).as("res")).first.res.abs.to_i
         #Substraction
         assert_equal 0, User.where((@age - 10).eq(50)).count
         assert_equal 0, User.where((@age - "10").eq(50)).count
