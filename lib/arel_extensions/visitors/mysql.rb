@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
     Arel::Visitors::MySQL.class_eval do
+      Arel::Visitors::MySQL::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'WEEKDAY'}
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
@@ -94,23 +95,18 @@ module ArelExtensions
 
 
       def visit_ArelExtensions_Nodes_Duration o, collector
-        #visit left for period
-        if o.left == "d" 
-          collector << "DAY("
-        elsif(o.left == "m")
-          collector << "MONTH("
-        elsif (o.left == "w")
-          collector << "WEEK("
-        elsif (o.left == "y")
-          collector << "YEAR("
+        if o.left == 'wd'
+          collector << "(WEEKDAY("
+          collector = visit o.right, collector
+          collector << ") + 1) % 7"
+        else
+          collector << "#{Arel::Visitors::MySQL::DATE_MAPPING[o.left]}("
+          collector = visit o.right, collector
+          collector << ")"
         end
-        #visit right
-        collector = visit o.right, collector
-        collector << ")"
         collector
       end
 
-     #****************************************************************#
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector << "ISNULL("
@@ -122,18 +118,6 @@ module ArelExtensions
         collector << ")"
         collector
       end
-
-
-      def visit_ArelExtensions_Nodes_Replace o, collector
-        collector << "REPLACE("
-        o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MySQL::COMMA unless i == 0
-          collector = visit arg, collector
-        }
-        collector << ")"
-        collector
-      end
-
 
       def visit_ArelExtensions_Nodes_Wday o, collector
         collector << "(WEEKDAY("

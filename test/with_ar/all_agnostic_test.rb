@@ -177,13 +177,13 @@ module ArelExtensions
       def test_find_in_set
         if !$sqlite || !$load_extension_disabled
           assert_equal 4, t(@neg, @comments & 2)
-          assert_equal 2, t(@neg, @comments & 6)
+          assert_equal 0, t(@neg, @comments & 6)
         end
       end
 
       def test_string_comparators
-        assert_equal 1, t(@neg, @name >= 'Mest')
-        assert_equal 1, t(@neg, @name <= (@name + 'Z'))
+        assert_equal (@env_db == 'postgesql' ? true : 1), t(@neg, @name >= 'Mest')
+        assert_equal (@env_db == 'postgesql' ? true : 1), t(@neg, @name <= (@name + 'Z'))
       end
 
       def test_regexp_not_regex
@@ -217,7 +217,7 @@ module ArelExtensions
         assert_equal "Myun", t(@myung, @name.rtrim("g"))
         assert_equal "yung", t(@myung, @name.ltrim("M"))
         assert_equal "yung", t(@myung, (@name + "M").trim("M"))
-        assert_equal "", t(@myung, @name.rtrim(@name))
+        assert_equal "", t(@myung, @name.rtrim(@name)) unless @env_db == 'oracle' # multi char not accepted
       end
 
       def test_coalesce
@@ -245,20 +245,18 @@ module ArelExtensions
         assert_equal 0, User.where(@created_at.year.eq("2012")).count
         #Month
         assert_equal 5, t(@camille, @created_at.month).to_i
-        assert_equal 8, User.where(User.arel_table[:created_at].month.eq("05")).count
+        assert_equal 8, User.where(@created_at.month.eq("05")).count
         #Week
         assert_equal 21, t(@arthur, @created_at.week).to_i
-        assert_equal 8,User.where(User.arel_table[:created_at].month.eq("05")).count
+        assert_equal 8, User.where(@created_at.month.eq("05")).count
         #Day
-        assert_equal 23, @laure.select((User.arel_table[:created_at].day).as("res")).first.res.to_i
-        assert_equal 0,User.where(User.arel_table[:created_at].day.eq("05")).count
+        assert_equal 23, t(@laure, @created_at.day).to_i
+        assert_equal 0, User.where(@created_at.day.eq("05")).count
       end
-
 
       def test_is_null
         assert_equal "Test", User.where(@age.is_null).select(@name).first.name
       end
-
 
       def test_math_plus
         d = Date.new(1997, 6, 15)
@@ -283,7 +281,7 @@ module ArelExtensions
       def test_math_moins
         d = Date.new(2016,05,20)
         #Datediff
-        assert_equal 8, User.where((User.arel_table[:created_at] - User.arel_table[:created_at]).eq(0)).count
+        assert_equal 8, User.where((@created_at - User.arel_table[:created_at]).eq(0)).count
         assert_equal 3, @laure.select((User.arel_table[:created_at] - d).as("res")).first.res.abs.to_i
         #Substraction
         assert_equal 0, User.where((@age - 10).eq(50)).count

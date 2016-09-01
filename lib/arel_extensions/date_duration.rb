@@ -24,5 +24,9 @@ module ArelExtensions
         ArelExtensions::Nodes::Duration.new 'wd', self
       end
 
+      def format(tpl)
+        ArelExtensions::Nodes::Format.new [self, tpl]
+      end
+
     end
 end

@@ -62,7 +62,7 @@ module ArelExtensions
         if o.left == 'wd'
           collector << "DAYOFWEEK("
         else
-          collector << "EXTRACT(#{Arel::Visitors::Oracle::DATE_MAPPING[o.left]} FROM DATE "
+          collector << "EXTRACT(#{Arel::Visitors::Oracle::DATE_MAPPING[o.left]} FROM "
         end
         collector = visit o.right, collector
         collector << ")"
@@ -79,11 +79,8 @@ module ArelExtensions
 
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector << "NVL("
         collector = visit o.left, collector
-        collector << Arel::Visitors::Oracle::COMMA
-        collector = visit Arel::Nodes.build_quoted(true), collector
-        collector << ")"
+        collector << ' IS NULL'
         collector
       end
 
@@ -94,17 +91,6 @@ module ArelExtensions
       collector << Arel::Visitors::Oracle::COMMA
       collector = visit o.right, collector
     end
-    collector << ")"
-    collector
-  end
-
-  def visit_ArelExtensions_Nodes_Replace o, collector
-    collector << "REPLACE("
-    collector = visit o.expr,collector
-    collector << Arel::Visitors::Oracle::COMMA
-    collector = visit o.left, collector
-    collector << Arel::Visitors::Oracle::COMMA
-    collector = visit o.right, collector
     collector << ")"
     collector
   end
@@ -141,6 +127,7 @@ module ArelExtensions
           collector << Arel::Visitors::Oracle::COMMA unless i == 0
           collector = visit arg, collector
         }
+        collector << ")"
         collector
       end
 

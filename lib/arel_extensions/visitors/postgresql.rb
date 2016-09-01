@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
     Arel::Visitors::PostgreSQL.class_eval do
+      Arel::Visitors::PostgreSQL::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'DOW'}
 
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "RANDOM("
@@ -91,17 +92,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Duration o, collector
-        #visit left for period
-        if o.left == "d"
-          collector << "EXTRACT(DAY FROM"
-        elsif o.left == "m"
-          collector << "EXTRACT(MONTH FROM "
-        elsif (o.left == "w")
-          collector << "EXTRACT(WEEK FROM"
-        elsif (o.left == "y")
-          collector << "EXTRACT(YEAR FROM"
-        end
-        #visit right
+        collector << "EXTRACT(#{Arel::Visitors::PostgreSQL::DATE_MAPPING[o.left]} FROM "
         collector = visit o.right, collector
         collector << ")"
         collector
@@ -130,7 +121,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Wday o, collector
-        collector << "DATE_PART('dow', "
+        collector << "EXRTACT(DOW, "
         collector = visit o.date, collector
         collector << ")"
         collector

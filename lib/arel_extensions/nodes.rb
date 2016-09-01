@@ -18,6 +18,7 @@ require 'arel_extensions/nodes/soundex'
 require 'arel_extensions/nodes/trim'
 require 'arel_extensions/nodes/ltrim'
 require 'arel_extensions/nodes/rtrim'
+require 'arel_extensions/nodes/format'
 
 # Date functions 
 require 'arel_extensions/nodes/date_diff'
