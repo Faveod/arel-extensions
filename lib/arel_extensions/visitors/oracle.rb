@@ -48,14 +48,14 @@ module ArelExtensions
         collector
       end
 
-  def visit_ArelExtensions_Nodes_DateDiff o, collector
-    collector << '('
-    collector = visit o.left, collector
-    collector << " - "
-    collector = visit o.right, collector
-    collector << ')'
-    collector
-  end
+      def visit_ArelExtensions_Nodes_DateDiff o, collector
+        collector << '('
+        collector = visit o.left, collector
+        collector << " - "
+        collector = visit o.right, collector
+        collector << ')'
+        collector
+      end
 
 
   def visit_ArelExtensions_Nodes_Duration o, collector
@@ -96,9 +96,9 @@ module ArelExtensions
   def visit_ArelExtensions_Nodes_Rand o, collector
     collector << "dbms_random.value("
     if(o.left != nil && o.right != nil)
-      collector << "'#{o.left}'"
+      collector = visit o.left, collector
       collector << Arel::Visitors::Oracle::COMMA
-      collector << "'#{o.right}'"
+      collector = visit o.right, collector
     end
     collector << ")"
     collector
@@ -136,11 +136,7 @@ module ArelExtensions
 
     def visit_ArelExtensions_Nodes_Soundex o, collector
       collector << "SOUNDEX("
-      if((o.expr).is_a?(Arel::Attributes::Attribute))
-        collector = visit o.expr, collector
-      else
-        collector << "'#{o.expr}'"
-      end
+      collector = visit o.expr, collector
       collector << ")"
       collector
     end
@@ -148,12 +144,8 @@ module ArelExtensions
     def visit_ArelExtensions_Nodes_Trim o , collector
       collector << 'TRIM("BOTH"'
       collector = visit o.left, collector
-      collector << ","
-      if(o.right.is_a?(Arel::Attributes::Attribute))
-        collector = visit o.right, collector
-      else
-        collector << "'#{o.right}'"
-      end
+      collector << Arel::Visitors::Oracle::COMMA
+      collector = visit o.right, collector
       collector << ")"
       collector
     end
@@ -161,26 +153,17 @@ module ArelExtensions
     def visit_ArelExtensions_Nodes_Ltrim o , collector
       collector << 'TRIM("LEADING",'
       collector = visit o.left, collector
-      collector << ","
-      if(o.right.is_a?(Arel::Attributes::Attribute))
-        collector = visit o.right, collector
-      else
-        collector << "'#{o.right}'"
-      end
+      collector << Arel::Visitors::Oracle::COMMA
+      collector = visit o.right, collector
       collector << ")"
       collector
     end
 
-
     def visit_ArelExtensions_Nodes_Rtrim o , collector
       collector << 'TRIM("TRAILING",'
       collector = visit o.left, collector
-      collector << ","
-      if(o.right.is_a?(Arel::Attributes::Attribute))
-        collector = visit o.right, collector
-      else
-        collector << "'#{o.right}'"
-      end
+      collector << Arel::Visitors::Oracle::COMMA
+      collector = visit o.right, collector
       collector << ")"
       collector
     end

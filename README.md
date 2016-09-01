@@ -4,7 +4,14 @@ Arel Extensions adds shortcuts, fixes and new ORM mappings (ruby to SQL) to Arel
 It aims to ensure pure ruby syntax for the biggest number of usual cases.
 It allows to use more advanced SQL functions for any supported RDBMS.
 
-Examples: 
+
+## Requirements
+
+Arel 6 (Rails 4) or Arel 7+ (Rails 5).
+
+
+## Examples
+
 t is an Arel::Table for table my_table
 
 ## Comparators
@@ -34,7 +41,7 @@ With Arel Extensions:
 # => SUM(my_table.nb) + 42
 ```
 
-Other functions : ABS, RAND, ROUND, FLOOR, CEIL, MD5, FORMAT
+Other functions : ABS, RAND, ROUND, FLOOR, CEIL, FORMAT
 
 ## String operations
 
