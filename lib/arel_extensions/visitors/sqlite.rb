@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
     Arel::Visitors::SQLite.class_eval do
+      Arel::Visitors::SQLite::DATE_MAPPING = {'d' => '%d', 'm' => '%m', 'w' => '%W', 'y' => '%Y', 'wd' => '%w', 'M' => '%M'}
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
@@ -47,17 +48,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Duration o, collector
-        #visit left for period
-        if(o.left == "d")
-          collector << "strftime('%d',"
-        elsif(o.left == "m")
-          collector << "strftime('%m',"
-        elsif (o.left == "w")
-          collector << "strftime('%W',"
-        elsif (o.left == "y")
-          collector << "strftime('%Y',"
-        end
-        #visit right
+        collector << "strftime('#{Arel::Visitors::SQLite::DATE_MAPPING[o.left]}'#{Arel::Visitors::SQLite::COMMA}"
         collector = visit o.right, collector
         collector << ")"
         collector

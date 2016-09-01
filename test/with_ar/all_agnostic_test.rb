@@ -176,14 +176,14 @@ module ArelExtensions
 
       def test_find_in_set
         if !$sqlite || !$load_extension_disabled
-          assert 4, t(@neg, @comments & 2)
-          assert 2, t(@neg, @comments & 6)
+          assert_equal 4, t(@neg, @comments & 2)
+          assert_equal 2, t(@neg, @comments & 6)
         end
       end
 
       def test_string_comparators
-        assert 1, t(@neg, @name >= 'test')
-        assert 1, t(@neg, @name <= @comments)
+        assert_equal 1, t(@neg, @name >= 'Mest')
+        assert_equal 1, t(@neg, @name <= (@name + 'Z'))
       end
 
       def test_regexp_not_regex
@@ -241,16 +241,16 @@ module ArelExtensions
 
       def test_date_duration
         #Year
-        assert_equal 2016, @lucas.select((User.arel_table[:created_at].year).as("res")).first.res.to_i
+        assert_equal 2016, t(@lucas, @created_at.year).to_i
         assert_equal 0, User.where(@created_at.year.eq("2012")).count
         #Month
-        assert_equal 5, @camille.select((User.arel_table[:created_at].month).as("res")).first.res.to_i
-        assert_equal 8,User.where(User.arel_table[:created_at].month.eq("05")).count
+        assert_equal 5, t(@camille, @created_at.month).to_i
+        assert_equal 8, User.where(User.arel_table[:created_at].month.eq("05")).count
         #Week
-        assert_equal 21,User.where(User.arel_table[:name].eq("Arthur")).select((User.arel_table[:created_at].week).as("res")).first.res.to_i
+        assert_equal 21, t(@arthur, @created_at.week).to_i
         assert_equal 8,User.where(User.arel_table[:created_at].month.eq("05")).count
         #Day
-        assert_equal 23,User.where(User.arel_table[:name].eq("Laure")).select((User.arel_table[:created_at].day).as("res")).first.res.to_i
+        assert_equal 23, @laure.select((User.arel_table[:created_at].day).as("res")).first.res.to_i
         assert_equal 0,User.where(User.arel_table[:created_at].day.eq("05")).count
       end
 

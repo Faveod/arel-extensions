@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
     Arel::Visitors::Oracle.class_eval do
+      Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR'}
 
       def visit_ArelExtensions_Nodes_IMatches o, collector
         collector = visit o.left.lower, collector
@@ -33,16 +34,15 @@ module ArelExtensions
           collector << Arel::Visitors::Oracle::COMMA
           collector = visit o.right, collector
         end
-        collector << ")"
+        collector << ") WITHIN GROUP "
         collector
       end
 
       def visit_ArelExtensions_Nodes_Coalesce o, collector
         collector << "COALESCE("
-        collector = visit o.left, collector
-        o.other.each { |a|
-          collector << Arel::Visitors::Oracle::COMMA
-          collector = visit a, collector
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::Oracle::COMMA unless i == 0
+          collector = visit arg, collector
         }
         collector << ")"
         collector
@@ -58,40 +58,34 @@ module ArelExtensions
       end
 
 
-  def visit_ArelExtensions_Nodes_Duration o, collector
-    #visit left for period
-    if(o.left == "d")
-      collector << "DAY("
-    elsif(o.left == "m")
-      collector << "MONTH("
-    elsif (o.left == "w")
-      collector << "WEEK"
-    elsif (o.left == "y")
-      collector << "YEAR("
-    end
-    #visit right
-    collector = visit o.right, collector
-    collector << ")"
-    collector
-  end
+      def visit_ArelExtensions_Nodes_Duration o, collector
+        if o.left == 'wd'
+          collector << "DAYOFWEEK("
+        else
+          collector << "EXTRACT(#{Arel::Visitors::Oracle::DATE_MAPPING[o.left]} FROM DATE "
+        end
+        collector = visit o.right, collector
+        collector << ")"
+        collector
+      end
 
 
-  def visit_ArelExtensions_Nodes_Length o, collector
-    collector << "LENGTH("
-    collector = visit o.expr, collector
-    collector << ")"
-    collector
-  end
+      def visit_ArelExtensions_Nodes_Length o, collector
+        collector << "LENGTH("
+        collector = visit o.expr, collector
+        collector << ")"
+        collector
+      end
 
 
-  def visit_ArelExtensions_Nodes_IsNull o, collector
-    collector << "NVL("
-    collector = visit o.left, collector
-    collector << Arel::Visitors::Oracle::COMMA
-    collector = visit Arel::Nodes.build_quoted(true), collector
-    collector << ")"
-    collector
-  end
+      def visit_ArelExtensions_Nodes_IsNull o, collector
+        collector << "NVL("
+        collector = visit o.left, collector
+        collector << Arel::Visitors::Oracle::COMMA
+        collector = visit Arel::Nodes.build_quoted(true), collector
+        collector << ")"
+        collector
+      end
 
   def visit_ArelExtensions_Nodes_Rand o, collector
     collector << "dbms_random.value("
@@ -141,29 +135,38 @@ module ArelExtensions
       collector
     end
 
+      def visit_ArelExtensions_Nodes_Locate o, collector
+        collector << "INSTR("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::Oracle::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector
+      end
+
     def visit_ArelExtensions_Nodes_Trim o , collector
-      collector << 'TRIM("BOTH"'
-      collector = visit o.left, collector
-      collector << Arel::Visitors::Oracle::COMMA
+      collector << 'TRIM(' # BOTH
       collector = visit o.right, collector
+      collector << ' FROM '
+      collector = visit o.left, collector
       collector << ")"
       collector
     end
 
     def visit_ArelExtensions_Nodes_Ltrim o , collector
-      collector << 'TRIM("LEADING",'
-      collector = visit o.left, collector
-      collector << Arel::Visitors::Oracle::COMMA
+      collector << 'TRIM(LEADING '
       collector = visit o.right, collector
+      collector << ' FROM '
+      collector = visit o.left, collector
       collector << ")"
       collector
     end
 
     def visit_ArelExtensions_Nodes_Rtrim o , collector
-      collector << 'TRIM("TRAILING",'
-      collector = visit o.left, collector
-      collector << Arel::Visitors::Oracle::COMMA
+      collector << 'TRIM(TRAILING '
       collector = visit o.right, collector
+      collector << ' FROM '
+      collector = visit o.left, collector
       collector << ")"
       collector
     end
