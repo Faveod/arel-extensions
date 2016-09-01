@@ -7,11 +7,12 @@ module ArelExtensions
     class ListTest < Minitest::Test
       def setup_db
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
-        if ENV['DB'] == 'oracle' && defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx" # not supported
-          ActiveRecord::Base.establish_connection((RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+        if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
+          @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
         else
-          ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+          @env_db = ENV['DB']
         end
+        ActiveRecord::Base.establish_connection(@env_db.try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
         ActiveRecord::Base.default_timezone = :utc
         @cnx = ActiveRecord::Base.connection
         $sqlite ||= false
@@ -35,8 +36,8 @@ module ArelExtensions
             end
           end
         end
-        if File.exist?("init/#{ENV['DB']}.sql")
-          sql = File.read("init/#{ENV['DB']}.sql")
+        if File.exist?("init/#{@env_db}.sql")
+          sql = File.read("init/#{@env_db }.sql")
           @cnx.execute(sql) unless sql.blank?
         end
         @cnx.drop_table(:users) rescue nil 
@@ -49,19 +50,20 @@ module ArelExtensions
           t.column :score, :decimal, :precision => 20, :scale => 10
         end
         @cnx.drop_table(:products) rescue nil
-        @cnx.create_table :products do |t|
+        @cnx.create_table :product_tests do |t|
           t.column :price, :decimal, :precision => 20, :scale => 10
         end
       end
 
       def teardown_db
         @cnx.drop_table(:users)
-        @cnx.drop_table(:products)
+        @cnx.drop_table(:product_tests)
       end
 
       class User < ActiveRecord::Base
       end
       class Product < ActiveRecord::Base
+        table_name 'product_tests'
       end
 
 
@@ -150,7 +152,7 @@ module ArelExtensions
       def test_concat
         assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
         assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
-        if ENV['DB'] == 'postgresql'
+        if @env_db == 'postgresql'
           assert_equal "Lucas Sophie", t(User.reorder(nil).from(User.select(:name).where(:name => ['Lucas', 'Sophie']).reorder(:name).as('users')), @name.group_concat(' '))
         else
           assert_equal "Lucas Sophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat(' '))
@@ -204,7 +206,7 @@ module ArelExtensions
       end
 
       def test_soundex
-        if (!$sqlite || !$load_extension_disabled) && (ENV['DB'] != 'postgresql')
+        if (!$sqlite || !$load_extension_disabled) && (@env_db != 'postgresql')
           assert_equal "C540", t(@camille, @name.soundex)
           assert_equal 8, User.where(@name.soundex.eq(@name.soundex)).count
         end
@@ -218,7 +220,7 @@ module ArelExtensions
       end
 
       def test_coalesce
-        if ENV['DB'] == 'postgresql'
+        if @env_db == 'postgresql'
           assert_equal 100, t(@test, @age.coalesce(100))
           assert_equal "Camille", t(@camille, @name.coalesce(nil, "default"))
           assert_equal 20, t(@test, @age.coalesce(nil, 20))

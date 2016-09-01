@@ -8,19 +8,20 @@ module ArelExtensions
       def setup_db
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
-          ActiveRecord::Base.establish_connection((RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+          @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
         else
-          ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+          @env_db = ENV['DB']
         end
+        ActiveRecord::Base.establish_connection(@env_db.try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
         ActiveRecord::Base.default_timezone = :utc
         @cnx = ActiveRecord::Base.connection
         Arel::Table.engine = ActiveRecord::Base
-        if File.exist?("init/#{ENV['DB']}.sql")
-          sql = File.read("init/#{ENV['DB']}.sql")
+        if File.exist?("init/#{@env_db}.sql")
+          sql = File.read("init/#{@env_db}.sql")
           @cnx.execute(sql) unless sql.blank?
         end
-        @cnx.drop_table(:users) rescue nil 
-        @cnx.create_table :users do |t|
+        @cnx.drop_table(:user_tests) rescue nil 
+        @cnx.create_table :user_tests do |t|
           t.column :age, :integer
           t.column :name, :string
           t.column :comments, :text
@@ -32,7 +33,7 @@ module ArelExtensions
 
       def setup
         setup_db
-        @table = Arel::Table.new(:users)
+        @table = Arel::Table.new(:user_tests)
         @cols = ['id', 'name', 'comments', 'created_at']
         @data = [
           [23, 'nom1', "sdfdsfdsfsdfsd fdsf dsf dsf sdf afdg fsdg sg sd gsdfg e 54435 344", '2016-01-01'],
@@ -41,7 +42,7 @@ module ArelExtensions
       end
 
       def teardown
-        @cnx.drop_table(:users)
+        @cnx.drop_table(:user_tests)
       end
 
       # Math Functions
