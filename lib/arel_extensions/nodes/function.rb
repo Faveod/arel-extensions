@@ -43,8 +43,10 @@ module ArelExtensions
 
       def convert_to_string_node(object)
         case object
-        when Arel::Nodes::Node, Fixnum, Integer
+        when Arel::Nodes::Node
           object
+        when Fixnum, Integer
+          Arel::Nodes.build_quoted(object.to_s)
         when Arel::Attributes::Attribute
           case Arel::Table.engine.connection.schema_cache.columns_hash(object.relation.table_name)[object.name.to_s].type
           when :date
@@ -61,7 +63,7 @@ module ArelExtensions
         when NilClass
           Arel.sql('NULL')
         when ActiveSupport::Duration
-          object.to_i
+          Arel::Nodes.build_quoted(object.to_i.to_s)
         else
           raise(ArgumentError, "#{object.class} can not be converted to CONCAT arg")
         end

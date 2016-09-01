@@ -176,8 +176,8 @@ module ArelExtensions
 
       def test_find_in_set
         if !$sqlite || !$load_extension_disabled
-          assert_equal 4, t(@neg, @comments & 2)
-          assert_equal 0, t(@neg, @comments & 6)
+          assert_equal 5, t(@neg, @comments & 2)
+          assert_equal 0, t(@neg, @comments & 6) # not found
         end
       end
 

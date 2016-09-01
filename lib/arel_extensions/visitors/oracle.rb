@@ -3,6 +3,14 @@ module ArelExtensions
     Arel::Visitors::Oracle.class_eval do
       Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR'}
 
+      def visit_ArelExtensions_Nodes_Concat o, collector
+        o.expressions.each_with_index { |arg, i|
+          collector = visit o.convert_to_string_node(arg), collector
+          collector << ' || ' unless i == o.expressions.length - 1
+        }
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_IMatches o, collector
         collector = visit o.left.lower, collector
         collector << ' LIKE '
@@ -157,6 +165,26 @@ module ArelExtensions
       collector << ")"
       collector
     end
+
+      def visit_ArelExtensions_Nodes_Format o, collector
+        case o.col_type
+        when :date, :datetime
+          collector << "TO_CHAR("
+          collector = visit o.left, collector
+          collector << Arel::Visitors::Oracle::COMMA unless i == 0
+          collector = visit o.right, collector
+          collector << ")"
+        when :integer, :float, :decimal
+          collector << "FORMAT("
+          collector = visit o.left, collector
+          collector << Arel::Visitors::Oracle::COMMA unless i == 0
+          collector = visit o.right, collector
+          collector << ")"
+        else
+          collector = visit o.left, collector
+        end
+        collector
+      end
 
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
         table = collector.value.sub(/\AINSERT INTO/, '')
