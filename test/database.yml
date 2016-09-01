@@ -27,13 +27,13 @@ jdbc-postgresql:
 oracle:
   adapter: oracle_enhanced
   database: xe
-  username: travis
-  password: travis
+  username: ruby
+  password: oci8
 jdbc-oracle:
   adapter: oracle_enhanced
   database: xe
-  username: travis
-  password: travis
+  username: ruby
+  password: oci8
 ibm_db:
   adapter:  ibm_db
   username: travis
