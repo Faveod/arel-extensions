@@ -174,8 +174,13 @@ module ArelExtensions
       end
 
       def test_string_comparators
-        assert_equal (@env_db == 'postgresql' ? true : 1), t(@neg, @name >= 'Mest')
-        assert_equal (@env_db == 'postgresql' ? true : 1), t(@neg, @name <= (@name + 'Z'))
+        if @env_db == 'postgresql'
+          assert t(@neg, @name >= 'Mest') == true || t(@neg, @name >= 'Mest') == 't' # depends of ar version
+          assert t(@neg, @name <= (@name + 'Z')) == true || t(@neg, @name <= (@name + 'Z')) == 't'
+        else
+          assert_equal 1, t(@neg, @name >= 'Mest')
+          assert_equal 1, t(@neg, @name <= (@name + 'Z'))
+        end
       end
 
       def test_regexp_not_regexp
@@ -193,8 +198,8 @@ module ArelExtensions
       end
 
       def test_replace
-        assert_equal "LucaX", t(@lucas, @name.replace("s","X"))
-        assert_equal "replace", t(@lucas, @name.replace(@name,"replace"))
+        assert_equal "LucaX", t(@lucas, @name.replace("s", "X"))
+        assert_equal "replace", t(@lucas, @name.replace(@name, "replace"))
       end
 
       def test_soundex
