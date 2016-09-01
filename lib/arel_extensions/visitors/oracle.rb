@@ -1,13 +1,15 @@
 module ArelExtensions
   module Visitors
     Arel::Visitors::Oracle.class_eval do
-      Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR'}
+      Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'D'}
 
       def visit_ArelExtensions_Nodes_Concat o, collector
+        collector << '('
         o.expressions.each_with_index { |arg, i|
           collector = visit o.convert_to_string_node(arg), collector
           collector << ' || ' unless i == o.expressions.length - 1
         }
+        collector << ')'
         collector
       end
 
@@ -36,13 +38,13 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
-        collector << "LISTAGG("
+        collector << "(LISTAGG("
         collector = visit o.left, collector
         if o.right
           collector << Arel::Visitors::Oracle::COMMA
           collector = visit o.right, collector
         end
-        collector << ") WITHIN GROUP "
+        collector << ") WITHIN GROUP )"
         collector
       end
 
@@ -68,11 +70,14 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Duration o, collector
         if o.left == 'wd'
-          collector << "DAYOFWEEK("
+          collector << "TO_CHAR("
+          collector = visit o.right, collector
+          collector << Arel::Visitors::Oracle::COMMA
+          collector << Arel::Nodes.build_quoted('D')
         else
           collector << "EXTRACT(#{Arel::Visitors::Oracle::DATE_MAPPING[o.left]} FROM "
+          collector = visit o.right, collector
         end
-        collector = visit o.right, collector
         collector << ")"
         collector
       end

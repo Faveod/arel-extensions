@@ -5,6 +5,8 @@ module ArelExtensions
     class DateDiff < Function #difference entre colonne date et date string/date
       attr_accessor :date_type
 
+      @@return_type = :integer # by default...
+
       def initialize(expr)
         col = expr.first
         case col

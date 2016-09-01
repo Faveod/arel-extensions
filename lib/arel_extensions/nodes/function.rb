@@ -4,6 +4,10 @@ module ArelExtensions
       include Arel::Math
       include Arel::Expressions
 
+      cattr_accessor :return_type
+
+      @@return_type = :string # by default...
+
     	# overrides as to make new Node like AliasPredication
       def as other
         Arel::Nodes::As.new(self, Arel.sql(other))

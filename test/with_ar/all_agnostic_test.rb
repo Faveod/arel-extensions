@@ -56,18 +56,12 @@ module ArelExtensions
         end
       end
 
-      def teardown_db
-        @cnx.drop_table(:user_tests)
-        @cnx.drop_table(:product_tests)
-      end
-
       class User < ActiveRecord::Base
         self.table_name = 'user_tests'
       end
       class Product < ActiveRecord::Base
         self.table_name = 'product_tests'
       end
-
 
       def setup
         d = Date.new(2016,05,23)
@@ -98,7 +92,8 @@ module ArelExtensions
       end
 
       def teardown
-        teardown_db
+        @cnx.drop_table(:user_tests)
+        @cnx.drop_table(:product_tests)
       end
 
       def t(scope, node)
@@ -117,17 +112,15 @@ module ArelExtensions
       end
 
       def test_ceil
-        if !$sqlite || !$load_extension_disabled
-          assert_equal 1, t(@neg, @score.ceil)
-          assert_equal 63, t(@arthur, @age.ceil + 42)
-        end
+        skip "Sqlite version can't load extension for ceil" if $sqlite && $load_extension_disabled
+        assert_equal 1, t(@neg, @score.ceil)
+        assert_equal 63, t(@arthur, @age.ceil + 42)
       end
 
       def test_floor
-        if !$sqlite || !$load_extension_disabled
-          assert_equal 0, t(@neg, @score.floor)
-          assert_equal 42, t(@arthur, @score.floor - 23)
-        end
+        skip "Sqlite version can't load extension for floor" if $sqlite && $load_extension_disabled
+        assert_equal 0, t(@neg, @score.floor)
+        assert_equal 42, t(@arthur, @score.floor - 23)
       end
 
       def test_rand
@@ -205,10 +198,10 @@ module ArelExtensions
       end
 
       def test_soundex
-        if (!$sqlite || !$load_extension_disabled) && (@env_db != 'postgresql')
-          assert_equal "C540", t(@camille, @name.soundex)
-          assert_equal 8, User.where(@name.soundex.eq(@name.soundex)).count
-        end
+        skip "Sqlite version can't load extension for soundex" if $sqlite && $load_extension_disabled
+        skip "PostgreSql version can't load extension for soundex" if @env_db == 'postgresql'
+        assert_equal "C540", t(@camille, @name.soundex)
+        assert_equal 8, User.where(@name.soundex.eq(@name.soundex)).count
       end
 
       def test_trim

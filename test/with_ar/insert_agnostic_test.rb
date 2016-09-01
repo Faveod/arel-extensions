@@ -9,6 +9,7 @@ module ArelExtensions
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
           @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
+          skip "Platform not supported"
         else
           @env_db = ENV['DB']
         end

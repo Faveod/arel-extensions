@@ -55,10 +55,12 @@ module ArelExtensions
 
       # String functions
       def visit_ArelExtensions_Nodes_Concat o, collector
+        collector << '('
         o.expressions.each_with_index { |arg, i|
           collector = visit arg, collector
           collector << ' || ' unless i == o.expressions.length - 1
         }
+        collector << ")"
         collector
       end
 
