@@ -21,7 +21,7 @@ script:
 - bundle exec rake test:sqlite
 - bundle exec rake test:mysql
 - bundle exec rake test:postgresql
- - bundle exec rake test:oracle
+- bundle exec rake test:oracle
 env:
   global:
   - JRUBY_OPTS='--dev -J-Xmx1024M'
