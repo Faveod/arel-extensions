@@ -5,8 +5,6 @@ before_install:
 - chmod +x .travis/oracle/download.sh
 - chmod +x .travis/oracle/install.sh
 - chmod +x .travis/setup_accounts.sh
-- ".travis/oracle/download.sh"
-- ".travis/oracle/install.sh"
 - gem install bundler
 install:
 - .travis/oracle/download.sh
