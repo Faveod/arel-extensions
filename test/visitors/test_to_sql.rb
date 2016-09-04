@@ -144,7 +144,7 @@ module ArelExtensions
         compile(c <= @table[:comments]).must_be_like %{"users"."name" <= "users"."comments"}
         compile(c =~ /\Atest\Z/).must_be_like %{"users"."name" REGEXP '^test$'}
         compile(c !~ /\Ate\Dst\Z/).must_be_like %{"users"."name" NOT REGEXP '^te[^0-9]st$'}
-      end
+      end      
 
       it "should manage complex formulas" do
         c = @table[:name]

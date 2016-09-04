@@ -302,6 +302,14 @@ module ArelExtensions
         assert_equal 0, User.select(d.wday).as("res").first.to_i
       end
 
+      # Boolean functions
+      def test_boolean_functions
+        assert_equal 1, @laure.where(
+          (@score.round > 19).⋀(@score.round < 21).⋁(@score.round(1) >= 20.1)
+        ).count
+      end
+
+
     end
   end
 end

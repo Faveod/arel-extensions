@@ -12,12 +12,3 @@ AS $function$
       SELECT 0) z
     LIMIT 1
 $function$
-
-;
-
-CREATE OR REPLACE FUNCTION public.timediff(a TIMESTAMP WITHOUT TIME ZONE, p TIMESTAMP WITHOUT TIME ZONE)
- RETURNS DOUBLE PRECISION
- LANGUAGE sql
-AS $function$
-	SELECT extract(epoch from (a - p))
-$function$

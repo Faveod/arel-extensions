@@ -33,6 +33,7 @@ require 'arel_extensions/nodes'
 require 'arel_extensions/comparators'
 require 'arel_extensions/date_duration'
 require 'arel_extensions/null_functions'
+require 'arel_extensions/boolean_functions'
 require 'arel_extensions/math'
 require 'arel_extensions/math_functions'
 require 'arel_extensions/string_functions'
@@ -55,6 +56,7 @@ Arel::Nodes::Function.class_eval do
   include ArelExtensions::DateDuration
   include ArelExtensions::MathFunctions
   include ArelExtensions::StringFunctions
+  include ArelExtensions::BooleanFunctions
 end
 
 Arel::Nodes::Unary.class_eval do
@@ -69,6 +71,7 @@ Arel::Nodes::Binary.class_eval do
   include ArelExtensions::Attributes
   include ArelExtensions::MathFunctions
   include ArelExtensions::Comparators
+  include ArelExtensions::BooleanFunctions
 end
 
 Arel::Nodes::Equality.class_eval do
