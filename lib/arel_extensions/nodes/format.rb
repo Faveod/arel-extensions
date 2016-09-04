@@ -1,6 +1,7 @@
 module ArelExtensions
   module Nodes
     class Format < Function
+      @@return_type = :string
     	attr_accessor :col_type
     	def initialize expr
 	        col = expr.first

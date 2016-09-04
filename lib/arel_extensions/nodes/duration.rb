@@ -2,7 +2,6 @@ module ArelExtensions
   module Nodes
     class Duration < Arel::Nodes::Function
 
-
       def initialize left, right, aliaz = nil
         tab = Array.new
         tab << left

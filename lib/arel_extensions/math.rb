@@ -1,6 +1,10 @@
 require 'arel_extensions/nodes'
 require 'arel_extensions/nodes/concat'
 
+require 'arel_extensions/nodes/date_diff'
+require 'arel_extensions/nodes/duration'
+require 'arel_extensions/nodes/wday'
+
 module ArelExtensions
   module Math
     #function + between

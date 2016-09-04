@@ -1,3 +1,6 @@
+require 'arel_extensions/nodes/coalesce'
+require 'arel_extensions/nodes/is_null'
+
 module ArelExtensions
   module NullFunctions
 

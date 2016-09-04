@@ -17,13 +17,13 @@ t is an Arel::Table for table my_table
 ## Comparators
 
 ```ruby
-(t[:nb] > 42).to_sql # (same as (t[:nb].gt(42)).to_sql)
-# => my_table.nb > 42
+(t[:date1] > t[:date2]).to_sql # (same as (t[:date1].gt(t[:date2])).to_sql)
+# => my_table.date1 > my_table.date2
 ```
 
 ```ruby
-(t[:date1] > t[:date2]).to_sql # (same as (t[:date1].gt(t[:date2])).to_sql)
-# => my_table.date1 > my_table.date2
+(t[:nb] > 42).to_sql # (same as (t[:nb].gt(42)).to_sql)
+# => my_table.nb > 42
 ```
 
 ## Maths

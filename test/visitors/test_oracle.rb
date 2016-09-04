@@ -77,13 +77,13 @@ module ArelExtensions
         d2 = Time.new(2015,6,1)
         d1 = DateTime.new(2015,6,2)
         sql = compile(ArelExtensions::Nodes::DateDiff.new([d1,d2]))
-        sql.must_match("'2015-06-02' - '2015-06-01'")
+        sql.must_match("'2015-06-02' - TO_DATE('2015-06-01')")
       end
 
       it "should diff between time values and time col" do
         d1 = DateTime.new(2015,6,2)
         sql = compile(ArelExtensions::Nodes::DateDiff.new([d1, @table[:updated_at]]))
-        sql.must_match %{'2015-06-02' - "users"."updated_at"}
+        sql.must_match %{'2015-06-02' - TO_DATE("users"."updated_at")}
       end
 
       it "should accept operators on dates with numbers" do

@@ -1,7 +1,8 @@
 module ArelExtensions
   module Nodes
     class Trim < Function
-
+      @@return_type = :string
+      
       def initialize expr
         tab = expr.map { |arg|
           convert_to_node(arg)

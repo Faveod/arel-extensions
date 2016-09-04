@@ -7,12 +7,12 @@ require 'arel_extensions/string_functions'
 
 module ArelExtensions
   module Attributes
-	include ArelExtensions::Comparators
-	include ArelExtensions::DateDuration
-	include ArelExtensions::Math
-	include ArelExtensions::MathFunctions
-	include ArelExtensions::NullFunctions
-	include ArelExtensions::StringFunctions
+  	include ArelExtensions::Comparators
+  	include ArelExtensions::DateDuration
+  	include ArelExtensions::Math
+  	include ArelExtensions::MathFunctions
+  	include ArelExtensions::NullFunctions
+  	include ArelExtensions::StringFunctions
 
   	def ==(other)
       Arel::Nodes::Equality.new self, Arel::Nodes.build_quoted(other, self)

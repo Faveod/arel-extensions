@@ -4,7 +4,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "arel_extensions"
-  s.version     = '0.8.5'
+  s.version     = '0.8.6'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Yann Azoury", "Mathilde Pechdimaldjian", "Félix Bellanger"]
   s.email       = ["yann.azoury@faveod.com", "mathilde.pechdimaldjian@gmail.com", "felix.bellanger@faveod.com"]

@@ -1,3 +1,9 @@
+require 'arel_extensions/nodes/abs'
+require 'arel_extensions/nodes/ceil'
+require 'arel_extensions/nodes/floor'
+require 'arel_extensions/nodes/round'
+require 'arel_extensions/nodes/rand'
+
 module ArelExtensions
   module MathFunctions
 
