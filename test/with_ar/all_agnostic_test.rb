@@ -229,12 +229,21 @@ module ArelExtensions
         end
       end
 
-      def test_comparator
+
+
+      # Comparators
+      def test_number_comparator
         assert_equal 2, User.where(@age < 6).count
         assert_equal 2, User.where(@age <= 10).count
         assert_equal 3, User.where(@age > 20).count
         assert_equal 4, User.where(@age >= 20).count
         assert_equal 1, User.where(@age > 5).where(@age < 20).count
+      end
+
+      def test_date_comparator
+        d = Date.new(2016,05,23)
+        assert_equal 0, User.where(@created_at < d).count
+        assert_equal 8, User.where(@created_at >= d).count
       end
 
       def test_date_duration
@@ -289,7 +298,7 @@ module ArelExtensions
 
       def test_wday
         d = Date.new(2016, 6, 26)
-        assert_equal 1, t(@myung, @created_at.wday).to_i
+        assert_equal (@env_db == 'oracle' ? 2 : 1), t(@myung, @created_at.wday).to_i # monday
         assert_equal 0, User.select(d.wday).as("res").first.to_i
       end
 
