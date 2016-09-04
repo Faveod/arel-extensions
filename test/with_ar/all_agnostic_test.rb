@@ -174,7 +174,8 @@ module ArelExtensions
       end
 
       def test_string_comparators
-        if @env_db == 'postgresql'
+        skip "Oracle can't use math operators to compare strings, any function to do that?" if @env_db == 'oracle'
+        if @env_db == 'postgresql' # may return real boolean
           assert t(@neg, @name >= 'Mest') == true || t(@neg, @name >= 'Mest') == 't' # depends of ar version
           assert t(@neg, @name <= (@name + 'Z')) == true || t(@neg, @name <= (@name + 'Z')) == 't'
         else
@@ -213,7 +214,8 @@ module ArelExtensions
         assert_equal "Myun", t(@myung, @name.rtrim("g"))
         assert_equal "yung", t(@myung, @name.ltrim("M"))
         assert_equal "yung", t(@myung, (@name + "M").trim("M"))
-        assert_equal "", t(@myung, @name.rtrim(@name)) unless @env_db == 'oracle' # multi char not accepted
+        skip "Oracle does not accept multi char trim" if @env_db == 'oracle'
+        assert_equal "", t(@myung, @name.rtrim(@name))
       end
 
       def test_coalesce

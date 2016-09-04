@@ -44,7 +44,9 @@ module ArelExtensions
           collector << Arel::Visitors::Oracle::COMMA
           collector = visit o.right, collector
         end
-        collector << ") WITHIN GROUP )"
+        collector << ") WITHIN GROUP (ORDER BY "
+        collector = visit o.left, collector
+        collector << "))"
         collector
       end
 
@@ -69,11 +71,12 @@ module ArelExtensions
 
 
       def visit_ArelExtensions_Nodes_Duration o, collector
-        if o.left == 'wd'
+        case o.left
+        when 'wd', 'w'
           collector << "TO_CHAR("
           collector = visit o.right, collector
           collector << Arel::Visitors::Oracle::COMMA
-          collector << Arel::Nodes.build_quoted('D')
+          collector << Arel::Nodes.build_quoted(Arel::Visitors::Oracle::DATE_MAPPING[o.left])
         else
           collector << "EXTRACT(#{Arel::Visitors::Oracle::DATE_MAPPING[o.left]} FROM "
           collector = visit o.right, collector
