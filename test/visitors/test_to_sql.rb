@@ -146,6 +146,13 @@ module ArelExtensions
         compile(c !~ /\Ate\Dst\Z/).must_be_like %{"users"."name" NOT REGEXP '^te[^0-9]st$'}
       end
 
+      it "should manage complex formulas" do
+        c = @table[:name]
+        compile(
+          (c.length / 42).round(2).floor > (@table[:updated_at] - Date.new(2000, 3, 31)).abs.ceil
+        ).must_be_like %{FLOOR(ROUND(LENGTH("users"."name") / 42, 2)) > CEIL(ABS(DATEDIFF("users"."updated_at", '2000-03-31')))}
+      end
+
     end
   end
 end
