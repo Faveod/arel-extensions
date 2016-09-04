@@ -1,7 +1,8 @@
 module ArelExtensions
   module Nodes
     class Concat < Function
-
+      @@return_type = :string
+      
       def initialize expr
         tab = expr.map { |arg|
           convert_to_node(arg)
@@ -16,6 +17,7 @@ module ArelExtensions
     end
 
     class GroupConcat < Function
+      @@return_type = :string
 
       def initialize expr
         tab = expr.map { |arg|

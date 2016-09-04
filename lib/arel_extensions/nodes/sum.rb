@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
-    class Sum < Arel::Nodes::Function
-
+    class Sum < Function
+      @@return_type = :number
 
       def initialize other, aliaz = nil
         tab = Array.new

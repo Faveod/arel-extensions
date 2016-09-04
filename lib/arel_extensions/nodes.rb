@@ -5,7 +5,6 @@ require 'arel_extensions/nodes/ceil'
 require 'arel_extensions/nodes/floor'
 require 'arel_extensions/nodes/round'
 require 'arel_extensions/nodes/rand'
-require 'arel_extensions/nodes/sum'
 
 # String functions
 require 'arel_extensions/nodes/concat' if Arel::VERSION.to_i < 7

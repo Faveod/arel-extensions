@@ -22,6 +22,7 @@ module ArelExtensions
     end
 
     class DateAdd < Function
+      @@return_type = :date
       attr_accessor :date_type
 
       def initialize expr
@@ -105,9 +106,10 @@ module ArelExtensions
     end
 
     class DateSub < Function #difference entre colonne date et date string/date
+      @@return_type = :integer
 
       def initialize(expr)
-        super [expr.first, convert_number(right)]
+        super [expr.first, convert_number(expr[1])]
       end
 
       def convert_number(object)
