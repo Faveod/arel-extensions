@@ -287,10 +287,10 @@ module ArelExtensions
 
 
       def test_math_moins
-        d = Date.new(2016,05,20)
+        d = Date.new(2016, 5, 20)
         #Datediff
-        assert_equal 8, User.where((@created_at - User.arel_table[:created_at]).eq(0)).count
-        assert_equal 3, @laure.select((User.arel_table[:created_at] - d).as("res")).first.res.abs.to_i
+        assert_equal 8, User.where((@created_at - @created_at).eq(0)).count
+        assert_equal 3, @laure.select((@created_at - d).as("res")).first.res.abs.to_i
         #Substraction
         assert_equal 0, User.where((@age - 10).eq(50)).count
         assert_equal 0, User.where((@age - "10").eq(50)).count

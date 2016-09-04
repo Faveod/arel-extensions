@@ -25,6 +25,10 @@ module ArelExtensions
         @expressions[1]
       end
 
+      def type_of_attribute(att)
+        Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
+      end
+
       def convert_to_node(object)
         case object
         when Arel::Attributes::Attribute, Arel::Nodes::Node, Fixnum, Integer
@@ -51,7 +55,7 @@ module ArelExtensions
         when Fixnum, Integer
           Arel::Nodes.build_quoted(object.to_s)
         when Arel::Attributes::Attribute
-          case Arel::Table.engine.connection.schema_cache.columns_hash(object.relation.table_name)[object.name.to_s].type
+          case self.type_of_attribute(object)
           when :date
             ArelExtensions::Nodes::Format.new [object, 'yyyy-mm-dd']
           else

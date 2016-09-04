@@ -11,7 +11,7 @@ module ArelExtensions
         col = expr.first
         case col
         when Arel::Nodes::Node
-          @date_type = Arel::Table.engine.connection.schema_cache.columns_hash(col.relation.table_name)[col.name.to_s].type
+          @date_type = type_of_attribute(col)
         when Date
           @date_type = :date
         when DateTime, Time
@@ -26,7 +26,7 @@ module ArelExtensions
 
       def initialize expr
         col = expr.first
-        @date_type = Arel::Table.engine.connection.schema_cache.columns_hash(col.relation.table_name)[col.name.to_s].type
+        @date_type = type_of_attribute(col)
         tab = expr.map do |arg|
           convert(arg)
         end
@@ -104,18 +104,10 @@ module ArelExtensions
       end
     end
 
-    class DateSub < Arel::Nodes::Node #difference entre colonne date et date string/date
-      include Arel::Predications
-      include Arel::WindowPredications
-      include Arel::OrderPredications
-      include Arel::AliasPredication
+    class DateSub < Function #difference entre colonne date et date string/date
 
-      attr_accessor :left, :right
-
-      def initialize(left, right, aliaz = nil)
-        super()
-        @left = left
-        @right = convert_number(right)
+      def initialize(expr)
+        super [expr.first, convert_number(right)]
       end
 
       def convert_number(object)
