@@ -21,6 +21,11 @@ t is an Arel::Table for table my_table
 # => my_table.nb > 42
 ```
 
+```ruby
+(t[:date1] > t[:date2]).to_sql # (same as (t[:date1].gt(t[:date2])).to_sql)
+# => my_table.date1 > my_table.date2
+```
+
 ## Maths
 
 Currently in Arel:
@@ -80,7 +85,7 @@ Other functions : SOUNDEX, LENGTH, REPLACE, LOCATE, TRIM
 ((t[:birthdate] - Date.today) * -1).to_sql
 # => DATEDIFF(my_table.birthdate, '2017-01-01') * -1
 
-(t[:birthdate].week).to_sql
+t[:birthdate].week.to_sql
 # => WEEK(my_table.birthdate)
 
 t[:birthdate].month.to_sql

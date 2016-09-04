@@ -99,42 +99,41 @@ module ArelExtensions
         collector
       end
 
-  def visit_ArelExtensions_Nodes_Rand o, collector
-    collector << "dbms_random.value("
-    if(o.left != nil && o.right != nil)
-      collector = visit o.left, collector
-      collector << Arel::Visitors::Oracle::COMMA
-      collector = visit o.right, collector
-    end
-    collector << ")"
-    collector
-  end
+      def visit_ArelExtensions_Nodes_Rand o, collector
+        collector << "DBMS_RANDOM.VALUE("
+        if(o.left != nil && o.right != nil)
+          collector = visit o.left, collector
+          collector << Arel::Visitors::Oracle::COMMA
+          collector = visit o.right, collector
+        end
+        collector << ")"
+        collector
+      end
 
-    def visit_Arel_Nodes_Regexp o, collector
-      collector << " REGEXP_LIKE("
-      collector = visit o.left, collector
-      collector << Arel::Visitors::Oracle::COMMA
-      collector = visit o.right, collector
-      collector << ')'
-      collector
-    end
+      def visit_Arel_Nodes_Regexp o, collector
+        collector << " REGEXP_LIKE("
+        collector = visit o.left, collector
+        collector << Arel::Visitors::Oracle::COMMA
+        collector = visit o.right, collector
+        collector << ')'
+        collector
+      end
 
+      def visit_Arel_Nodes_NotRegexp o, collector
+        collector << " NOT REGEXP_LIKE("
+        collector = visit o.left, collector
+        collector << Arel::Visitors::Oracle::COMMA
+        collector = visit o.right, collector
+        collector << ')'
+        collector
+      end
 
-    def visit_Arel_Nodes_NotRegexp o, collector
-      collector << " NOT REGEXP_LIKE("
-      collector = visit o.left, collector
-      collector << Arel::Visitors::Oracle::COMMA
-      collector = visit o.right, collector
-      collector << ')'
-      collector
-    end
-
-    def visit_ArelExtensions_Nodes_Soundex o, collector
-      collector << "SOUNDEX("
-      collector = visit o.expr, collector
-      collector << ")"
-      collector
-    end
+      def visit_ArelExtensions_Nodes_Soundex o, collector
+        collector << "SOUNDEX("
+        collector = visit o.expr, collector
+        collector << ")"
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "INSTR("
@@ -146,37 +145,39 @@ module ArelExtensions
         collector
       end
 
-    def visit_ArelExtensions_Nodes_Trim o , collector
-      collector << 'TRIM(' # BOTH
-      collector = visit o.right, collector
-      collector << ' FROM '
-      collector = visit o.left, collector
-      collector << ")"
-      collector
-    end
+      def visit_ArelExtensions_Nodes_Trim o , collector
+        collector << 'TRIM(' # BOTH
+        collector = visit o.right, collector
+        collector << ' FROM '
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
 
-    def visit_ArelExtensions_Nodes_Ltrim o, collector
-      collector << 'TRIM(LEADING '
-      collector = visit o.right, collector
-      collector << ' FROM '
-      collector = visit o.left, collector
-      collector << ")"
-      collector
-    end
+      def visit_ArelExtensions_Nodes_Ltrim o, collector
+        collector << 'TRIM(LEADING '
+        collector = visit o.right, collector
+        collector << ' FROM '
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
 
-    def visit_ArelExtensions_Nodes_Rtrim o, collector
-      collector << 'TRIM(TRAILING '
-      collector = visit o.right, collector
-      collector << ' FROM '
-      collector = visit o.left, collector
-      collector << ")"
-      collector
-    end
+      def visit_ArelExtensions_Nodes_Rtrim o, collector
+        collector << 'TRIM(TRAILING '
+        collector = visit o.right, collector
+        collector << ' FROM '
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
+        collector << '('
         collector = visit o.left, collector
         collector << (o.right.value >= 0 ? ' + ' : ' - ')
         collector = visit o.oracle_value(o.right), collector
+        collector << ')'
         collector
       end
 
@@ -205,7 +206,6 @@ module ArelExtensions
         into = " INTO#{table}"
         collector = Arel::Collectors::SQLString.new
         collector << "INSERT ALL\n"
-  #      row_nb = o.left.length
         o.left.each_with_index do |row, idx|
           collector << "#{into} VALUES ("
           v = Arel::Nodes::Values.new(row, o.cols)

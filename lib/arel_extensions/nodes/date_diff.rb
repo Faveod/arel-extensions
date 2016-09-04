@@ -76,9 +76,9 @@ module ArelExtensions
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
-            Arel.sql("INTERVAL %s DAY" % v.inspect.to_i)
+            Arel.sql("INTERVAL '%s' DAY" % v.inspect.to_i)
           elsif @date_type == :datetime
-            Arel.sql("INTERVAL %s SECOND" % v.to_i)
+            Arel.sql("INTERVAL '%s' SECOND" % v.to_i)
           end
 #        elsif Arel::Attributes::Attribute === v
 #          v
