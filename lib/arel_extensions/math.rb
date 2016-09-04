@@ -15,7 +15,7 @@ module ArelExtensions
           Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
         elsif arg == :datetime || arg == :date
           ArelExtensions::Nodes::DateAdd.new [self, other]
-        elsif arg == :string
+        elsif arg == :string || arg == :text
           ArelExtensions::Nodes::Concat.new [self, other]
         end        
       end

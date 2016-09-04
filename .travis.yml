@@ -33,6 +33,7 @@ env:
   - JRUBY_OPTS='--dev -J-Xmx1024M'
   - ORACLE_COOKIE=sqldev
   - ORACLE_FILE=oracle11g/xe/oracle-xe-11.2.0-1.0.x86_64.rpm.zip
+  - ORACLE_OJDBC_URL=http://download.oracle.com/otn/utilities_drivers/jdbc/11204/ojdbc6.jar
   - TNS_ADMIN=$ORACLE_HOME/network/admin
   - ORACLE_BASE=/u01/app/oracle
   - ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe

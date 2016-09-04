@@ -72,6 +72,21 @@ module ArelExtensions
         end
       end
 
+      def oracle_value(v = nil)
+        v ||= self.expressions.last
+        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+          if @date_type == :date
+            Arel.sql("INTERVAL '%s'" % v.inspect.sub(/s\Z/, '').upcase)
+          elsif @date_type == :datetime
+            Arel.sql("INTERVAL '%s'" % v.inspect.sub(/s\Z/, '').upcase)
+          end
+#        elsif Arel::Attributes::Attribute === v
+#          v
+        else
+          v
+        end
+      end
+
       private
       def convert(object)
         case object

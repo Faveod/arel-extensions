@@ -76,7 +76,7 @@ module ArelExtensions
           collector << "TO_CHAR("
           collector = visit o.right, collector
           collector << Arel::Visitors::Oracle::COMMA
-          collector << Arel::Nodes.build_quoted(Arel::Visitors::Oracle::DATE_MAPPING[o.left])
+          collector = visit Arel::Nodes.build_quoted(Arel::Visitors::Oracle::DATE_MAPPING[o.left]), collector
         else
           collector << "EXTRACT(#{Arel::Visitors::Oracle::DATE_MAPPING[o.left]} FROM "
           collector = visit o.right, collector
@@ -156,7 +156,7 @@ module ArelExtensions
       collector
     end
 
-    def visit_ArelExtensions_Nodes_Ltrim o , collector
+    def visit_ArelExtensions_Nodes_Ltrim o, collector
       collector << 'TRIM(LEADING '
       collector = visit o.right, collector
       collector << ' FROM '
@@ -165,7 +165,7 @@ module ArelExtensions
       collector
     end
 
-    def visit_ArelExtensions_Nodes_Rtrim o , collector
+    def visit_ArelExtensions_Nodes_Rtrim o, collector
       collector << 'TRIM(TRAILING '
       collector = visit o.right, collector
       collector << ' FROM '
@@ -173,6 +173,13 @@ module ArelExtensions
       collector << ")"
       collector
     end
+
+      def visit_ArelExtensions_Nodes_DateAdd o, collector
+        collector = visit o.left, collector
+        collector << (o.right.value >= 0 ? ' + ' : ' - ')
+        collector = visit o.oracle_value(o.right), collector
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_Format o, collector
         case o.col_type
