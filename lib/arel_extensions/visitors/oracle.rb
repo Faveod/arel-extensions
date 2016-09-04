@@ -1,7 +1,7 @@
 module ArelExtensions
   module Visitors
     Arel::Visitors::Oracle.class_eval do
-      Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'D'}
+      Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'IW', 'y' => 'YEAR', 'wd' => 'D'}
 
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << '('
@@ -68,7 +68,6 @@ module ArelExtensions
         collector << ')'
         collector
       end
-
 
       def visit_ArelExtensions_Nodes_Duration o, collector
         case o.left
