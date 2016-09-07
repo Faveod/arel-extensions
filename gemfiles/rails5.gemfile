@@ -7,20 +7,20 @@ group :development, :test do
 	gem 'activemodel', '~> 5'
 	gem 'activerecord', '~> 5'
 
-	gem "sqlite3", :platform => [:ruby, :mswin, :mingw]
-	gem "mysql2", :platform => [:ruby, :mswin, :mingw]
-	gem "pg", :platform => [:ruby, :mswin, :mingw]
+	gem "sqlite3", :platforms => [:ruby, :mswin, :mingw]
+	gem "mysql2", :platforms => [:ruby, :mswin, :mingw]
+	gem "pg", :platforms => [:ruby, :mswin, :mingw]
 
-	gem 'ruby-oci8', :platform => [:ruby, :mswin, :mingw] if ENV.has_key? 'ORACLE_HOME'
+	gem 'ruby-oci8', :platforms => [:ruby, :mswin, :mingw] if ENV.has_key? 'ORACLE_HOME'
 	gem 'activerecord-oracle_enhanced-adapter', '~> 1.7.0' if ENV.has_key? 'ORACLE_HOME'
 
 	# for JRuby
-	gem 'activerecord-jdbc-adapter', platform: :jruby
-	gem "jdbc-sqlite3", :platform => :jruby
-	gem "activerecord-jdbcsqlite3-adapter", :platform => :jruby
-	gem "activerecord-jdbcmysql-adapter", :platform => :jruby
-	gem "activerecord-jdbcpostgresql-adapter", :platform => :jruby
-	gem "activerecord-jdbcmssql-adapter", :platform => :jruby
+	gem 'activerecord-jdbc-adapter', :platforms => :jruby
+	gem "jdbc-sqlite3", :platforms => :jruby
+	gem "activerecord-jdbcsqlite3-adapter", :platforms => :jruby
+	gem "activerecord-jdbcmysql-adapter", :platforms => :jruby
+	gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
+	gem "activerecord-jdbcmssql-adapter", :platforms => :jruby
 end
 
 gemspec :path => "../"

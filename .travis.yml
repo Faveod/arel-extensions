@@ -20,7 +20,6 @@ services:
 before_script:
 - mysql -e 'create database arext_test;'
 - psql -c 'create database arext_test;' -U postgres
-# - $ORACLE_HOME/bin/sqlplus CREATE DB
 script:
 - gem build arel_extensions.gemspec
 - bundle exec rake test

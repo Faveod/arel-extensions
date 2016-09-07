@@ -286,7 +286,7 @@ module ArelExtensions
       end
 
 
-      def test_math_moins
+      def test_math_minus
         d = Date.new(2016, 5, 20)
         #Datediff
         assert_equal 8, User.where((@created_at - @created_at).eq(0)).count
