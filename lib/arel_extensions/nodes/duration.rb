@@ -21,7 +21,7 @@ module ArelExtensions
 
 
       def as other
-        Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
+        Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other.to_s)
       end
 
     end

@@ -3,7 +3,7 @@ require 'date'
 module ArelExtensions
   module Nodes
     class DateDiff < Function #difference entre colonne date et date string/date
-      attr_accessor :date_type
+      attr_accessor :left_node_type
       attr_accessor :right_node_type
 
       @@return_type = :integer # by default...
@@ -12,19 +12,19 @@ module ArelExtensions
         col = expr.first
         case col
         when Arel::Nodes::Node
-          @date_type = type_of_attribute(col)
+          @left_node_type = type_of_attribute(col)
         when Date
-          @date_type = :date
+          @left_node_type = :ruby_date
         when DateTime, Time
-          @date_type = :datetime
+          @left_node_type = :ruby_time
         end
         case expr[1]
         when Arel::Nodes::Node
           @right_node_type = type_of_attribute(col)
         when Date
-          @right_node_type = :date
+          @right_node_type = :ruby_date
         when DateTime, Time
-          @right_node_type = :datetime
+          @right_node_type = :ruby_time
         end
         super [convert_to_date_node(col), convert_to_date_node(expr[1])]
       end
