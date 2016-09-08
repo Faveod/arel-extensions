@@ -69,7 +69,7 @@ module ArelExtensions
 
       it "should diff date col and datetime col with AS" do
         sql = compile((@table[:updated_at] - @table[:created_at]).as('new_name'))
-        sql.must_be_like %{(TO_DATE("users"."updated_at") - TO_DATE("users"."created_at") AS new_name}
+        sql.must_be_like %{(TO_DATE("users"."updated_at") - TO_DATE("users"."created_at")) AS new_name}
       end
 
       it "should diff between time values" do
