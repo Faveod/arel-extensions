@@ -68,7 +68,7 @@ module ArelExtensions
         collector << " - "
         collector << 'TO_DATE(' unless o.right_node_type == :date || o.right_node_type == :datetime
         collector = visit o.right, collector
-        collector << ')' if o.right_node_type == :date || o.right_node_type == :datetime
+        collector << ')' unless o.right_node_type == :date || o.right_node_type == :datetime
         collector << ')'
         collector
       end

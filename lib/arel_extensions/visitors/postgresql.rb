@@ -83,10 +83,10 @@ module ArelExtensions
         collector << "DATE_PART('day'"
         collector << Arel::Visitors::PostgreSQL::COMMA
         collector = visit o.left, collector
-        collector << (o.date_type == :date ? '::date' : '::timestamp')
+        collector << (o.left_node_type == :date ? '::date' : '::timestamp')
         collector << " - "
         collector = visit o.right, collector
-        collector << (o.date_type == :date ? '::date' : '::timestamp')
+        collector << (o.right_node_type == :date ? '::date' : '::timestamp')
         collector << ")"
         collector
       end
