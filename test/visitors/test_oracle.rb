@@ -57,7 +57,6 @@ module ArelExtensions
         compile(c.idoes_not_match('%test%')).must_be_like %{LOWER("users"."name") NOT LIKE LOWER('%test%')}
       end
 
-
       # Maths
       # DateDiff
       it "should diff date col and date" do
@@ -88,7 +87,6 @@ module ArelExtensions
 
       it "should accept operators on dates with numbers" do
         c = @table[:created_at]
-#        u = @table[:updated_at]
         compile(c - 42).must_be_like %{DATE_SUB("users"."created_at", 42)}
         compile(c - @table[:id]).must_be_like %{DATE_SUB("users"."created_at", "users"."id")}
       end
