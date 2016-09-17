@@ -6,7 +6,7 @@ module ArelExtensions
         '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b',  # year, month
         '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W',                               # day, weekday
         '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p',                 # hours
-        '%M' => '%M', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => ''
+        '%M' => '%i', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => ''
       }
 
       #String functions
@@ -89,7 +89,7 @@ module ArelExtensions
           collector = visit o.left, collector
           collector << Arel::Visitors::MySQL::COMMA
           f = o.iso_format.dup
-          Arel::Visitors::MySQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(Regexp.new('\\' + d), r) }
+          Arel::Visitors::MySQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
           collector = visit Arel::Nodes.build_quoted(f), collector
           collector << ")"
         when :integer, :float, :decimal

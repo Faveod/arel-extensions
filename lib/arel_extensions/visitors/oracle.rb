@@ -197,10 +197,9 @@ module ArelExtensions
         collector << Arel::Visitors::Oracle::COMMA
 
         f = o.iso_format.dup
-        Arel::Visitors::Oracle::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(Regexp.new('\\' + d), r) }
+        Arel::Visitors::Oracle::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
         collector = visit Arel::Nodes.build_quoted(f), collector
 
-        collector = visit o.right, collector
         collector << ")"
         collector
       end

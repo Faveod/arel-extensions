@@ -8,7 +8,7 @@ module ArelExtensions
         '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM',                   # hours
         '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz'                              # seconds, subseconds
       }
-      
+
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "RANDOM("
         if(o.left != nil && o.right != nil)
@@ -81,13 +81,12 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Format o, collector
         collector << "TO_CHAR("
         collector = visit o.left, collector
-        collector << Arel::Visitors::Oracle::COMMA
+        collector << Arel::Visitors::PostgreSQL::COMMA
 
         f = o.iso_format.dup
-        Arel::Visitors::Oracle::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(Regexp.new('\\' + d), r) }
+        Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
         collector = visit Arel::Nodes.build_quoted(f), collector
 
-        collector = visit o.right, collector
         collector << ")"
         collector
       end

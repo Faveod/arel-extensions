@@ -305,7 +305,7 @@ module ArelExtensions
         #Substraction
         assert_equal 0, User.where((@age - 10).eq(50)).count
         assert_equal 0, User.where((@age - "10").eq(50)).count
-        # assert_equal 0, User.where((@age - 9.5).eq(50.5)).count
+        # assert_equal 0, User.where((@age - 9.5).eq(50.5)).count # should work: TODO
         assert_equal 0, User.where((@age - "9.5").eq(50.5)).count
       end
 
