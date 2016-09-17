@@ -1,5 +1,8 @@
 # Arel Extensions
 
+[![Build Status](https://secure.travis-ci.org/Faveod/arel-extensions.svg)](http://travis-ci.org/Faveod/arel-extensions)
+
+
 Arel Extensions adds shortcuts, fixes and new ORM mappings (ruby to SQL) to Arel.
 It aims to ensure pure ruby syntax for the biggest number of usual cases.
 It allows to use more advanced SQL functions for any supported RDBMS.

@@ -2,6 +2,12 @@ module ArelExtensions
   module Visitors
     Arel::Visitors::MySQL.class_eval do
       Arel::Visitors::MySQL::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'WEEKDAY'}
+      Arel::Visitors::MySQL::DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
+        '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b',  # year, month
+        '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W',                               # day, weekday
+        '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p',                 # hours
+        '%M' => '%M', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => ''
+      }
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
@@ -75,6 +81,29 @@ module ArelExtensions
         collector << ")"
         collector
       end
+
+      def visit_ArelExtensions_Nodes_Format o, collector
+        case o.col_type
+        when :date, :datetime
+          collector << "DATE_FORMAT("
+          collector = visit o.left, collector
+          collector << Arel::Visitors::MySQL::COMMA
+          f = o.iso_format.dup
+          Arel::Visitors::MySQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(Regexp.new('\\' + d), r) }
+          collector = visit Arel::Nodes.build_quoted(f), collector
+          collector << ")"
+        when :integer, :float, :decimal
+          collector << "FORMAT("
+          collector = visit o.left, collector
+          collector << Arel::Visitors::ToSql::COMMA
+          collector = visit o.right, collector
+          collector << ")"
+        else
+          collector = visit o.left, collector
+        end
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         collector << "DATEDIFF("
         collector = visit o.left, collector

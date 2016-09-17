@@ -2,6 +2,12 @@ module ArelExtensions
   module Visitors
     Arel::Visitors::SQLite.class_eval do
       Arel::Visitors::SQLite::DATE_MAPPING = {'d' => '%d', 'm' => '%m', 'w' => '%W', 'y' => '%Y', 'wd' => '%w', 'M' => '%M'}
+      Arel::Visitors::SQLite::DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
+        '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b',  # year, month
+        '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W',                               # day, weekday
+        '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p',                 # hours
+        '%M' => '%M', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => ''                                # seconds, subseconds
+      }
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII

@@ -12,10 +12,11 @@ module ArelExtensions
     #Date and integer adds or subtracts a specified time interval from a date.
     def +(other)
       arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
-      if arg == :integer || arg == :decimal || arg == :float
-        if other.is_a?(String)
-          other = other.to_i
-        end
+      if arg == :integer
+        other = other.to_i if other.is_a?(String)
+        Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
+      elsif arg == :decimal || arg == :float
+        other = Arel.sql(other) if other.is_a?(String)  # Arel should accept Float & BigDecimal!
         Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
       elsif arg == :datetime || arg == :date
         ArelExtensions::Nodes::DateAdd.new [self, other]
@@ -43,9 +44,7 @@ module ArelExtensions
           ArelExtensions::Nodes::DateSub.new [self, other]
         end
       else
-        if other.is_a?(String)
-          other = other.to_i
-        end
+        other = Arel.sql(other) if other.is_a?(String)# Arel should accept Float & BigDecimal!
         Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
       end
     end

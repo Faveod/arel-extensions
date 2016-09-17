@@ -64,9 +64,9 @@ module ArelExtensions
       end
 
       def setup
-        d = Date.new(2016,05,23)
+        d = Date.new(2016, 5, 23)
         setup_db
-        u = User.create :age => 5, :name => "Lucas", :created_at => d, :score => 20.16
+        u = User.create :age => 5, :name => "Lucas", :created_at => d, :score => 20.16, :updated_at => Time.utc(2014, 3, 3, 12, 42)
         @lucas = User.where(:id => u.id)
         u = User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
         @sophie = User.where(:id => u.id)
@@ -87,6 +87,7 @@ module ArelExtensions
         @name = User.arel_table[:name]
         @score = User.arel_table[:score]
         @created_at = User.arel_table[:created_at]
+        @updated_at = User.arel_table[:updated_at]
         @comments = User.arel_table[:comments]
         @price = Product.arel_table[:price]
       end
@@ -218,6 +219,11 @@ module ArelExtensions
         assert_equal "", t(@myung, @name.rtrim(@name))
       end
 
+      def test_format
+        assert_equal '2016-05-23', t(@lucas, @created_at.format('%Y-%m-%d'))
+        assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S'))
+      end
+
       def test_coalesce
         if @env_db == 'postgresql'
           assert_equal 100, t(@test, @age.coalesce(100))
@@ -241,7 +247,7 @@ module ArelExtensions
       end
 
       def test_date_comparator
-        d = Date.new(2016,05,23)
+        d = Date.new(2016, 5, 23)
         assert_equal 0, User.where(@created_at < d).count
         assert_equal 8, User.where(@created_at >= d).count
       end
@@ -259,6 +265,11 @@ module ArelExtensions
         #Day
         assert_equal 23, t(@laure, @created_at.day).to_i
         assert_equal 0, User.where(@created_at.day.eq("05")).count
+      end
+
+      def test_cast_types
+        skip "not implemented yet"
+        assert_equal true, t(@arthur, @score =~ /22/)
       end
 
       def test_is_null
@@ -294,6 +305,8 @@ module ArelExtensions
         #Substraction
         assert_equal 0, User.where((@age - 10).eq(50)).count
         assert_equal 0, User.where((@age - "10").eq(50)).count
+        # assert_equal 0, User.where((@age - 9.5).eq(50.5)).count
+        assert_equal 0, User.where((@age - "9.5").eq(50.5)).count
       end
 
       def test_wday

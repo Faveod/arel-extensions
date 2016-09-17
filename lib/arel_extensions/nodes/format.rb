@@ -2,11 +2,13 @@ module ArelExtensions
   module Nodes
     class Format < Function
       @@return_type = :string
-    	attr_accessor :col_type
+
+    	attr_accessor :col_type, :iso_format
     	def initialize expr
 	        col = expr.first
+          @iso_format = expr[1]
 	        @col_type = type_of_attribute(col)
-        	super [expr.first, convert_to_string_node(expr[1])]
+        	super [col, convert_to_string_node(@iso_format)]
     	end
     end
   end
