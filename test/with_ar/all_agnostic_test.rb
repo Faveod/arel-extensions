@@ -223,7 +223,7 @@ module ArelExtensions
 
       def test_blank
         assert_equal (@env_db == 'postgresql' ? true : 1), t(@myung, @comments.blank) unless @env_db == 'oracle'
-        assert_equal (['postgresql', 'oracle'].include?(@env_db) ? false : 0), t(@myung, @name.blank)
+        assert_equal (@env_db == 'postgresql' ? false : 0), t(@myung, @name.blank)
       end
 
       def test_format
