@@ -75,7 +75,7 @@ module ArelExtensions
         u = User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
         @arthur = User.where(:id => u.id)
         u = User.create :age => 23, :name => "Myung", :created_at => d, :score => 20.16
-        @myung = User.where(:id => u.id).reorder(nil)
+        @myung = User.where(:id => u.id)
         u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16
         @laure = User.where(:id => u.id)
         u = User.create :age => nil, :name => "Test", :created_at => d, :score => 1.62
@@ -222,8 +222,8 @@ module ArelExtensions
       end
 
       def test_blank
-        assert_equal (@env_db == 'postgresql' ? true : 1), t(@myung, @comments.blank)
-        assert_equal (@env_db == 'postgresql' ? false : 0), t(@myung, @name.blank)
+        assert_equal (@env_db == 'postgresql' ? true : 1), t(@myung, @comments.blank) unless @env_db == 'oracle'
+        assert_equal (['postgresql', 'oracle'].include?(@env_db) ? false : 0), t(@myung, @name.blank)
       end
 
       def test_format
