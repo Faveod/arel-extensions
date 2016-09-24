@@ -159,11 +159,11 @@ module ArelExtensions
         collector << 'TRIM(' # BOTH
         case o.right.expr
         when "\t"
-          collector << Arel.sql('CHR(9)')
+          collector << 'CHR(9)'
         when "\n"
-          collector << Arel.sql('CHR(10)')
+          collector << 'CHR(10)'
         when "\r"
-          collector << Arel.sql('CHR(13)')
+          collector << 'CHR(13)'
         else
           collector = visit o.right, collector
         end
