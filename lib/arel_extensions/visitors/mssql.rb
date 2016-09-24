@@ -107,15 +107,15 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Replace o, collector
-         collector << "REPLACE("
-         collector = visit o.expr,collector
-         collector << Arel::Visitors::MSSQL::COMMA
+        collector << "REPLACE("
+        collector = visit o.expr,collector
+        collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.left, collector
  
-         collector << ","
+        collector << ","
         collector = visit o.right, collector
-         collector << ")"
-         collector
+        collector << ")"
+        collector
       end
 
 
