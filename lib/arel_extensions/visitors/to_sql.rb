@@ -153,8 +153,9 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
+        collector << '('
         collector = visit o.left, collector
-        collector << " = ''"
+        collector << " = '')"
         collector
       end
 
