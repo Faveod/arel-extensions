@@ -212,6 +212,7 @@ module ArelExtensions
       end
 
       def test_trim
+        assert_equal "Myung", t(@myung, @name.trim)
         assert_equal "Myun", t(@myung, @name.rtrim("g"))
         assert_equal "yung", t(@myung, @name.ltrim("M"))
         assert_equal "yung", t(@myung, (@name + "M").trim("M"))

@@ -191,6 +191,15 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Blank o, collector
+        puts collector.value.inspect
+        puts o.left.inspect
+        collector = visit o.left, collector
+        collector << " = ''"
+        collector
+      end
+
+
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << '('
         collector = visit o.left, collector
