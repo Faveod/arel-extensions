@@ -40,8 +40,6 @@ module ArelExtensions
         collector = visit o.left, collector
         collector<< ","
         collector = visit o.right, collector
-
-        end
         collector << ")"
         collector
       end
@@ -59,11 +57,7 @@ module ArelExtensions
           collector << "YEAR("
         end
         #visit right
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.right, collector
-        else
-          collector << "'#{o.right}'"
-        end
+        collector = visit o.right, collector
         collector << ")"
         collector
       end
@@ -79,10 +73,10 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "CHARINDEX("
         collector = visit o.val, collector
-       collector << ","
-       collector = visit o.expr, collector
-       collector << ")"
-       collector
+        collector << Arel::Visitors::MSSQL::COMMA
+        collector = visit o.expr, collector
+        collector << ")"
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
@@ -119,11 +113,7 @@ module ArelExtensions
         collector = visit o.left, collector
  
          collector << ","
-         if(o.right.is_a?(Arel::Attributes::Attribute))
-           collector = visit o.right, collector
-         else
-           collector << "'#{o.right}'"
-         end
+        collector = visit o.right, collector
          collector << ")"
          collector
       end
