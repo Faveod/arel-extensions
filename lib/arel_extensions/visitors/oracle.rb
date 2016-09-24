@@ -157,16 +157,16 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Trim o, collector
         collector << 'TRIM(' # BOTH
-        r = o.right
-        case r.expr
+        case o.right.expr
         when "\t"
-          r = Arel.sql('CHR(9)')
+          collector << Arel.sql('CHR(9)')
         when "\n"
-          r = Arel.sql('CHR(10)')
+          collector << Arel.sql('CHR(10)')
         when "\r"
-          r = Arel.sql('CHR(13)')
+          collector << Arel.sql('CHR(13)')
+        else
+          collector = visit o.right, collector
         end
-        collector = visit r, collector
         collector << ' FROM '
         collector = visit o.left, collector
         collector << ")"
