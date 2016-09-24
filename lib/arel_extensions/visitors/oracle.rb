@@ -168,7 +168,9 @@ module ArelExtensions
           collector = visit o.right, collector
         end
         collector << ' FROM '
+        collector << '(' if o.left.is_a? ArelExtensions::Nodes::Trim
         collector = visit o.left, collector
+        collector << ')' if o.left.is_a? ArelExtensions::Nodes::Trim
         collector << ")"
         collector
       end
@@ -190,15 +192,6 @@ module ArelExtensions
         collector << ")"
         collector
       end
-
-      def visit_ArelExtensions_Nodes_Blank o, collector
-        puts collector.value.inspect
-        puts o.left.inspect
-        collector = visit o.left, collector
-        collector << " = ''"
-        collector
-      end
-
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << '('

@@ -15,5 +15,12 @@ module ArelExtensions
       end
 
     end
+
+    class Ltrim < Trim
+    end
+
+    class Rtrim < Trim
+    end
+
   end
 end

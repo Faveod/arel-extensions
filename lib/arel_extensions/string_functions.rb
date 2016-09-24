@@ -6,8 +6,6 @@ require 'arel_extensions/nodes/find_in_set'
 require 'arel_extensions/nodes/replace'
 require 'arel_extensions/nodes/soundex'
 require 'arel_extensions/nodes/trim'
-require 'arel_extensions/nodes/ltrim'
-require 'arel_extensions/nodes/rtrim'
 require 'arel_extensions/nodes/blank'
 require 'arel_extensions/nodes/format'
 
