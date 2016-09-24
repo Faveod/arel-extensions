@@ -75,7 +75,7 @@ module ArelExtensions
         u = User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
         @arthur = User.where(:id => u.id)
         u = User.create :age => 23, :name => "Myung", :created_at => d, :score => 20.16
-        @myung = User.where(:id => u.id)
+        @myung = User.where(:id => u.id).reorder(nil)
         u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16
         @laure = User.where(:id => u.id)
         u = User.create :age => nil, :name => "Test", :created_at => d, :score => 1.62

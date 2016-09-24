@@ -138,13 +138,6 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Soundex o, collector
-        collector << "SOUNDEX("
-        collector = visit o.expr, collector
-        collector << ")"
-        collector
-      end
-
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "INSTR("
         o.expressions.each_with_index { |arg, i|
