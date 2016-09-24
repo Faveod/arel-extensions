@@ -186,6 +186,13 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Blank o, collector
+        collector << 'CASE WHEN ('
+        collector = visit o.left, collector
+        collector << " = '') THEN 1 ELSE END"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << '('
         collector = visit o.left, collector

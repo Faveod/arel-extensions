@@ -215,6 +215,7 @@ module ArelExtensions
         assert_equal "Myung", t(@myung, @name.trim)
         assert_equal "Myun", t(@myung, @name.rtrim("g"))
         assert_equal "yung", t(@myung, @name.ltrim("M"))
+        assert_equal "Myung", t(@myung, @name.trim.ltrim.rtrim)
         assert_equal "yung", t(@myung, (@name + "M").trim("M"))
         skip "Oracle does not accept multi char trim" if @env_db == 'oracle'
         assert_equal "", t(@myung, @name.rtrim(@name))
