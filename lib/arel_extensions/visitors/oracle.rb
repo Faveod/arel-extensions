@@ -187,9 +187,9 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        collector << 'CASE WHEN ('
+        collector << '(CASE WHEN ('
         collector = visit o.left, collector
-        collector << " = '') THEN 1 ELSE END"
+        collector << " = '') THEN 1 ELSE 0 END)"
         collector
       end
 
