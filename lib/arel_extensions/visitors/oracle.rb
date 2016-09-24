@@ -191,23 +191,6 @@ module ArelExtensions
         collector
       end
 
-
-
-
-
-      def visit_ArelExtensions_Nodes_Blank o, collector
-        table = collector.value.sub(/\AINSERT INTO/, '')
-        collector = visit o.right, collector
-        collector << ' FROM '
-        collector = visit o.left, collector
-        collector << ")"
-        collector
-      end
-
-
-
-
-
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << '('
         collector = visit o.left, collector
