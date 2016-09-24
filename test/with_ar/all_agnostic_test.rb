@@ -219,6 +219,11 @@ module ArelExtensions
         assert_equal "", t(@myung, @name.rtrim(@name))
       end
 
+      def test_blank
+        assert_equal (@env_db == 'postgresql' ? true : 1), t(@myung, @comments.blank)
+        assert_equal (@env_db == 'postgresql' ? false : 0), t(@myung, @name.blank)
+      end
+
       def test_format
         assert_equal '2016-05-23', t(@lucas, @created_at.format('%Y-%m-%d'))
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S'))

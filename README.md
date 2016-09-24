@@ -57,8 +57,11 @@ Other functions : ABS, RAND, ROUND, FLOOR, CEIL, FORMAT
 (t[:name] + ' append').to_sql
 # => CONCAT(my_table.name, ' append')
 
-(t[:name].if_null('default')).to_sql
-# => ISNULL(my_table.name, 'default')
+(t[:name].coalesce('default')).to_sql
+# => COALESCE(my_table.name, 'default')
+
+(t[:name].blank).to_sql
+# => TRIM(TRIM(TRIM(COALESCE(my_table.name, '')), '\t'), '\n') = ''
 
 (t[:name] =~ /\A[a-d_]+/).to_sql
 # => my_table.name REGEXP '\^[a-d_]+'
@@ -96,6 +99,9 @@ t[:birthdate].month.to_sql
 
 t[:birthdate].year.to_sql
 # => YEAR(my_table.birthdate)
+
+t[:birthdate].format('%Y-%m-%d').to_sql
+# => DATE_FORMAT(my_table.birthdate, '%Y-%m-%d')
 ```
 
 ## Unions (in next version)

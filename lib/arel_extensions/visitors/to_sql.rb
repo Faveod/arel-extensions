@@ -152,6 +152,12 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Blank o, collector
+        collector = visit o.left, collector
+        collector << " = ''"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_Format o, collector
         case o.col_type
         when :date, :datetime

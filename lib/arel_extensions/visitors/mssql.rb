@@ -1,6 +1,12 @@
 module ArelExtensions
   module Visitors
     Arel::Visitors::MSSQL.class_eval do
+      Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES = {
+        '%Y' => 'yy', '%C' => '', '%y' => 'yy', '%m' => 'mm', '%B' =>   '', '%b' => '', '%^b' => '',      # year, month
+        '%d' => 'dd', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                               # day, weekday
+        '%H' => 'hh', '%k' => '', '%I' =>   '', '%l' =>   '', '%P' => '', '%p' => '',                 # hours
+        '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
+      }
 
       # Math Functions
       def visit_ArelExtensions_Nodes_Ceil o, collector
@@ -24,7 +30,7 @@ module ArelExtensions
         else
           collector = visit o.left, collector
           collector << " + '"
-          collector << "#{o.right}'"
+          collector = visit o.right, collector
           collector
         end
       end
@@ -33,10 +39,7 @@ module ArelExtensions
         collector << "DATEDIFF(day,"
         collector = visit o.left, collector
         collector<< ","
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.right, collector
-        else
-          collector<< "'#{o.right}'"
+        collector = visit o.right, collector
 
         end
         collector << ")"
@@ -73,24 +76,38 @@ module ArelExtensions
      end
 
 
-     def visit_ArelExtensions_Nodes_Locate o, collector
-       collector << "CHARINDEX("
-      collector = visit o.val, collector
+      def visit_ArelExtensions_Nodes_Locate o, collector
+        collector << "CHARINDEX("
+        collector = visit o.val, collector
        collector << ","
        collector = visit o.expr, collector
        collector << ")"
        collector
-     end
+      end
 
-      def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector << "ISNULL("
-        collector = visit o.left, collector
-        collector << ","
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-        collector = visit o.right, collector
-        else
-        collector << "'#{o.right}'"
-        end
+      def visit_ArelExtensions_Nodes_Format o, collector
+        collector << "CONCAT("
+
+        t = o.iso_format.split('%')
+        t.each_with_index {|str, i|
+          if i == 0 && f[0] != '%'
+            collector = visit Arel::Nodes.build_quoted(str), collector
+          elsif str.length > 0
+            if !Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]].blank?
+              collector << 'DATEPART('
+              collector << Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]]
+              collector << Arel::Visitors::MSSQL::COMMA
+              collector = visit o.left, collector
+              collector << ')'
+              if str.length > 1
+                collector << Arel::Visitors::MSSQL::COMMA
+                collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
+              end
+            end
+          end
+          collector << Arel::Visitors::MSSQL::COMMA unless i < (t.length - 1)
+        }
+
         collector << ")"
         collector
       end
@@ -98,12 +115,9 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Replace o, collector
          collector << "REPLACE("
          collector = visit o.expr,collector
-         collector << ","
-         if(o.left.is_a?(Arel::Attributes::Attribute))
-           collector = visit o.left, collector
-         else
-           collector << "'#{o.left}'"
-         end
+         collector << Arel::Visitors::MSSQL::COMMA
+        collector = visit o.left, collector
+ 
          collector << ","
          if(o.right.is_a?(Arel::Attributes::Attribute))
            collector = visit o.right, collector

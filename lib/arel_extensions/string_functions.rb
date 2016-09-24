@@ -8,6 +8,7 @@ require 'arel_extensions/nodes/soundex'
 require 'arel_extensions/nodes/trim'
 require 'arel_extensions/nodes/ltrim'
 require 'arel_extensions/nodes/rtrim'
+require 'arel_extensions/nodes/blank'
 require 'arel_extensions/nodes/format'
 
 module ArelExtensions
@@ -68,16 +69,20 @@ module ArelExtensions
     end
 
     #Function returns a string after removing left, right or the both prefixes or suffixes int argument
-    def trim other
+    def trim other = ' '
       ArelExtensions::Nodes::Trim.new [self, other]
     end
 
-    def ltrim other
+    def ltrim other = ' '
       ArelExtensions::Nodes::Ltrim.new [self, other]
     end
 
-    def rtrim other
+    def rtrim other = ' '
       ArelExtensions::Nodes::Rtrim.new [self, other]
+    end
+
+    def blank
+      ArelExtensions::Nodes::Blank.new [self]
     end
 
   end
