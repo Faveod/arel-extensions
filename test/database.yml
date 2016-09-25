@@ -40,7 +40,7 @@ ibm_db:
   database: arext_test
 mssql:
   adapter: sqlserver
-  host: (local)\SQL2016
+  dataserver: (local)\SQL2016
   database: master
   username: sa
   password: Password12!
