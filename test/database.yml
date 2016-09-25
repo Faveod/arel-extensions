@@ -38,3 +38,8 @@ ibm_db:
   adapter:  ibm_db
   username: travis
   database: arext_test
+mssql:
+  adapter: sqlserver
+  database: master
+  username: sa
+  password: Password12!

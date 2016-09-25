@@ -3,12 +3,17 @@ source "https://rubygems.org"
 gemspec
 
 group :test do
-	gem "sqlite3", :platforms => [:ruby, :mswin, :mingw]
-	gem "mysql2", :platforms => [:ruby, :mswin, :mingw]
+	gem "sqlite3", :platforms => [:mri, :mswin, :mingw, :x64_mingw]
+	gem "mysql2", :platforms => [:mri, :mswin, :mingw, :x64_mingw]
+    gem "pg", :platforms => [:mri, :mingw, :x64_mingw]
+
 	gem "jdbc-sqlite3", :platforms => :jruby
 	gem "activerecord-jdbcsqlite3-adapter", :platforms => :jruby
 	gem "activerecord-jdbcmysql-adapter", :platforms => :jruby
 	gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
+
+    gem "tiny_tds", :platforms => [:mri, :mingw, :x64_mingw]
+    gem "activerecord-sqlserver-adapter", :platforms => [:mri, :mingw, :x64_mingw]
 
 	gem 'activesupport', '~> 4.0'
   	gem 'activemodel', '~> 4.0'

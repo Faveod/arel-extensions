@@ -4,6 +4,9 @@ branches:
   only:
     - master
 
+services:
+  - mssql2016
+
 # Disable normal Windows builds in favor of our test script.
 build: off
 
@@ -24,8 +27,8 @@ test_script:
 
 environment:
   matrix:
-    - ruby_version: '200'
     - ruby_version: '193'
+    - ruby_version: '200'
     - ruby_version: '21'
     - ruby_version: '22'
     - ruby_version: '23'
