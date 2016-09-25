@@ -1,7 +1,10 @@
 # Arel Extensions
 
 [![Build Status](https://secure.travis-ci.org/Faveod/arel-extensions.svg)](http://travis-ci.org/Faveod/arel-extensions)
-
+[![Latest Release](https://img.shields.io/gem/v/arel_extensions.svg)](https://rubygems.org/gems/arel_extensions)
+![](http://img.shields.io/badge/license-MIT-brightgreen.svg)
+![](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?type=total)
+![](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?label=downloads-current-version)
 
 Arel Extensions adds shortcuts, fixes and new ORM mappings (ruby to SQL) to Arel.
 It aims to ensure pure ruby syntax for the biggest number of usual cases.
@@ -28,6 +31,9 @@ t is an Arel::Table for table my_table
 (t[:nb] > 42).to_sql # (same as (t[:nb].gt(42)).to_sql)
 # => my_table.nb > 42
 ```
+
+Other operators : <, >=, <=, =~
+
 
 ## Maths
 

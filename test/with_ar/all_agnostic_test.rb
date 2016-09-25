@@ -222,8 +222,17 @@ module ArelExtensions
       end
 
       def test_blank
-        assert_equal (@env_db == 'postgresql' ? true : 1), t(@myung, @comments.blank) unless @env_db == 'oracle'
-        assert_equal (@env_db == 'postgresql' ? false : 0), t(@myung, @name.blank)
+        if @env_db == 'postgresql'
+          assert_includes [false, 'f'], t(@myung, @name.blank) # depends of adapter
+        else
+          assert_equal 0, t(@myung, @name.blank)
+        end
+        skip "Oracle requires cast for CLOB" if @env_db == 'oracle' # comments is CLOB, CHAR expected
+        if @env_db == 'postgresql'
+          assert_includes [true, 't'], t(@myung, @comments.blank) # depends of adapter
+        else
+          assert_equal 1, t(@myung, @comments.blank)
+        end
       end
 
       def test_format
@@ -318,7 +327,7 @@ module ArelExtensions
 
       def test_wday
         d = Date.new(2016, 6, 26)
-        assert_equal (@env_db == 'oracle' ? 2 : 1), t(@myung, @created_at.wday).to_i # monday
+        assert_equal(@env_db == 'oracle' ? 2 : 1, t(@myung, @created_at.wday).to_i) # monday
         assert_equal 0, User.select(d.wday).as("res").first.to_i
       end
 

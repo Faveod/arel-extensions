@@ -1,0 +1,26 @@
+Code quality:
+- codeclimate.com
+- coveralls.io
+- gemnasium
+- inch-ci.org
+- appveyor.com (windows)
+- hakiri.io
+
+[![Gem Version](https://img.shields.io/gem/v/arel_extensions.svg)][gem]
+[![Build Status](https://img.shields.io/travis/faveod/arel_extensions.svg)][travis]
+[![Dependency Status](https://img.shields.io/gemnasium/faveod/arel_extensions.svg)][https://gemnasium.com/faveod/arel_extensions]
+[![Code Climate](https://img.shields.io/codeclimate/github/faveod/arel_extensions.svg)][https://codeclimate.com/github/faveod/arel_extensions]
+[![Coverage Status](https://img.shields.io/coveralls/faveod/arel_extensions.svg)][https://coveralls.io/r/faveod/arel_extensions]
+[![Inline docs](http://inch-ci.org/github/faveod/arel_extensions.svg)][https://inch-ci.org/github/faveod/https://gemnasium.com/faveod/arel_extensions]
+[![security](https://hakiri.io/github/faveod/arel_extensions/master.svg)](https://hakiri.io/github/faveod/arel_extensions/master)
+[![codebeat](https://codebeat.co/badges/<change>)](https://codebeat.co/projects/github-com-faveod-arel_extensions)
+
+
+New features:
+- POSIX format numbers (%.2f)
+- easy unions
+- cast
+
+Tests improvements:
+- SQL Server
+- DB2
