@@ -1,0 +1,31 @@
+version: "{build}"
+
+branches:
+  only:
+    - master
+
+# Disable normal Windows builds in favor of our test script.
+build: off
+
+install:
+  - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
+  - ruby --version
+  - gem --version
+  - gem install bundler -v "!= 1.12.0, != 1.12.1, != 1.12.2, != 1.12.3"
+  - bundler --version
+  - bundle install
+
+test_script:
+  - ruby --version
+  - gem --version
+  - bundler --version
+  - bundle exec rake test
+  - bundle exec rake test:mssql
+
+environment:
+  matrix:
+    - ruby_version: '200'
+    - ruby_version: '193'
+    - ruby_version: '21'
+    - ruby_version: '22'
+    - ruby_version: '23'
