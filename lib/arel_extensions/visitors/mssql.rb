@@ -38,7 +38,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         collector << "DATEDIFF(day,"
         collector = visit o.left, collector
-        collector<< ","
+        collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.right, collector
         collector << ")"
         collector
@@ -112,7 +112,7 @@ module ArelExtensions
         collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.left, collector
  
-        collector << ","
+        collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.right, collector
         collector << ")"
         collector

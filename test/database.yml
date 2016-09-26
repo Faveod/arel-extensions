@@ -41,7 +41,7 @@ ibm_db:
 mssql:
   adapter: sqlserver
 #  host: localhost
-  dataserver: localhost\SQL2014
+  dataserver: .\SQL2014
   database: master
   username: sa
   password: Password12!
