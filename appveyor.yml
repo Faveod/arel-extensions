@@ -8,7 +8,7 @@ branches:
     - master
 
 services:
-  - mssql2016
+  - mssql2014
 
 
 install:
@@ -24,13 +24,13 @@ before_test:
   - ruby -v
   - gem -v
   - bundle -v
+  - ps: Start-Service 'MSSQL$SQL2014'
 
 test_script:
   - ruby --version
   - gem --version
   - bundler --version
   - bundle exec rake test
-  - ps: Start-Service 'MSSQL$SQL2016'
   - bundle exec rake test:mssql
 
 environment:
