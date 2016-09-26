@@ -24,19 +24,20 @@ before_test:
   - ruby -v
   - gem -v
   - bundle -v
-  - ps: Start-Service 'MSSQL$SQL2014'
 
 test_script:
   - ruby --version
   - gem --version
   - bundler --version
   - bundle exec rake test
+  - ps: Start-Service 'MSSQL$SQL2014'
+  - timeout /t 4 /nobreak > NUL
   - bundle exec rake test:mssql
 
 environment:
   matrix:
-    - RUBY_VERSION: 193
     - RUBY_VERSION: 200
     - RUBY_VERSION: 21
     - RUBY_VERSION: 22
     - RUBY_VERSION: 23
+    - RUBY_VERSION: "23-x64"
