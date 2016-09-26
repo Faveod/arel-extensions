@@ -40,7 +40,7 @@ ibm_db:
   database: arext_test
 mssql:
   adapter: sqlserver
-#  host: localhost
+  host: localhost
   dataserver: .\SQL2014
   database: master
   username: sa
