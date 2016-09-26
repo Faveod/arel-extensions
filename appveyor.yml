@@ -30,6 +30,7 @@ test_script:
   - gem --version
   - bundler --version
   - bundle exec rake test
+  - ps: Start-Service 'MSSQL$SQL2016'
   - bundle exec rake test:mssql
 
 environment:
