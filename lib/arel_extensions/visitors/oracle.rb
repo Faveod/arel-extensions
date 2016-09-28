@@ -207,7 +207,7 @@ module ArelExtensions
         collector = visit o.left, collector
         collector << Arel::Visitors::Oracle::COMMA
 
-        f = o.iso_format.dup
+        f = o.iso_format.gsub(/\ (\w+)/, ' "\1"')
         Arel::Visitors::Oracle::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
         collector = visit Arel::Nodes.build_quoted(f), collector
 
