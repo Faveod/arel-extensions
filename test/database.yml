@@ -3,7 +3,7 @@ sqlite:
   database: ":memory:"
   timeout: 500
 jdbc-sqlite:
-  adapter: jdbcsqlite3 
+  adapter: jdbcsqlite3
   database: ":memory:"
   timeout: 500
 mysql:
@@ -40,8 +40,7 @@ ibm_db:
   database: arext_test
 mssql:
   adapter: sqlserver
-  host: localhost
-  dataserver: localhost\SQL2014
-  database: master
+  host: (local)
+  database: SQL2014
   username: sa
   password: Password12!
