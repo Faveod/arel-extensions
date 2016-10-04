@@ -4,7 +4,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "arel_extensions"
-  s.version     = '0.8.7'
+  s.version     = '0.8.8'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Yann Azoury", "Mathilde Pechdimaldjian", "Félix Bellanger"]
   s.email       = ["yann.azoury@faveod.com", "mathilde.pechdimaldjian@gmail.com", "felix.bellanger@faveod.com"]
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib"]
 
-  s.add_dependency('arel', '~> 6.0')
+  s.add_dependency('arel', '>= 6.0')
 
   s.add_development_dependency('minitest', '~> 5.9')
   s.add_development_dependency('rdoc', '~> 4.0')
