@@ -19,7 +19,9 @@ module ArelExtensions
         Arel::Table.engine = ActiveRecord::Base
         if File.exist?("init/#{@env_db}.sql")
           sql = File.read("init/#{@env_db}.sql")
-          @cnx.execute(sql) unless sql.blank?
+          unless sql.blank?
+            @cnx.execute(sql) rescue $stderr << "can't create functions"
+          end
         end
         @cnx.drop_table(:user_tests) rescue nil 
         @cnx.create_table :user_tests do |t|
