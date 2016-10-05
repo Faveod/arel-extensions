@@ -24,7 +24,10 @@ module ArelExtensions
           collector = visit o.right, collector
           collector
         elsif ( arg == :date || arg == :datetime)
-          collector << "DATEADD(day,#{o.right},"
+          collector << "DATEADD(day"
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector = visit o.right, collector
+          collector << Arel::Visitors::MSSQL::COMMA
           collector = visit o.left, collector
           collector
         else
@@ -36,7 +39,8 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        collector << "DATEDIFF(day,"
+        collector << "DATEDIFF(day"
+        collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.left, collector
         collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.right, collector
@@ -122,13 +126,13 @@ module ArelExtensions
       # SQL Server does not know about REGEXP
       def visit_Arel_Nodes_Regexp o, collector
         collector = visit o.left, collector
-        collector << "LIKE '% #{o.right}%'"
+        collector << "LIKE '%#{o.right}%'"
         collector
       end
 
       def visit_Arel_Nodes_NotRegexp o, collector
         collector = visit o.left, collector
-        collector << "NOT LIKE '% #{o.right}%'"
+        collector << "NOT LIKE '%#{o.right}%'"
         collector
       end
 
