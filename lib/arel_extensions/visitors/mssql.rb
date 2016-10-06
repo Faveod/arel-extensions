@@ -222,6 +222,6 @@ end
 Arel::Visitors::MSSQL.class_eval do
   include ArelExtensions::Visitors::MSSQL
 end
-Arel::Visitors::SQLServer.class_eval do
+Arel::Visitors::VISITORS['sqlserver'].class_eval do
   include ArelExtensions::Visitors::MSSQL
-end if defined?(Arel::Visitors::SQLServer)
+end if Arel::Visitors::VISITORS['sqlserver']
