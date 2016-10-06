@@ -218,10 +218,3 @@ module ArelExtensions
     end
   end
 end
-
-Arel::Visitors::MSSQL.class_eval do
-  include ArelExtensions::Visitors::MSSQL
-end
-Arel::Visitors::VISITORS['sqlserver'].class_eval do
-  include ArelExtensions::Visitors::MSSQL
-end if Arel::Visitors::VISITORS['sqlserver']
