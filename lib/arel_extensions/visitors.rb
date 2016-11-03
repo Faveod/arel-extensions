@@ -9,37 +9,15 @@ Arel::Visitors::MSSQL.class_eval do
 	include ArelExtensions::Visitors::MSSQL
 end
 
-puts "[SQL_SERVER_LOADING_DEBUG] VISITORS: " + Arel::Visitors::VISITORS.inspect
-
-if Arel::Visitors::VISITORS['sqlserver'] && Arel::Visitors::VISITORS['sqlserver'] != Arel::Visitors::MSSQL
-	Arel::Visitors::VISITORS['sqlserver'].class_eval do
-  		include ArelExtensions::Visitors::MSSQL
-	end 
-end
-
-puts "[SQL_SERVER_LOADING_DEBUG] Arel::Visitors constants: #{Arel::Visitors.constants.inspect}"
-puts "[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::ENGINE_VISITORS constants: #{Arel::Visitors::ENGINE_VISITORS.inspect}"
-
-puts "ActiveRecord::ConnectionAdapters::SQLServerAdapter loaded #{ActiveRecord::ConnectionAdapters::SQLServerAdapter}" rescue puts "no ActiveRecord::ConnectionAdapters::SQLServerAdapter"
-puts("[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::SQLServer constants: #{Arel::Visitors::SQLServer.inspect}") rescue puts "no Arel::Visitors::SQLServer"
-
-# puts Gem.loaded_specs.map{|n,spec| spec }.sort{|x,y| -(x.dependencies.length <=> y.dependencies.length) }.inspect
-
 begin 
-require('arel_sqlserver')
-puts "ActiveRecord::ConnectionAdapters::SQLServerAdapter loaded #{ActiveRecord::ConnectionAdapters::SQLServerAdapter}" rescue puts "no ActiveRecord::ConnectionAdapters::SQLServerAdapter"
-puts("[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::SQLServer constants: #{Arel::Visitors::SQLServer.inspect}") rescue puts "no Arel::Visitors::SQLServer"
-
-puts "[SQL_SERVER_LOADING_DEBUG] VISITORS: " + Arel::Visitors::VISITORS.inspect
-
-if Arel::Visitors::VISITORS['sqlserver'] && Arel::Visitors::VISITORS['sqlserver'] != Arel::Visitors::MSSQL
-	Arel::Visitors::VISITORS['sqlserver'].class_eval do
-  		include ArelExtensions::Visitors::MSSQL
-	end 
-end
-
+	require 'arel_sqlserver'
+	if Arel::VERSION.to_i == 6
+		if Arel::Visitors::VISITORS['sqlserver'] && Arel::Visitors::VISITORS['sqlserver'] != Arel::Visitors::MSSQL
+			Arel::Visitors::VISITORS['sqlserver'].class_eval do
+		  		include ArelExtensions::Visitors::MSSQL
+			end 
+		end
+	end
 rescue LoadError
-	puts "LoadError"
 rescue => e
- 	puts "can't load activerecord-sqlserver-adapter/arel/visitors/sqlserver #{e.inspect}"
- end
+end

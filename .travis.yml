@@ -45,7 +45,7 @@ rvm:
 - 2.1
 - 2.2.5
 - 2.3.1
-- rbx-2
+# - rbx-2
 - jruby-9.0.5.0
 - jruby-head
 - ruby-head
@@ -56,10 +56,10 @@ jdk:
 matrix:
   fast_finish: true
   exclude:
-  - rvm: rbx-2
-    jdk: openjdk7
-  - rvm: rbx-2
-    jdk: oraclejdk7
+#  - rvm: rbx-2
+#    jdk: openjdk7
+#  - rvm: rbx-2
+#    jdk: oraclejdk7
   - rvm: 2.0.0
     jdk: openjdk7
   - rvm: 2.0.0
@@ -84,8 +84,8 @@ matrix:
     gemfile: gemfiles/rails5.gemfile
   - rvm: 2.1
     gemfile: gemfiles/rails5.gemfile
-  - rvm: rbx-2
-    gemfile: gemfiles/rails5.gemfile
+#  - rvm: rbx-2
+#    gemfile: gemfiles/rails5.gemfile
   - rvm: ruby-head
     gemfile: gemfiles/rails4.gemfile
   allow_failures:

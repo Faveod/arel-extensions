@@ -145,19 +145,16 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "CHARINDEX("
-        collector = visit o.val, collector
+        collector = visit o.right, collector
         collector << Arel::Visitors::MSSQL::COMMA
-        collector = visit o.expr, collector
+        collector = visit o.left, collector
         collector << ")"
         collector
       end
 
       def visit_ArelExtensions_Nodes_Trim o, collector
         collector << "LTRIM(RTRIM("
-        o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
-          collector = visit arg, collector
-        }
+        collector = visit o.left, collector
         collector << "))"
         collector
       end
@@ -167,7 +164,7 @@ module ArelExtensions
 
         t = o.iso_format.split('%')
         t.each_with_index {|str, i|
-          if i == 0 && f[0] != '%'
+          if i == 0 && t[0] != '%'
             collector = visit Arel::Nodes.build_quoted(str), collector
           elsif str.length > 0
             if !Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]].blank?
