@@ -20,15 +20,17 @@ end
 puts "[SQL_SERVER_LOADING_DEBUG] Arel::Visitors constants: #{Arel::Visitors.constants.inspect}"
 puts "[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::ENGINE_VISITORS constants: #{Arel::Visitors::ENGINE_VISITORS.inspect}"
 
-puts "ActiveRecord::ConnectionAdapters::SQLServerAdapter loaded #{ActiveRecord::ConnectionAdapters::SQLServerAdapter}" rescue "no ActiveRecord::ConnectionAdapters::SQLServerAdapter"
+puts "ActiveRecord::ConnectionAdapters::SQLServerAdapter loaded #{ActiveRecord::ConnectionAdapters::SQLServerAdapter}" rescue puts "no ActiveRecord::ConnectionAdapters::SQLServerAdapter"
 puts("[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::SQLServer constants: #{Arel::Visitors::SQLServer.inspect}") rescue puts "no Arel::Visitors::SQLServer"
 
 puts Gem.loaded_specs.map{|n,spec| spec }.sort{|x,y| -(x.dependencies.length <=> y.dependencies.length) }.inspect
 
 begin 
-# require('activerecord-sqlserver-adapter/arel/visitors/sqlserver')
+require('arel/visitors/sqlserver')
 puts "ActiveRecord::ConnectionAdapters::SQLServerAdapter loaded #{ActiveRecord::ConnectionAdapters::SQLServerAdapter}" rescue "no ActiveRecord::ConnectionAdapters::SQLServerAdapter"
 puts("[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::SQLServer constants: #{Arel::Visitors::SQLServer.inspect}") rescue puts "no Arel::Visitors::SQLServer"
+rescue LoadError
+	puts "LoadEror"
 rescue => e
- 	"can't load activerecord-sqlserver-adapter/arel/visitors/sqlserver #{e.inspect}"
+ 	puts "can't load activerecord-sqlserver-adapter/arel/visitors/sqlserver #{e.inspect}"
  end
