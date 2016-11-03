@@ -23,6 +23,8 @@ puts "[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::ENGINE_VISITORS constants: #{Ar
 puts "ActiveRecord::ConnectionAdapters::SQLServerAdapter loaded #{ActiveRecord::ConnectionAdapters::SQLServerAdapter}" rescue "no ActiveRecord::ConnectionAdapters::SQLServerAdapter"
 puts("[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::SQLServer constants: #{Arel::Visitors::SQLServer.inspect}") rescue puts "no Arel::Visitors::SQLServer"
 
+puts Gem.loaded_specs.map{|n,spec| spec }.sort{|x,y| -(x.dependencies.length <=> y.dependencies.length) }.inspect
+
 begin 
 # require('activerecord-sqlserver-adapter/arel/visitors/sqlserver')
 puts "ActiveRecord::ConnectionAdapters::SQLServerAdapter loaded #{ActiveRecord::ConnectionAdapters::SQLServerAdapter}" rescue "no ActiveRecord::ConnectionAdapters::SQLServerAdapter"
