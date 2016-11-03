@@ -27,8 +27,17 @@ puts("[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::SQLServer constants: #{Arel::Vi
 
 begin 
 require('arel_sqlserver')
-puts "ActiveRecord::ConnectionAdapters::SQLServerAdapter loaded #{ActiveRecord::ConnectionAdapters::SQLServerAdapter}" rescue "no ActiveRecord::ConnectionAdapters::SQLServerAdapter"
+puts "ActiveRecord::ConnectionAdapters::SQLServerAdapter loaded #{ActiveRecord::ConnectionAdapters::SQLServerAdapter}" rescue puts "no ActiveRecord::ConnectionAdapters::SQLServerAdapter"
 puts("[SQL_SERVER_LOADING_DEBUG] Arel::Visitors::SQLServer constants: #{Arel::Visitors::SQLServer.inspect}") rescue puts "no Arel::Visitors::SQLServer"
+
+puts "[SQL_SERVER_LOADING_DEBUG] VISITORS: " + Arel::Visitors::VISITORS.inspect
+
+if Arel::Visitors::VISITORS['sqlserver'] && Arel::Visitors::VISITORS['sqlserver'] != Arel::Visitors::MSSQL
+	Arel::Visitors::VISITORS['sqlserver'].class_eval do
+  		include ArelExtensions::Visitors::MSSQL
+	end 
+end
+
 rescue LoadError
 	puts "LoadError"
 rescue => e
