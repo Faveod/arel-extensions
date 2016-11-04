@@ -45,6 +45,10 @@ module FakeRecord
       @tables.include? name.to_s
     end
 
+    def data_source_exists? name
+      @tables.include? name.to_s
+    end
+
     def columns name, message = nil
       @columns[name.to_s]
     end
@@ -107,6 +111,10 @@ module FakeRecord
     end
 
     def table_exists? name
+      connection.tables.include? name.to_s
+    end
+
+    def data_source_exists? name
       connection.tables.include? name.to_s
     end
 

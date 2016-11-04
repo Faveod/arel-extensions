@@ -16,13 +16,13 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector << "ISNULL("
-        collector = visit o.left, collector
-        collector << Arel::Visitors::MSSQL::COMMA
-        collector << " 1)"
-        collector
-      end
+#      def visit_ArelExtensions_Nodes_IsNull o, collector
+#        collector << "ISNULL("
+#        collector = visit o.left, collector
+#        collector << Arel::Visitors::MSSQL::COMMA
+#        collector << " 1)"
+#        collector
+#      end
 
       # Deprecated
       def visit_ArelExtensions_Nodes_ConcatOld o, collector
@@ -112,10 +112,10 @@ module ArelExtensions
         when 'wd', 'w'
           collector << "TO_CHAR("
           collector = visit o.right, collector
-          collector << Arel::Visitors::Oracle::COMMA
-          collector = visit Arel::Nodes.build_quoted(Arel::Visitors::Oracle::DATE_MAPPING[o.left]), collector
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector = visit Arel::Nodes.build_quoted(Arel::Visitors::MSSQL::DATE_MAPPING[o.left]), collector
         else
-          collector << "EXTRACT(#{Arel::Visitors::Oracle::DATE_MAPPING[o.left]} FROM "
+          collector << "DATEPART(#{Arel::Visitors::MSSQL::DATE_MAPPING[o.left]} FROM "
           collector = visit o.right, collector
         end
         collector << ")"
@@ -152,12 +152,30 @@ module ArelExtensions
         collector
       end
 
+      # TODO manage 2nd argument
       def visit_ArelExtensions_Nodes_Trim o, collector
         collector << "LTRIM(RTRIM("
         collector = visit o.left, collector
         collector << "))"
         collector
       end
+
+      # TODO manage 2nd argument
+      def visit_ArelExtensions_Nodes_Ltrim o, collector
+        collector << "LTRIM("
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
+
+      # TODO manage 2nd argument
+      def visit_ArelExtensions_Nodes_Rtrim o, collector
+        collector << "RTRIM("
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
+
 
       def visit_ArelExtensions_Nodes_Format o, collector
         collector << "CONCAT("
@@ -166,6 +184,10 @@ module ArelExtensions
         t.each_with_index {|str, i|
           if i == 0 && t[0] != '%'
             collector = visit Arel::Nodes.build_quoted(str), collector
+            if str.length > 1
+              collector << Arel::Visitors::MSSQL::COMMA
+              collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
+            end
           elsif str.length > 0
             if !Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]].blank?
               collector << 'DATEPART('
@@ -198,6 +220,27 @@ module ArelExtensions
         collector
       end
 
+
+      # TODO manage case insensitivity
+      def visit_ArelExtensions_Nodes_IMatches o, collector
+        collector = infix_value o, collector, ' LIKE '
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+
+      # TODO manage case insensitivity
+      def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
+        collector = infix_value o, collector, ' NOT LIKE '
+        if o.escape
+          collector << ' ESCAPE '
+          collector = visit o.escape, collector
+        end
+        collector
+      end
 
       # SQL Server does not know about REGEXP
       def visit_Arel_Nodes_Regexp o, collector

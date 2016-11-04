@@ -1,6 +1,5 @@
 # # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-# require "arel_extensions"
 require "arel_extensions/version"
 
 Gem::Specification.new do |s|
