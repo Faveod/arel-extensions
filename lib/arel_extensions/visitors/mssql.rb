@@ -155,9 +155,9 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        collector << '(LEN(LTRIM(RTRIM('
-        collector = visit o.left.coalesce(' '), collector
-        collector << "))) < 1)"
+        collector << '(LEN(LTRIM(RTRIM(ISNULL('
+        collector = visit o.left, collector
+        collector << ", ''))) = 0)"
         collector
       end
 
