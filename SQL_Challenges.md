@@ -25,3 +25,4 @@ A good way could be to create user defined functions to ensure a total transpare
 - (L/R)TRIM(str, 'x') -> TRIM with arguments
 - Maths Operators on string ('a' <= 'b')
 - GROUP_CONCAT
+- FIND_IN_SET

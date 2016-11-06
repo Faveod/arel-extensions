@@ -1,7 +1,7 @@
 module ArelExtensions
   module Visitors
     module MSSQL
-      Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'D', 'w' => 'IW'}
+      Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'weekday', 'w' => 'week'}
       Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'yy', '%C' => '', '%y' => 'yy', '%m' => 'mm', '%B' =>   '', '%b' => '', '%^b' => '',      # year, month
         '%d' => 'dd', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                               # day, weekday
@@ -18,10 +18,10 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector << "COALESCE("
+        collector << "("
         collector = visit o.left, collector
-        collector << Arel::Visitors::MSSQL::COMMA
-        collector << " 1)"
+#         collector << Arel::Visitors::MSSQL::COMMA
+        collector << " IS NULL)"
         collector
       end
 
@@ -69,7 +69,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
-        collector << "DATE_ADD("
+        collector << "DATEADD("
         collector << o.mssql_datepart(o.right)
         collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.mssql_value(o.right), collector
@@ -143,7 +143,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        collector << 'LENGTH(LTRIM(RTRIM('
+        collector << 'LEN(LTRIM(RTRIM('
         collector = visit o.left, collector
         collector << "))) = 0"
         collector
@@ -162,11 +162,11 @@ module ArelExtensions
             end
           elsif str.length > 0
             if !Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]].blank?
-              collector << 'DATEPART('
+              collector << 'STR(DATEPART('
               collector << Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]]
               collector << Arel::Visitors::MSSQL::COMMA
               collector = visit o.left, collector
-              collector << ')'
+              collector << '))'
               if str.length > 1
                 collector << ' + '
                 collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
