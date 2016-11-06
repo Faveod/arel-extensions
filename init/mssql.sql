@@ -1,10 +1,18 @@
-CREATE FUNCTION [dbo].[TRIM] (@string VARCHAR(MAX))
+USE dbo;
+GO
+IF OBJECT_ID (N'dbo.TRIM', N'FN') IS NOT NULL
+    DROP FUNCTION dbo.TRIM;
+GO
+CREATE FUNCTION dbo.TRIM (@string VARCHAR(MAX))
 RETURNS VARCHAR(MAX)
-AS BEGIN
+AS
+BEGIN
 	RETURN LTRIM(RTRIM(@string));
 END;
-
 GO
+
+-----------------------------
+-- GO
 
 
 -- CREATE FUNCTION FIND_IN_SET(@value VARCHAR(MAX), @list VARCHAR(MAX), @delim VARCHAR(MAX))
@@ -15,9 +23,13 @@ GO
 
 -- GO
 
-CREATE FUNCTION [dbo].[SplitString] (@List NVARCHAR(MAX), @Delim VARCHAR(255))
+IF OBJECT_ID (N'dbo.SplitString', N'FN') IS NOT NULL
+    DROP FUNCTION dbo.SplitString;
+GO
+CREATE FUNCTION dbo.SplitString (@List NVARCHAR(MAX), @Delim VARCHAR(255))
 RETURNS TABLE
-AS BEGIN
+AS
+BEGIN
     RETURN ( SELECT [Value] FROM 
       ( 
         SELECT 

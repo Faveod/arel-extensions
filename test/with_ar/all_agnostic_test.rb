@@ -40,7 +40,13 @@ module ArelExtensions
         end
         if File.exist?("init/#{@env_db}.sql")
           sql = File.read("init/#{@env_db}.sql")
-          @cnx.execute(sql) unless sql.blank?
+          if @env_db == 'mssql'
+            sql.split(/^GO\s*$/).each {|str|
+              @cnx.execute(str.strip) unless str.blank?
+            }
+          else
+            @cnx.execute(sql) unless sql.blank?
+          end
         end
         @cnx.drop_table(:user_tests) rescue nil 
         @cnx.create_table :user_tests do |t|
@@ -222,9 +228,10 @@ module ArelExtensions
 
       def test_trim
         assert_equal "Myung", t(@myung, @name.trim)
+        assert_equal "Myung", t(@myung, @name.trim.ltrim.rtrim)
+        skip "SQL Server does not manage argument for (L/R)TRIM" if @env_db == 'mssql'
         assert_equal "Myun", t(@myung, @name.rtrim("g"))
         assert_equal "yung", t(@myung, @name.ltrim("M"))
-        assert_equal "Myung", t(@myung, @name.trim.ltrim.rtrim)
         assert_equal "yung", t(@myung, (@name + "M").trim("M"))
         skip "Oracle does not accept multi char trim" if @env_db == 'oracle'
         assert_equal "", t(@myung, @name.rtrim(@name))

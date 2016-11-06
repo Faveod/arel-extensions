@@ -6,8 +6,14 @@ A good way could be to create user defined functions to ensure a total transpare
 
 
 ## SQLite
-CEIL and FLOOR
+CEIL and FLOOR without pcre
+FIND_IN_SET
+LOCATE
+REGEXP without extension
+SOUNDEX
 
+## PostgreSQL
+SOUNDEX without extension
 
 ## SQL Server (any version)
 
