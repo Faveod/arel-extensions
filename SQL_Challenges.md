@@ -5,23 +5,23 @@ But here are some of the features we did not succeed to create in some cases. An
 A good way could be to create user defined functions to ensure a total transparent compatibility and to encapsulate these improvements.
 
 
-## SQLite
+## SQLite (without extension)
 - CEIL and FLOOR without pcre
 - FIND_IN_SET
 - LOCATE
-- REGEXP without extension
+- REGEXP
 - SOUNDEX
 
-## PostgreSQL
-- SOUNDEX without extension
+## PostgreSQL (without extension)
+- SOUNDEX
 
 
 ## Oracle
+- Maths Operators on string ('a' <= 'b')
 
 
-
-## SQL Server (any version)
-- REGEXP (without specific extension)
+## SQL Server (any version > 2005, without extension)
+- REGEXP
 - (L/R)TRIM(str, 'x') -> TRIM with arguments
-- VARCHAR comparison ('a' <= 'b')
-
+- Maths Operators on string ('a' <= 'b')
+- GROUP_CONCAT

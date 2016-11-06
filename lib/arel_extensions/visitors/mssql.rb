@@ -1,7 +1,7 @@
 module ArelExtensions
   module Visitors
     module MSSQL
-      Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'D', 'w' => 'IW', }
+      Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'D', 'w' => 'IW'}
       Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'yy', '%C' => '', '%y' => 'yy', '%m' => 'mm', '%B' =>   '', '%b' => '', '%^b' => '',      # year, month
         '%d' => 'dd', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                               # day, weekday
@@ -18,10 +18,10 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector << "ISNULL("
+        collector << "COALESCE("
         collector = visit o.left, collector
         collector << Arel::Visitors::MSSQL::COMMA
-        collector << " 1 = 1)"
+        collector << " 1)"
         collector
       end
 
@@ -48,11 +48,10 @@ module ArelExtensions
         end
       end
 
-
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MySQL::COMMA unless i == 0
+          collector << Arel::Visitors::MSSQL::COMMA unless i == 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -71,63 +70,20 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << "DATE_ADD("
-        collector = visit o.left, collector
-        collector << Arel::Visitors::ToSql::COMMA
+        collector << o.mssql_datepart(o.right)
+        collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.mssql_value(o.right), collector
+        collector << Arel::Visitors::MSSQL::COMMA
+        collector = visit o.left, collector
         collector << ")"
         collector
       end
-
-      # Deprecated
-      def visit_ArelExtensions_Nodes_FormatOld o, collector
-        case o.col_type
-        when :date, :datetime
-          collector << "FORMAT("
-          collector = visit o.left, collector
-          collector << Arel::Visitors::MSSQL::COMMA
-          collector = visit o.right, collector
-          collector << ")"
-        when :integer, :float, :decimal
-          collector << "FORMAT("
-          collector = visit o.left, collector
-          collector << Arel::Visitors::MSSQL::COMMA
-          collector = visit o.right, collector
-          collector << ")"
-        else
-          collector = visit o.left, collector
-        end
-        collector
-      end
-
-      def visit_ArelExtensions_Nodes_DurationOld o, collector
-        #visit left for period
-        if(o.left == "d")
-          collector << "DAY("
-        elsif(o.left == "m")
-          collector << "MONTH("
-        elsif (o.left == "w")
-          collector << "WEEK"
-        elsif (o.left == "y")
-          collector << "YEAR("
-        end
-        #visit right
-        collector = visit o.right, collector
-        collector << ")"
-        collector
-      end
-
 
       def visit_ArelExtensions_Nodes_Duration o, collector
-        case o.left
-        when 'wd', 'w'
-          collector << "TO_CHAR("
-          collector = visit o.right, collector
-          collector << Arel::Visitors::MSSQL::COMMA
-          collector = visit Arel::Nodes.build_quoted(Arel::Visitors::MSSQL::DATE_MAPPING[o.left]), collector
-        else
-          collector << "DATEPART(#{Arel::Visitors::MSSQL::DATE_MAPPING[o.left]} FROM "
-          collector = visit o.right, collector
-        end
+        collector << 'DATEPART('
+        collector << Arel::Visitors::MSSQL::DATE_MAPPING[o.left]
+        collector << Arel::Visitors::MSSQL::COMMA
+        collector = visit o.right, collector
         collector << ")"
         collector
       end
@@ -186,9 +142,15 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Blank o, collector
+        collector << 'LENGTH(LTRIM(RTRIM('
+        collector = visit o.left, collector
+        collector << "))) = 0"
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_Format o, collector
-        collector << "CONCAT("
+        collector << "("
 
         t = o.iso_format.split('%')
         t.each_with_index {|str, i|
@@ -206,26 +168,24 @@ module ArelExtensions
               collector = visit o.left, collector
               collector << ')'
               if str.length > 1
-                collector << Arel::Visitors::MSSQL::COMMA
+                collector << ' + '
                 collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
               end
             end
           end
-          collector << Arel::Visitors::MSSQL::COMMA unless i < (t.length - 1)
+          collector << ' + ' if t[i + 1]
         }
 
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Replace o, collector
         collector << "REPLACE("
-        collector = visit o.expr,collector
-        collector << Arel::Visitors::MSSQL::COMMA
-        collector = visit o.left, collector
- 
-        collector << Arel::Visitors::MSSQL::COMMA
-        collector = visit o.right, collector
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::MSSQL::COMMA unless i == 0
+          collector = visit arg, collector
+        }
         collector << ")"
         collector
       end

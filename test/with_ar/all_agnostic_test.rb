@@ -146,7 +146,7 @@ module ArelExtensions
 
       def test_sum
         if @env_db == 'mssql'
-          assert_equal 68, User.reorder(nil).select((@age.sum + 1).as("res")).take(50).first.res
+          assert_equal 68, User.reorder(nil).select((@age.sum + 1).as("res")).take(50).limit(1).pluck(:res)
           assert_equal 134, User.reorder(nil).select((@age.sum + @age.sum).as("res")).take(50).first.res
           assert_equal 201, User.reorder(nil).select(((@age * 3).sum).as("res")).take(50).first.res
           assert_equal 4009, User.reorder(nil).select(((@age * @age).sum).as("res")).take(50).first.res
@@ -162,6 +162,7 @@ module ArelExtensions
       def test_concat
         assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
         assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
+        skip "TODO: find a way... to do group_concat/listagg in SQL Server" if @env_db == 'mssql'
         if @env_db == 'postgresql'
           assert_equal "Lucas Sophie", t(User.reorder(nil).from(User.select(:name).where(:name => ['Lucas', 'Sophie']).reorder(:name).as('user_tests')), @name.group_concat(' '))
         else
@@ -184,6 +185,7 @@ module ArelExtensions
 
       def test_find_in_set
         skip "Sqlite version can't load extension for find_in_set" if $sqlite && $load_extension_disabled
+        skip "SQL Server does not know about FIND_IN_SET" if @env_db == 'mssql'
         assert_equal 5, t(@neg, @comments & 2)
         assert_equal 0, t(@neg, @comments & 6) # not found
       end
@@ -202,6 +204,7 @@ module ArelExtensions
 
       def test_regexp_not_regexp
         skip "Sqlite version can't load extension for regexp" if $sqlite && $load_extension_disabled
+        skip "SQL Server does not know about REGEXP without extensions" if @env_db == 'mssql'
         assert_equal 1, User.where(@name =~ '^M').count
         assert_equal 6, User.where(@name !~ '^L').count
         assert_equal 1, User.where(@name =~ /^M/).count

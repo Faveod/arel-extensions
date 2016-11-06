@@ -99,9 +99,22 @@ module ArelExtensions
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
-            Arel.sql("INTERVAL '%s' DAY" % v.inspect.to_i)
+            v.inspect.to_i
           elsif @date_type == :datetime
-            Arel.sql("INTERVAL '%s' SECOND" % v.to_i)
+            v.to_i
+          end
+        else
+          v
+        end
+      end
+
+      def mssql_datepart(v = nil)
+        v ||= self.expressions.last
+        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+          if @date_type == :date
+            Arel.sql('day')
+          elsif @date_type == :datetime
+            Arel.sql('second')
           end
         else
           v
