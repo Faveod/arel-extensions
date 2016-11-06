@@ -1,5 +1,3 @@
-USE dbo;
-GO
 IF OBJECT_ID (N'dbo.TRIM', N'FN') IS NOT NULL
     DROP FUNCTION dbo.TRIM;
 GO
