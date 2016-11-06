@@ -150,7 +150,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Blank o, collector
         collector << '(LEN(LTRIM(RTRIM('
-        collector = visit o.left, collector
+        collector = visit o.left.coalesce(''), collector
         collector << "))) < 1)"
         collector
       end
@@ -158,8 +158,10 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Format o, collector
         f = o.iso_format.dup
         fmt = Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
+        puts "[SQL SERVER][FORMAT] #{f.inspect}"
         if Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[fmt]
-          collector << "CONVERT(VARCHAR(#{fmt.length}"
+          collector << 'CONVERT(VARCHAR('
+          collector << fmt.length
           collector << Arel::Visitors::MSSQL::COMMA
           collector = visit o.left, collector
           collector << Arel::Visitors::MSSQL::COMMA
