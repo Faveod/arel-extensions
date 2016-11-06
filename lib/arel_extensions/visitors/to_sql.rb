@@ -153,9 +153,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        collector << 'LENGTH(TRIM('
+        collector << 'LENGTH(TRIM(COALESCE('
         collector = visit o.left, collector
-        collector << ")) = 0"
+        collector << Arel::Visitors::ToSql::COMMA
+        collector = visit Arel::Nodes.build_quoted(''), collector
+        collector << "))) = 0"
         collector
       end
 

@@ -171,7 +171,7 @@ module ArelExtensions
           collector << Arel::Visitors::MSSQL::COMMA
           collector = visit o.left, collector
           collector << Arel::Visitors::MSSQL::COMMA
-          collector << Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[f]
+          collector << Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[f].to_s
           collector << ')'
           collector
         else
