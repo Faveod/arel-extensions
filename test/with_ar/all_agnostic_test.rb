@@ -146,10 +146,10 @@ module ArelExtensions
 
       def test_sum
         if @env_db == 'mssql'
-          assert_equal 68, User.select((@age.sum + 1).as("res")).take(50).limit(1).reorder(nil).pluck(:res)
-          assert_equal 134, User.reorder(nil).select((@age.sum + @age.sum).as("res")).take(50).first.res
-          assert_equal 201, User.reorder(nil).select(((@age * 3).sum).as("res")).take(50).first.res
-          assert_equal 4009, User.reorder(nil).select(((@age * @age).sum).as("res")).take(50).first.res
+          assert_equal 68, User.select((@age.sum + 1).as("res"), User.arel_table[:id].sum).take(50).first.res
+          assert_equal 134, User.reorder(nil).select((@age.sum + @age.sum).as("res"), User.arel_table[:id].sum).take(50).first.res
+          assert_equal 201, User.reorder(nil).select(((@age * 3).sum).as("res"), User.arel_table[:id].sum).take(50).first.res
+          assert_equal 4009, User.reorder(nil).select(((@age * @age).sum).as("res"), User.arel_table[:id].sum).take(50).first.res
         else
           assert_equal 68, User.select((@age.sum + 1).as("res")).take(50).first.res
           assert_equal 134, User.select((@age.sum + @age.sum).as("res")).take(50).first.res
@@ -295,7 +295,7 @@ module ArelExtensions
         assert_equal 5, t(@camille, @created_at.month).to_i
         assert_equal 8, User.where(@created_at.month.eq("05")).count
         #Week
-        assert_equal 21, t(@arthur, @created_at.week).to_i
+        assert_equal (@env_db == 'mssql' ? 22 : 21), t(@arthur, @created_at.week).to_i
         assert_equal 8, User.where(@created_at.month.eq("05")).count
         #Day
         assert_equal 23, t(@laure, @created_at.day).to_i
@@ -346,7 +346,7 @@ module ArelExtensions
 
       def test_wday
         d = Date.new(2016, 6, 26)
-        assert_equal(@env_db == 'oracle' ? 2 : 1, t(@myung, @created_at.wday).to_i) # monday
+        assert_equal(@env_db == 'oracle' || @env_db == 'mssql' ? 2 : 1, t(@myung, @created_at.wday).to_i) # monday
         assert_equal 0, User.select(d.wday).as("res").first.to_i
       end
 

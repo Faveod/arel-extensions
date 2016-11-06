@@ -143,9 +143,9 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        collector << 'LEN(LTRIM(RTRIM('
+        collector << '(LEN(LTRIM(RTRIM('
         collector = visit o.left, collector
-        collector << "))) = 0"
+        collector << "))) = 0)"
         collector
       end
 
@@ -162,11 +162,11 @@ module ArelExtensions
             end
           elsif str.length > 0
             if !Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]].blank?
-              collector << 'STR(DATEPART('
+              collector << 'LTRIM(STR(DATEPART('
               collector << Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]]
               collector << Arel::Visitors::MSSQL::COMMA
               collector = visit o.left, collector
-              collector << '))'
+              collector << ')))'
               if str.length > 1
                 collector << ' + '
                 collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
