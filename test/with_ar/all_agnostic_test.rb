@@ -146,7 +146,7 @@ module ArelExtensions
 
       def test_sum
         if @env_db == 'mssql'
-          assert_equal 68, User.select((@age.sum + 1).as("res"), User.arel_table[:id].sum).take(50).first.res
+          assert_equal 68, User.select((@age.sum + 1).as("res"), User.arel_table[:id].sum).take(50).reorder(@age).first.res
           assert_equal 134, User.reorder(nil).select((@age.sum + @age.sum).as("res"), User.arel_table[:id].sum).take(50).first.res
           assert_equal 201, User.reorder(nil).select(((@age * 3).sum).as("res"), User.arel_table[:id].sum).take(50).first.res
           assert_equal 4009, User.reorder(nil).select(((@age * @age).sum).as("res"), User.arel_table[:id].sum).take(50).first.res

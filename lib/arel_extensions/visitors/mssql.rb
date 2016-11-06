@@ -3,10 +3,16 @@ module ArelExtensions
     module MSSQL
       Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'weekday', 'w' => 'week'}
       Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES = {
-        '%Y' => 'yy', '%C' => '', '%y' => 'yy', '%m' => 'mm', '%B' =>   '', '%b' => '', '%^b' => '',      # year, month
-        '%d' => 'dd', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                               # day, weekday
+        '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' =>   '', '%b' => '', '%^b' => '',      # year, month
+        '%d' => 'DD', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                               # day, weekday
         '%H' => 'hh', '%k' => '', '%I' =>   '', '%l' =>   '', '%P' => '', '%p' => '',                 # hours
         '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
+      }
+      # TODO all others... http://www.sql-server-helper.com/tips/date-formats.aspx
+      Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS = {
+        'YYYY-MM-DD' => 120,
+        'YY-MM-DD'  => 120,
+        'MM/DD/YYYY' => 101
       }
 
       # Math Functions
@@ -145,39 +151,50 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Blank o, collector
         collector << '(LEN(LTRIM(RTRIM('
         collector = visit o.left, collector
-        collector << "))) = 0)"
+        collector << "))) < 1)"
         collector
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
-        collector << "("
-
-        t = o.iso_format.split('%')
-        t.each_with_index {|str, i|
-          if i == 0 && t[0] != '%'
-            collector = visit Arel::Nodes.build_quoted(str), collector
-            if str.length > 1
-              collector << Arel::Visitors::MSSQL::COMMA
-              collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
-            end
-          elsif str.length > 0
-            if !Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]].blank?
-              collector << 'LTRIM(STR(DATEPART('
-              collector << Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]]
-              collector << Arel::Visitors::MSSQL::COMMA
-              collector = visit o.left, collector
-              collector << ')))'
+        f = o.iso_format.dup
+        fmt = Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
+        if Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[fmt]
+          collector << "CONVERT(VARCHAR(#{fmt.length}"
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector = visit o.left, collector
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector << Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[fmt]          
+          collector << ')'
+          collector
+        else
+          collector << "("
+          t = o.iso_format.split('%')
+          t.each_with_index {|str, i|
+            if i == 0 && t[0] != '%'
+              collector = visit Arel::Nodes.build_quoted(str), collector
               if str.length > 1
-                collector << ' + '
+                collector << Arel::Visitors::MSSQL::COMMA
                 collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
               end
+            elsif str.length > 0
+              if !Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]].blank?
+                collector << 'LTRIM(STR(DATEPART('
+                collector << Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]]
+                collector << Arel::Visitors::MSSQL::COMMA
+                collector = visit o.left, collector
+                collector << ')))'
+                if str.length > 1
+                  collector << ' + '
+                  collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
+                end
+              end
             end
-          end
-          collector << ' + ' if t[i + 1]
-        }
+            collector << ' + ' if t[i + 1]
+          }
 
-        collector << ')'
-        collector
+          collector << ')'
+          collector
+        end
       end
 
       def visit_ArelExtensions_Nodes_Replace o, collector
