@@ -12,7 +12,13 @@ module ArelExtensions
       Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS = {
         'YYYY-MM-DD' => 120,
         'YY-MM-DD'  => 120,
-        'MM/DD/YYYY' => 101
+        'MM/DD/YYYY' => 101,
+        'MM-DD-YYYY' => 110,
+        'YYYY/MM/DD' => 111,
+        'DD-MM-YYYY' => 105,
+        'DD-MM-YY'   => 5,
+        'DD.MM.YYYY' => 104,
+        'YYYY-MM-DDTHH:MM:SS:MMM' => 126
       }
 
       # Math Functions
@@ -150,7 +156,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Blank o, collector
         collector << '(LEN(LTRIM(RTRIM('
-        collector = visit o.left.coalesce(''), collector
+        collector = visit o.left.coalesce(' '), collector
         collector << "))) < 1)"
         collector
       end
@@ -160,8 +166,10 @@ module ArelExtensions
         fmt = Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
         puts "[SQL SERVER][FORMAT] #{f.inspect}"
         if Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[fmt]
+          puts "[SQL SERVER][FORMAT] #{Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[fmt].inspect}"
           collector << 'CONVERT(VARCHAR('
           collector << fmt.length
+          collector << ')'
           collector << Arel::Visitors::MSSQL::COMMA
           collector = visit o.left, collector
           collector << Arel::Visitors::MSSQL::COMMA
