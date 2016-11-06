@@ -153,9 +153,9 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        collector << '('
+        collector << 'LENGTH(TRIM('
         collector = visit o.left, collector
-        collector << " = '')"
+        collector << ")) = 0"
         collector
       end
 
@@ -271,7 +271,7 @@ module ArelExtensions
         collector << "DATE_ADD("
         collector = visit o.left, collector
         collector << Arel::Visitors::ToSql::COMMA
-        collector = visit o.right, collector
+        collector = visit o.sqlite_value(o.right), collector
         collector << ")"
         collector
       end

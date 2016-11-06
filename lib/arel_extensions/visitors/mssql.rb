@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
     module MSSQL
+      Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'D', 'w' => 'IW', }
       Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'yy', '%C' => '', '%y' => 'yy', '%m' => 'mm', '%B' =>   '', '%b' => '', '%^b' => '',      # year, month
         '%d' => 'dd', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                               # day, weekday
@@ -16,13 +17,13 @@ module ArelExtensions
         collector
       end
 
-#      def visit_ArelExtensions_Nodes_IsNull o, collector
-#        collector << "ISNULL("
-#        collector = visit o.left, collector
-#        collector << Arel::Visitors::MSSQL::COMMA
-#        collector << " 1)"
-#        collector
-#      end
+      def visit_ArelExtensions_Nodes_IsNull o, collector
+        collector << "ISNULL("
+        collector = visit o.left, collector
+        collector << Arel::Visitors::MSSQL::COMMA
+        collector << " 1 = 1)"
+        collector
+      end
 
       # Deprecated
       def visit_ArelExtensions_Nodes_ConcatOld o, collector
@@ -64,6 +65,15 @@ module ArelExtensions
         collector = visit o.left, collector
         collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.right, collector
+        collector << ")"
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_DateAdd o, collector
+        collector << "DATE_ADD("
+        collector = visit o.left, collector
+        collector << Arel::Visitors::ToSql::COMMA
+        collector = visit o.mssql_value(o.right), collector
         collector << ")"
         collector
       end
@@ -254,6 +264,22 @@ module ArelExtensions
         collector << "NOT LIKE '%#{o.right}%'"
         collector
       end
+
+      # TODO
+      def visit_ArelExtensions_Nodes_GroupConcat o, collector
+        collector << "(LISTAGG("
+        collector = visit o.left, collector
+        if o.right
+          collector << Arel::Visitors::Oracle::COMMA
+          collector = visit o.right, collector
+        end
+        collector << ") WITHIN GROUP (ORDER BY "
+        collector = visit o.left, collector
+        collector << "))"
+        collector
+      end
+
+
 
     end
   end

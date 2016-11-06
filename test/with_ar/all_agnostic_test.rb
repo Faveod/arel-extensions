@@ -184,6 +184,7 @@ module ArelExtensions
 
       def test_string_comparators
         skip "Oracle can't use math operators to compare strings" if @env_db == 'oracle' # use GREATEST ?
+        skip "SQL Server can't use math operators to compare strings" if @env_db == 'mssql' # use GREATEST ?
         if @env_db == 'postgresql' # may return real boolean
           assert t(@neg, @name >= 'Mest') == true || t(@neg, @name >= 'Mest') == 't' # depends of ar version
           assert t(@neg, @name <= (@name + 'Z')) == true || t(@neg, @name <= (@name + 'Z')) == 't'
