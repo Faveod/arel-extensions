@@ -1,8 +1,8 @@
 CREATE FUNCTION [dbo].[TRIM] (@string VARCHAR(MAX))
 RETURNS VARCHAR(MAX)
-AS -- BEGIN
+AS BEGIN
 	RETURN LTRIM(RTRIM(@string));
--- END;
+END;
 
 GO
 
@@ -17,7 +17,7 @@ GO
 
 CREATE FUNCTION [dbo].[SplitString] (@List NVARCHAR(MAX), @Delim VARCHAR(255))
 RETURNS TABLE
-AS
+AS BEGIN
     RETURN ( SELECT [Value] FROM 
       ( 
         SELECT 
@@ -29,4 +29,4 @@ AS
           AND SUBSTRING(@Delim + @List, [Number], LEN(@Delim)) = @Delim
       ) AS y
     );
-
+END;
