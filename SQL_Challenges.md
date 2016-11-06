@@ -6,18 +6,22 @@ A good way could be to create user defined functions to ensure a total transpare
 
 
 ## SQLite
-CEIL and FLOOR without pcre
-FIND_IN_SET
-LOCATE
-REGEXP without extension
-SOUNDEX
+- CEIL and FLOOR without pcre
+- FIND_IN_SET
+- LOCATE
+- REGEXP without extension
+- SOUNDEX
 
 ## PostgreSQL
-SOUNDEX without extension
+- SOUNDEX without extension
+
+
+## Oracle
+
+
 
 ## SQL Server (any version)
-
-REGEXP (without specific extension)
-(L/R)TRIM(str, 'x') -> TRIM with arguments
-VARCHAR comparison ('a' <= 'b')
+- REGEXP (without specific extension)
+- (L/R)TRIM(str, 'x') -> TRIM with arguments
+- VARCHAR comparison ('a' <= 'b')
 
