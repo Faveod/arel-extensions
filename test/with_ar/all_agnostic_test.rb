@@ -163,6 +163,7 @@ module ArelExtensions
       def test_concat
         assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
         assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
+        assert_equal 'Test Laure', t(@laure, Arel::Nodes.build_quoted('Test ') + @name)
         skip "TODO: find a way... to do group_concat/listagg in SQL Server" if @env_db == 'mssql'
         if @env_db == 'postgresql'
           assert_equal "Lucas Sophie", t(User.reorder(nil).from(User.select(:name).where(:name => ['Lucas', 'Sophie']).reorder(:name).as('user_tests')), @name.group_concat(' '))

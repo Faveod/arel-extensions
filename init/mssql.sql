@@ -2,11 +2,27 @@ IF OBJECT_ID (N'dbo.TRIM', N'FN') IS NOT NULL
     DROP FUNCTION dbo.TRIM;
 GO
 CREATE FUNCTION dbo.TRIM (@string VARCHAR(MAX))
-RETURNS VARCHAR(MAX)
-AS
+RETURNS VARCHAR(MAX) AS
 BEGIN
 	RETURN LTRIM(RTRIM(@string));
 END;
+GO
+
+IF OBJECT_ID (N'dbo.TrimChar', N'FN') IS NOT NULL
+    DROP FUNCTION dbo.TrimChar;
+GO
+CREATE FUNCTION dbo.TrimChar(@value nvarchar(4000), @c nchar(1))
+RETURNS nvarchar(4000) AS
+BEGIN
+	set @value = REPLACE(@value, ' ', '~')	-- replace all spaces with an unused character
+	set @value = REPLACE(@value, @c, ' ')	-- replace the character to trim with a space
+	set @value = LTRIM(RTRIM(@value))		-- trim
+	set @value = REPLACE(@value, ' ', @c)	-- replace back all spaces with the trimmed character
+	set @value = REPLACE(@value, '~', ' ')	-- replace back all never-used characters with a space
+
+	RETURN @value
+END;
+
 GO
 
 -----------------------------

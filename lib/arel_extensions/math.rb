@@ -11,6 +11,7 @@ module ArelExtensions
     #String and others (convert in string)  allows you to concatenate 2 or more strings together.
     #Date and integer adds or subtracts a specified time interval from a date.
     def +(other)
+      return ArelExtensions::Nodes::Concat.new [self, other] if self.is_a?(Arel::Nodes::Quoted)
       arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
       if arg == :integer
         other = other.to_i if other.is_a?(String)

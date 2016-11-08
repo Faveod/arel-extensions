@@ -164,9 +164,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Format o, collector
         f = o.iso_format.dup
         Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
-#        puts "[SQL SERVER][FORMAT] #{f.inspect}"
         if Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[f]
-#          puts "[SQL SERVER][FORMAT][2] #{Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[f].inspect}"
           collector << "CONVERT(VARCHAR(#{f.length})"
           collector << Arel::Visitors::MSSQL::COMMA
           collector = visit o.left, collector
