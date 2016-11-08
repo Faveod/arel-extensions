@@ -67,7 +67,8 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+        # TODO
+        if false && (o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time)
           collector << 'TO_CHAR(TRUNC(sysdate) + ('
           collector = visit o.left, collector
           collector << ' - '
