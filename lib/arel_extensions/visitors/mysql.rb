@@ -110,9 +110,9 @@ module ArelExtensions
         else
           collector << "DATEDIFF("
         end
-        collector = visit o.left, collector
-        collector << Arel::Visitors::MySQL::COMMA
         collector = visit o.right, collector
+        collector << Arel::Visitors::MySQL::COMMA
+        collector = visit o.left, collector
         collector << ")"
         collector
       end

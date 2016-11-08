@@ -104,11 +104,11 @@ module ArelExtensions
         else
           collector << "DATEDIFF('day', "
         end
-        collector = visit o.left, collector
-        collector << (o.left_node_type == :date ? '::date' : '::timestamp')
-        collector << Arel::Visitors::PostgreSQL::COMMA
         collector = visit o.right, collector
         collector << (o.right_node_type == :date ? '::date' : '::timestamp')
+        collector << Arel::Visitors::PostgreSQL::COMMA
+        collector = visit o.left, collector
+        collector << (o.left_node_type == :date ? '::date' : '::timestamp')
         collector << ")"
         collector
       end

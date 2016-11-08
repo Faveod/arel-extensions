@@ -77,9 +77,9 @@ module ArelExtensions
           collector << "DATEDIFF(day"
         end
         collector << Arel::Visitors::MSSQL::COMMA
-        collector = visit o.left, collector
-        collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.right, collector
+        collector << Arel::Visitors::MSSQL::COMMA
+        collector = visit o.left, collector
         collector << ")"
         collector
       end
