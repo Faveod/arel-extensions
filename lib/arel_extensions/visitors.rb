@@ -20,4 +20,5 @@ begin
 	end
 rescue LoadError
 rescue => e
+	e
 end
