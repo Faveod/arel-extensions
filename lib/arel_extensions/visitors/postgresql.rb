@@ -106,7 +106,7 @@ module ArelExtensions
         end
         collector = visit o.left, collector
         collector << (o.left_node_type == :date ? '::date' : '::timestamp')
-        collector << " - "
+        collector << Arel::Visitors::PostgreSQL::COMMA
         collector = visit o.right, collector
         collector << (o.right_node_type == :date ? '::date' : '::timestamp')
         collector << ")"
