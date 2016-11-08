@@ -100,7 +100,7 @@ module ArelExtensions
         when String
           Arel::Nodes.build_quoted(Time.parse(object), self)
         when Date
-          Arel::Nodes.build_quoted(object.to_time, self)
+          Arel::Nodes.build_quoted(Time.utc(object.year, object.month, object.day, 0, 0, 0), self)
         else
           raise(ArgumentError, "#{object.class} can not be converted to Datetime")
         end

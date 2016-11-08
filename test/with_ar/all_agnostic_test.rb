@@ -296,7 +296,7 @@ module ArelExtensions
         assert_equal 5, t(@camille, @created_at.month).to_i
         assert_equal 8, User.where(@created_at.month.eq("05")).count
         #Week
-        assert_equal (@env_db == 'mssql' ? 22 : 21), t(@arthur, @created_at.week).to_i
+        assert_equal(@env_db == 'mssql' ? 22 : 21, t(@arthur, @created_at.week).to_i)
         assert_equal 8, User.where(@created_at.month.eq("05")).count
         #Day
         assert_equal 23, t(@laure, @created_at.day).to_i

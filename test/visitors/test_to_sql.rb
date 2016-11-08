@@ -150,7 +150,7 @@ module ArelExtensions
         c = @table[:name]
         compile(
           (c.length / 42).round(2).floor > (@table[:updated_at] - Date.new(2000, 3, 31)).abs.ceil
-        ).must_be_like %{FLOOR(ROUND(LENGTH("users"."name") / 42, 2)) > CEIL(ABS(TIMEDIFF("users"."updated_at", '2000-03-31 00:00:00 +0200')))}
+        ).must_be_like %{FLOOR(ROUND(LENGTH("users"."name") / 42, 2)) > CEIL(ABS(TIMEDIFF("users"."updated_at", '2000-03-31 00:00:00 UTC')))}
       end
 
     end
