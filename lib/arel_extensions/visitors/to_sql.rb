@@ -194,7 +194,11 @@ module ArelExtensions
       end
 
   	  def visit_ArelExtensions_Nodes_DateDiff o, collector
-  	    collector << "DATEDIFF("
+        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+          collector << 'TIMEDIFF('
+        else
+          collector << "DATEDIFF("
+        end
   	    collector = visit o.left, collector
   	    collector << Arel::Visitors::ToSql::COMMA
   	    collector = visit o.right, collector

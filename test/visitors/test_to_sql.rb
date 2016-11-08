@@ -111,7 +111,7 @@ module ArelExtensions
 
       it "should diff date col and datetime col with AS" do
         sql = compile((@table[:updated_at] - @table[:created_at]).as('new_name'))
-        sql.must_match %{DATEDIFF("users"."updated_at", "users"."created_at") AS new_name}
+        sql.must_match %{TIMEDIFF("users"."updated_at", "users"."created_at") AS new_name}
       end
 
       it "should diff between time values" do
@@ -150,7 +150,7 @@ module ArelExtensions
         c = @table[:name]
         compile(
           (c.length / 42).round(2).floor > (@table[:updated_at] - Date.new(2000, 3, 31)).abs.ceil
-        ).must_be_like %{FLOOR(ROUND(LENGTH("users"."name") / 42, 2)) > CEIL(ABS(DATEDIFF("users"."updated_at", '2000-03-31')))}
+        ).must_be_like %{FLOOR(ROUND(LENGTH("users"."name") / 42, 2)) > CEIL(ABS(TIMEDIFF("users"."updated_at", '2000-03-31 00:00:00 +0200')))}
       end
 
     end

@@ -45,10 +45,17 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        collector << " julianday("
-        collector = visit o.left, collector
-        collector << ")- julianday("
-        collector = visit o.right, collector
+        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+          collector << "strftime('%s', "
+          collector = visit o.left, collector
+          collector << ") - strftime('%s', "
+          collector = visit o.right, collector
+        else
+          collector << "julianday("
+          collector = visit o.left, collector
+          collector << ") - julianday("
+          collector = visit o.right, collector
+        end
         collector << ")"
         collector
       end

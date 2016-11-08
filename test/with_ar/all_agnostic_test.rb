@@ -73,7 +73,7 @@ module ArelExtensions
       def setup
         d = Date.new(2016, 5, 23)
         setup_db
-        u = User.create :age => 5, :name => "Lucas", :created_at => d, :score => 20.16, :updated_at => Time.utc(2014, 3, 3, 12, 42)
+        u = User.create :age => 5, :name => "Lucas", :created_at => d, :score => 20.16, :updated_at => Time.utc(2014, 3, 3, 12, 42, 0)
         @lucas = User.where(:id => u.id)
         u = User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
         @sophie = User.where(:id => u.id)
@@ -273,8 +273,6 @@ module ArelExtensions
         end
       end
 
-
-
       # Comparators
       def test_number_comparator
         assert_equal 2, User.where(@age < 6).count
@@ -304,6 +302,13 @@ module ArelExtensions
         assert_equal 23, t(@laure, @created_at.day).to_i
         assert_equal 0, User.where(@created_at.day.eq("05")).count
       end
+
+      def test_datetime_diff
+        assert_equal 0, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 42)).to_i
+        assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18))
+        assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
+      end
+
 
       def test_cast_types
         skip "not implemented yet"

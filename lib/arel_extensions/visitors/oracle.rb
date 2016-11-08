@@ -68,13 +68,13 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         collector << '('
-        collector << 'TO_DATE(' unless o.left_node_type == :date || o.left_node_type == :datetime
+        collector << 'TO_DATE(' unless o.left_node_type == :date
         collector = visit o.left, collector
-        collector << ')' unless o.left_node_type == :date || o.left_node_type == :datetime
+        collector << ')' unless o.left_node_type == :date
         collector << " - "
-        collector << 'TO_DATE(' unless o.right_node_type == :date || o.right_node_type == :datetime
+        collector << 'TO_DATE(' unless o.right_node_type == :date
         collector = visit o.right, collector
-        collector << ')' unless o.right_node_type == :date || o.right_node_type == :datetime
+        collector << ')' unless o.right_node_type == :date
         collector << ')'
         collector
       end
