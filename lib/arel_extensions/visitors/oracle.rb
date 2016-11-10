@@ -67,23 +67,17 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        # TODO
-        if false && (o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time)
-          collector << 'TO_CHAR(TRUNC(sysdate) + ('
-          collector = visit o.left, collector
-          collector << ' - '
-          collector = visit o.right, collector
-          collector << "), 'SS') SECONDS"
-        else
-          collector << '('
-          collector << 'TO_DATE(' unless o.left_node_type == :date
-          collector = visit o.left, collector
-          collector << ')' unless o.left_node_type == :date
-          collector << " - "
-          collector << 'TO_DATE(' unless o.right_node_type == :date
-          collector = visit o.right, collector
-          collector << ')' unless o.right_node_type == :date
-          collector << ')'
+        collector << '('
+        collector << 'TO_DATE(' unless o.left_node_type == :date
+        collector = visit o.left, collector
+        collector << ')' unless o.left_node_type == :date
+        collector << " - "
+        collector << 'TO_DATE(' unless o.right_node_type == :date
+        collector = visit o.right, collector
+        collector << ')' unless o.right_node_type == :date
+        collector << ')'
+        if (o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time)
+          collector << ' * 86400' # convert to seconds
         end
         collector
       end
