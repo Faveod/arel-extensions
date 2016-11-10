@@ -64,12 +64,13 @@ module ArelExtensions
       end
 
       it "should diff date col and datetime col" do
-        compile(@table[:created_at] - @table[:updated_at]).must_match %{"users"."created_at" - TO_DATE("users"."updated_at")}
+        compile(@table[:created_at] - @table[:updated_at]).must_match %{"users"."created_at" - "users"."updated_at"}
       end
 
       it "should diff date col and datetime col with AS" do
         sql = compile((@table[:updated_at] - @table[:created_at]).as('new_name'))
-        sql.must_be_like %{(TO_DATE("users"."updated_at") - "users"."created_at") * 86400 AS new_name}
+#        sql.must_be_like %{(TO_DATE("users"."updated_at") - "users"."created_at") * 86400 AS new_name}
+        sql.must_be_like %{("users"."updated_at" - "users"."created_at") * CASE WHEN (TRUNC("users"."updated_at", 'DDD') = "users"."updated_at") THEN 1 ELSE 86400 END AS new_name}
       end
 
       it "should diff between time values" do
@@ -82,7 +83,7 @@ module ArelExtensions
       it "should diff between time values and time col" do
         d1 = DateTime.new(2015,6,2)
         sql = compile(ArelExtensions::Nodes::DateDiff.new([d1, @table[:updated_at]]))
-        sql.must_match %{TO_DATE('2015-06-02') - TO_DATE("users"."updated_at")}
+        sql.must_match %{TO_DATE('2015-06-02') - "users"."updated_at"}
       end
 
       it "should accept operators on dates with numbers" do

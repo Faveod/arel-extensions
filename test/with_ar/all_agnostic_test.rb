@@ -301,6 +301,17 @@ module ArelExtensions
         #Day
         assert_equal 23, t(@laure, @created_at.day).to_i
         assert_equal 0, User.where(@created_at.day.eq("05")).count
+
+        skip "manage DATE" if @env_db == 'oracle'
+        #Hour
+        assert_equal 0, t(@laure, @created_at.hour).to_i
+        assert_equal 12, t(@lucas, @updated_at.hour).to_i
+        #Minute
+        assert_equal 0, t(@laure, @created_at.minute).to_i
+        assert_equal 42, t(@lucas, @updated_at.minute).to_i
+        #Second
+        assert_equal 0, t(@laure, @created_at.second).to_i
+        assert_equal 0, t(@lucas, @updated_at.second).to_i
       end
 
       def test_datetime_diff
