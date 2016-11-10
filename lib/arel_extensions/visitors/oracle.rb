@@ -1,7 +1,7 @@
 module ArelExtensions
   module Visitors
     Arel::Visitors::Oracle.class_eval do
-      Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'IW', 'y' => 'YEAR', 'wd' => 'D'}
+      Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'IW', 'y' => 'YEAR', 'wd' => 'D', 'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'}
       Arel::Visitors::Oracle::DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'IYYY', '%C' => 'CC', '%y' => 'YY', '%m' => 'MM', '%B' => 'Month', '%^B' => 'MONTH', '%b' => 'Mon', '%^b' => 'MON',
         '%d' => 'DD', '%e' => 'FMDD', '%j' => 'DDD', '%w' => '', '%A' => 'Day',                             # day, weekday
@@ -66,6 +66,7 @@ module ArelExtensions
         collector
       end
 
+      # :date is not possible in Oracle since this type does not really exist
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         collector << '('
         collector << 'TO_DATE(' unless o.left_node_type == :date
@@ -77,8 +78,14 @@ module ArelExtensions
         collector << ')' unless o.right_node_type == :date
         collector << ')'
         if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-          puts "[DATEDIFF] #{o.left.inspect} -- /#{o.left_node_type.inspect}/ #{Arel::Table.engine.connection.schema_cache.columns_hash(o.left.relation.table_name)[o.left.name.to_s].inspect} "
-          collector << ' * 86400' # converts to seconds
+#          puts "[DATEDIFF] #{o.left.inspect} -- /#{o.left_node_type.inspect}/ #{Arel::Table.engine.connection.schema_cache.columns_hash(o.left.relation.table_name)[o.left.name.to_s].inspect} "
+          collector << ' * CASE WHEN ('
+          collector = visit o.left.hour, collector
+          collector << ' + '
+          collector = visit o.left.minute, collector
+          collector << ' + '
+          collector = visit o.left.second, collector
+          collector << ' = 0) THEN 86400 ELSE 1 END' # converts to seconds
         end
         collector
       end

@@ -1,7 +1,7 @@
 module ArelExtensions
   module Visitors
     module MSSQL
-      Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'weekday', 'w' => 'week'}
+      Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'weekday', 'w' => 'week', 'h' => 'hour', 'mn' => 'minute', 's' => 'second'}
       Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' =>   '', '%b' => '', '%^b' => '',      # year, month
         '%d' => 'DD', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                               # day, weekday

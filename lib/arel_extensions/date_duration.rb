@@ -27,6 +27,18 @@ module ArelExtensions
       ArelExtensions::Nodes::Duration.new 'wd', self
     end
 
+    def hour
+      ArelExtensions::Nodes::Duration.new "h", self
+    end
+
+    def minute
+      ArelExtensions::Nodes::Duration.new "mn", self
+    end
+
+    def second
+      ArelExtensions::Nodes::Duration.new "s", self
+    end
+
     def format(tpl)
       ArelExtensions::Nodes::Format.new [self, tpl]
     end
