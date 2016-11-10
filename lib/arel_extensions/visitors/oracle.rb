@@ -68,24 +68,29 @@ module ArelExtensions
 
       # :date is not possible in Oracle since this type does not really exist
       def visit_ArelExtensions_Nodes_DateDiff o, collector
+        lc = o.left_node_type == :ruby_date || o.left_node_type == :ruby_time
+        rc = o.right_node_type == :ruby_date || o.right_node_type == :ruby_time
         collector << '('
-        collector << 'TO_DATE(' unless o.left_node_type == :date
+        collector << 'TO_DATE(' if lc
         collector = visit o.left, collector
-        collector << ')' unless o.left_node_type == :date
+        collector << ')' if lc
         collector << " - "
-        collector << 'TO_DATE(' unless o.right_node_type == :date
+        collector << 'TO_DATE(' if rc
         collector = visit o.right, collector
-        collector << ')' unless o.right_node_type == :date
+        collector << ')' if rc
         collector << ')'
         if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
 #          puts "[DATEDIFF] #{o.left.inspect} -- /#{o.left_node_type.inspect}/ #{Arel::Table.engine.connection.schema_cache.columns_hash(o.left.relation.table_name)[o.left.name.to_s].inspect} "
-          collector << ' * CASE WHEN ('
-          collector = visit o.left.hour, collector
-          collector << ' + '
-          collector = visit o.left.minute, collector
-          collector << ' + '
-          collector = visit o.left.second, collector
-          collector << ' = 0) THEN 86400 ELSE 1 END' # converts to seconds
+          collector << ' * CASE WHEN (TRUNC('
+          collector << 'TO_DATE(' if lc
+          collector = visit o.left, collector
+          collector << ')' if lc
+          collector << Arel::Visitors::Oracle::COMMA
+          collector << "'DDD') = "
+          collector << 'TO_DATE(' if lc
+          collector = visit o.left, collector
+          collector << ')' if lc
+          collector << ') THEN 86400 ELSE 1 END' # converts to seconds
         end
         collector
       end
