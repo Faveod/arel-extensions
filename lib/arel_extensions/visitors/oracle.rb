@@ -76,8 +76,9 @@ module ArelExtensions
         collector = visit o.right, collector
         collector << ')' unless o.right_node_type == :date
         collector << ')'
-        if (o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time)
-          collector << ' * 86400' # convert to seconds
+        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+          puts "[DATEDIFF] #{o.left.inspect} -- /#{o.left_node_type.inspect}/ #{Arel::Table.engine.connection.schema_cache.columns_hash(o.left.relation.table_name)[o.left.name.to_s].inspect} "
+          collector << ' * 86400' # converts to seconds
         end
         collector
       end
