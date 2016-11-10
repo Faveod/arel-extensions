@@ -102,7 +102,7 @@ module ArelExtensions
         collector << Arel::Visitors::MSSQL::COMMA
         collector << 'CONVERT(datetime,' if conv
         collector = visit o.right, collector
-        colelctor << ')' if conv
+        collector << ')' if conv
         collector << ")"
         collector
       end
