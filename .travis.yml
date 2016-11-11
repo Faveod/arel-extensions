@@ -1,6 +1,9 @@
 language: ruby
 sudo: required
-cache: bundler
+cache:
+  bundler: true
+  directories:
+  - $ORACLE_DOWNLOAD_DIR
 before_install:
 - chmod +x .travis/oracle/download.sh
 - chmod +x .travis/oracle/install.sh
@@ -26,7 +29,7 @@ script:
 - bundle exec rake test:sqlite
 - bundle exec rake test:mysql
 - bundle exec rake test:postgresql
-# - bundle exec rake test:oracle # service unavailable
+- bundle exec rake test:oracle # service unavailable
 env:
   global:
   - JRUBY_OPTS='--dev -J-Xmx1024M'
