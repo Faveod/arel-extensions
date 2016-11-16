@@ -8,5 +8,14 @@ module ArelExtensions
         	super expr
     	end
     end
+
+    class NotBlank < Function
+    	@@return_type = :boolean
+
+    	def initialize expr
+        	super expr
+    	end
+    end
+
   end
 end

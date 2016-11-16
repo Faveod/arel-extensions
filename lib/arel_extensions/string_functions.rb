@@ -83,5 +83,9 @@ module ArelExtensions
       ArelExtensions::Nodes::Blank.new [self]
     end
 
+    def not_blank
+      ArelExtensions::Nodes::NotBlank.new [self]
+    end
+
   end
 end

@@ -126,7 +126,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "DBMS_RANDOM.VALUE("
-        if(o.left != nil && o.right != nil)
+        if o.left && o.right
           collector = visit o.left, collector
           collector << Arel::Visitors::Oracle::COMMA
           collector = visit o.right, collector
@@ -205,6 +205,13 @@ module ArelExtensions
         collector << '(CASE WHEN ('
         collector = visit o.left, collector
         collector << " = '') THEN 1 ELSE 0 END)"
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_NotBlank o, collector
+        collector << '(CASE WHEN ('
+        collector = visit o.left, collector
+        collector << " = '') THEN 0 ELSE 1 END)"
         collector
       end
 

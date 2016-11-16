@@ -245,8 +245,10 @@ module ArelExtensions
       def test_blank
         if @env_db == 'postgresql'
           assert_includes [false, 'f'], t(@myung, @name.blank) # depends of adapter
+          assert_includes [true, 't'], t(@myung, @name.not_blank) # depends of adapter
         else
           assert_equal 0, t(@myung, @name.blank)
+          assert_equal 1, t(@myung, @name.not_blank)
         end
         skip "Oracle requires cast for CLOB" if @env_db == 'oracle' # comments is CLOB, CHAR expected
         if @env_db == 'postgresql'

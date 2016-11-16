@@ -168,6 +168,13 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_NotBlank o, collector
+        collector << 'CASE WHEN LEN(LTRIM(RTRIM(ISNULL('
+        collector = visit o.left, collector
+        collector << ", '')))) = 0 THEN 0 ELSE 1 END"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_Format o, collector
         f = o.iso_format.dup
         Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }

@@ -161,6 +161,16 @@ module ArelExtensions
         collector
       end
 
+
+      def visit_ArelExtensions_Nodes_NotBlank o, collector
+        collector << 'LENGTH(TRIM(COALESCE('
+        collector = visit o.left, collector
+        collector << Arel::Visitors::ToSql::COMMA
+        collector = visit Arel::Nodes.build_quoted(''), collector
+        collector << "))) > 0"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_Format o, collector
         case o.col_type
         when :date, :datetime
