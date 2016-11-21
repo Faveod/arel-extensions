@@ -31,9 +31,9 @@ GO
 CREATE FUNCTION dbo.FIND_IN_SET(@value VARCHAR(MAX), @list VARCHAR(MAX), @delim VARCHAR(MAX))
 RETURNS VARCHAR(MAX) AS
 BEGIN
-	IF @delim IS NULL
+	IF (@delim IS NULL)
 		set @delim = ',';
-	RETURN (@delim || @list || @delim) LIKE ('%' || @delim || @value || @delim || '%');
+	RETURN CONCAT(@delim, @list, @delim) LIKE CONCAT('%', @delim, @value, @delim, '%');
 END;
 GO
 

@@ -246,8 +246,8 @@ module ArelExtensions
           assert_includes [false, 'f'], t(@myung, @name.blank) # depends of adapter
           assert_includes [true, 't'], t(@myung, @name.not_blank) # depends of adapter
         elsif @env_db == 'oracle'
-          assert_equal 'Myung', t(@myung, @name.blank.coalesce(42))
-          assert_equal 42, t(@myung, @name.not_blank.coalesce(42))
+          assert_equal 'Myung', t(@myung, @name.blank.coalesce('42'))
+          assert_equal '42', t(@myung, @name.not_blank.coalesce('42'))
         else
           assert_equal 0, t(@myung, @name.blank)
           assert_equal 1, t(@myung, @name.not_blank)
