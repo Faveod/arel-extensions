@@ -22,7 +22,6 @@ A good way could be to create user defined functions to ensure a total transpare
 
 ## SQL Server (any version > 2005, without extension)
 - REGEXP
-- (L/R)TRIM(str, 'x') -> TRIM with arguments
 - Maths Operators on string ('a' <= 'b')
 - GROUP_CONCAT
 - FIND_IN_SET

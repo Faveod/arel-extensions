@@ -22,22 +22,20 @@ BEGIN
 
 	RETURN @value
 END;
-
 GO
 
------------------------------
--- GO
 
 IF OBJECT_ID (N'dbo.FIND_IN_SET', N'FN') IS NOT NULL
     DROP FUNCTION dbo.FIND_IN_SET;
 GO
--- CREATE FUNCTION dbo.FIND_IN_SET(@value VARCHAR(MAX), @list VARCHAR(MAX), @delim VARCHAR(MAX))
---	RETURNS VARCHAR(MAX)
---	AS BEGIN
---		RETURN LTRIM(RTRIM(@value));
---	END;
-
--- GO
+CREATE FUNCTION dbo.FIND_IN_SET(@value VARCHAR(MAX), @list VARCHAR(MAX), @delim VARCHAR(MAX))
+RETURNS VARCHAR(MAX) AS
+BEGIN
+	IF @delim IS NULL
+		set @delim = ',';
+	RETURN (@delim || @list || @delim) LIKE ('%' || @delim || @value || @delim || '%');
+END;
+GO
 
 --IF OBJECT_ID (N'dbo.SplitString', N'FN') IS NOT NULL
 --    DROP FUNCTION dbo.SplitString;

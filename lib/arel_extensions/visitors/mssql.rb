@@ -254,6 +254,16 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_FindInSet o, collector
+        collector << "dbo.FIND_IN_SET("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::MSSQL::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
 
       # TODO manage case insensitivity
       def visit_ArelExtensions_Nodes_IMatches o, collector

@@ -202,13 +202,13 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        collector = visit o.left.ltrim.rtrim.eq(nil), collector
+        collector = visit o.left.ltrim.rtrim, collector
         collector
       end
 
       def visit_ArelExtensions_Nodes_NotBlank o, collector
 #        collector << '(CASE WHEN ('
-        collector = visit o.left.ltrim.rtrim.not_eq(nil), collector
+        collector = visit o.left.ltrim.rtrim, collector
 #        collector << " = '') THEN 0 ELSE 1 END)"
         collector
       end
