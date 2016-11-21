@@ -33,7 +33,7 @@ RETURNS VARCHAR(MAX) AS
 BEGIN
 	IF (@delim IS NULL)
 		set @delim = ',';
-	RETURN CONCAT(@delim, @list, @delim) LIKE CONCAT('%', @delim, @value, @delim, '%');
+	RETURN (CONCAT(@delim, @list, @delim) LIKE CONCAT('%', @delim, @value, @delim, '%'));
 END;
 GO
 
