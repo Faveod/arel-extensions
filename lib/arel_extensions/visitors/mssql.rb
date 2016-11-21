@@ -137,14 +137,15 @@ module ArelExtensions
         collector
       end
 
-      # TODO manage 2nd argument
       def visit_ArelExtensions_Nodes_Trim o, collector
         if o.right
-          collector << 'dbo.TrimChar('
+          collector << "REPLACE(REPLACE(LTRIM(RTRIM(REPLACE(REPLACE("
           collector = visit o.left, collector
-          collector << Arel::Visitors::MSSQL::COMMA
+          collector << ", ' ', '~'), "
           collector = visit o.right, collector
-          collector << ')'
+          collector << ", ' '))), ' ', "
+          collector = visit o.right, collector
+          collector << "), '~', ' ')"
         else
           collector << "LTRIM(RTRIM("
           collector = visit o.left, collector
@@ -153,7 +154,6 @@ module ArelExtensions
         collector
       end
 
-      # TODO manage 2nd argument
       def visit_ArelExtensions_Nodes_Ltrim o, collector
         if o.right
           collector << "REPLACE(REPLACE(LTRIM(REPLACE(REPLACE("
@@ -171,7 +171,6 @@ module ArelExtensions
         collector
       end
 
-      # TODO manage 2nd argument
       def visit_ArelExtensions_Nodes_Rtrim o, collector
         if o.right
           collector << "REPLACE(REPLACE(RTRIM(REPLACE(REPLACE("

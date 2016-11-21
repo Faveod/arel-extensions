@@ -57,6 +57,7 @@ Arel::Nodes::Function.class_eval do
   include ArelExtensions::MathFunctions
   include ArelExtensions::StringFunctions
   include ArelExtensions::BooleanFunctions
+  include ArelExtensions::NullFunctions
 end
 
 Arel::Nodes::Unary.class_eval do
