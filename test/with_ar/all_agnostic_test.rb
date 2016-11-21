@@ -234,7 +234,7 @@ module ArelExtensions
       def test_trim
         assert_equal "Myung", t(@myung, @name.trim)
         assert_equal "Myung", t(@myung, @name.trim.ltrim.rtrim)
-        skip "SQL Server does not manage argument for (L/R)TRIM" if @env_db == 'mssql'
+#        skip "SQL Server does not manage argument for (L/R)TRIM" if @env_db == 'mssql'
         assert_equal "Myun", t(@myung, @name.rtrim("g"))
         assert_equal "yung", t(@myung, @name.ltrim("M"))
         assert_equal "yung", t(@myung, (@name + "M").trim("M"))
@@ -246,6 +246,9 @@ module ArelExtensions
         if @env_db == 'postgresql'
           assert_includes [false, 'f'], t(@myung, @name.blank) # depends of adapter
           assert_includes [true, 't'], t(@myung, @name.not_blank) # depends of adapter
+        elsif @env_db == 'oracle'
+          assert_equal 'Myung', t(@myung, @name.blank.coalesce(42))
+          assert_equal 42, t(@myung, @name.not_blank.coalesce(42))
         else
           assert_equal 0, t(@myung, @name.blank)
           assert_equal 1, t(@myung, @name.not_blank)
@@ -260,7 +263,7 @@ module ArelExtensions
 
       def test_format
         assert_equal '2016-05-23', t(@lucas, @created_at.format('%Y-%m-%d'))
-        skip "SQL Server does  not accept any format" if @env_db == 'mssql'
+        skip "SQL Server does not accept any format" if @env_db == 'mssql'
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S'))
       end
 

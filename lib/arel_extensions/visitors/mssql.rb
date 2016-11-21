@@ -139,25 +139,53 @@ module ArelExtensions
 
       # TODO manage 2nd argument
       def visit_ArelExtensions_Nodes_Trim o, collector
-        collector << "LTRIM(RTRIM("
-        collector = visit o.left, collector
-        collector << "))"
+        if o.right
+          collector << 'dbo.TrimChar('
+          collector = visit o.left, collector
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector = visit o.right, collector
+          collector << ')'
+        else
+          collector << "LTRIM(RTRIM("
+          collector = visit o.left, collector
+          collector << "))"
+        end
         collector
       end
 
       # TODO manage 2nd argument
       def visit_ArelExtensions_Nodes_Ltrim o, collector
-        collector << "LTRIM("
-        collector = visit o.left, collector
-        collector << ")"
+        if o.right
+          collector << "REPLACE(REPLACE(LTRIM(REPLACE(REPLACE("
+          collector = visit o.left, collector
+          collector << ", ' ', '~'), "
+          collector = visit o.right, collector
+          collector << ", ' ')), ' ', "
+          collector = visit o.right, collector
+          collector << "), '~', ' ')"
+        else
+          collector << "LTRIM("
+          collector = visit o.left, collector
+          collector << ")"
+        end
         collector
       end
 
       # TODO manage 2nd argument
       def visit_ArelExtensions_Nodes_Rtrim o, collector
-        collector << "RTRIM("
-        collector = visit o.left, collector
-        collector << ")"
+        if o.right
+          collector << "REPLACE(REPLACE(RTRIM(REPLACE(REPLACE("
+          collector = visit o.left, collector
+          collector << ", ' ', '~'), "
+          collector = visit o.right, collector
+          collector << ", ' ')), ' ', "
+          collector = visit o.right, collector
+          collector << "), '~', ' ')"
+        else
+          collector << "RTRIM("
+          collector = visit o.left, collector
+          collector << ")"
+        end
         collector
       end
 
