@@ -24,10 +24,10 @@ BEGIN
 END;
 GO
 
-IF OBJECT_ID (N'dbo.SplitString', N'FN') IS NOT NULL
-    DROP FUNCTION dbo.SplitString;
+IF OBJECT_ID (N'dbo.SplitStringWithDelim', N'FN') IS NOT NULL
+    DROP FUNCTION dbo.SplitStringWithDelim;
 GO
-CREATE FUNCTION dbo.SplitString(@List NVARCHAR(4000), @Delimiter NCHAR(1))
+CREATE FUNCTION dbo.SplitStringWithDelim(@List NVARCHAR(4000), @Delimiter NCHAR(1))
 RETURNS TABLE AS
 RETURN
 (
@@ -52,7 +52,7 @@ CREATE FUNCTION dbo.FIND_IN_SET(@Value VARCHAR(MAX), @List VARCHAR(MAX), @Delimi
 RETURNS BIGINT
 AS
 BEGIN
-    RETURN COALESCE((SELECT MIN(Id) FROM dbo.SplitString(@List, COALESCE(@Delimiter, ',')) WHERE Data = @Value), 0)
+    RETURN COALESCE((SELECT MIN(Id) FROM dbo.SplitStringWithDelim(@List, COALESCE(@Delimiter, ',')) WHERE Data = @Value), 0)
 END
 GO
 
