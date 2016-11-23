@@ -36,7 +36,7 @@ RETURN
         SELECT 0 AS stpos, CHARINDEX(@Delimiter, @List) AS endpos
         UNION ALL
         SELECT endpos + 1, CHARINDEX(@Delimiter, @List, endpos + 1)
-            FROM Split
+            FROM SplitString
             WHERE endpos > 0
     )
     SELECT 'Id' = ROW_NUMBER() OVER (ORDER BY (SELECT 1)),
