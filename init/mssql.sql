@@ -24,14 +24,14 @@ BEGIN
 END;
 GO
 
-IF OBJECT_ID (N'dbo.Split', N'FN') IS NOT NULL
-    DROP FUNCTION dbo.Split;
+IF OBJECT_ID (N'dbo.SplitString', N'FN') IS NOT NULL
+    DROP FUNCTION dbo.SplitString;
 GO
-CREATE FUNCTION dbo.Split(@List NVARCHAR(4000), @Delimiter NCHAR(1))
+CREATE FUNCTION dbo.SplitString(@List NVARCHAR(4000), @Delimiter NCHAR(1))
 RETURNS TABLE AS
 RETURN
 (
-    WITH Split(stpos,endpos)
+    WITH SplitString(stpos,endpos)
     AS(
         SELECT 0 AS stpos, CHARINDEX(@Delimiter, @List) AS endpos
         UNION ALL
@@ -41,7 +41,7 @@ RETURN
     )
     SELECT 'Id' = ROW_NUMBER() OVER (ORDER BY (SELECT 1)),
         'Data' = SUBSTRING(@List, stpos, COALESCE(NULLIF(endpos, 0), LEN(@List) + 1) - stpos)
-    FROM Split
+    FROM SplitString
 )
 GO
 
@@ -52,7 +52,7 @@ CREATE FUNCTION dbo.FIND_IN_SET(@Value VARCHAR(MAX), @List VARCHAR(MAX), @Delimi
 RETURNS BIGINT
 AS
 BEGIN
-    RETURN COALESCE((SELECT MIN(Id) FROM dbo.Split(@List, COALESCE(@Delimiter, ',')) WHERE Data = @Value), 0)
+    RETURN COALESCE((SELECT MIN(Id) FROM dbo.SplitString(@List, COALESCE(@Delimiter, ',')) WHERE Data = @Value), 0)
 END
 GO
 

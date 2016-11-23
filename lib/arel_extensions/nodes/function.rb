@@ -26,7 +26,14 @@ module ArelExtensions
       end
 
       def type_of_attribute(att)
-        Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
+        case att
+        when Arel::Attributes::Attribute
+          Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
+        when ArelExtensions::Nodes::Function
+          att.class.return_type
+        else
+          nil
+        end
       end
 
       def convert_to_node(object)

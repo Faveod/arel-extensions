@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
     Arel::Visitors::Oracle.class_eval do
+      SPECIAL_CHARS = {"\t" => 'CHR(9)', "\n" => 'CHR(10)', "\r" => 'CHR(13)'}
       Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'IW', 'y' => 'YEAR', 'wd' => 'D', 'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'}
       Arel::Visitors::Oracle::DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'IYYY', '%C' => 'CC', '%y' => 'YY', '%m' => 'MM', '%B' => 'Month', '%^B' => 'MONTH', '%b' => 'Mon', '%^b' => 'MON',
@@ -165,13 +166,8 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Trim o, collector
         collector << 'TRIM(' # BOTH
-        case o.right.expr
-        when "\t"
-          collector << 'CHR(9)'
-        when "\n"
-          collector << 'CHR(10)'
-        when "\r"
-          collector << 'CHR(13)'
+        if o.right.expr && SPECIAL_CHARS[o.right.expr]
+          collector << SPECIAL_CHARS[o.right.expr]
         else
           collector = visit o.right, collector
         end
@@ -196,7 +192,11 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Ltrim o, collector
         collector << 'TRIM(LEADING '
-        collector = visit o.right, collector
+        if o.right.expr && SPECIAL_CHARS[o.right.expr]
+          collector << SPECIAL_CHARS[o.right.expr]
+        else
+          collector = visit o.right, collector
+        end
         collector << ' FROM '
         collector = visit o.left, collector
         collector << ")"
@@ -205,7 +205,11 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Rtrim o, collector
         collector << 'TRIM(TRAILING '
-        collector = visit o.right, collector
+        if o.right.expr && SPECIAL_CHARS[o.right.expr]
+          collector << SPECIAL_CHARS[o.right.expr]
+        else
+          collector = visit o.right, collector
+        end
         collector << ' FROM '
         collector = visit o.left, collector
         collector << ")"
