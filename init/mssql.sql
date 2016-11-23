@@ -31,17 +31,17 @@ CREATE FUNCTION dbo.SplitString(@List NVARCHAR(4000), @Delimiter NCHAR(1))
 RETURNS TABLE AS
 RETURN
 (
-    WITH SplitString(stpos,endpos)
+    WITH SplitStringCte(stpos,endpos)
     AS(
         SELECT 0 AS stpos, CHARINDEX(@Delimiter, @List) AS endpos
         UNION ALL
         SELECT endpos + 1, CHARINDEX(@Delimiter, @List, endpos + 1)
-            FROM SplitString
+            FROM SplitStringCte
             WHERE endpos > 0
     )
     SELECT 'Id' = ROW_NUMBER() OVER (ORDER BY (SELECT 1)),
         'Data' = SUBSTRING(@List, stpos, COALESCE(NULLIF(endpos, 0), LEN(@List) + 1) - stpos)
-    FROM SplitString
+    FROM SplitStringCte
 )
 GO
 
