@@ -19,8 +19,9 @@ Code quality:
 New features:
 - POSIX format numbers (%.2f)
 - easy unions
-- cast
+- cast, to_char
 
 Tests improvements:
 - SQL Server
 - DB2
+- Informix

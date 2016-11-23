@@ -9,24 +9,13 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Concat o, collector
-        arg = o.left.relation.engine.columns.find{|c| c.name == o.left.name.to_s}.type
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector << "CONCAT("
-          collector = visit o.left, collector
-          collector<< ","
-          collector = visit o.right, collector
-          collector << ")"
-        elsif ( arg == :date || arg == :datetime)
-          collector = visit o.left, collector
-          collector<< "+"
-          collector << "#{o.right} days"
-        else
-          collector << "CONCAT("
-          collector = visit o.left, collector
-          collector<< ","
-          collector <<"#{o.right})"
-        end
+      def visit_ArelExtensions_Nodes_Trim o, collector
+        collector << "LTRIM(RTRIM("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << "))"
         collector
       end
 

@@ -81,7 +81,7 @@ module ArelExtensions
         @camille = User.where(:id => u.id)
         u = User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
         @arthur = User.where(:id => u.id)
-        u = User.create :age => 23, :name => "Myung", :created_at => d, :score => 20.16
+        u = User.create :age => 23, :name => "Myung", :created_at => d, :score => 20.16, :comments => ' '
         @myung = User.where(:id => u.id)
         u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16
         @laure = User.where(:id => u.id)
@@ -245,12 +245,18 @@ module ArelExtensions
         if @env_db == 'postgresql'
           assert_includes [false, 'f'], t(@myung, @name.blank) # depends of adapter
           assert_includes [true, 't'], t(@myung, @name.not_blank) # depends of adapter
+          assert_includes [true, 't'], t(@myung, @comments.blank)
+          assert_includes [false, 'f'], t(@myung, @comments.not_blank)
         elsif @env_db == 'oracle'
-          assert_equal 'Myung', t(@myung, @name.blank.coalesce('42'))
-          assert_equal '42', t(@myung, @name.not_blank.coalesce('42'))
+          assert_equal '42', t(@myung, @name.blank.coalesce('42'))
+          assert_equal 'Myung', t(@myung, @name.not_blank.coalesce('42'))
+          assert_equal 'blank', t(@myung, @comments.blank.coalesce('42'))
+          assert_equal '42', t(@myung, @comments.not_blank.coalesce('42'))
         else
           assert_equal 0, t(@myung, @name.blank)
           assert_equal 1, t(@myung, @name.not_blank)
+          assert_equal 1, t(@myung, @comments.blank)
+          assert_equal 0, t(@myung, @comments.not_blank)
         end
         skip "Oracle requires cast for CLOB" if @env_db == 'oracle' # comments is CLOB, CHAR expected
         if @env_db == 'postgresql'

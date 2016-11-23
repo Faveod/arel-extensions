@@ -177,7 +177,18 @@ module ArelExtensions
         end
         collector << ' FROM '
         collector << '(' if o.left.is_a? ArelExtensions::Nodes::Trim
-        collector = visit o.left, collector
+        if o.type_of_attribute(o.left) == :text
+          collector << 'dbms_lob.substr('
+          collector = visit o.left, collector
+          collector << Arel::Visitors::Oracle::COMMA
+          collector << 'dbms_lob.getlength('
+          collector = visit o.left, collector
+          collector << ')'
+          collector << Arel::Visitors::Oracle::COMMA
+          collector << '1)'
+        else
+          collector = visit o.left, collector
+        end
         collector << ')' if o.left.is_a? ArelExtensions::Nodes::Trim
         collector << ")"
         collector
@@ -201,11 +212,16 @@ module ArelExtensions
         collector
       end
 
+      # blank ? <param> : NULL
       def visit_ArelExtensions_Nodes_Blank o, collector
+        collector << '(CASE WHEN ('
         collector = visit o.left.trim, collector
+        collector << " IS NULL) THEN 'blank'"
+        collector << " ELSE NULL END)"
         collector
       end
 
+      # not blank ? <param> : NULL
       def visit_ArelExtensions_Nodes_NotBlank o, collector
         collector << '(CASE WHEN ('
         collector = visit o.left.trim, collector
