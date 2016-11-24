@@ -326,10 +326,14 @@ module ArelExtensions
 
       def test_datetime_diff
         assert_equal 0, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 42)).to_i
-        assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
-        assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
+        if @env_db == 'oracle' && Arel::VERSION.to_i > 6 # in rails 5, result is multiplied by 24*60*60 = 86400...
+          assert_equal 42 * 86400, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
+          assert_equal(-3600 * 86400, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)          
+        else
+          assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
+          assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
+        end
       end
-
 
       def test_cast_types
         skip "not implemented yet"
