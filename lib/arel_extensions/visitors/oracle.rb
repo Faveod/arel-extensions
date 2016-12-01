@@ -177,9 +177,9 @@ module ArelExtensions
           collector << 'dbms_lob.substr('
           collector = visit o.left, collector
           collector << Arel::Visitors::Oracle::COMMA
-          collector << 'dbms_lob.getlength(COALESCE('
+          collector << 'COALESCE(dbms_lob.getlength('
           collector = visit o.left, collector
-          collector << ", ''))"
+          collector << "), 0)"
           collector << Arel::Visitors::Oracle::COMMA
           collector << '1)'
         else
