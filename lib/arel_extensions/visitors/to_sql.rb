@@ -282,6 +282,19 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Then o, collector
+        collector << "CASE WHEN ("
+        collector = visit o.left, collector
+        collector << ") THEN "
+        collector = visit o.right, collector
+        if o.expressions[2]          
+          collector << " ELSE "
+          collector = visit o.expressions[2], collector
+        end
+        collector << " END"
+        collector
+      end
+
       # Date operations
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << "DATE_ADD("
