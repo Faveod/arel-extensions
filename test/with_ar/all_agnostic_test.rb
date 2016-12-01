@@ -250,6 +250,7 @@ module ArelExtensions
         else
           assert_equal 0, @myung.where(@name.blank).count
           assert_equal 1, @myung.where(@name.not_blank).count
+          puts @myung.where(@comments.blank).to_sql if @env_db == 'oracle'
           assert_equal 1, @myung.where(@comments.blank).count
           assert_equal 0, @myung.where(@comments.not_blank).count
         end
@@ -264,7 +265,7 @@ module ArelExtensions
         if @env_db == 'postgresql'
           assert_includes [true, 't'], t(@myung, @comments.blank) # depends of adapter
         else
-          assert_equal 1, t(@myung, @comments.blank)
+          assert_equal 1, t(@myung, @comments.blank.then(1,0))
         end
       end
 
