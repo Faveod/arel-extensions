@@ -247,13 +247,11 @@ module ArelExtensions
           assert_includes [true, 't'], t(@myung, @name.not_blank) # depends of adapter
           assert_includes [true, 't'], t(@myung, @comments.blank)
           assert_includes [false, 'f'], t(@myung, @comments.not_blank)
-        else
-          assert_equal 0, @myung.where(@name.blank).count
-          assert_equal 1, @myung.where(@name.not_blank).count
-          puts @myung.where(@comments.blank).to_sql if @env_db == 'oracle'
-          assert_equal 1, @myung.where(@comments.blank).count
-          assert_equal 0, @myung.where(@comments.not_blank).count
         end
+        assert_equal 0, @myung.where(@name.blank).count
+        assert_equal 1, @myung.where(@name.not_blank).count
+        assert_equal 1, @myung.where(@comments.blank).count
+        assert_equal 0, @myung.where(@comments.not_blank).count
         assert_equal 43, t(@myung, @name.blank.then(42, 43))
         assert_equal 'true', t(@myung, @name.not_blank.then('true', 'false'))
         assert_equal 'true', t(@myung, @comments.blank.then('true', 'false'))
