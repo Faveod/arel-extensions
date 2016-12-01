@@ -189,17 +189,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        collector << 'CASE WHEN LEN(LTRIM(RTRIM(ISNULL('
-        collector = visit o.left, collector
-        collector << ", '')))) = 0 THEN 1 ELSE 0 END"
-        collector
+        visit o.left.trim.length.eq(0), collector
       end
 
       def visit_ArelExtensions_Nodes_NotBlank o, collector
-        collector << 'CASE WHEN LEN(LTRIM(RTRIM(ISNULL('
-        collector = visit o.left, collector
-        collector << ", '')))) = 0 THEN 0 ELSE 1 END"
-        collector
+        visit o.left.trim.length.gt(0), collector
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector

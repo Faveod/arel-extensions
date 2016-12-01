@@ -1,3 +1,5 @@
+require 'arel_extensions/nodes/then'
+
 module ArelExtensions
 	module BooleanFunctions
 
@@ -9,6 +11,9 @@ module ArelExtensions
 			self.or(other)
 		end
 
+		def then(t, f = nil)
+        	ArelExtensions::Nodes::Then.new [self, t, f]
+		end
 	end
 end
 

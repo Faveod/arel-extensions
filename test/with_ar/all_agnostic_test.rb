@@ -247,17 +247,17 @@ module ArelExtensions
           assert_includes [true, 't'], t(@myung, @name.not_blank) # depends of adapter
           assert_includes [true, 't'], t(@myung, @comments.blank)
           assert_includes [false, 'f'], t(@myung, @comments.not_blank)
-        elsif @env_db == 'oracle'
-          assert_equal 42, t(@myung, @name.blank.then(42))
-          assert_equal 'true', t(@myung, @name.not_blank.then('true', 'false'))
-          assert_equal 'true', t(@myung, @comments.blank.then('true', 'false'))
-          assert_equal 'false', t(@myung, @comments.not_blank.then('true', 'false'))
         else
           assert_equal 0, t(@myung, @name.blank)
           assert_equal 1, t(@myung, @name.not_blank)
           assert_equal 1, t(@myung, @comments.blank)
           assert_equal 0, t(@myung, @comments.not_blank)
         end
+        assert_equal 43, t(@myung, @name.blank.then(42, 43))
+        assert_equal 'true', t(@myung, @name.not_blank.then('true', 'false'))
+        assert_equal 'true', t(@myung, @comments.blank.then('true', 'false'))
+        assert_equal 'false', t(@myung, @comments.not_blank.then('true', 'false'))
+
         assert_equal 0, @myung.where(@name.blank).count
         assert_equal 1, @myung.where(@name.not_blank).count
         skip "Oracle requires cast for CLOB" if @env_db == 'oracle' # comments is CLOB, CHAR expected

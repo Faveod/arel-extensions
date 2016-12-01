@@ -216,23 +216,12 @@ module ArelExtensions
         collector
       end
 
-      # blank ? <param> : NULL
       def visit_ArelExtensions_Nodes_Blank o, collector
-        collector << '(CASE WHEN ('
-        collector = visit o.left.trim, collector
-        collector << " IS NULL) THEN 'blank'"
-        collector << " ELSE NULL END)"
-        collector
+        visit o.left.trim.length.eq(0), collector
       end
 
-      # not blank ? <param> : NULL
       def visit_ArelExtensions_Nodes_NotBlank o, collector
-        collector << '(CASE WHEN ('
-        collector = visit o.left.trim, collector
-        collector << " IS NOT NULL) THEN "
-        collector = visit o.left.trim, collector
-        collector << " ELSE NULL END)"
-        collector
+        visit o.left.trim.length.gt(0), collector
       end
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
