@@ -174,10 +174,10 @@ module ArelExtensions
         collector << ' FROM '
         collector << '(' if o.left.is_a? ArelExtensions::Nodes::Trim
         if o.type_of_attribute(o.left) == :text
-          collector << 'dbms_lob.substr('
+          collector << 'dbms_lob.SUBSTR('
           collector = visit o.left, collector
           collector << Arel::Visitors::Oracle::COMMA
-          collector << 'COALESCE(dbms_lob.getlength('
+          collector << 'COALESCE(dbms_lob.GETLENGTH('
           collector = visit o.left, collector
           collector << "), 0)"
           collector << Arel::Visitors::Oracle::COMMA
@@ -217,11 +217,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        visit o.left.trim.length.eq(0), collector
+        visit o.left.trim.length.coalesce(0).eq(0), collector
       end
 
       def visit_ArelExtensions_Nodes_NotBlank o, collector
-        visit o.left.trim.length.gt(0), collector
+        visit o.left.trim.length.coalesce(0).gt(0), collector
       end
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector

@@ -263,7 +263,7 @@ module ArelExtensions
 
         assert_equal 0, @myung.where(@name.blank).count
         assert_equal 1, @myung.where(@name.not_blank).count
-        skip "Oracle requires cast for CLOB" if @env_db == 'oracle' # comments is CLOB, CHAR expected
+#        skip "Oracle requires cast for CLOB" if @env_db == 'oracle' # comments is CLOB, CHAR expected
         if @env_db == 'postgresql'
           assert_includes [true, 't'], t(@myung, @comments.blank) # depends of adapter
         else
