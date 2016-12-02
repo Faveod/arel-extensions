@@ -250,25 +250,16 @@ module ArelExtensions
         end
         assert_equal 0, @myung.where(@name.blank).count
         assert_equal 1, @myung.where(@name.not_blank).count
-        if @env_db == 'oracle'
-          puts "COMMENTS: #{@comments.blank.to_sql}  #{@myung.count}"
-        end
         assert_equal 1, @myung.where(@comments.blank).count
         assert_equal 0, @neg.where(@comments.blank).count
+        assert_equal 1, @neg.where(@comments.not_blank).count
         assert_equal 0, @myung.where(@comments.not_blank).count
-        assert_equal 43, t(@myung, @name.blank.then(42, 43))
+        assert_equal 'false', t(@myung, @name.blank.then('true', 'false'))
         assert_equal 'true', t(@myung, @name.not_blank.then('true', 'false'))
         assert_equal 'true', t(@myung, @comments.blank.then('true', 'false'))
         assert_equal 'false', t(@myung, @comments.not_blank.then('true', 'false'))
-
-        assert_equal 0, @myung.where(@name.blank).count
-        assert_equal 1, @myung.where(@name.not_blank).count
-#        skip "Oracle requires cast for CLOB" if @env_db == 'oracle' # comments is CLOB, CHAR expected
-        if @env_db == 'postgresql'
-          assert_includes [true, 't'], t(@myung, @comments.blank) # depends of adapter
-        else
-          assert_equal 1, t(@myung, @comments.blank.then(1,0))
-        end
+        assert_equal 'false', t(@neg, @comments.blank.then('true', 'false'))
+        assert_equal 'true', t(@neg, @comments.not_blank.then('true', 'false'))
       end
 
       def test_format
