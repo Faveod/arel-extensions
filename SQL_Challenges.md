@@ -6,7 +6,6 @@ A good way could be to create user defined functions to ensure a total transpare
 
 
 ## SQLite (without extension)
-- CEIL and FLOOR without pcre
 - FIND_IN_SET
 - LOCATE
 - REGEXP

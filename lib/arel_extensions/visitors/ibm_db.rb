@@ -23,30 +23,8 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateDiff  o, collector
         collector << "DAY("
         collector = visit o.left, collector
-        collector<< ","
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.right, collector
-        else
-          collector<< "'#{o.right}'"
-        end
-        collector << ")"
-        collector
-      end
-
-
-      def visit_ArelExtensions_Nodes_Duration o , collector
-        #visit left for period
-        if(o.left == "d")
-          collector << "DAY("
-        elsif(o.left == "m")
-          collector << "MONTH("
-        elsif (o.left == "w")
-          collector << "WEEK"
-        elsif (o.left == "y")
-          collector << "YEAR("
-        end
-        #visit right
-        if(o.right.is_a?(Arel::Attributes::Attribute))
+        collector << ","
+        if o.right.is_a?(Arel::Attributes::Attribute)
           collector = visit o.right, collector
         else
           collector << "'#{o.right}'"
@@ -55,6 +33,27 @@ module ArelExtensions
         collector
       end
 
+
+      def visit_ArelExtensions_Nodes_Duration o , collector
+        #visit left for period
+        if o.left == "d"
+          collector << "DAY("
+        elsif o.left == "m"
+          collector << "MONTH("
+        elsif o.left == "w"
+          collector << "WEEK"
+        elsif o.left == "y"
+          collector << "YEAR("
+        end
+        #visit right
+        if o.right.is_a?(Arel::Attributes::Attribute)
+          collector = visit o.right, collector
+        else
+          collector << "'#{o.right}'"
+        end
+        collector << ")"
+        collector
+      end
 
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
@@ -66,7 +65,7 @@ module ArelExtensions
         else
           collector << "'#{o.right}'"
         end
-        collector <<")"
+        collector << ")"
         collector
       end
 

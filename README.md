@@ -139,3 +139,364 @@ insert_manager = Arel::InsertManager.new(User).into(User.arel_table)
 insert_manager.bulk_insert(@cols, @data)
 User.connection.execute(insert_manager.to_sql)
 ```
+
+## New Arel Functions
+
+<style type="text/css">
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:5px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;padding:5px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-3oug{background-color:#fd6864;text-align:center;vertical-align:top}
+    .tg .tg-by3v{font-weight:bold;font-size:14px;text-align:center}
+    .tg .tg-jogk{font-style:italic;vertical-align:top}
+    .tg .tg-pjz5{font-weight:bold;font-size:14px;background-color:#f8a102;text-align:center;vertical-align:top}
+    .tg .tg-82sq{font-weight:bold;background-color:#ffce93;color:#330001;vertical-align:top}
+    .tg .tg-yw4l{vertical-align:top}
+    .tg .tg-j6lv{background-color:#96fffb;text-align:center;vertical-align:top}
+    .tg .tg-ffjm{font-weight:bold;background-color:#fffc9e;vertical-align:top}
+    .tg .tg-orpl{font-size:10px;background-color:#96fffb;vertical-align:top}
+    .tg .tg-4rp9{font-weight:bold;background-color:#ffffc7;vertical-align:top}
+    .tg .tg-72dn{font-weight:bold;background-color:#f7f6cd;vertical-align:top}
+    .tg .tg-9hbo{font-weight:bold;vertical-align:top}
+    .arel-functions th { font-weight:bold; }
+    .arel-functions th[rowspan] { vertical-align: middle; width:3em;}
+    .arel-functions th[rowspan] > div { transform:rotate(-90deg); transform-origin: center center; white-space: nowrap; }
+    .arel-functions td.ok { color:green; text-align:center; }
+</style>
+<table class="tg arel-functions">
+  <thead>
+  <tr>
+    <th></th>
+    <th class="tg-by3v">Function / Example<br/>ToSql</th>
+    <th class="tg-pjz5">MySQL / MariaDB</th>
+    <th class="tg-pjz5">PostgreSQL</th>
+    <th class="tg-pjz5">SQLite</th>
+    <th class="tg-pjz5">Oracle</th>
+    <th class="tg-pjz5">MS SQL</th>
+    <th class="tg-pjz5">DB2<br/>(not tested on real DB)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <th class="tg-82sq" rowspan="6"><div>Number functions</div></th>
+    <td class="tg-yw4l">ABS<br>column.abs<br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">CEIL<br>column.ceil</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">CASE + ROUND</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">CEILING()</td>
+    <td class="tg-j6lv">CEILING()</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">FLOOR<br>column.floor</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">CASE + ROUND</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">RAND<br>Arel.rand</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">RANDOM()</td>
+    <td class="tg-j6lv">dbms_random.value()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">ROUND<br>column.round(precision = 0)</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">SUM / AVG / MIN / MAX + x<br>column.sum + 42</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <th class="tg-ffjm" rowspan="12"><div>String functions</div></th>
+    <td class="tg-yw4l">CONCAT<br>column + "string"</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv"> ||</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">+</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">LENGTH<br>column.length</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">LEN()</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">LOCATE<br>column.locate("string")</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">INSTR()</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">CHARINDEX()</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">FIND_IN_SET<br>column &amp; ("l")</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-orpl">db.create_function( "find_in_set", 1 ) <br>do |func, value1, value2|,<br>func.result =value1.index(value2)<br>end <br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">SOUNDEX<br>column.soundex</td>
+    <td class="ok">✔</td>
+    <td class="tg-3oug">require fuzzystrmatch</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">REPLACE<br>column.replace("s","X")</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">REGEXP<br>column =~ "pattern"<br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-3oug">require pcre.so</td>
+    <td class="tg-j6lv">REGEXP_LIKE</td>
+    <td class="tg-j6lv">LIKE</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">NOT_REGEXP<br>column != "pattern"</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔<br></td>
+    <td class="tg-3oug">require pcre.so</td>
+    <td class="tg-j6lv">NOT REGEXP_LIKE </td>
+    <td class="tg-j6lv">NOT LIKE</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">ILIKE (in Arel6)<br/>column.imatches('%pattern')</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">TRIM (leading)<br>column.trim("LEADING","M")</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">LTRIM()</td>
+    <td class="tg-j6lv">LTRIM()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">LTRIM()</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">TRIM (trailing)<br>column.trim("TRAILING","g")</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">RTRIM()</td>
+    <td class="tg-j6lv">RTRIM()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">Rtrim()</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">TRIM (both)<br>column.trim("BOTH","e")</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">TRIM()<br></td>
+    <td class="tg-j6lv">TRIM()</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">LTRIM(RTRIM())</td>
+    <td class="tg-j6lv">TRIM()</td>
+  </tr>
+  <tr>
+    <th class="tg-4rp9" rowspan="6"><div>Date functions</div></th>
+    <td class="tg-yw4l">DATEADD<br>column + 2.year<br></td>
+    <td class="tg-j6lv">DATE_ADD()<br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">+</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">DATEDIFF<br>column - date<br></td>
+    <td class="tg-j6lv">DATEDIFF()<br></td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">JULIANDAY() - JULIANDAY()</td>
+    <td class="tg-j6lv"> -</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">DAY()</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">DAY<br>column.day<br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">STRFTIME()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">MONTH<br>column.month<br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">STRFTIME()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">WEEK<br>column.week</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">STRFTIME()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">YEAR<br>column.year</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">STRFTIME()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <th class="tg-72dn" rowspan="8"><div>Comparators functions</div></th>
+    <td class="tg-yw4l">COALESCE<br>column.coalesce(var)</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">ISNULL<br>column.isnull()</td>
+    <td class="tg-j6lv">IFNULL()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">NVC()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">==<br>column == integer</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">!=<br>column != integer</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">&gt;<br>column &gt; integer</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">&gt;=<br>column &gt;= integer</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">&lt; <br>column &lt; integer</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">&lt;=<br>column &lt;= integer</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <th class="tg-9hbo" rowspan="2"><div>Boolean <br/> functions</div></th>
+    <td class="tg-yw4l">OR ( ⋁ )<br>column.eq(var).⋁(column.eq(var))</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">AND ( ⋀ )<br>column.eq(var).⋀(column.eq(var))</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <th class="bulk_insert" rowspan="1"><div>Bulk <br/> Insert</div></th>
+    <td class="tg-yw4l">insert_manager.bulk_insert(@cols, @data)</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  </tbody>
+</table>

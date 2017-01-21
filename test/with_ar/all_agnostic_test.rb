@@ -77,7 +77,7 @@ module ArelExtensions
         @lucas = User.where(:id => u.id)
         u = User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
         @sophie = User.where(:id => u.id)
-        u = User.create :age => 20, :name => "Camille", :created_at => d, :score => 20.16
+        u = User.create :age => 20, :name => "Camille", :created_at => d, :score => -20.16
         @camille = User.where(:id => u.id)
         u = User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
         @arthur = User.where(:id => u.id)
@@ -115,19 +115,24 @@ module ArelExtensions
 
       def test_abs
         assert_equal 42, t(@neg, @age.abs)
+        assert_equal 20.16, t(@camille, @score.abs)
         assert_equal 14, t(@laure, (@age - 39).abs)
         assert_equal 28, t(@laure, (@age - 39).abs + (@age - 39).abs)
       end
 
       def test_ceil
-        skip "Sqlite version can't load extension for ceil" if $sqlite && $load_extension_disabled
-        assert_equal 1, t(@neg, @score.ceil)
+#        skip "Sqlite version can't load extension for ceil" if $sqlite && $load_extension_disabled
+        assert_equal 2, t(@test, @score.ceil) # 1.62
+        assert_equal (-20), t(@camille, @score.ceil) # -20.16
+        assert_equal (-20), t(@camille, (@score - 0.5).ceil) # -20.16
         assert_equal 63, t(@arthur, @age.ceil + 42)
       end
 
       def test_floor
-        skip "Sqlite version can't load extension for floor" if $sqlite && $load_extension_disabled
+#        skip "Sqlite version can't load extension for floor" if $sqlite && $load_extension_disabled
         assert_equal 0, t(@neg, @score.floor)
+        assert_equal 1, t(@test, @score.floor) # 1.62
+        assert_equal (-9), t(@test, (@score - 10).floor) # 1.62
         assert_equal 42, t(@arthur, @score.floor - 23)
       end
 
@@ -269,6 +274,7 @@ module ArelExtensions
       end
 
       def test_coalesce
+        assert_equal 'Camille concat', t(@camille, @name.coalesce(nil, "default") + ' concat')
         if @env_db == 'postgresql'
           assert_equal 100, t(@test, @age.coalesce(100))
           assert_equal "Camille", t(@camille, @name.coalesce(nil, "default"))

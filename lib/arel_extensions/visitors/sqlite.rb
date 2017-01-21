@@ -109,9 +109,37 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Wday o, collector
-        collector << "strftime('%w',"
+        collector << "STRFTIME('%w',"
         collector = visit o.date, collector
         collector << ")"
+        collector
+      end
+
+      # CASE WHEN ROUND(3.42,1) > round(3.42) THEN round(3.42) ELSE round(3.42)-1 END
+      # OR CAST(3.14 AS INTEGER)
+      def visit_ArelExtensions_Nodes_Floor o, collector
+        collector << "CASE WHEN ROUND("
+        collector = visit o.left, collector
+        collector << ", 1) > ROUND("
+        collector = visit o.left, collector
+        collector << ") THEN ROUND("
+        collector = visit o.left, collector
+        collector << ") ELSE ROUND("
+        collector = visit o.left, collector
+        collector << ") - 1 END"
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_Ceil o, collector
+        collector << "CASE WHEN ROUND("
+        collector = visit o.left, collector
+        collector << ", 1) > ROUND("
+        collector = visit o.left, collector
+        collector << ") THEN ROUND("
+        collector = visit o.left, collector
+        collector << ") + 1 ELSE ROUND("
+        collector = visit o.left, collector
+        collector << ") END"
         collector
       end
 

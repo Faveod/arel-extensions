@@ -12,6 +12,16 @@ module ArelExtensions
     #Date and integer adds or subtracts a specified time interval from a date.
     def +(other)
       return ArelExtensions::Nodes::Concat.new [self, other] if self.is_a?(Arel::Nodes::Quoted)
+      return case self.class.return_type
+      when :string, :text
+        ArelExtensions::Nodes::Concat.new [self, other]
+      when :integer, :decimal, :float, :number
+        Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
+      when :date, :datetime
+        ArelExtensions::Nodes::DateAdd.new [self, other]
+      else
+        ArelExtensions::Nodes::Concat.new [self, other]
+      end if self.is_a?(ArelExtensions::Nodes::Function)
       arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
       if arg == :integer
         other = other.to_i if other.is_a?(String)
@@ -29,6 +39,16 @@ module ArelExtensions
     #function returns the time between two dates
     #function returns the susbration between two int
     def -(other)
+      return case self.class.return_type
+      when :string, :text # ???
+        Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other)) # ??
+      when :integer, :decimal, :float, :number
+        Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
+      when :date, :datetime
+        ArelExtensions::Nodes::DateSub.new [self, other]
+      else
+        Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
+      end if self.is_a?(ArelExtensions::Nodes::Function)
       arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
       if (arg == :date || arg == :datetime)
         case other
@@ -45,8 +65,14 @@ module ArelExtensions
           ArelExtensions::Nodes::DateSub.new [self, other]
         end
       else
-        other = Arel.sql(other) if other.is_a?(String)# Arel should accept Float & BigDecimal!
-        Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
+        case other
+        when Fixnum, Float, BigDecimal
+          Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, Arel.sql(other.to_s)))
+        when String
+          Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, Arel.sql(other)))
+        else
+          Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
+        end
       end
     end
 
