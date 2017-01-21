@@ -142,27 +142,6 @@ User.connection.execute(insert_manager.to_sql)
 
 ## New Arel Functions
 
-<style type="text/css">
-    .tg  {border-collapse:collapse;border-spacing:0;}
-    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:5px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
-    .tg th{font-family:Arial, sans-serif;font-size:14px;padding:5px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
-    .tg .tg-3oug{background-color:#fd6864;text-align:center;vertical-align:top}
-    .tg .tg-by3v{font-weight:bold;font-size:14px;text-align:center}
-    .tg .tg-jogk{font-style:italic;vertical-align:top}
-    .tg .tg-pjz5{font-weight:bold;font-size:14px;background-color:#f8a102;text-align:center;vertical-align:top}
-    .tg .tg-82sq{font-weight:bold;background-color:#ffce93;color:#330001;vertical-align:top}
-    .tg .tg-yw4l{vertical-align:top}
-    .tg .tg-j6lv{background-color:#96fffb;text-align:center;vertical-align:top}
-    .tg .tg-ffjm{font-weight:bold;background-color:#fffc9e;vertical-align:top}
-    .tg .tg-orpl{font-size:10px;background-color:#96fffb;vertical-align:top}
-    .tg .tg-4rp9{font-weight:bold;background-color:#ffffc7;vertical-align:top}
-    .tg .tg-72dn{font-weight:bold;background-color:#f7f6cd;vertical-align:top}
-    .tg .tg-9hbo{font-weight:bold;vertical-align:top}
-    .arel-functions th { font-weight:bold; }
-    .arel-functions th[rowspan] { vertical-align: middle; width:3em;}
-    .arel-functions th[rowspan] > div { transform:rotate(-90deg); transform-origin: center center; white-space: nowrap; }
-    .arel-functions td.ok { color:green; text-align:center; }
-</style>
 <table class="tg arel-functions">
   <thead>
   <tr>
