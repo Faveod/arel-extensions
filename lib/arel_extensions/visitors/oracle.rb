@@ -61,7 +61,17 @@ module ArelExtensions
         collector << "COALESCE("
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::Oracle::COMMA unless i == 0
-          collector = visit arg, collector
+          if i > 0 && o.left_node_type == :text
+            if arg == ''
+              collector << 'empty_clob()'
+            else
+              collector << 'TO_CLOB('
+              collector = visit arg, collector
+              collector << ')'
+            end
+          else
+            collector = visit arg, collector
+          end
         }
         collector << ")"
         collector

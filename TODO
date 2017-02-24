@@ -20,6 +20,7 @@ New features:
 - POSIX format numbers (%.2f)
 - easy unions
 - cast, to_char
+- rake tasks to load sql functions
 
 Tests improvements:
 - SQL Server

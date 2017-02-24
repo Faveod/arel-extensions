@@ -275,6 +275,11 @@ module ArelExtensions
 
       def test_coalesce
         assert_equal 'Camille concat', t(@camille, @name.coalesce(nil, "default") + ' concat')
+
+        assert_equal ' ', t(@myung, @comments.coalesce("Myung").coalesce('ignored'))
+        assert_equal 'Laure', t(@laure, @comments.coalesce("Laure"))
+        assert_equal '', t(@laure, @comments.coalesce(""))
+
         if @env_db == 'postgresql'
           assert_equal 100, t(@test, @age.coalesce(100))
           assert_equal "Camille", t(@camille, @name.coalesce(nil, "default"))
