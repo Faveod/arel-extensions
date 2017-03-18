@@ -91,6 +91,16 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Substring o, collector
+        collector << "SUBSTRING("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_Replace o, collector
         collector << "REPLACE("
         o.expressions.each_with_index { |arg, i|

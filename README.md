@@ -73,7 +73,7 @@ Other functions : ABS, RAND, ROUND, FLOOR, CEIL, FORMAT
 # => my_table.name REGEXP '\^[a-d_]+'
 ```
 
-Other functions : SOUNDEX, LENGTH, REPLACE, LOCATE, TRIM
+Other functions : SOUNDEX, LENGTH, REPLACE, LOCATE, SUBSTRING, TRIM
 
 ### String Array operations
 
@@ -142,7 +142,7 @@ User.connection.execute(insert_manager.to_sql)
 
 ## New Arel Functions
 
-<table class="tg arel-functions">
+<table class="tg arel-functions" style="font-size:80%">
   <thead>
   <tr>
     <th></th>
@@ -237,6 +237,15 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-j6lv">INSTR()</td>
     <td class="ok">✔</td>
     <td class="tg-j6lv">CHARINDEX()</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">SUBSTRING<br/>column[1..2]<br/>column.substring(1)<br/>column.substring(1, 1)</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">SUBSTR()</td>
+    <td class="tg-j6lv">SUBSTR()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
     <td class="ok">✔</td>
   </tr>
   <tr>

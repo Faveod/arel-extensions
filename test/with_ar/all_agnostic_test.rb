@@ -190,6 +190,18 @@ module ArelExtensions
         assert_equal 5, t(@lucas, @name.locate("s"))
       end
 
+      def test_substring
+        assert_equal 'C', t(@camille, @name.substring(1, 1))
+        assert_equal '', t(@lucas, @name.substring(42))
+        assert_equal 'Lu', t(@lucas, @name.substring(1,2))
+
+        assert_equal 'C', t(@camille, @name[0, 1])
+        assert_equal 'C', t(@camille, @name[0])
+        assert_equal '', t(@lucas, @name[42])
+        assert_equal 'Lu', t(@lucas, @name[0,2])
+        assert_equal 'Lu', t(@lucas, @name[0..1])
+      end
+
       def test_find_in_set
         skip "Sqlite version can't load extension for find_in_set" if $sqlite && $load_extension_disabled
         skip "SQL Server does not know about FIND_IN_SET" if @env_db == 'mssql'

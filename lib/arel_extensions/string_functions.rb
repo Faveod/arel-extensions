@@ -1,6 +1,7 @@
 require 'arel_extensions/nodes/concat' if Arel::VERSION.to_i < 7
 require 'arel_extensions/nodes/length'
 require 'arel_extensions/nodes/locate'
+require 'arel_extensions/nodes/substring'
 require 'arel_extensions/nodes/matches'
 require 'arel_extensions/nodes/find_in_set'
 require 'arel_extensions/nodes/replace'
@@ -26,6 +27,20 @@ module ArelExtensions
     #If string1 or string2 is NULL then it returns NULL. If string1 not found in string2 then it returns 0.
     def locate val
       ArelExtensions::Nodes::Locate.new [self, val]
+    end
+
+    def substring start, len = nil
+      ArelExtensions::Nodes::Substring.new [self, start, len]
+    end
+    def [](start, ind = nil)
+      start += 1 if start.is_a?(Integer)
+      if start.is_a?(Range)
+        ArelExtensions::Nodes::Substring.new [self, start.begin + 1, start.end - start.begin + 1]
+      elsif start.is_a?(Integer) && !ind
+        ArelExtensions::Nodes::Substring.new [self, start, 1]
+      else
+        ArelExtensions::Nodes::Substring.new [self, start, ind - start + 1]
+      end
     end
 
     #SOUNDEX function returns a character string containing the phonetic representation of char.

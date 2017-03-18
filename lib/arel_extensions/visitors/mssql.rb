@@ -137,6 +137,21 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Substring o, collector
+        collector << "SUBSTRING("
+        collector = visit o.expressions[0], collector
+        collector << Arel::Visitors::MSSQL::COMMA
+        collector = visit o.expressions[1], collector
+        collector << Arel::Visitors::MSSQL::COMMA
+        if !o.expressions[2]
+          collector = visit o.expressions[0].length, collector
+        else
+          collector = visit o.expressions[2], collector
+        end
+        collector << ")"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_Trim o, collector
         if o.right
           collector << "REPLACE(REPLACE(LTRIM(RTRIM(REPLACE(REPLACE("
