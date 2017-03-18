@@ -10,12 +10,14 @@ module ArelExtensions
           convert_to_node(arg)
         }
         case expr.first
-        when Arel::Nodes::Node, Arel::Attributes::Attribute 
-          @left_node_type = type_of_attribute(expr.first)
         when String
           @left_node_type = :string
-        when ArelExtensions::Nodes::Coalesce
-          @left_node_type = expr.first.left_node_type
+        when Integer, Fixnum, Float
+          @left_node_type = :number
+        when ArelExtensions::Nodes::Coalesce, ArelExtensions::Nodes::Function
+          @left_node_type = expr.first.try(:left_node_type)
+        when Arel::Nodes::Node, Arel::Attributes::Attribute 
+          @left_node_type = type_of_attribute(expr.first)
         when Date
           @left_node_type = :ruby_date
         when DateTime, Time
