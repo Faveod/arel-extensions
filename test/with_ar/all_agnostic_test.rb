@@ -241,11 +241,23 @@ module ArelExtensions
         assert_equal "replace", t(@lucas, @name.replace(@name, "replace"))
       end
 
+      def test_replace_once
+        skip "TODO"
+#        skip "Sqlite version can't load extension for locate" if $sqlite && $load_extension_disabled
+        assert_equal "LuCas", t(@lucas, @name.substring(1, @name.locate('c') - 1) + 'C' + @name.substring(@name.locate('c') + 1, @name.length))
+      end
+
       def test_soundex
         skip "Sqlite version can't load extension for soundex" if $sqlite && $load_extension_disabled
         skip "PostgreSql version can't load extension for soundex" if @env_db == 'postgresql'
         assert_equal "C540", t(@camille, @name.soundex)
         assert_equal 8, User.where(@name.soundex.eq(@name.soundex)).count
+      end
+
+      def test_change_case
+        assert_equal "myung", t(@myung, @name.downcase)
+        assert_equal "MYUNG", t(@myung, @name.upcase)
+        assert_equal "myung", t(@myung, @name.upcase.downcase)
       end
 
       def test_trim
@@ -290,7 +302,7 @@ module ArelExtensions
 
         assert_equal ' ', t(@myung, @comments.coalesce("Myung").coalesce('ignored'))
         assert_equal 'Laure', t(@laure, @comments.coalesce("Laure"))
-        assert_equal '', t(@laure, @comments.coalesce(""))
+        assert_equal (@env_db == 'oracle' ? nil : ''), t(@laure, @comments.coalesce(""))
 
         if @env_db == 'postgresql'
           assert_equal 100, t(@test, @age.coalesce(100))

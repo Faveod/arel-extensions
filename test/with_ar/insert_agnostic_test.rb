@@ -20,7 +20,7 @@ module ArelExtensions
         if File.exist?("init/#{@env_db}.sql")
           sql = File.read("init/#{@env_db}.sql")
           unless sql.blank?
-            @cnx.execute(sql) rescue $stderr << "can't create functions"
+            @cnx.execute(sql) rescue $stderr << "can't create functions\n"
           end
         end
         @cnx.drop_table(:user_tests) rescue nil 

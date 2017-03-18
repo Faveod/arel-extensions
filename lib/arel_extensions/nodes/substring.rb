@@ -1,6 +1,7 @@
 module ArelExtensions
   module Nodes
     class Substring < Function
+    	@@return_type = :string
 
 		def initialize expr
 			tab = [convert_to_node(expr[0]), convert_to_node(expr[1])]
@@ -12,9 +13,10 @@ module ArelExtensions
 			return super(tab)
 		end
 
-		def +(other)
-	        return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
-		end
+#		def +(other)
+#			puts "[Substring] : #{other.inspect} (#{self.expressions.inspect})"
+#	        return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
+#		end
 
     end
   end

@@ -72,7 +72,7 @@ module ArelExtensions
         collector << "instr("
         collector = visit o.expr, collector
         collector << Arel::Visitors::SQLite::COMMA
-        collector = visit o.val, collector
+        collector = visit o.right, collector
         collector << ")"
         collector
       end
@@ -80,7 +80,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Substring o, collector
         collector << "SUBSTR("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector << Arel::Visitors::SQLite::COMMA unless i == 0
           collector = visit arg, collector
         }
         collector << ")"

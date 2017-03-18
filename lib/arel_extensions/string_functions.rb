@@ -7,6 +7,7 @@ require 'arel_extensions/nodes/find_in_set'
 require 'arel_extensions/nodes/replace'
 require 'arel_extensions/nodes/soundex'
 require 'arel_extensions/nodes/trim'
+require 'arel_extensions/nodes/change_case'
 require 'arel_extensions/nodes/blank'
 require 'arel_extensions/nodes/format'
 
@@ -92,6 +93,14 @@ module ArelExtensions
 
     def rtrim other = ' '
       ArelExtensions::Nodes::Rtrim.new [self, other]
+    end
+
+    def downcase
+      ArelExtensions::Nodes::Downcase.new [self]
+    end
+
+    def upcase
+      ArelExtensions::Nodes::Upcase.new [self]
     end
 
     def blank

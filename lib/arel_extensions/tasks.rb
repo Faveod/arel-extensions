@@ -1,12 +1,12 @@
-namespace :arelextensions do
-	desc 'Install DB functions'
+namespace :arel_extensions do
+	desc 'Install DB functions into current DB'
 	task :install_functions => :environment do
-        if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
+		if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
           @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
         else
-          @env_db = ENV['DB']
+          @env_db = ENV['DB'] || ActiveRecord::Base.connection.adapter_name
         end
-        ActiveRecord::Base.establish_connection(@env_db.try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+        ActiveRecord::Base.establish_connection(Rails.env)
         @cnx = ActiveRecord::Base.connection
         if File.exist?("init/#{@env_db}.sql")
           sql = File.read("init/#{@env_db}.sql")
