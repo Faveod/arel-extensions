@@ -244,7 +244,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="tg-j6lv">SUBSTR()</td>
     <td class="tg-j6lv">SUBSTR()</td>
-    <td class="ok">✔</td>
+    <td class="tg-j6lv">SUBSTR()</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
   </tr>

@@ -14,6 +14,8 @@ module ArelExtensions
           @left_node_type = type_of_attribute(expr.first)
         when String
           @left_node_type = :string
+        when ArelExtensions::Nodes::Coalesce
+          @left_node_type = expr.first.left_node_type
         when Date
           @left_node_type = :ruby_date
         when DateTime, Time

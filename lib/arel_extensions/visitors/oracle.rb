@@ -174,6 +174,16 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Substring o, collector
+        collector << "SUBSTR("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::Oracle::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_Trim o, collector
         collector << 'TRIM(' # BOTH
         if o.right.expr && SPECIAL_CHARS[o.right.expr]

@@ -1,5 +1,7 @@
 require 'arel'
 
+require 'arel_extensions/railtie' if defined?(Rails::Railtie)
+
 # UnaryOperation|Grouping|Extract < Unary < Arel::Nodes::Node
 # Equality|Regexp|Matches < Binary < Arel::Nodes::Node
 # Count|NamedFunction < Function < Arel::Nodes::Node

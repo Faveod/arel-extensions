@@ -17,6 +17,7 @@ Code quality:
 
 
 New features:
+- UPCASE / DOWNCASE
 - POSIX format numbers (%.2f)
 - easy unions
 - cast, to_char
