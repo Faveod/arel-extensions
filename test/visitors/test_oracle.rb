@@ -77,7 +77,7 @@ module ArelExtensions
         d2 = Time.new(2015,6,1)
         d1 = DateTime.new(2015,6,2)
         sql = compile(ArelExtensions::Nodes::DateDiff.new([d1,d2]))
-        sql.must_match("TO_DATE('2015-06-02') - '2015-06-01'")
+        sql.must_match("TO_DATE('2015-06-02') - TO_DATE('2015-06-01')")
       end
 
       it "should diff between time values and time col" do

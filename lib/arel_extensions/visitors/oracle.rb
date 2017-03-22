@@ -80,15 +80,15 @@ module ArelExtensions
       # :date is not possible in Oracle since this type does not really exist
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         lc = o.left_node_type == :ruby_date || o.left_node_type == :ruby_time
-#        rc = o.right_node_type == :ruby_date || o.right_node_type == :ruby_time
+        rc = o.right_node_type == :ruby_date || o.right_node_type == :ruby_time
         collector << '('
         collector << 'TO_DATE(' if lc
         collector = visit o.left, collector
         collector << ')' if lc
         collector << " - "
-        collector << 'TO_DATE(' if o.right_node_type == :ruby_date
+        collector << 'TO_DATE(' if rc
         collector = visit o.right, collector
-        collector << ')' if o.right_node_type == :ruby_date
+        collector << ')' if rc
         collector << ')'
         if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
           collector << ' * (CASE WHEN (TRUNC('
