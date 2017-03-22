@@ -302,7 +302,11 @@ module ArelExtensions
 
         assert_equal ' ', t(@myung, @comments.coalesce("Myung").coalesce('ignored'))
         assert_equal 'Laure', t(@laure, @comments.coalesce("Laure"))
-        assert_equal(@env_db == 'oracle' ? nil : '', t(@laure, @comments.coalesce("")))
+        if @env_db == 'oracle'
+          assert_nil t(@laure, @comments.coalesce(""))
+        else
+          assert_equal('', t(@laure, @comments.coalesce("")))
+        end
 
         if @env_db == 'postgresql'
           assert_equal 100, t(@test, @age.coalesce(100))
@@ -364,7 +368,7 @@ module ArelExtensions
           assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
           assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
 
-          assert_equal 0, t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1).to_i
+          assert_includes [nil, 0], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1)
         end
       end
 
