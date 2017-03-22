@@ -1,6 +1,6 @@
 module ArelExtensions
   module Nodes
-    class Wday < Arel::Nodes::Function
+    class Wday < Function
 
 
       def initialize other, aliaz = nil

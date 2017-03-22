@@ -1,3 +1,4 @@
+require 'arel_extensions/nodes/function'
 require 'arel_extensions/nodes/duration'
 require 'arel_extensions/nodes/wday'
 

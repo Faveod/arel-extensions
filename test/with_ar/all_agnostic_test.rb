@@ -123,8 +123,8 @@ module ArelExtensions
       def test_ceil
 #        skip "Sqlite version can't load extension for ceil" if $sqlite && $load_extension_disabled
         assert_equal 2, t(@test, @score.ceil) # 1.62
-        assert_equal (-20), t(@camille, @score.ceil) # -20.16
-        assert_equal (-20), t(@camille, (@score - 0.5).ceil) # -20.16
+        assert_equal(-20, t(@camille, @score.ceil)) # -20.16
+        assert_equal(-20, t(@camille, (@score - 0.5).ceil)) # -20.16
         assert_equal 63, t(@arthur, @age.ceil + 42)
       end
 
@@ -132,7 +132,7 @@ module ArelExtensions
 #        skip "Sqlite version can't load extension for floor" if $sqlite && $load_extension_disabled
         assert_equal 0, t(@neg, @score.floor)
         assert_equal 1, t(@test, @score.floor) # 1.62
-        assert_equal (-9), t(@test, (@score - 10).floor) # 1.62
+        assert_equal(-9, t(@test, (@score - 10).floor)) # 1.62
         assert_equal 42, t(@arthur, @score.floor - 23)
       end
 
@@ -192,12 +192,12 @@ module ArelExtensions
 
       def test_substring
         assert_equal 'C', t(@camille, @name.substring(1, 1))
-        assert_equal (@env_db == 'oracle' ? nil : ''), t(@lucas, @name.substring(42))
+        assert_equal(@env_db == 'oracle' ? nil : '', t(@lucas, @name.substring(42)))
         assert_equal 'Lu', t(@lucas, @name.substring(1,2))
 
         assert_equal 'C', t(@camille, @name[0, 1])
         assert_equal 'C', t(@camille, @name[0])
-        assert_equal (@env_db == 'oracle' ? nil : ''), t(@lucas, @name[42])
+        assert_equal(@env_db == 'oracle' ? nil : '', t(@lucas, @name[42]))
         assert_equal 'Lu', t(@lucas, @name[0,2])
         assert_equal 'Lu', t(@lucas, @name[0..1])
       end
@@ -302,7 +302,7 @@ module ArelExtensions
 
         assert_equal ' ', t(@myung, @comments.coalesce("Myung").coalesce('ignored'))
         assert_equal 'Laure', t(@laure, @comments.coalesce("Laure"))
-        assert_equal (@env_db == 'oracle' ? nil : ''), t(@laure, @comments.coalesce(""))
+        assert_equal(@env_db == 'oracle' ? nil : '', t(@laure, @comments.coalesce("")))
 
         if @env_db == 'postgresql'
           assert_equal 100, t(@test, @age.coalesce(100))
@@ -363,6 +363,8 @@ module ArelExtensions
         else
           assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
           assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
+
+          assert_equal 0, t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1).to_i
         end
       end
 

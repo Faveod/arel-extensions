@@ -1,7 +1,6 @@
 module ArelExtensions
   module Nodes
     class Rand < Function
-
       @@return_type = :number
 
       def initialize(seed = nil)

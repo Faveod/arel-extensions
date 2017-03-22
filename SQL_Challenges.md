@@ -7,7 +7,7 @@ A good way could be to create user defined functions to ensure a total transpare
 
 ## SQLite (without extension)
 - FIND_IN_SET
-- LOCATE / instr
+- LOCATE / instr (before 3.7.x)
 - REGEXP
 - SOUNDEX
 
