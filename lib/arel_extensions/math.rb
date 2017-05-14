@@ -44,7 +44,7 @@ module ArelExtensions
     end
 
     #function returns the time between two dates
-    #function returns the susbration between two int
+    #function returns the substraction between two ints
     def -(other)
       return case self.class.return_type
       when :string, :text # ???
