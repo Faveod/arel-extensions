@@ -1,11 +1,11 @@
 source "https://rubygems.org"
 
-gem 'arel', '~> 8'
+gem 'arel', '~> 7.0'
 
 group :development, :test do
-	gem 'activesupport', '~> 5'
-	gem 'activemodel', '~> 5'
-	gem 'activerecord', '~> 5'
+	gem 'activesupport', '~> 5.0'
+	gem 'activemodel', '~> 5.0'
+	gem 'activerecord', '~> 5.0'
 
 	gem "sqlite3", :platforms => [:mri, :mswin, :mingw]
 	gem "mysql2", :platforms => [:mri, :mswin, :mingw]
@@ -15,7 +15,7 @@ group :development, :test do
 #    gem "activerecord-sqlserver-adapter", :platforms => [:mri, :mingw]
 
 	gem 'ruby-oci8', :platforms => [:mri, :mswin, :mingw] if ENV.has_key? 'ORACLE_HOME'
-	gem 'activerecord-oracle_enhanced-adapter', '~> 1.8' if ENV.has_key? 'ORACLE_HOME'
+	gem 'activerecord-oracle_enhanced-adapter', '~> 1.7' if ENV.has_key? 'ORACLE_HOME'
 
 	# for JRuby
 	gem 'activerecord-jdbc-adapter', :platforms => :jruby

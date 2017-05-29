@@ -17,9 +17,10 @@ Code quality:
 
 
 New features:
-- POSIX format numbers (%.2f)
+- POSIX format numbers (%.2f), dates (man 3 printf)
 - easy unions
 - cast, to_char
+- avoid incompatible queries in PgSQL/Oracle/SQLServer when columns are used outside of group by columns (in select or order by)
 
 Tests improvements:
 - SQL Server

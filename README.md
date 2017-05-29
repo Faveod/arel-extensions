@@ -212,7 +212,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <th class="tg-ffjm" rowspan="12"><div>String functions</div></th>
+    <th class="tg-ffjm" rowspan="13"><div>String functions</div></th>
     <td class="tg-yw4l">CONCAT<br>column + "string"</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>

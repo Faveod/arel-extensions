@@ -16,6 +16,7 @@ install:
 - bundle install
 gemfile:
 - gemfiles/rails4.gemfile
+- gemfiles/rails5_0.gemfile
 - gemfiles/rails5.gemfile
 services:
 - mysql
@@ -91,6 +92,12 @@ matrix:
     gemfile: gemfiles/rails5.gemfile
   - rvm: ruby-head
     gemfile: gemfiles/rails4.gemfile
+  - rvm: 2.0.0
+    gemfile: gemfiles/rails5_0.gemfile
+  - rvm: 2.1
+    gemfile: gemfiles/rails5_0.gemfile
+  - rvm: rbx-2
+    gemfile: gemfiles/rails5_0.gemfile
   allow_failures:
   - rvm: rbx-2
     gemfile: gemfiles/rails4.gemfile
