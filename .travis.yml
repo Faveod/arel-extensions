@@ -102,6 +102,12 @@ matrix:
   - rvm: rbx-2
     gemfile: gemfiles/rails4.gemfile
   - rvm: rbx-2
+    gemfile: gemfiles/rails5_0.gemfile
+  - rvm: jruby-9.0.5.0
+    gemfile: gemfiles/rails5_0.gemfile
+  - rvm: jruby-head
+    gemfile: gemfiles/rails5_0.gemfile
+  - rvm: rbx-2
     gemfile: gemfiles/rails5.gemfile
   - rvm: jruby-9.0.5.0
     gemfile: gemfiles/rails5.gemfile
