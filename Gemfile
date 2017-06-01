@@ -13,8 +13,8 @@ group :development, :test do
 	gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
 
 	
-  gem "tiny_tds", :require => false, :platforms => [:mri, :mingw, :x64_mingw, :mswin]
-  gem "activerecord-sqlserver-adapter", '~> 4.2.0', :platforms => [:mri, :mingw, :x64_mingw,  :mswin]
+  gem "tiny_tds", :require => false, :platforms => [:mingw, :x64_mingw, :mswin]
+  gem "activerecord-sqlserver-adapter", '~> 4.2.0', :platforms => [:mingw, :x64_mingw,  :mswin]
 
 	gem 'activesupport', '~> 4.0'
   	gem 'activemodel', '~> 4.0'
