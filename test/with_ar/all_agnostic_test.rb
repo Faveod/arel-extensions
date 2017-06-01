@@ -25,10 +25,17 @@ module ArelExtensions
           if !$load_extension_disabled
             begin
               db.create_function("find_in_set", 1) do |func, value1, value2|
-                func.result = value1.to_s.index(value2)
+                case value1
+                when String
+                  func.result = value1.split(',').index(value2.to_s) || -1
+                when NilClass
+                  func.result = nil
+                else
+                  func.result = value1.to_s.split(',').index(value2.to_s) || -1
+                end
               end
               db.create_function("instr", 1) do |func, value1, value2|
-                func.result = value1.to_s.index(value2)
+                func.result = value1.to_s.index(value2.to_s) + 1
               end rescue "already here (> 3.8.5)"
               db.enable_load_extension(1)
               db.load_extension("/usr/lib/sqlite3/pcre.so")

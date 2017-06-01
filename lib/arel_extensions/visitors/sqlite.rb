@@ -190,14 +190,15 @@ module ArelExtensions
                 if attr && attr.able_to_type_cast?
                   collector << quote(attr.type_cast_for_database(value))
                 else
-                  collector << quote(value, column_for(attr))
+#                  collector << quote(value, column_for(attr))
+                  collector << quote(value).to_s
                 end
                 if idx == 0
                   collector << " AS "
                   collector << quote(attr.name)
                 end
               end
-              collector << Arel::Visitors::SQLite::COMMA unless i == len
+              collector << COMMA unless i == len
           }
           collector << ' UNION ALL ' unless idx == o.left.length - 1
         end
