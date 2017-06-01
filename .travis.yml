@@ -5,10 +5,13 @@ cache:
   directories:
   - $ORACLE_DOWNLOAD_DIR
 before_install:
+- chmod +x .travis/sqlite3/extension-functions.sh
 - chmod +x .travis/oracle/download.sh
 - chmod +x .travis/oracle/install.sh
 - chmod +x .travis/setup_accounts.sh
 install:
+- sudo apt-get install -y sqlite3-pcre curl
+- .travis/sqlite3/extension-functions.sh
 - .travis/oracle/download.sh
 - .travis/oracle/install.sh
 - .travis/setup_accounts.sh
