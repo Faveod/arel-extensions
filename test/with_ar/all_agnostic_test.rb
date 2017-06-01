@@ -6,7 +6,7 @@ module ArelExtensions
 
     class ListTest < Minitest::Test
       require 'minitest/pride'
-      def setup_db
+      def connect_db
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
           @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
@@ -48,6 +48,8 @@ module ArelExtensions
             @cnx.execute(sql) unless sql.blank?
           end
         end
+
+      def setup_db
         @cnx.drop_table(:user_tests) rescue nil 
         @cnx.create_table :user_tests do |t|
           t.column :age, :integer
@@ -72,6 +74,7 @@ module ArelExtensions
 
       def setup
         d = Date.new(2016, 5, 23)
+        connect_db
         setup_db
         u = User.create :age => 5, :name => "Lucas", :created_at => d, :score => 20.16, :updated_at => Time.utc(2014, 3, 3, 12, 42, 0)
         @lucas = User.where(:id => u.id)

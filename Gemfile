@@ -12,10 +12,9 @@ group :development, :test do
 	gem "activerecord-jdbcmysql-adapter", :platforms => :jruby
 	gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
 
-	if RUBY_PLATFORM =~ /[^r]win\d\d/
-    	gem "tiny_tds", :require => false, :platforms => [:mri, :mingw, :mswin]
-    	gem "activerecord-sqlserver-adapter", '~> 4.2.0', :platforms => [:mri, :mingw, :mswin]
-	end
+	
+  gem "tiny_tds", :require => false, :platforms => [:mri, :mingw, :x64_mingw, :mswin]
+  gem "activerecord-sqlserver-adapter", '~> 4.2.0', :platforms => [:mri, :mingw, :x64_mingw,  :mswin]
 
 	gem 'activesupport', '~> 4.0'
   	gem 'activemodel', '~> 4.0'

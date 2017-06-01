@@ -14,7 +14,7 @@ Rake::TestTask.new(:test) do |t|
   	t.verbose = true
 end
 
-%w(mysql postgresql sqlite ibm_db oracle mssql).each do |adapter|
+%w(mysql postgresql sqlite3 ibm_db oracle mssql).each do |adapter|
 	namespace :test do
 		Rake::TestTask.new(adapter => "#{adapter}:env") { |t|
 			t.libs << 'lib'
