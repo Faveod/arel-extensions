@@ -153,6 +153,7 @@ module ArelExtensions
         collector
       end
 
+    if Arel::VERSION.to_i < 7
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
         o.left.each_with_index do |row, idx|
           collector << 'SELECT '
@@ -175,6 +176,34 @@ module ArelExtensions
         end
         collector
       end
+    else
+      def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        o.left.each_with_index do |row, idx|
+          collector << 'SELECT '
+          v = Arel::Nodes::Values.new(row, o.cols)
+          len = v.expressions.length - 1
+          v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value.as(attr.name), collector
+              else
+                if attr && attr.able_to_type_cast?
+                  collector << quote(attr.type_cast_for_database(value))
+                else
+                  collector << quote(value, column_for(attr))
+                end
+                if idx == 0
+                  collector << " AS "
+                  collector << quote(attr.name)
+                end
+              end
+              collector << Arel::Visitors::SQLite::COMMA unless i == len
+          }
+          collector << ' UNION ALL ' unless idx == o.left.length - 1
+        end
+        collector
+      end
+    end
 
     end
   end
