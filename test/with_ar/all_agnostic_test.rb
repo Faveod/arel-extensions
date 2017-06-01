@@ -48,6 +48,7 @@ module ArelExtensions
             @cnx.execute(sql) unless sql.blank?
           end
         end
+	  end
 
       def setup_db
         @cnx.drop_table(:user_tests) rescue nil 
