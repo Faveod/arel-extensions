@@ -18,7 +18,7 @@ module ArelExtensions
         ActiveRecord::Base.default_timezone = :utc
         @cnx = ActiveRecord::Base.connection
         $sqlite ||= false
-        if ActiveRecord::Base.connection.adapter_name =~ /sqlite/i
+        if !(ActiveRecord::Base.connection.adapter_name =~ /sqlite/i).nil?
           $sqlite = true
           db = @cnx.raw_connection
           $load_extension_disabled ||= false
