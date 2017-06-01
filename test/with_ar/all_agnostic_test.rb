@@ -24,29 +24,34 @@ module ArelExtensions
           $load_extension_disabled ||= false
           if !$load_extension_disabled
             begin
-              db.create_function("find_in_set", 1) do |func, value1, value2|
-                case value1
-                when String
-                  i = value1.split(',').index(value2.to_s)
-                  func.result = i ? i+1 : 0
-                when NilClass
-                  func.result = nil
-                else
-                  i = value1.to_s.split(',').index(value2.to_s)
-                  func.result = i ? i+1 : 0
-                end
-              end
-              db.create_function("instr", 1) do |func, value1, value2|
-                func.result = value1.to_s.index(value2.to_s) + 1
-              end rescue "already here (> 3.8.5)"
               db.enable_load_extension(1)
               db.load_extension("/usr/lib/sqlite3/pcre.so")
               db.load_extension("/usr/lib/sqlite3/extension-functions.so")
               db.enable_load_extension(0)
-              #function find_in_set
             rescue => e
               $load_extension_disabled = true
               puts "can not load extensions #{e.inspect}"
+            end
+            begin
+              db.create_function("find_in_set", 1) do |func, value1, value2|
+                puts "values: #{value1.inspect} -- #{value2.inspect}"
+                case value1
+                when String
+                  i = value1.split(',').index(value2.to_s)
+                  func.result = i ? (i+1) : 0
+                when NilClass
+                  func.result = nil
+                else
+                  i = value1.to_s.split(',').index(value2.to_s)
+                  func.result = i ? (i+1) : 0
+                end
+              end
+              db.create_function("instr", 1) do |func, value1, value2|
+                i = value1.to_s.index(value2.to_s)
+                func.result = i ? (i+1) : 0
+              end rescue "already here (> 3.8.5)"
+            rescue => e
+                puts "can not add functions #{e.inspect}"
             end
           end
         end
