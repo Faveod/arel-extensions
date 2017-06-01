@@ -30,7 +30,7 @@ before_script:
 script:
 - gem build arel_extensions.gemspec
 - bundle exec rake test
-- bundle exec rake test:sqlite
+- bundle exec rake test:sqlite3
 - bundle exec rake test:mysql
 - bundle exec rake test:postgresql
 - bundle exec rake test:oracle # service unavailable
