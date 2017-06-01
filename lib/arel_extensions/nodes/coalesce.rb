@@ -12,7 +12,7 @@ module ArelExtensions
         case expr.first
         when String
           @left_node_type = :string
-        when Integer, Fixnum, Float
+        when Integer, Float
           @left_node_type = :number
         when ArelExtensions::Nodes::Coalesce, ArelExtensions::Nodes::Function
           @left_node_type = expr.first.try(:left_node_type)

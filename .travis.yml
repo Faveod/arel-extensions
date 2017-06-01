@@ -49,6 +49,7 @@ rvm:
 - 2.1
 - 2.2.5
 - 2.3.1
+- 2.4.0
 - rbx-2
 - jruby-9.0.5.0
 - jruby-head
@@ -79,6 +80,10 @@ matrix:
   - rvm: 2.3.1
     jdk: openjdk7
   - rvm: 2.3.1
+    jdk: oraclejdk7
+  - rvm: 2.4.0
+    jdk: openjdk7
+  - rvm: 2.4.0
     jdk: oraclejdk7
   - rvm: ruby-head
     jdk: openjdk7
