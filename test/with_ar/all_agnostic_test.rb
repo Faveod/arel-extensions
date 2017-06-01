@@ -27,11 +27,13 @@ module ArelExtensions
               db.create_function("find_in_set", 1) do |func, value1, value2|
                 case value1
                 when String
-                  func.result = value1.split(',').index(value2.to_s) || -1
+                  i = value1.split(',').index(value2.to_s)
+                  func.result = i ? i+1 : 0
                 when NilClass
                   func.result = nil
                 else
-                  func.result = value1.to_s.split(',').index(value2.to_s) || -1
+                  i = value1.to_s.split(',').index(value2.to_s)
+                  func.result = i ? i+1 : 0
                 end
               end
               db.create_function("instr", 1) do |func, value1, value2|
@@ -215,7 +217,11 @@ module ArelExtensions
 
         assert_equal 'C', t(@camille, @name[0, 1])
         assert_equal 'C', t(@camille, @name[0])
-        assert_equal(@env_db == 'oracle' ? nil : '', t(@lucas, @name[42]))
+        if @env_db == 'oracle'
+          assert_nil(t(@lucas, @name[42]))
+        else
+          assert_equal('', t(@lucas, @name[42]))
+        end
         assert_equal 'Lu', t(@lucas, @name[0,2])
         assert_equal 'Lu', t(@lucas, @name[0..1])
       end
