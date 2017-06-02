@@ -15,6 +15,8 @@ Code quality:
 [![security](https://hakiri.io/github/faveod/arel_extensions/master.svg)](https://hakiri.io/github/faveod/arel_extensions/master)
 [![codebeat](https://codebeat.co/badges/<change>)](https://codebeat.co/projects/github-com-faveod-arel_extensions)
 
+TODO:
+- all skips in tests
 
 New features:
 - POSIX format numbers (%.2f), dates (man 3 printf)
