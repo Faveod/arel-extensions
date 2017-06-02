@@ -6,10 +6,11 @@
 
 ORACLE_DOWNLOAD_FILE="$(basename "$ORACLE_FILE")"
 
-if [ -n "$ORACLE_DOWNLOAD_DIR" ]; then
+if [ -n "$ORACLE_DOWNLOAD_DIR" ];#verifie si la variable d'environemment existe bien
+ then # defini le début du bloque d'instruction
   mkdir -p "$ORACLE_DOWNLOAD_DIR"
   ORACLE_DOWNLOAD_FILE="$(readlink -f "$ORACLE_DOWNLOAD_DIR")/$ORACLE_DOWNLOAD_FILE"
-fi
+fi 
 
 if [ "${*#*--unless-exists}" != "$*" ] && [ -f "$ORACLE_DOWNLOAD_FILE" ]; then
   exit 0
@@ -19,11 +20,11 @@ cd "$(dirname "$(readlink -f "$0")")"
 
 npm install bluebird node-phantom-simple
 
-export ORACLE_DOWNLOAD_FILE
+export ORACLE_DOWNLOAD_FILE #sert a mettre les variable dans la variable d'environment
 export COOKIES='cookies.txt'
 export USER_AGENT='Mozilla/5.0'
 
 echo > "$COOKIES"
-chmod 600 "$COOKIES"
+chmod 600 "$COOKIES" #permet de modifier les droit d'un fichier pour différents utilisateurs...
 
 exec node download.js
