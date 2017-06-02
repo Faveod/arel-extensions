@@ -335,7 +335,7 @@ module ArelExtensions
         collector
       end
 
-
+    if Arel::VERSION.to_i < 7
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
         collector << "VALUES "
         row_nb = o.left.length
@@ -356,6 +356,33 @@ module ArelExtensions
         end
         collector
       end
+    else
+      def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        collector << "VALUES "
+        row_nb = o.left.length
+        o.left.each_with_index do |row, idx|
+          collector << '('
+          v = Arel::Nodes::Values.new(row, o.cols)
+          len = v.expressions.length - 1
+          v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value, collector
+              else
+                if attr && attr.able_to_type_cast?
+                  collector << quote(attr.type_cast_for_database(value))
+                else
+                  collector << quote(value).to_s
+                end
+              end
+              collector << Arel::Visitors::ToSql::COMMA unless i == len
+          }
+          collector << (idx == row_nb-1 ? ')' : '), ')
+        end
+        collector
+      end
+    end
+
 
   	end
 

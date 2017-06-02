@@ -234,7 +234,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">LOCATE<br>column.locate("string")</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">INSTR()</td>
+    <td class="tg-j6lv">INSTR() or Ruby function</td>
     <td class="ok">✔</td>
     <td class="tg-j6lv">CHARINDEX()</td>
     <td class="ok">✔</td>
@@ -252,7 +252,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">FIND_IN_SET<br>column &amp; ("l")</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-orpl">db.create_function( "find_in_set", 1 ) <br>do |func, value1, value2|,<br>func.result =value1.index(value2)<br>end <br></td>
+    <td class="tg-orpl">Ruby function</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
