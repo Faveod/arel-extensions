@@ -14,11 +14,6 @@ module ArelExtensions
           $load_extension_disabled = true
           puts "can not load extensions #{e.inspect}"
         end
-        begin
-          add_sqlite_functions
-        rescue => e
-          puts "can not add functions #{e.inspect}"
-        end
       end
     end
 
@@ -43,6 +38,13 @@ module ArelExtensions
     end
 
     def add_sql_functions(env_db)
+      if env_db =~ /sqlite/i
+        begin
+          add_sqlite_functions
+        rescue => e
+          puts "can not add sqlite functions #{e.inspect}"
+        end
+      end
       if File.exist?("init/#{env_db}.sql")
         sql = File.read("init/#{env_db}.sql")
         if env_db == 'mssql'

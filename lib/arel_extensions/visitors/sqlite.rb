@@ -198,7 +198,7 @@ module ArelExtensions
                   collector << quote(attr.name)
                 end
               end
-              collector << COMMA unless i == len
+              collector << Arel::Visitors::SQLite::COMMA unless i == len
           }
           collector << ' UNION ALL ' unless idx == o.left.length - 1
         end

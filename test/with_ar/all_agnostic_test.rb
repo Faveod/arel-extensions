@@ -21,7 +21,6 @@ module ArelExtensions
         $load_extension_disabled ||= false
         csf = CommonSqlFunctions.new(@cnx)
         csf.add_sql_functions(@env_db)
-
       end
 
       def setup_db
