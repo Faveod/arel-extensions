@@ -31,8 +31,8 @@ module ArelExtensions
           Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
         when ArelExtensions::Nodes::Function
           att.class.return_type
-        else
-          nil
+#        else
+#          nil
         end
       end
 

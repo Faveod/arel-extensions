@@ -3,12 +3,12 @@ module ArelExtensions
     module MSSQL
       Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'weekday', 'w' => 'week', 'h' => 'hour', 'mn' => 'minute', 's' => 'second'}
       Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES = {
-        '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' =>   '', '%b' => '', '%^b' => '',      # year, month
-        '%d' => 'DD', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                               # day, weekday
-        '%H' => 'hh', '%k' => '', '%I' =>   '', '%l' =>   '', '%P' => '', '%p' => '',                 # hours
+        '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' =>   '', '%b' => '', '%^b' => '', # year, month
+        '%d' => 'DD', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '', # day, weekday
+        '%H' => 'hh', '%k' => '', '%I' =>   '', '%l' =>   '', '%P' => '', '%p' => '', # hours
         '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
       }
-      # TODO all others... http://www.sql-server-helper.com/tips/date-formats.aspx
+      # TODO; all others... http://www.sql-server-helper.com/tips/date-formats.aspx
       Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS = {
         'YYYY-MM-DD' => 120,
         'YY-MM-DD'  => 120,
@@ -71,16 +71,16 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-          collector << "DATEDIFF(second"
-        else
-          collector << "DATEDIFF(day"
-        end
+        collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+                        'DATEDIFF(second'
+                    else
+                      'DATEDIFF(day'
+                    end
         collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.right, collector
         collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.left, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
@@ -138,17 +138,13 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Substring o, collector
-        collector << "SUBSTRING("
+        collector << 'SUBSTRING('
         collector = visit o.expressions[0], collector
         collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.expressions[1], collector
         collector << Arel::Visitors::MSSQL::COMMA
-        if !o.expressions[2]
-          collector = visit o.expressions[0].length, collector
-        else
-          collector = visit o.expressions[2], collector
-        end
-        collector << ")"
+        collector = o.expressions[2] ? visit(o.expressions[2], collector) : visit(o.expressions[0].length, collector)
+        collector << ')'
         collector
       end
 
@@ -273,8 +269,7 @@ module ArelExtensions
         collector
       end
 
-
-      # TODO manage case insensitivity
+      # TODO; manage case insensitivity
       def visit_ArelExtensions_Nodes_IMatches o, collector
         collector = infix_value o, collector, ' LIKE '
         if o.escape
@@ -285,7 +280,7 @@ module ArelExtensions
         end
       end
 
-      # TODO manage case insensitivity
+      # TODO; manage case insensitivity
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
         collector = infix_value o, collector, ' NOT LIKE '
         if o.escape
@@ -308,7 +303,7 @@ module ArelExtensions
         collector
       end
 
-      # TODO
+      # TODO; 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "(LISTAGG("
         collector = visit o.left, collector
@@ -321,8 +316,6 @@ module ArelExtensions
         collector << "))"
         collector
       end
-
-
 
     end
   end

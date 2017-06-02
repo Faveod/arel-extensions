@@ -1,0 +1,40 @@
+AllCops:
+  DisabledByDefault: true
+  Exclude:
+  - "test/**/*"
+
+Layout/EndOfLine:
+  Enabled: true
+
+Layout/ExtraSpacing:
+  Enabled: true
+
+Layout/SpaceAroundEqualsInParameterDefault:
+  Enabled: true
+
+Layout/TrailingBlankLines:
+  Enabled: true
+
+Style/CollectionMethods:
+  Enabled: true
+
+Style/CommandLiteral:
+  Enabled: true
+
+Style/CommentAnnotation:
+  Enabled: true
+
+Style/ConditionalAssignment:
+  Enabled: true
+
+Style/EmptyElse:
+  Enabled: true
+
+Style/Encoding:
+  Enabled: true
+
+Style/FileName:
+  Enabled: true
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: false
