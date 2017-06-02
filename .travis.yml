@@ -3,7 +3,7 @@ sudo: required
 cache:
   bundler: true
   directories:
-  - .autoconf
+  #- .autoconf
   - $ORACLE_DOWNLOAD_DIR #Arbitrary directories/Répertoires arbitraires ---> download.sh
 before_install:
 - chmod +x .travis/sqlite3/extension-functions.sh
