@@ -16,6 +16,17 @@ It allows to use more advanced SQL functions for any supported RDBMS.
 Arel 6 (Rails 4) or Arel 7+ (Rails 5).
 
 
+## Usage
+
+Most of the features will work just by adding the gem to your Gemfiles. To make sure to get all the features for any dbms, you should execute the next line as soon as you get your connection to your DB:
+
+```ruby
+ArelExtensions::CommonSqlFunctions.new(ActiveRecord::Base.connection).add_sql_functions()
+```
+
+It will add common SQL features in your DB to align ti with current routines. Technically, it will execute SQL scripts from init folder.
+
+
 ## Examples
 
 t is an Arel::Table for table my_table

@@ -37,7 +37,8 @@ module ArelExtensions
       end rescue "function instr already here (>= 3.8.5)"
     end
 
-    def add_sql_functions(env_db)
+    def add_sql_functions(env_db = nil)
+      env_db ||= @cnx.adapter_name
       if env_db =~ /sqlite/i
         begin
           add_sqlite_functions
