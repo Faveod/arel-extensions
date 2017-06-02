@@ -38,3 +38,9 @@ Style/FileName:
 
 Style/MethodCallWithArgsParentheses:
   Enabled: false
+
+Performance/DoubleStartEndWith:
+  Enabled: true
+
+Performance/RedundantMerge:
+  Enabled: true

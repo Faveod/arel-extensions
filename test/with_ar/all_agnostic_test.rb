@@ -352,7 +352,7 @@ module ArelExtensions
         else
           assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
           assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
-          if @env_db == 'mssql'
+          if @env_db == 'mssql' || @env_db == 'oracle' # can't select booleans
             assert_equal 0, @lucas.where((@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1).count
           else
             assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1)
@@ -360,6 +360,7 @@ module ArelExtensions
         end
       end
 
+      # TODO; cast types
       def test_cast_types
         skip "not implemented yet"
         assert_equal true, t(@arthur, @score =~ /22/)

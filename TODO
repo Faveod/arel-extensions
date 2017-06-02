@@ -17,6 +17,7 @@ Code quality:
 
 TODO:
 - all skips in tests
+- all SQL Server date formats
 
 New features:
 - POSIX format numbers (%.2f), dates (man 3 printf)
