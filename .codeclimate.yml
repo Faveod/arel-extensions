@@ -14,7 +14,7 @@ engines:
   "bundler-audit":
     enabled: false
   markdownlint:
-    enabled: true
+    enabled: false
 ratings:
   paths:
   - lib/**
