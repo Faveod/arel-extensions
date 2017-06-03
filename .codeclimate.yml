@@ -6,7 +6,7 @@ engines:
     #	Rubocop/Metrics/ClassLength:
     #  	enabled: false
   duplication:
-  	enabled: false
+    enabled: false
   brakeman:
     enabled: true
   reek:
