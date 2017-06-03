@@ -1,7 +1,9 @@
 # Arel Extensions
 
-[![Build Status](https://secure.travis-ci.org/Faveod/arel-extensions.svg)](http://travis-ci.org/Faveod/arel-extensions)
+[![Build Status](https://img.shields.io/travis/Faveod/arel-extensions.svg)](http://travis-ci.org/Faveod/arel-extensions)
 [![Latest Release](https://img.shields.io/gem/v/arel_extensions.svg)](https://rubygems.org/gems/arel_extensions)
+[![Code Climate](https://img.shields.io/codeclimate/github/Faveod/arel-extensions.svg)](https://codeclimate.com/github/Faveod/arel-extensions)
+[![Gemnasium](https://img.shields.io/gemnasium/Faveod/arel-extensions.svg)](https://gemnasium.com/github.com/Faveod/arel-extensions)
 ![](http://img.shields.io/badge/license-MIT-brightgreen.svg)
 ![](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?type=total)
 ![](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?label=downloads-current-version)
