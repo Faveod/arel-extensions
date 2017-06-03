@@ -8,7 +8,7 @@ engines:
   duplication:
     enabled: false
   brakeman:
-    enabled: true
+    enabled: false
   reek:
     enabled: true
   "bundler-audit":
