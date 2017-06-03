@@ -305,11 +305,7 @@ module ArelExtensions
               when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
                 collector = visit value, collector
               else
-                if attr && attr.able_to_type_cast?
-                  collector << quote(attr.type_cast_for_database(value))
-                else
-                  collector << quote(value).to_s
-                end
+                collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
               end
               collector << Arel::Visitors::Oracle::COMMA unless i == len
           }

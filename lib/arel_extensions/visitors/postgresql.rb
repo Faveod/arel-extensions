@@ -99,11 +99,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-          collector << "DATEDIFF('second', "
-        else
-          collector << "DATEDIFF('day', "
-        end
+        collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+                        "DATEDIFF('second', "
+                    else
+                        "DATEDIFF('day', "
+                    end
         collector = visit o.right, collector
         collector << (o.right_node_type == :date ? '::date' : '::timestamp')
         collector << Arel::Visitors::PostgreSQL::COMMA
