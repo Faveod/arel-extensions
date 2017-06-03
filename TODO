@@ -1,15 +1,11 @@
 Code quality:
 + codeclimate.com
-- coveralls.io
 + gemnasium
-- inch-ci.org
 + appveyor.com (windows)
-- hakiri.io
-
-[![Coverage Status](https://img.shields.io/coveralls/faveod/arel_extensions.svg)][https://coveralls.io/r/faveod/arel_extensions]
-[![Inline docs](http://inch-ci.org/github/faveod/arel_extensions.svg)][https://inch-ci.org/github/faveod/https://gemnasium.com/faveod/arel_extensions]
-[![security](https://hakiri.io/github/faveod/arel_extensions/master.svg)](https://hakiri.io/github/faveod/arel_extensions/master)
-[![codebeat](https://codebeat.co/badges/<change>)](https://codebeat.co/projects/github-com-faveod-arel_extensions)
++ hakiri.io
+- coveralls.io
+- inch-ci.org
+- codebeat.co
 
 TODO:
 - all skips in tests
@@ -19,6 +15,7 @@ New features:
 - POSIX format numbers (%.2f), dates (man 3 printf)
 - easy unions
 - cast, to_char
+- auto-remove order by in sub queries
 - avoid incompatible queries in PgSQL/Oracle/SQLServer when columns are used outside of group by columns (in select or order by)
 
 Tests improvements:
