@@ -12,7 +12,7 @@ engines:
   reek:
     enabled: true
   "bundler-audit":
-    enabled: true
+    enabled: false
   markdownlint:
     enabled: true
 ratings:
