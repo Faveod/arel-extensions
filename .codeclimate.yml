@@ -1,3 +1,4 @@
+---
 engines:
   rubocop:
     enabled: true
@@ -10,12 +11,15 @@ engines:
     enabled: true
   reek:
     enabled: true
-  bundler-audit:
+  "bundler-audit":
+    enabled: true
+  markdownlint:
     enabled: true
 ratings:
   paths:
   - lib/**
   - "**.rb"
+  - "**.md"
 exclude_paths:
 - .travis/**/*
 - test/**/*
