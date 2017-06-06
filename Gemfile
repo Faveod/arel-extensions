@@ -3,22 +3,15 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
-<<<<<<< HEAD
+
 	gem "sqlite3", :platforms => [:mri, :mswin,:x64_mingw,:mingw]
 	gem "mysql2", :platforms => [:mri, :mswin,:x64_mingw, :mingw]
     gem "pg", :platforms => [:mri, :mingw,:x64_mingw, :mswin]
-<<<<<<< HEAD
-=======
-	
+
 	gem "sqlite3", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
 	gem "mysql2", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
 	gem "pg", :platforms => [:mri, :mingw, :x64_mingw, :mswin]
->>>>>>> origin/master
-=======
-  gem "sqlite3", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
-  gem "mysql2", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
-  gem "pg", :platforms => [:mri, :mingw, :x64_mingw, :mswin]
->>>>>>> refs/remotes/Faveod/master
+
 
   gem "jdbc-sqlite3", :platforms => :jruby
   gem "activerecord-jdbcsqlite3-adapter", :platforms => :jruby
@@ -26,13 +19,10 @@ group :development, :test do
   gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
 
 	
-<<<<<<< HEAD
-    gem "tiny_tds", :require => false, :platforms => [:mingw, :x64_mingw, :mswin]
-    gem "activerecord-sqlserver-adapter", '~> 4.2.0', :platforms => [:mingw, :x64_mingw,  :mswin]
-=======
+
   gem "tiny_tds", :require => false, :platforms => [:mingw, :x64_mingw, :mswin]
   gem "activerecord-sqlserver-adapter", '~> 4.2.0', :platforms => [:mingw, :x64_mingw, :mswin]
->>>>>>> refs/remotes/Faveod/master
+
 
   gem 'activesupport', '~> 4.0'
   gem 'activemodel', '~> 4.0'

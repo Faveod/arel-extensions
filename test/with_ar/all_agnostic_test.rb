@@ -17,7 +17,7 @@ module ArelExtensions
         ActiveRecord::Base.establish_connection(@env_db.try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
         ActiveRecord::Base.default_timezone = :utc
         @cnx = ActiveRecord::Base.connection
-<<<<<<< HEAD
+
         $sqlite ||= false
         if !(ActiveRecord::Base.connection.adapter_name =~ /sqlite/i).nil?
           $sqlite = true
@@ -50,25 +50,15 @@ module ArelExtensions
           end
         end
 	  end
-<<<<<<< HEAD
-=======
-        $sqlite = @cnx.adapter_name =~ /sqlite/i
-=======
+
 	  
 	  
 	  $sqlite = @cnx.adapter_name =~ /sqlite/i
-=======
-        $sqlite = @cnx.adapter_name =~ /sqlite/i
->>>>>>> refs/remotes/Faveod/master
->>>>>>> origin/master
+
         $load_extension_disabled ||= false
         csf = CommonSqlFunctions.new(@cnx)
         csf.add_sql_functions(@env_db)
       end
-<<<<<<< HEAD
->>>>>>> refs/remotes/Faveod/master
-=======
->>>>>>> origin/master
 
       def setup_db
         @cnx.drop_table(:user_tests) rescue nil 
@@ -399,26 +389,17 @@ module ArelExtensions
         else
           assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
           assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
-<<<<<<< HEAD
+
 
           skip "Pb with order in Oracle" if @env_db == 'oracle'
           assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18))) < -1
-<<<<<<< HEAD
-=======
-=======
-		  
-=======
->>>>>>> refs/remotes/Faveod/master
->>>>>>> origin/master
+
           if @env_db == 'mssql' || @env_db == 'oracle' # can't select booleans
             assert_equal 0, @lucas.where((@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1).count
           else
             assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1)
           end
-<<<<<<< HEAD
->>>>>>> refs/remotes/Faveod/master
-=======
->>>>>>> origin/master
+
         end
       end
 
