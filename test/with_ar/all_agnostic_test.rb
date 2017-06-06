@@ -50,13 +50,25 @@ module ArelExtensions
           end
         end
 	  end
+<<<<<<< HEAD
 =======
         $sqlite = @cnx.adapter_name =~ /sqlite/i
+=======
+	  
+	  
+	  $sqlite = @cnx.adapter_name =~ /sqlite/i
+=======
+        $sqlite = @cnx.adapter_name =~ /sqlite/i
+>>>>>>> refs/remotes/Faveod/master
+>>>>>>> origin/master
         $load_extension_disabled ||= false
         csf = CommonSqlFunctions.new(@cnx)
         csf.add_sql_functions(@env_db)
       end
+<<<<<<< HEAD
 >>>>>>> refs/remotes/Faveod/master
+=======
+>>>>>>> origin/master
 
       def setup_db
         @cnx.drop_table(:user_tests) rescue nil 
@@ -391,13 +403,22 @@ module ArelExtensions
 
           skip "Pb with order in Oracle" if @env_db == 'oracle'
           assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18))) < -1
+<<<<<<< HEAD
 =======
+=======
+		  
+=======
+>>>>>>> refs/remotes/Faveod/master
+>>>>>>> origin/master
           if @env_db == 'mssql' || @env_db == 'oracle' # can't select booleans
             assert_equal 0, @lucas.where((@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1).count
           else
             assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1)
           end
+<<<<<<< HEAD
 >>>>>>> refs/remotes/Faveod/master
+=======
+>>>>>>> origin/master
         end
       end
 
