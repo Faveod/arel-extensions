@@ -5,7 +5,7 @@ cache:
   directories:
   #- .autoconf 
   #Arbitrary directories/Répertoires arbitraires ---> download.sh
-  - /tmp
+  - /tmp/oracle-xe-11.2.0-1.0.x86_64.rpm.zip
 before_install:
 - chmod +x .travis/sqlite3/extension-functions.sh
 - chmod +x .travis/oracle/download.sh       #Il s'agit de se fichier qui tent d'avoir accès aux serveur Oracle
@@ -39,7 +39,7 @@ script:
 env:
   global:
   - JRUBY_OPTS='--dev -J-Xmx1024M'
-  - ORACLE_DOWNLOAD_DIR=/tmp
+  - ORACLE_DOWNLOAD_DIR=/tmp/oracle-xe-11.2.0-1.0.x86_64.rpm.zip
   - ORACLE_COOKIE=sqldev
   - ORACLE_FILE=oracle11g/xe/oracle-xe-11.2.0-1.0.x86_64.rpm.zip
   - ORACLE_OJDBC_URL=http://download.oracle.com/otn/utilities_drivers/jdbc/11204/ojdbc6.jar
