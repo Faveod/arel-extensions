@@ -1,9 +1,14 @@
 # Arel Extensions
 
-[![Build Status](https://secure.travis-ci.org/Faveod/arel-extensions.svg)](http://travis-ci.org/Faveod/arel-extensions)
-[![Latest Release](https://img.shields.io/gem/v/arel_extensions.svg)](https://rubygems.org/gems/arel_extensions)
+[![Travis Build Status](https://img.shields.io/travis/Faveod/arel-extensions.svg?label=Travis%20build)](http://travis-ci.org/Faveod/arel-extensions)
+[![AppVeyor Build Status](https://img.shields.io/appveyor/ci/yazfav/arel-extensions.svg?label=AppVeyor%20build)](https://ci.appveyor.com/project/yazfav/arel-extensions)
+[![Code Climate](https://img.shields.io/codeclimate/github/Faveod/arel-extensions.svg)](https://codeclimate.com/github/Faveod/arel-extensions)
+[![Gemnasium](https://img.shields.io/gemnasium/Faveod/arel-extensions.svg)](https://gemnasium.com/github.com/Faveod/arel-extensions)
+[![Security](https://hakiri.io/github/Faveod/arel-extensions/master.svg)](https://hakiri.io/github/Faveod/arel-extensions/master)
 ![](http://img.shields.io/badge/license-MIT-brightgreen.svg)
-![](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?type=total)
+
+Gem: [![Latest Release](https://img.shields.io/gem/v/arel_extensions.svg)](https://rubygems.org/gems/arel_extensions)
+[![Gem download](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?type=total)](https://rubygems.org/gems/arel_extensions)
 ![](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?label=downloads-current-version)
 
 Arel Extensions adds shortcuts, fixes and new ORM mappings (ruby to SQL) to Arel.
@@ -14,6 +19,17 @@ It allows to use more advanced SQL functions for any supported RDBMS.
 ## Requirements
 
 Arel 6 (Rails 4) or Arel 7+ (Rails 5).
+[Arel Repository](http://github.com/rails/arel)
+
+## Usage
+
+Most of the features will work just by adding the gem to your Gemfiles. To make sure to get all the features for any dbms, you should execute the next line as soon as you get your connection to your DB:
+
+```ruby
+ArelExtensions::CommonSqlFunctions.new(ActiveRecord::Base.connection).add_sql_functions()
+```
+
+It will add common SQL features in your DB to align ti with current routines. Technically, it will execute SQL scripts from init folder.
 
 
 ## Examples
@@ -234,7 +250,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">LOCATE<br>column.locate("string")</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">INSTR()</td>
+    <td class="tg-j6lv">INSTR() or Ruby function</td>
     <td class="ok">✔</td>
     <td class="tg-j6lv">CHARINDEX()</td>
     <td class="ok">✔</td>
@@ -252,7 +268,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">FIND_IN_SET<br>column &amp; ("l")</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-orpl">db.create_function( "find_in_set", 1 ) <br>do |func, value1, value2|,<br>func.result =value1.index(value2)<br>end <br></td>
+    <td class="tg-orpl">Ruby function</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>

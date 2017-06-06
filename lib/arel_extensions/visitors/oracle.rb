@@ -266,6 +266,7 @@ module ArelExtensions
         collector
       end
 
+    if Arel::VERSION.to_i < 7
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
         table = collector.value.sub(/\AINSERT INTO/, '')
         into = " INTO#{table}"
@@ -289,6 +290,32 @@ module ArelExtensions
         collector << ' SELECT 1 FROM dual'
         collector
       end
+    else
+      def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        table = collector.value.sub(/\AINSERT INTO/, '')
+        into = " INTO#{table}"
+        collector = Arel::Collectors::SQLString.new
+        collector << "INSERT ALL\n"
+        o.left.each_with_index do |row, idx|
+          collector << "#{into} VALUES ("
+          v = Arel::Nodes::Values.new(row, o.cols)
+          len = v.expressions.length - 1
+          v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value, collector
+              else
+                collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
+              end
+              collector << Arel::Visitors::Oracle::COMMA unless i == len
+          }
+          collector << ')'
+        end
+        collector << ' SELECT 1 FROM dual'
+        collector
+      end
+    end
+
     end
   end
 end

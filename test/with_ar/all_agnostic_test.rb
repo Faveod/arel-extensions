@@ -17,6 +17,7 @@ module ArelExtensions
         ActiveRecord::Base.establish_connection(@env_db.try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
         ActiveRecord::Base.default_timezone = :utc
         @cnx = ActiveRecord::Base.connection
+<<<<<<< HEAD
         $sqlite ||= false
         if !(ActiveRecord::Base.connection.adapter_name =~ /sqlite/i).nil?
           $sqlite = true
@@ -49,6 +50,13 @@ module ArelExtensions
           end
         end
 	  end
+=======
+        $sqlite = @cnx.adapter_name =~ /sqlite/i
+        $load_extension_disabled ||= false
+        csf = CommonSqlFunctions.new(@cnx)
+        csf.add_sql_functions(@env_db)
+      end
+>>>>>>> refs/remotes/Faveod/master
 
       def setup_db
         @cnx.drop_table(:user_tests) rescue nil 
@@ -196,12 +204,20 @@ module ArelExtensions
 
       def test_substring
         assert_equal 'C', t(@camille, @name.substring(1, 1))
-        assert_equal(@env_db == 'oracle' ? nil : '', t(@lucas, @name.substring(42)))
+        if @env_db == 'oracle'
+          assert_nil(t(@lucas, @name.substring(42)))
+        else
+          assert_equal('', t(@lucas, @name.substring(42)))
+        end
         assert_equal 'Lu', t(@lucas, @name.substring(1,2))
 
         assert_equal 'C', t(@camille, @name[0, 1])
         assert_equal 'C', t(@camille, @name[0])
-        assert_equal(@env_db == 'oracle' ? nil : '', t(@lucas, @name[42]))
+        if @env_db == 'oracle'
+          assert_nil(t(@lucas, @name[42]))
+        else
+          assert_equal('', t(@lucas, @name[42]))
+        end
         assert_equal 'Lu', t(@lucas, @name[0,2])
         assert_equal 'Lu', t(@lucas, @name[0..1])
       end
@@ -371,12 +387,21 @@ module ArelExtensions
         else
           assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
           assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
+<<<<<<< HEAD
 
           skip "Pb with order in Oracle" if @env_db == 'oracle'
           assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18))) < -1
+=======
+          if @env_db == 'mssql' || @env_db == 'oracle' # can't select booleans
+            assert_equal 0, @lucas.where((@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1).count
+          else
+            assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1)
+          end
+>>>>>>> refs/remotes/Faveod/master
         end
       end
 
+      # TODO; cast types
       def test_cast_types
         skip "not implemented yet"
         assert_equal true, t(@arthur, @score =~ /22/)

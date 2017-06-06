@@ -42,6 +42,8 @@ require 'arel_extensions/string_functions'
 
 require 'arel_extensions/insert_manager'
 
+require 'arel_extensions/common_sql_functions'
+
 module Arel
   def self.rand
     ArelExtensions::Nodes::Rand.new

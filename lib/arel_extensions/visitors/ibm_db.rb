@@ -12,7 +12,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Trim o, collector
         collector << "LTRIM(RTRIM("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector << Arel::Visitors::IBM_DB::COMMA unless i == 0
           collector = visit arg, collector
         }
         collector << "))"
@@ -20,7 +20,7 @@ module ArelExtensions
       end
 
 
-      def visit_ArelExtensions_Nodes_DateDiff  o, collector
+      def visit_ArelExtensions_Nodes_DateDiff o, collector
         collector << "DAY("
         collector = visit o.left, collector
         collector << ","
@@ -34,7 +34,7 @@ module ArelExtensions
       end
 
 
-      def visit_ArelExtensions_Nodes_Duration o , collector
+      def visit_ArelExtensions_Nodes_Duration o, collector
         #visit left for period
         if o.left == "d"
           collector << "DAY("

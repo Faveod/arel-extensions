@@ -34,7 +34,7 @@ module ArelExtensions
         other = other.to_i if other.is_a?(String)
         Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
       elsif arg == :decimal || arg == :float
-        other = Arel.sql(other) if other.is_a?(String)  # Arel should accept Float & BigDecimal!
+        other = Arel.sql(other) if other.is_a?(String) # Arel should accept Float & BigDecimal!
         Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
       elsif arg == :datetime || arg == :date
         ArelExtensions::Nodes::DateAdd.new [self, other]
@@ -68,12 +68,12 @@ module ArelExtensions
           end
         when Arel::Nodes::Node, DateTime, Time, String, Date
           ArelExtensions::Nodes::DateDiff.new [self, other]
-        when Fixnum
+        when Integer
           ArelExtensions::Nodes::DateSub.new [self, other]
         end
       else
         case other
-        when Fixnum, Float, BigDecimal
+        when Integer, Float, BigDecimal
           Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, Arel.sql(other.to_s)))
         when String
           Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, Arel.sql(other)))
