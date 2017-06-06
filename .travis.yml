@@ -1,7 +1,6 @@
 language: ruby
 sudo: required
 cache:
-  bundler: true
   directories:
   #- .autoconf
   - /tmp #Arbitrary directories/Répertoires arbitraires ---> download.sh
