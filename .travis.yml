@@ -1,6 +1,10 @@
 language: ruby
 sudo: required
-
+cache:
+  bundler: true
+  directories:
+  #- .autoconf
+  - $ORACLE_DOWNLOAD_DIR #Arbitrary directories/Répertoires arbitraires ---> download.sh
 before_install:
 - chmod +x .travis/sqlite3/extension-functions.sh
 - chmod +x .travis/oracle/download.sh       #Il s'agit de se fichier qui tent d'avoir accès aux serveur Oracle
