@@ -1,25 +1,21 @@
 Code quality:
-- codeclimate.com
++ codeclimate.com
++ gemnasium
++ appveyor.com (windows)
++ hakiri.io
 - coveralls.io
-- gemnasium
 - inch-ci.org
-- appveyor.com (windows)
-- hakiri.io
+- codebeat.co
 
-[![Gem Version](https://img.shields.io/gem/v/arel_extensions.svg)][gem]
-[![Build Status](https://img.shields.io/travis/faveod/arel_extensions.svg)][travis]
-[![Dependency Status](https://img.shields.io/gemnasium/faveod/arel_extensions.svg)][https://gemnasium.com/faveod/arel_extensions]
-[![Code Climate](https://img.shields.io/codeclimate/github/faveod/arel_extensions.svg)][https://codeclimate.com/github/faveod/arel_extensions]
-[![Coverage Status](https://img.shields.io/coveralls/faveod/arel_extensions.svg)][https://coveralls.io/r/faveod/arel_extensions]
-[![Inline docs](http://inch-ci.org/github/faveod/arel_extensions.svg)][https://inch-ci.org/github/faveod/https://gemnasium.com/faveod/arel_extensions]
-[![security](https://hakiri.io/github/faveod/arel_extensions/master.svg)](https://hakiri.io/github/faveod/arel_extensions/master)
-[![codebeat](https://codebeat.co/badges/<change>)](https://codebeat.co/projects/github-com-faveod-arel_extensions)
-
+TODO:
+- all skips in tests
+- all SQL Server date formats
 
 New features:
 - POSIX format numbers (%.2f), dates (man 3 printf)
 - easy unions
 - cast, to_char
+- auto-remove order by in sub queries
 - avoid incompatible queries in PgSQL/Oracle/SQLServer when columns are used outside of group by columns (in select or order by)
 
 Tests improvements:

@@ -1,0 +1,25 @@
+---
+engines:
+  rubocop:
+    enabled: true
+    #checks:
+    #	Rubocop/Metrics/ClassLength:
+    #  	enabled: false
+  duplication:
+    enabled: false
+  brakeman:
+    enabled: false
+  reek:
+    enabled: true
+  "bundler-audit":
+    enabled: false
+  markdownlint:
+    enabled: false
+ratings:
+  paths:
+  - lib/**
+  - "**.rb"
+  - "**.md"
+exclude_paths:
+- .travis/**/*
+- test/**/*

@@ -3,10 +3,10 @@ module ArelExtensions
     Arel::Visitors::SQLite.class_eval do
       Arel::Visitors::SQLite::DATE_MAPPING = {'d' => '%d', 'm' => '%m', 'w' => '%W', 'y' => '%Y', 'wd' => '%w', 'M' => '%M', 'h' => '%H', 'mn' => '%M', 's' => '%S'}
       Arel::Visitors::SQLite::DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
-        '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b',  # year, month
-        '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W',                               # day, weekday
-        '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p',                 # hours
-        '%M' => '%M', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => ''                                # seconds, subseconds
+        '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b', # year, month
+        '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W', # day, weekday
+        '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p', # hours
+        '%M' => '%M', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => '' # seconds, subseconds
       }
 
       #String functions
@@ -153,6 +153,7 @@ module ArelExtensions
         collector
       end
 
+    if Arel::VERSION.to_i < 7
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
         o.left.each_with_index do |row, idx|
           collector << 'SELECT '
@@ -175,6 +176,30 @@ module ArelExtensions
         end
         collector
       end
+    else
+      def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        o.left.each_with_index do |row, idx|
+          collector << 'SELECT '
+          v = Arel::Nodes::Values.new(row, o.cols)
+          len = v.expressions.length - 1
+          v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value.as(attr.name), collector
+              else
+                collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
+                if idx == 0
+                  collector << " AS "
+                  collector << quote(attr.name)
+                end
+              end
+              collector << Arel::Visitors::SQLite::COMMA unless i == len
+          }
+          collector << ' UNION ALL ' unless idx == o.left.length - 1
+        end
+        collector
+      end
+    end
 
     end
   end

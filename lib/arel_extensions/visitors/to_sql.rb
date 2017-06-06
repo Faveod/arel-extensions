@@ -234,11 +234,11 @@ module ArelExtensions
       end
 
   	  def visit_ArelExtensions_Nodes_DateDiff o, collector
-        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-          collector << 'TIMEDIFF('
-        else
-          collector << "DATEDIFF("
-        end
+        collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+                      'TIMEDIFF('
+                    else
+                      'DATEDIFF('
+                    end
   	    collector = visit o.left, collector
   	    collector << Arel::Visitors::ToSql::COMMA
   	    collector = visit o.right, collector
@@ -331,13 +331,13 @@ module ArelExtensions
         collector = visit o.left, collector
         collector << Arel::Visitors::ToSql::COMMA
         collector = visit o.sqlite_value(o.right), collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
-
+    if Arel::VERSION.to_i < 7
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
-        collector << "VALUES "
+        collector << 'VALUES '
         row_nb = o.left.length
         o.left.each_with_index do |row, idx|
           collector << '('
@@ -356,6 +356,29 @@ module ArelExtensions
         end
         collector
       end
+    else
+      def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        collector << 'VALUES '
+        row_nb = o.left.length
+        o.left.each_with_index do |row, idx|
+          collector << '('
+          v = Arel::Nodes::Values.new(row, o.cols)
+          len = v.expressions.length - 1
+          v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value, collector
+              else
+                collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
+              end
+              collector << Arel::Visitors::ToSql::COMMA unless i == len
+          }
+          collector << (idx == row_nb-1 ? ')' : '), ')
+        end
+        collector
+      end
+    end
+
 
   	end
 

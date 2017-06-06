@@ -31,14 +31,14 @@ module ArelExtensions
           Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
         when ArelExtensions::Nodes::Function
           att.class.return_type
-        else
-          nil
+#        else
+#          nil
         end
       end
 
       def convert_to_node(object)
         case object
-        when Arel::Attributes::Attribute, Arel::Nodes::Node, Fixnum, Integer
+        when Arel::Attributes::Attribute, Arel::Nodes::Node, Integer
           object
         when DateTime, Time
           Arel::Nodes.build_quoted(Date.new(object.year, object.month, object.day), self)
@@ -59,7 +59,7 @@ module ArelExtensions
         case object
         when Arel::Nodes::Node
           object
-        when Fixnum, Integer
+        when Integer
           Arel::Nodes.build_quoted(object.to_s)
         when Arel::Attributes::Attribute
           case self.type_of_attribute(object)
@@ -117,7 +117,7 @@ module ArelExtensions
         case object
         when Arel::Attributes::Attribute, Arel::Nodes::Node
           object
-        when Fixnum, Integer
+        when Integer
           object.to_i.abs
         when DateTime, Date, Time, String, ActiveSupport::Duration
           object.to_i.abs

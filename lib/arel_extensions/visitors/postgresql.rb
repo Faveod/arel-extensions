@@ -4,9 +4,9 @@ module ArelExtensions
       Arel::Visitors::PostgreSQL::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'DOW', 'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'}
       Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'IYYY', '%C' => 'CC', '%y' => 'YY', '%m' => 'MM', '%B' => 'Month', '%^B' => 'MONTH', '%b' => 'Mon', '%^b' => 'MON',
-        '%d' => 'DD', '%e' => 'FMDD', '%j' => 'DDD', '%w' => '', '%A' => 'Day',                             # day, weekday
-        '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM',                   # hours
-        '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz'                              # seconds, subseconds
+        '%d' => 'DD', '%e' => 'FMDD', '%j' => 'DDD', '%w' => '', '%A' => 'Day', # day, weekday
+        '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM', # hours
+        '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz' # seconds, subseconds
       }
 
       def visit_ArelExtensions_Nodes_Rand o, collector
@@ -99,11 +99,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-          collector << "DATEDIFF('second', "
-        else
-          collector << "DATEDIFF('day', "
-        end
+        collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+                        "DATEDIFF('second', "
+                    else
+                        "DATEDIFF('day', "
+                    end
         collector = visit o.right, collector
         collector << (o.right_node_type == :date ? '::date' : '::timestamp')
         collector << Arel::Visitors::PostgreSQL::COMMA
@@ -155,7 +155,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Wday o, collector
         collector << "EXRTACT(DOW, "
         collector = visit o.date, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
