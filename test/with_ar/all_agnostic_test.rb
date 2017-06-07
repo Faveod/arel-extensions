@@ -3,7 +3,6 @@ require 'date'
 
 module ArelExtensions
   module WthAr
-
     class ListTest < Minitest::Test
       require 'minitest/pride'
       def connect_db
@@ -49,7 +48,7 @@ module ArelExtensions
             @cnx.execute(sql) unless sql.blank?
           end
         end
-	  end
+	  
 
 	  
 	  
@@ -122,7 +121,7 @@ module ArelExtensions
         scope.select(node.as('res')).first.res
       end
 
-      # Math Functions
+        #Math Functions
       def test_classical_arel
         assert_in_epsilon 42.16, t(@laure, @score + 22), 0.01
       end
@@ -135,7 +134,7 @@ module ArelExtensions
       end
 
       def test_ceil
-#        skip "Sqlite version can't load extension for ceil" if $sqlite && $load_extension_disabled
+        #skip "Sqlite version can't load extension for ceil" if $sqlite && $load_extension_disabled
         assert_equal 2, t(@test, @score.ceil) # 1.62
         assert_equal(-20, t(@camille, @score.ceil)) # -20.16
         assert_equal(-20, t(@camille, (@score - 0.5).ceil)) # -20.16
@@ -143,7 +142,7 @@ module ArelExtensions
       end
 
       def test_floor
-#        skip "Sqlite version can't load extension for floor" if $sqlite && $load_extension_disabled
+        #skip "Sqlite version can't load extension for floor" if $sqlite && $load_extension_disabled
         assert_equal 0, t(@neg, @score.floor)
         assert_equal 1, t(@test, @score.floor) # 1.62
         assert_equal(-9, t(@test, (@score - 10).floor)) # 1.62
@@ -265,7 +264,7 @@ module ArelExtensions
 
       def test_replace_once
         skip "TODO"
-#        skip "Sqlite version can't load extension for locate" if $sqlite && $load_extension_disabled
+        #skip "Sqlite version can't load extension for locate" if $sqlite && $load_extension_disabled
         assert_equal "LuCas", t(@lucas, @name.substring(1, @name.locate('c') - 1) + 'C' + @name.substring(@name.locate('c') + 1, @name.length))
       end
 
@@ -428,7 +427,7 @@ module ArelExtensions
         assert_equal 1, User.where((@age + "1").eq(6)).count
         assert_equal 1, User.where((@age + @age).eq(10)).count
         #concat Date
-    #    puts((User.arel_table[:created_at] + 1).as("res").to_sql.inspect)
+        #puts((User.arel_table[:created_at] + 1).as("res").to_sql.inspect)
         assert_equal "2016-05-24", t(@myung, @created_at + 1).to_date.to_s
         assert_equal "2016-05-25", t(@myung, @created_at + 2.day).to_date.to_s
       end
@@ -461,5 +460,9 @@ module ArelExtensions
 
 
     end
+  
+  
   end
+
+
 end
