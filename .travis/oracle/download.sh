@@ -1,7 +1,10 @@
 #!/bin/sh -e
 # vim: set et sw=2 ts=2:
 
-[ -n "$ORACLE_COOKIE" ] || { echo "Missing ORACLE_COOKIE environment variable!"; exit 1; }
+if [ -n "$ORACLE_COOKIE" ]; then 
+ echo "Missing ORACLE_COOKIE environment variable!"
+ exit 1
+fi
 [ -n "$ORACLE_FILE" ] || { echo "Missing ORACLE_FILE environment variable!"; exit 1; }
 
 ORACLE_DOWNLOAD_FILE="$(basename "$ORACLE_FILE")"
