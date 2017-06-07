@@ -7,48 +7,48 @@ module ArelExtensions
     class ListTest < Minitest::Test
       require 'minitest/pride'
       def connect_db
-        ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
-        if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
-          @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
-          skip "Platform not supported"
-        else
-          @env_db = ENV['DB']
-        end
-        ActiveRecord::Base.establish_connection(@env_db.try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
-        ActiveRecord::Base.default_timezone = :utc
-        @cnx = ActiveRecord::Base.connection
+			ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
+			if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
+			  @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
+			  skip "Platform not supported"
+			else
+			  @env_db = ENV['DB']
+			end
+			ActiveRecord::Base.establish_connection(@env_db.try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
+			ActiveRecord::Base.default_timezone = :utc
+			@cnx = ActiveRecord::Base.connection
 
-        $sqlite ||= false
-        if !(ActiveRecord::Base.connection.adapter_name =~ /sqlite/i).nil?
-          $sqlite = true
-          db = @cnx.raw_connection
-          $load_extension_disabled ||= false
-          if !$load_extension_disabled
-            begin
-              db.create_function("find_in_set", 1) do |func, value1, value2|
-                func.result = value1.index(value2)
-              end
-              db.enable_load_extension(1)
-              db.load_extension("/usr/lib/sqlite3/pcre.so")
-              db.load_extension("/usr/lib/sqlite3/extension-functions.so")
-              db.enable_load_extension(0)
-              #function find_in_set
-            rescue => e
-              $load_extension_disabled = true
-              puts "can not load extensions #{e.inspect}"
-            end
-          end
-        end
-        if File.exist?("init/#{@env_db}.sql")
-          sql = File.read("init/#{@env_db}.sql")
-          if @env_db == 'mssql'
-            sql.split(/^GO\s*$/).each {|str|
-              @cnx.execute(str.strip) unless str.blank?
-            }
-          else
-            @cnx.execute(sql) unless sql.blank?
-          end
-        end
+			$sqlite ||= false
+			if !(ActiveRecord::Base.connection.adapter_name =~ /sqlite/i).nil?
+			  $sqlite = true
+			  db = @cnx.raw_connection
+			  $load_extension_disabled ||= false
+			  if !$load_extension_disabled
+				begin
+				  db.create_function("find_in_set", 1) do |func, value1, value2|
+					func.result = value1.index(value2)
+				  end
+				  db.enable_load_extension(1)
+				  db.load_extension("/usr/lib/sqlite3/pcre.so")
+				  db.load_extension("/usr/lib/sqlite3/extension-functions.so")
+				  db.enable_load_extension(0)
+				  #function find_in_set
+				rescue => e
+				  $load_extension_disabled = true
+				  puts "can not load extensions #{e.inspect}"
+				end
+			  end
+			end
+			if File.exist?("init/#{@env_db}.sql")
+			  sql = File.read("init/#{@env_db}.sql")
+			  if @env_db == 'mssql'
+				sql.split(/^GO\s*$/).each {|str|
+				  @cnx.execute(str.strip) unless str.blank?
+				}
+			  else
+				@cnx.execute(sql) unless sql.blank?
+			  end
+			end
 	  end
 
 	  
