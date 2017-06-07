@@ -461,4 +461,5 @@ module ArelExtensions
 
 
     end
-  
+  end
+end
