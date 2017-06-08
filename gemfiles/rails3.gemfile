@@ -3,6 +3,8 @@ source "https://rubygems.org"
 gem 'arel', '~> 3.0' # too old...
 
 group :development, :test do
+    gem 'simplecov', :require => false
+	
 	gem "sqlite3", :platform => [:ruby, :mswin, :mingw]
 	gem "mysql2", :platform => [:ruby, :mswin, :mingw]
 	gem "activerecord-mysql2-adapter", :platform => [:ruby, :mswin, :mingw]

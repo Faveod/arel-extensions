@@ -3,6 +3,8 @@ source "https://rubygems.org"
 gem 'arel', '~> 6.0'
 
 group :development, :test do
+    gem 'simplecov', :require => false
+	
 	gem 'activesupport', '~> 4.0'
 	gem 'activemodel', '~> 4.0'
 	gem 'activerecord', '~> 4.0'
