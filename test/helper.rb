@@ -1,6 +1,3 @@
-require 'simplecov'
-SimpleCov.start
-
 require 'rubygems'
 require 'minitest/autorun'
 require 'fileutils'
