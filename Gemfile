@@ -12,7 +12,7 @@ group :development, :test do
 	gem "mysql2", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
 	gem "pg", :platforms => [:mri, :mingw, :x64_mingw, :mswin]
 
-	
+  gem 'simplecov', :require => false, :group => :test
   gem "jdbc-sqlite3", :platforms => :jruby
   gem "activerecord-jdbcsqlite3-adapter", :platforms => :jruby
   gem "activerecord-jdbcmysql-adapter", :platforms => :jruby
