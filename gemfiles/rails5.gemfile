@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gem 'arel', '~> 8'
 
 group :development, :test do
-	gem "simplecov", :require => false
+	gem "codecov", :require => false
 	
 	gem 'activesupport', '~> 5'
 	gem 'activemodel', '~> 5'
