@@ -1,7 +1,7 @@
 language: ruby
 sudo: required
 cache:
-  timeout:3600
+  timeout: 3600
   bundler: true
   directories:
   #- .autoconf 
