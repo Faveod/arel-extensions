@@ -111,7 +111,7 @@ matrix:
     gemfile: gemfiles/rails5_0.gemfile
   allow_failures:
   - rvm: rbx-2
-    gemfile: gemfiles/rails4.gemfile
+    gemfile: gemfiles/rails5.gemfile
   - rvm: rbx-2
     gemfile: gemfiles/rails5_0.gemfile
   - rvm: jruby-9.0.5.0
