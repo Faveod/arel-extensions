@@ -8,8 +8,8 @@
 ![](http://img.shields.io/badge/license-MIT-brightgreen.svg)
 
 Gem: [![Latest Release](https://img.shields.io/gem/v/arel_extensions.svg)](https://rubygems.org/gems/arel_extensions)
-[![Gem download](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?type=total)](https://rubygems.org/gems/arel_extensions)
-![](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?label=downloads-current-version)
+[![Gem](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?type=total)](https://rubygems.org/gems/arel_extensions)
+[![Gem](https://ruby-gem-downloads-badge.herokuapp.com/arel_extensions?label=downloads-current-version)](https://rubygems.org/gems/arel_extensions)
 
 Arel Extensions adds shortcuts, fixes and new ORM mappings (ruby to SQL) to Arel.
 It aims to ensure pure ruby syntax for the biggest number of usual cases.

@@ -32,6 +32,20 @@ module ArelExtensions
           t.column :updated_at, :datetime
           t.column :score, :decimal, :precision => 20, :scale => 10
         end
+        if @env_db == 'oracle'
+          @cnx.execute(%q[CREATE OR REPLACE trigger user_tests_trg
+    before insert on user_tests
+    for each row
+BEGIN
+    IF :new.id IS NULL THEN
+      :new.id := user_tests_seq.nextval;
+    END IF;
+END;])
+        end
+      end
+
+      class User < ActiveRecord::Base
+        self.table_name = 'user_tests'
       end
 
       def setup
@@ -39,8 +53,13 @@ module ArelExtensions
         @table = Arel::Table.new(:user_tests)
         @cols = ['id', 'name', 'comments', 'created_at']
         @data = [
-          [23, 'nom1', "sdfdsfdsfsdfsd fdsf dsf dsf sdf afdg fsdg sg sd gsdfg e 54435 344", '2016-01-01'],
-          [25, 'nom2', "sdfdsfdsfsdf", '2016-01-01']
+          [23, 'nom1', "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.", '2016-01-01'],
+          [25, 'nom2', "sdfdsfdsfsdf", '2016-01-02']
+        ]
+        @cols2 = ['name', 'comments', 'created_at']
+        @data2 = [
+          ['nom3', "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.", '2016-01-01'],
+          ['nom4', "sdfdsfdsfsdf", '2016-01-04']
         ]
       end
 
@@ -53,6 +72,11 @@ module ArelExtensions
         insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(Arel::Table.engine).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         @cnx.execute(insert_manager.to_sql)
+        assert_equal 2, User.count, "insertions failed"
+        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(Arel::Table.engine).into(@table)
+        insert_manager.bulk_insert(@cols2, @data2)
+        @cnx.execute(insert_manager.to_sql)
+        assert_equal 4, User.count, "insertions failed"
       end
 
     end

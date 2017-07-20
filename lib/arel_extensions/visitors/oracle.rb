@@ -266,21 +266,32 @@ module ArelExtensions
         collector
       end
 
+      # add primary_key if not present, avoid zip
     if Arel::VERSION.to_i < 7
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        raise ArgumentError, "missing columns" if o.cols.empty?
         table = collector.value.sub(/\AINSERT INTO/, '')
         into = " INTO#{table}"
         collector = Arel::Collectors::SQLString.new
         collector << "INSERT ALL\n"
-        o.left.each_with_index do |row, idx|
+        pk_name = @connection.primary_key(o.cols.first.relation.name)
+        if pk_name
+          pk_missing = !o.cols.detect{|c| c.name == pk_name }
+          o.cols.unshift(o.cols.first.relation[pk_name]) if pk_missing
+        else
+          pk_missing = false
+        end
+        o.left.each_with_index do |row, idx| # values
           collector << "#{into} VALUES ("
+          row.unshift(nil) if pk_missing # expects to have a trigger to set the value before insert
           v = Arel::Nodes::Values.new(row, o.cols)
           len = v.expressions.length - 1
-          v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+          v.expressions.each_with_index { |value, i|
               case value
               when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
                 collector = visit value, collector
               else
+                attr = v.columns[i]
                 collector << quote(value, attr && column_for(attr)).to_s
               end
               collector << Arel::Visitors::Oracle::COMMA unless i == len
