@@ -283,7 +283,7 @@ module ArelExtensions
         end
         o.left.each_with_index do |row, idx| # values
           collector << "#{into} VALUES ("
-          row.unshift(nil) if pk_missing # expects to have a trigger to set the value before insert
+          collector << "NULL, " if pk_missing # expects to have a trigger to set the value before insert
           v = Arel::Nodes::Values.new(row, o.cols)
           len = v.expressions.length - 1
           v.expressions.each_with_index { |value, i|
