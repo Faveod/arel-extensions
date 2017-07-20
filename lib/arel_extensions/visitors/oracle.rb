@@ -277,7 +277,7 @@ module ArelExtensions
         pk_name = @connection.primary_key(o.cols.first.relation.name)
         if pk_name
           pk_missing = !o.cols.detect{|c| c.name == pk_name }
-          o.cols.unshift(o.cols.first.relation[pk_name]) if pk_missing
+          into.sub!(/\(/, %Q[("#{pk_name.upcase}", ]) if pk_missing
         else
           pk_missing = false
         end
