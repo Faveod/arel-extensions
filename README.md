@@ -126,11 +126,11 @@ t[:birthdate].format('%Y-%m-%d').to_sql
 # => DATE_FORMAT(my_table.birthdate, '%Y-%m-%d')
 ```
 
-## Unions (in next version)
+## Unions 
 
 ```ruby
 (t.where(t[:name].eq('str')) + t.where(t[:name].eq('test'))).to_sql
-# => SELECT * FROM my_table WHERE (name = 'str') UNION SELECT * FROM my_table WHERE (name= 'test')
+# => (SELECT * FROM my_table WHERE name = 'str') UNION (SELECT * FROM my_table WHERE name= 'test')
 ```
 
 ## Stored Procedures and User-defined functions

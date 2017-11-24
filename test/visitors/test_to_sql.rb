@@ -1,4 +1,4 @@
-require 'helper'
+require './helper'
 require 'set'
 
 module ArelExtensions
@@ -152,7 +152,23 @@ module ArelExtensions
           (c.length / 42).round(2).floor > (@table[:updated_at] - Date.new(2000, 3, 31)).abs.ceil
         ).must_be_like %{FLOOR(ROUND(LENGTH("users"."name") / 42, 2)) > CEIL(ABS(TIMEDIFF("users"."updated_at", '2000-03-31 00:00:00 UTC')))}
       end
+      
+      # Unions and Intersections
+      
+      it "should accept union operators on tables, queries and union/intersection nodes" do
+		c = @table.project(@table[:name])
+		compile(c + c)
+			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")} 
+		(c + c).to_sql
+			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}       
+		(c + (c + c)).to_sql
+			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
+		(c + c + c).to_sql
+			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
+		(c + c + c + c).to_sql
+			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
+      end
 
     end
   end
-end
+end 

@@ -4,6 +4,7 @@ require 'arel_extensions/nodes/concat'
 require 'arel_extensions/nodes/date_diff'
 require 'arel_extensions/nodes/duration'
 require 'arel_extensions/nodes/wday'
+require 'arel_extensions/nodes/union'
 
 module ArelExtensions
   module Math
@@ -11,6 +12,7 @@ module ArelExtensions
     #String and others (convert in string)  allows you to concatenate 2 or more strings together.
     #Date and integer adds or subtracts a specified time interval from a date.
     def +(other)
+	  return ArelExtensions::Nodes::Union.new self, other if self.is_a?(Arel::SelectManager) || self.is_a?(Arel::Nodes::Union)
       return ArelExtensions::Nodes::Concat.new [self, other] if self.is_a?(Arel::Nodes::Quoted)
       if self.is_a?(Arel::Nodes::Grouping)
         if self.expr.left.is_a?(String) || self.expr.right.is_a?(String)

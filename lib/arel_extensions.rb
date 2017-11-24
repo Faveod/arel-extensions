@@ -44,6 +44,10 @@ require 'arel_extensions/insert_manager'
 
 require 'arel_extensions/common_sql_functions'
 
+require 'arel_extensions/nodes/union'
+
+
+
 module Arel
   def self.rand
     ArelExtensions::Nodes::Rand.new
@@ -89,4 +93,14 @@ end
 
 Arel::InsertManager.class_eval do
   include ArelExtensions::InsertManager
+end
+
+Arel::SelectManager.class_eval do
+  include ArelExtensions::Math
+  include ArelExtensions::Nodes
+end
+
+Arel::Nodes::Union.class_eval do	
+  include ArelExtensions::Math
+  include ArelExtensions::Nodes
 end
