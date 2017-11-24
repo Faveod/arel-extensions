@@ -74,6 +74,9 @@ module ArelExtensions
         @updated_at = User.arel_table[:updated_at]
         @comments = User.arel_table[:comments]
         @price = Product.arel_table[:price]
+        
+        @ut = User.arel_table
+        @pt = Product.arel_table
       end
 
       def teardown
@@ -414,6 +417,13 @@ module ArelExtensions
         assert_equal 1, @laure.where(
           (@score.round > 19).⋀(@score.round < 21).⋁(@score.round(1) >= 20.1)
         ).count
+      end
+      
+      # Union operator
+      def test_union_operator
+        assert_equal 2, User.from((@ut.project(@age).where(@age > 22) + @ut.project(@age).where(@age<0)).as('my_union')).count
+        assert_equal 3, User.from((@ut.project(@age).where(@age == 20) + @ut.project(@age).where(@age == 23) + @ut.project(@age).where(@age = 21)).as('my_union')).count
+        assert_equal 2, User.from((@ut.project(@age).where(@age == 20) + @ut.project(@age).where(@age == 20) + @ut.project(@age).where(@age = 21)).as('my_union')).count
       end
 
 

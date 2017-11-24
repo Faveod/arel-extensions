@@ -153,8 +153,7 @@ module ArelExtensions
         ).must_be_like %{FLOOR(ROUND(LENGTH("users"."name") / 42, 2)) > CEIL(ABS(TIMEDIFF("users"."updated_at", '2000-03-31 00:00:00 UTC')))}
       end
       
-      # Unions and Intersections
-      
+      # Unions       
       it "should accept union operators on queries and union nodes" do
 		c = @table.project(@table[:name])
 		compile(c + c)
@@ -164,6 +163,8 @@ module ArelExtensions
 		(c + c).as('test').to_sql
 			.must_be_like %{((SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")) AS test}  
 		(c + (c + c)).to_sql
+			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
+		((c + c) + c).to_sql
 			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
 		(c + c + c).to_sql
 			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
