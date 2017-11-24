@@ -327,6 +327,14 @@ module ArelExtensions
       end
     end
 
+	
+		def visit_ArelExtensions_Nodes_Union o, collector
+			collector = visit o.left, collector
+			collector << " UNION "
+			collector = visit o.right, collector
+			collector
+		end
+
     end
   end
 end
