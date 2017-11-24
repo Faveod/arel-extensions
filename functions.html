@@ -23,6 +23,7 @@
     .arel-functions th[rowspan] { vertical-align: middle; width:3em;}
     .arel-functions th[rowspan] > div { transform:rotate(-90deg); transform-origin: center center; white-space: nowrap; }
     .arel-functions td.ok { color:green; text-align:center; }
+    .arel-functions td.ko { color:red; text-align:center; }
 </style>
   </head>
   <body>
@@ -96,7 +97,7 @@
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <th class="tg-ffjm" rowspan="12"><div>String functions</div></th>
+    <th class="tg-ffjm" rowspan="14"><div>String functions</div></th>
     <td class="tg-yw4l">CONCAT<br>column + "string"</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -378,6 +379,16 @@
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
+  </tr> 
+  <tr>
+    <th class="bulk_insert" rowspan="1"><div>Set<br/> Operators</div></th>
+    <td class="tg-yw4l">UNION ( + )<br/>query + query</td>
+    <td class="ko">to be tested</td>
+    <td class="ko">to be tested</td>
+    <td class="ko">to be tested</td>
+    <td class="ko">to be tested</td>
+    <td class="ko">to be tested</td>
+    <td class="ko">to be tested</td>
   </tr>
   </tbody>
 </table>

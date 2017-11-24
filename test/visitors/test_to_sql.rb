@@ -155,19 +155,19 @@ module ArelExtensions
       
       # Unions and Intersections
       
-      it "should accept union operators on tables, queries and union/intersection nodes" do
+      it "should accept union operators on queries and union nodes" do
 		c = @table.project(@table[:name])
 		compile(c + c)
 			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")} 
 		(c + c).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}       
+			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}  			     
+		(c + c).as('test').to_sql
+			.must_be_like %{((SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")) AS test}  
 		(c + (c + c)).to_sql
 			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
 		(c + c + c).to_sql
 			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
-		(c + c + c + c).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
-      end
+	 end
 
     end
   end

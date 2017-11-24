@@ -130,7 +130,7 @@ t[:birthdate].format('%Y-%m-%d').to_sql
 
 ```ruby
 (t.where(t[:name].eq('str')) + t.where(t[:name].eq('test'))).to_sql
-# => (SELECT * FROM my_table WHERE name = 'str') UNION (SELECT * FROM my_table WHERE name= 'test')
+# => (SELECT * FROM my_table WHERE name='str') UNION (SELECT * FROM my_table WHERE name='test')
 ```
 
 ## Stored Procedures and User-defined functions
@@ -501,6 +501,15 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
+  </tr>  <tr>
+    <th class="set_operators" rowspan="1"><div>Set <br/> Operators</div></th>
+    <td class="tg-yw4l">UNION (+)<br/>query + query</td>
+    <td class="ko">to test</td>
+    <td class="ko">to test</td>
+    <td class="ko">to test</td>
+    <td class="ko">to test</td>
+    <td class="ko">to test</td>
+    <td class="ko">to test</td>
   </tr>
   </tbody>
 </table>
