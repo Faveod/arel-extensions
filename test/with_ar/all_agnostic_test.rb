@@ -420,10 +420,13 @@ module ArelExtensions
       end
       
       # Union operator
-      def test_union_operator
+      def test_union_operator      
+        assert_equal 3, User.find_by_sql((@ut.project(@age).where(@age.gt(22)) + @ut.project(@age).where(@age.lt(0))).to_sql).length
+		assert_equal 3, User.find_by_sql((@ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(21))).to_sql).length
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.gt(22)) + @ut.project(@age).where(@age.lt(0))).as('my_union')).length
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(23)) + @ut.project(@age).where(@age.eq(21))).as('my_union')).length
         assert_equal 2, User.select('*').from((@ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(21))).as('my_union')).length
+        assert_equal 3, User.find_by_sql(@ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(21))).to_sql).length
       end
 
 
