@@ -17,6 +17,7 @@ fi
 
 cd "$(dirname "$(readlink -f "$0")")"
 
+echo "PhantomJS version $(phantomjs --version)"
 npm install bluebird node-phantom-simple
 
 export ORACLE_DOWNLOAD_FILE
