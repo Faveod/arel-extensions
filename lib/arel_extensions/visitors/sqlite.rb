@@ -203,13 +203,13 @@ module ArelExtensions
     
     
 		def visit_ArelExtensions_Nodes_Union o, collector
-			if o.left.is_a?(Arel::Nodes::SelectManager)
+			if o.left.is_a?(Arel::SelectManager)
 				collector = visit o.left.ast, collector
 			else
 				collector = visit o.left, collector
 			end
 			collector << " UNION "
-			if o.right.is_a?(Arel::Nodes::SelectManager)
+			if o.right.is_a?(Arel::SelectManager)
 				collector = visit o.right.ast, collector
 			else
 				collector = visit o.right, collector
