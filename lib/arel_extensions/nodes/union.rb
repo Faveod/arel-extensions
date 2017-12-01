@@ -9,6 +9,10 @@ module ArelExtensions
       def +(other)
         return ArelExtensions::Nodes::Union.new(self,[other]) 
       end
+      
+      def as other
+        ArelExtensions::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other.to_s)
+      end
     end
     
   end

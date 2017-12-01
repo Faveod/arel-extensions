@@ -10,7 +10,7 @@ module ArelExtensions
 
     	# overrides as to make new Node like AliasPredication
       def as other
-        Arel::Nodes::As.new(self, Arel.sql(other))
+        ArelExtensions::Nodes::As.new(self, Arel.sql(other))
       end
 
       def expr
