@@ -31,18 +31,23 @@ module ArelExtensions
       else
         ArelExtensions::Nodes::Concat.new [self, other]
       end if self.is_a?(ArelExtensions::Nodes::Function)
-      arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].try(:type)
-      if arg == :integer || (!arg)
-        other = other.to_i if other.is_a?(String)
-        Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
-      elsif arg == :decimal || arg == :float
-        other = Arel.sql(other) if other.is_a?(String) # Arel should accept Float & BigDecimal!
-        Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
-      elsif arg == :datetime || arg == :date
-        ArelExtensions::Nodes::DateAdd.new [self, other]
-      elsif arg == :string || arg == :text
-        ArelExtensions::Nodes::Concat.new [self, other]
-      end        
+      col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
+      if (!col) #if the column doesn't exist in the database
+		return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new(self, other))
+	  else
+		arg = col.type
+        if arg == :integer || (!arg)
+          other = other.to_i if other.is_a?(String)
+          Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
+        elsif arg == :decimal || arg == :float
+          other = Arel.sql(other) if other.is_a?(String) # Arel should accept Float & BigDecimal!
+          Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
+        elsif arg == :datetime || arg == :date
+          ArelExtensions::Nodes::DateAdd.new [self, other]
+        elsif arg == :string || arg == :text
+          ArelExtensions::Nodes::Concat.new [self, other]
+        end        
+      end
     end
 
     #function returns the time between two dates
@@ -58,31 +63,41 @@ module ArelExtensions
       else
         Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
       end if self.is_a?(ArelExtensions::Nodes::Function)
-      arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].try(:type)
-      if (arg == :date || arg == :datetime)
-        case other
-        when Arel::Attributes::Attribute
-          arg2 = Arel::Table.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s].try(:type)
-          if arg2 == :date || arg2 == :datetime
-            ArelExtensions::Nodes::DateDiff.new [self, other]
-          else
-            ArelExtensions::Nodes::DateSub.new [self, other]
-          end
-        when Arel::Nodes::Node, DateTime, Time, String, Date
-          ArelExtensions::Nodes::DateDiff.new [self, other]
-        when Integer
-          ArelExtensions::Nodes::DateSub.new [self, other]
-        end
-      else
-        case other
-        when Integer, Float, BigDecimal
-          Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, Arel.sql(other.to_s)))
-        when String
-          Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, Arel.sql(other)))
-        else
-          Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
-        end
-      end
+      col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
+      if (!col) #if the column doesn't exist in the database
+		return Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
+	  else
+		arg = col.type
+		if (arg == :date || arg == :datetime)
+			case other
+			when Arel::Attributes::Attribute
+			  col2 = Arel::Table.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s]
+			  if (!col2) #if the column doesn't exist in the database				
+				ArelExtensions::Nodes::DateSub.new [self, other]
+			  else
+				arg2 = col2.type
+			    if arg2 == :date || arg2 == :datetime
+			  	  ArelExtensions::Nodes::DateDiff.new [self, other]
+			    else
+				  ArelExtensions::Nodes::DateSub.new [self, other]
+			    end
+			  end  
+			when Arel::Nodes::Node, DateTime, Time, String, Date
+			  ArelExtensions::Nodes::DateDiff.new [self, other]
+			when Integer
+			  ArelExtensions::Nodes::DateSub.new [self, other]
+			end
+		else
+			case other
+			when Integer, Float, BigDecimal
+			  Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, Arel.sql(other.to_s)))
+			when String
+			  Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, Arel.sql(other)))
+			else
+			  Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
+			end
+		end
+	  end
     end
         
     def *(other)
