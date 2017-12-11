@@ -60,6 +60,7 @@ rvm:
 jdk:
 - openjdk7
 - oraclejdk8
+- oraclejdk9
 matrix:
   fast_finish: true
   exclude:
@@ -94,6 +95,7 @@ matrix:
   - rvm: rbx-2
     gemfile: gemfiles/rails5_0.gemfile
   allow_failures:
+  - jdk: oraclejdk9
   - rvm: rbx-2
     gemfile: gemfiles/rails4.gemfile
   - rvm: rbx-2
