@@ -25,6 +25,14 @@ module ArelExtensions
       # Math Functions
       it "should not break Arel functions" do
         compile(@price + 42).must_be_like %{("products"."price" + 42)}
+		compile(@table[:id] + @table[:pas_en_base])
+			.must_be_like %{("users"."id" + "users"."pas_en_base")} 
+		compile(@table[:pas_en_base] + @table[:id])
+			.must_be_like %{("users"."pas_en_base" + "users"."id")} 
+		compile(@table[:id] - @table[:pas_en_base])
+			.must_be_like %{("users"."id" - "users"."pas_en_base")} 
+		compile(@table[:pas_en_base] - @table[:id])
+			.must_be_like %{("users"."pas_en_base" - "users"."id")} 
       end
 
       it "should return right calculations on numbers" do
@@ -186,7 +194,7 @@ module ArelExtensions
 			.must_be_like %{((SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")) union_table}  			     
 			
 	 end
-
+	 
     end
   end
 end 

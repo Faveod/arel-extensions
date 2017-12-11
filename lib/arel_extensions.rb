@@ -108,6 +108,7 @@ Arel::Nodes::Union.class_eval do
 end
 
 Arel::Nodes::UnionAll.class_eval do	
+  include ArelExtensions::Math
   include ArelExtensions::Nodes
 end
 

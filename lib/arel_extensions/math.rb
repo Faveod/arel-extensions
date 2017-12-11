@@ -31,8 +31,8 @@ module ArelExtensions
       else
         ArelExtensions::Nodes::Concat.new [self, other]
       end if self.is_a?(ArelExtensions::Nodes::Function)
-      arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
-      if arg == :integer
+      arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].try(:type)
+      if arg == :integer || !arg
         other = other.to_i if other.is_a?(String)
         Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
       elsif arg == :decimal || arg == :float
@@ -58,11 +58,11 @@ module ArelExtensions
       else
         Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
       end if self.is_a?(ArelExtensions::Nodes::Function)
-      arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
+      arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].try(:type)
       if (arg == :date || arg == :datetime)
         case other
         when Arel::Attributes::Attribute
-          arg2 = Arel::Table.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s].type
+          arg2 = Arel::Table.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s].try(:type)
           if arg2 == :date || arg2 == :datetime
             ArelExtensions::Nodes::DateDiff.new [self, other]
           else
