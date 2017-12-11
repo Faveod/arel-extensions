@@ -112,5 +112,5 @@ matrix:
 bundler_args: "--jobs 3 --retry 2"
 notifications:
   email: 
-    recipients:
-	  - julien.delporte@faveod.com
+    notifications:
+      - julien.delporte@faveod.com
