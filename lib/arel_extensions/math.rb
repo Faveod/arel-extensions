@@ -32,7 +32,7 @@ module ArelExtensions
         ArelExtensions::Nodes::Concat.new [self, other]
       end if self.is_a?(ArelExtensions::Nodes::Function)
       arg = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].try(:type)
-      if arg == :integer || !arg
+      if arg == :integer || not arg
         other = other.to_i if other.is_a?(String)
         Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
       elsif arg == :decimal || arg == :float

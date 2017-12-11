@@ -74,6 +74,7 @@ module ArelExtensions
         @updated_at = User.arel_table[:updated_at]
         @comments = User.arel_table[:comments]
         @price = Product.arel_table[:price]
+        @not_in_table = User.arel_table[:not_in_table]
         
         @ut = User.arel_table
         @pt = Product.arel_table
