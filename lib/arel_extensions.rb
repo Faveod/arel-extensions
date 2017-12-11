@@ -45,6 +45,7 @@ require 'arel_extensions/insert_manager'
 require 'arel_extensions/common_sql_functions'
 
 require 'arel_extensions/nodes/union'
+require 'arel_extensions/nodes/union_all'
 require 'arel_extensions/nodes/as'
 
 
@@ -103,6 +104,10 @@ end
 
 Arel::Nodes::Union.class_eval do	
   include ArelExtensions::Math
+  include ArelExtensions::Nodes
+end
+
+Arel::Nodes::UnionAll.class_eval do	
   include ArelExtensions::Nodes
 end
 

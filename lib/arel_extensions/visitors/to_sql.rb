@@ -386,8 +386,15 @@ module ArelExtensions
 		collector
 	end
 	
+	def visit_ArelExtensions_Nodes_UnionAll o, collector
+		collector = visit o.left, collector
+		collector << " UNION ALL "
+		collector = visit o.right, collector
+		collector
+	end
+	
 	def visit_ArelExtensions_Nodes_As o, collector
-		if o.left.is_a?(ArelExtensions::Nodes::Union)
+		if o.left.is_a?(ArelExtensions::Nodes::Union) || o.left.is_a?(ArelExtensions::Nodes::UnionAll)
 			collector << "("
 			collector = visit o.left, collector
 			collector << ") "			

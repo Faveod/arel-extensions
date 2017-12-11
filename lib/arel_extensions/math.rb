@@ -84,6 +84,10 @@ module ArelExtensions
         end
       end
     end
-
+        
+    def *(other)
+	  return ArelExtensions::Nodes::UnionAll.new self, other if self.is_a?(Arel::SelectManager) || self.is_a?(Arel::Nodes::UnionAll)
+    end 
+     
   end
 end

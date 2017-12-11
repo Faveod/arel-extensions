@@ -215,6 +215,21 @@ module ArelExtensions
 				collector = visit o.right, collector
 			end
 			collector
+		end	
+		
+		def visit_ArelExtensions_Nodes_UnionAll o, collector
+			if o.left.is_a?(Arel::SelectManager)
+				collector = visit o.left.ast, collector
+			else
+				collector = visit o.left, collector
+			end
+			collector << " UNION ALL "
+			if o.right.is_a?(Arel::SelectManager)
+				collector = visit o.right.ast, collector
+			else
+				collector = visit o.right, collector
+			end
+			collector
 		end
 
     end
