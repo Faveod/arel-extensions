@@ -10,7 +10,7 @@ before_install:
 - chmod +x .travis/oracle/install.sh
 - chmod +x .travis/setup_accounts.sh
 install:
-- sudo apt-get install -y sqlite3-pcre curl
+- sudo apt-get install -y sqlite3-pcre curl freetds
 - .travis/sqlite3/extension-functions.sh
 - .travis/oracle/download.sh
 - .travis/oracle/install.sh
@@ -59,39 +59,24 @@ rvm:
 - ruby-head
 jdk:
 - openjdk7
-- oraclejdk7
 - oraclejdk8
 matrix:
   fast_finish: true
   exclude:
   - rvm: rbx-2
     jdk: openjdk7
-  - rvm: rbx-2
-    jdk: oraclejdk7
   - rvm: 2.0.0
     jdk: openjdk7
-  - rvm: 2.0.0
-    jdk: oraclejdk7
   - rvm: 2.1
     jdk: openjdk7
-  - rvm: 2.1
-    jdk: oraclejdk7
   - rvm: 2.2.5
     jdk: openjdk7
-  - rvm: 2.2.5
-    jdk: oraclejdk7
   - rvm: 2.3.1
     jdk: openjdk7
-  - rvm: 2.3.1
-    jdk: oraclejdk7
   - rvm: 2.4.0
     jdk: openjdk7
-  - rvm: 2.4.0
-    jdk: oraclejdk7
   - rvm: ruby-head
     jdk: openjdk7
-  - rvm: ruby-head
-    jdk: oraclejdk7
   - rvm: 2.0.0
     gemfile: gemfiles/rails5.gemfile
   - rvm: 2.1
