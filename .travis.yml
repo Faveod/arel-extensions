@@ -81,19 +81,19 @@ matrix:
   - rvm: jruby-head
     jdk: openjdk7
   - rvm: rbx-2
-    jdk: openjdk8
+    jdk: oraclejdk8
   - rvm: 2.0.0
-    jdk: openjdk8
+    jdk: oraclejdk8
   - rvm: 2.1
-    jdk: openjdk8
+    jdk: oraclejdk8
   - rvm: 2.2.5
-    jdk: openjdk8
+    jdk: oraclejdk8
   - rvm: 2.3.1
-    jdk: openjdk8
+    jdk: oraclejdk8
   - rvm: 2.4.0
-    jdk: openjdk8
+    jdk: oraclejdk8
   - rvm: ruby-head
-    jdk: openjdk8
+    jdk: oraclejdk8
   - rvm: 2.0.0
     gemfile: gemfiles/rails5.gemfile
   - rvm: 2.1
