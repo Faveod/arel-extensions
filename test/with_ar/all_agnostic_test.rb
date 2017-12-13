@@ -92,20 +92,6 @@ module ArelExtensions
       # Math Functions
       def test_classical_arel
         assert_in_epsilon 42.16, t(@laure, @score + 22), 0.01
-        assert_nothing_raised do 
-			@not_in_table + @age
-		end
-        assert_nothing_raised do 
-			@not_in_table - @age
-		end
-        assert_nothing_raised do
-			@age + @not_in_table
-		end
-        assert_nothing_raised do 
-			@age - @not_in_table
-		end
-        assert_nothing_raised do 
-		end
       end
 
       def test_abs
