@@ -123,9 +123,6 @@ matrix:
     gemfile: gemfiles/rails5.gemfile
   - rvm: jruby-head
     gemfile: gemfiles/rails5.gemfile
-  - rvm: jruby-9.0.5.0 
-    gemfile: gemfiles/rails4.gemfile
-    jdk: oraclejdk9
   - rvm: jruby-head 
     gemfile: gemfiles/rails4.gemfile
     jdk: oraclejdk9
@@ -134,3 +131,4 @@ notifications:
   email: 
     notifications:
       - julien.delporte@faveod.com
+      - yann.azoury@faveod.com

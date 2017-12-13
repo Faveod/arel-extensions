@@ -5,8 +5,8 @@ Gem::Specification.new do |s|
   s.name        = "arel_extensions"
   s.version     = ArelExtensions::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Yann Azoury", "Mathilde Pechdimaldjian", "Félix Bellanger"]
-  s.email       = ["yann.azoury@faveod.com", "mathilde.pechdimaldjian@gmail.com", "felix.bellanger@faveod.com"]
+  s.authors     = ["Yann Azoury", "Félix Bellanger", "Julien Delporte"]
+  s.email       = ["yann.azoury@faveod.com", "felix.bellanger@faveod.com", "julien.delporte@faveod.com"]
   s.homepage    = "https://github.com/Faveod/arel-extensions"
   s.description = "Adds new features to Arel"
   s.summary     = "Extending Arel"
