@@ -6,7 +6,7 @@ module ArelExtensions
         return super(left,right)
       end
 
-      def *(other)
+      def union_all(other)
         return ArelExtensions::Nodes::UnionAll.new(self,other) 
       end
          

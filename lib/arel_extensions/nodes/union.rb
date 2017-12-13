@@ -10,6 +10,10 @@ module ArelExtensions
         return ArelExtensions::Nodes::Union.new(self,other) 
       end
       
+      def union(other)
+        return ArelExtensions::Nodes::UnionAll.new(self,other) 
+      end
+      
       def as other
         ArelExtensions::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other.to_s)
       end

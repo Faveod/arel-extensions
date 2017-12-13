@@ -92,6 +92,9 @@ module ArelExtensions
       # Math Functions
       def test_classical_arel
         assert_in_epsilon 42.16, t(@laure, @score + 22), 0.01
+        assert_nothing_raised (@not_in_table + @not_in_table)
+        assert_nothing_raised (@not_in_table - @not_in_table)
+        assert_nothing_raised (@not_in_table * @not_in_table)
       end
 
       def test_abs
@@ -428,11 +431,11 @@ module ArelExtensions
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(23)) + @ut.project(@age).where(@age.eq(21))).as('my_union')).length
         assert_equal 2, User.select('*').from((@ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(21))).as('my_union')).length
         
-        assert_equal 3, User.find_by_sql((@ut.project(@age).where(@age.gt(22)) * @ut.project(@age).where(@age.lt(0))).to_sql).length
-		assert_equal 3, User.find_by_sql((@ut.project(@age).where(@age.eq(20)) * @ut.project(@age).where(@age.eq(20)) * @ut.project(@age).where(@age.eq(21))).to_sql).length
-        assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.gt(22)) * @ut.project(@age).where(@age.lt(0))).as('my_union')).length
-        assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)) * @ut.project(@age).where(@age.eq(23)) * @ut.project(@age).where(@age.eq(21))).as('my_union')).length
-        assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)) * @ut.project(@age).where(@age.eq(20)) * @ut.project(@age).where(@age.eq(21))).as('my_union')).length
+        assert_equal 3, User.find_by_sql((@ut.project(@age).where(@age.gt(22)).union_all(@ut.project(@age).where(@age.lt(0)))).to_sql).length
+		assert_equal 3, User.find_by_sql((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(20))).union_all(@ut.project(@age).where(@age.eq(21)))).to_sql).length
+        assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.gt(22)).union_all(@ut.project(@age).where(@age.lt(0)))).as('my_union')).length
+        assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(23))).union_all(@ut.project(@age).where(@age.eq(21)))).as('my_union')).length
+        assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(20))).union_all(@ut.project(@age).where(@age.eq(21)))).as('my_union')).length
       end
 
 

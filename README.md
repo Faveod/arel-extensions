@@ -504,12 +504,21 @@ User.connection.execute(insert_manager.to_sql)
   </tr>  <tr>
     <th class="set_operators" rowspan="1"><div>Set <br/> Operators</div></th>
     <td class="tg-yw4l">UNION (+)<br/>query + query</td>
-    <td class="ko">to test</td>
-    <td class="ko">to test</td>
-    <td class="ko">to test</td>
-    <td class="ko">to test</td>
-    <td class="ko">to test</td>
-    <td class="ko">to test</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>  <tr>
+    <th class="set_operators" rowspan="1"><div>Set <br/> Operators</div></th>
+    <td class="tg-yw4l">UNION ALL<br/>query.union_all(query)</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
   </tr>
   </tbody>
 </table>

@@ -116,3 +116,4 @@ Arel::Nodes::As.class_eval do
   include ArelExtensions::Nodes
 end
 
+

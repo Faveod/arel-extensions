@@ -5,6 +5,7 @@ require 'arel_extensions/nodes/date_diff'
 require 'arel_extensions/nodes/duration'
 require 'arel_extensions/nodes/wday'
 require 'arel_extensions/nodes/union'
+require 'arel_extensions/nodes/union_all'
 
 module ArelExtensions
   module Math
@@ -33,7 +34,7 @@ module ArelExtensions
       end if self.is_a?(ArelExtensions::Nodes::Function)
       col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
       if (!col) #if the column doesn't exist in the database
-		return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new(self, other))
+		Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new(self, other))
 	  else
 		arg = col.type
         if arg == :integer || (!arg)
@@ -100,13 +101,21 @@ module ArelExtensions
 	  end
     end
         
-    def *(other)
-	  if self.is_a?(Arel::SelectManager) || self.is_a?(Arel::Nodes::UnionAll) || self.is_a?(Arel::Nodes::Union)
-			return ArelExtensions::Nodes::UnionAll.new self, other 
-		else
-			return super(other)
+    #def *(other)
+	  #if self.is_a?(Arel::SelectManager) || self.is_a?(Arel::Nodes::UnionAll) || self.is_a?(Arel::Nodes::Union)
+			#return ArelExtensions::Nodes::UnionAll.new self, other 
+		#else
+			#return super(other)
+	  #end
+    #end 
+    
+	  def union(other)
+		return ArelExtensions::Nodes::Union.new(self,other) 
 	  end
-    end 
+	  
+	  def union_all(other)
+		return ArelExtensions::Nodes::UnionAll.new(self,other) 
+	  end
      
   end
 end
