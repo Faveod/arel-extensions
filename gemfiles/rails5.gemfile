@@ -18,7 +18,7 @@ group :development, :test do
 	gem 'activerecord-oracle_enhanced-adapter', '~> 1.8' if ENV.has_key? 'ORACLE_HOME'
 
 	# for JRuby
-	gem 'activerecord-jdbc-adapter', :platforms => :jruby
+	gem 'activerecord-jdbc-adapter', :github => 'jruby/activerecord-jdbc-adapter', :tag => 'v51.0', :platforms => :jruby
 	gem "jdbc-sqlite3", :platforms => :jruby
 	gem "activerecord-jdbcsqlite3-adapter", :platforms => :jruby
 	gem "activerecord-jdbcmysql-adapter", :platforms => :jruby
