@@ -39,6 +39,7 @@ require 'arel_extensions/boolean_functions'
 require 'arel_extensions/math'
 require 'arel_extensions/math_functions'
 require 'arel_extensions/string_functions'
+require 'arel_extensions/set_functions'
 
 require 'arel_extensions/insert_manager'
 
@@ -98,17 +99,17 @@ Arel::InsertManager.class_eval do
 end
 
 Arel::SelectManager.class_eval do
-  include ArelExtensions::Math
+  include ArelExtensions::SetFunctions
   include ArelExtensions::Nodes
 end
 
 Arel::Nodes::Union.class_eval do	
-  include ArelExtensions::Math
+  include ArelExtensions::SetFunctions
   include ArelExtensions::Nodes
 end
 
 Arel::Nodes::UnionAll.class_eval do	
-  include ArelExtensions::Math
+  include ArelExtensions::SetFunctions
   include ArelExtensions::Nodes
 end
 
