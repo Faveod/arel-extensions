@@ -62,10 +62,8 @@ module ArelExtensions
       def mysql_value(v = nil)
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
-          if @date_type == :date
-            Arel.sql((v.value >= 0 ? 'INTERVAL ' : 'INTERVAL -') + v.inspect.sub(/s\Z/, ''))
-          elsif @date_type == :datetime
-            Arel.sql((v.value >= 0 ? 'INTERVAL ' : 'INTERVAL -') + v.inspect.sub(/s\Z/, ''))
+          if @date_type == :date || @date_type == :datetime
+            Arel.sql('INTERVAL %s' % v.inspect.sub(/s\Z/, ''))
           end
         else
           v
