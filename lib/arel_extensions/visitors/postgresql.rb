@@ -35,6 +35,16 @@ module ArelExtensions
         collector = visit o.right, collector
         collector
       end
+      
+      def visit_ArelExtensions_Nodes_Concat o, collector
+        collector << '('
+        o.expressions.each_with_index { |arg, i|
+          collector = visit arg, collector
+          collector << ' || ' unless i == o.expressions.length - 1
+        }
+        collector << ")"
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "array_to_string(array_agg("
