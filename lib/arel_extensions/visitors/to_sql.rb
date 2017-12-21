@@ -56,11 +56,10 @@ module ArelExtensions
       # String functions
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
-	    collector = visit o.left, collector
-	    if o.right
-		  collector << Arel::Visitors::ToSql::COMMA
-		  collector = visit o.right, collector
-	    end
+	    o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
         collector << ")"
         collector
       end

@@ -58,8 +58,8 @@ module ArelExtensions
       # String Functions
       it "should accept functions on strings" do
         c = @table[:name]
-        compile(c + 'test').must_be_like %{("users"."name" || 'test')}
-        compile(c + 'test' + ' chain').must_be_like %{("users"."name" || 'test' || ' chain')}
+        compile(c + 'test').must_be_like %{CONCAT(\"users\".\"name\", 'test')}
+        compile(c + 'test' + ' chain').must_be_like %{CONCAT(\"users\".\"name\", 'test', ' chain')}
         compile(c.length).must_be_like %{LENGTH("users"."name")}
         compile(c.length.round + 42).must_be_like %{(ROUND(LENGTH("users"."name")) + 42)}
         compile(c.locate('test')).must_be_like %{LOCATE('test', "users"."name")}
