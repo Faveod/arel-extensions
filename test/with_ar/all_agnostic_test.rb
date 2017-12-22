@@ -365,8 +365,8 @@ module ArelExtensions
 			date1 = Date.today 
 			durPos = 10.years
 			durNeg = -10.years
-			date2 = d1 + durPos
-			date3 = d1 - durPos
+			date2 = date1 + durPos
+			date3 = date1 - durPos
 			# Pull Request #5 tests
 			assert_equal date3,t(@test,(date1 - durPos))
 			assert_equal date2,t(@test,(date1 + durPos))
