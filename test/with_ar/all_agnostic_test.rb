@@ -368,10 +368,8 @@ module ArelExtensions
 			date2 = date1 + durPos
 			date3 = date1 - durPos
 			# Pull Request #5 tests
-			assert_equal date3,t(@test,(@created_at - durPos))
-			assert_equal date2,t(@test,(@created_at + durPos))
-			assert_equal date2,t(@test,(@created_at - durNeg))
-			assert_equal date3,t(@test,(@created_at + durNeg))
+			assert_equal date2, t(@test,(@created_at + durPos))
+			assert_equal date3, t(@test,(@created_at + durNeg))
           end
         end
       end
