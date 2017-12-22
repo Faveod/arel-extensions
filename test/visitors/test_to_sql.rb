@@ -138,6 +138,15 @@ module ArelExtensions
         sql = compile(ArelExtensions::Nodes::DateDiff.new([d1, @table[:updated_at]]))
         sql.must_match %{DATEDIFF('2015-06-02', "users"."updated_at")}
       end
+      
+      it "should diff between date col and duration" do
+		d1 = 10
+		d2 = -10
+        compile(@table[:created_at] - d1).
+			must_match %{DATE_SUB("users"."created_at", 10)}
+        compile(@table[:created_at] - d2).
+			must_match %{DATE_SUB("users"."created_at", -10)}
+      end
 
       it "should accept operators on dates with numbers" do
         c = @table[:created_at]
