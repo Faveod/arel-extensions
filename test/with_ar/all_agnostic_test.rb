@@ -362,16 +362,16 @@ module ArelExtensions
             assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1)
           end
           if @env_db == 'mysql'
-			date1 = Date.today 
+			date1 = Date.new(2016, 5, 23)
 			durPos = 10.years
 			durNeg = -10.years
 			date2 = date1 + durPos
 			date3 = date1 - durPos
 			# Pull Request #5 tests
-			assert_equal date3,t(@test,(date1 - durPos))
-			assert_equal date2,t(@test,(date1 + durPos))
-			assert_equal date2,t(@test,(date1 - durNeg))
-			assert_equal date3,t(@test,(date1 + durNeg))
+			assert_equal date3,t(@test,(@created_at - durPos))
+			assert_equal date2,t(@test,(@created_at + durPos))
+			assert_equal date2,t(@test,(@created_at - durNeg))
+			assert_equal date3,t(@test,(@created_at + durNeg))
           end
         end
       end
