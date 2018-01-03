@@ -368,8 +368,8 @@ module ArelExtensions
 			date2 = date1 + durPos
 			date3 = date1 - durPos
 			# Pull Request #5 tests
-			assert((date2 == t(@test,(@created_at + durPos))) || ("2026-05-23" == t(@test,(@created_at + durPos))))
-			assert((date3 == t(@test,(@created_at + durNeg))) || ("2006-05-23" == t(@test,(@created_at + durNeg)))) 
+			assert date2 == t(@test,(@created_at + durPos)) || "2026-05-23" == t(@test,(@created_at + durPos))
+			assert date3 == t(@test,(@created_at + durNeg)) || "2006-05-23" == t(@test,(@created_at + durNeg))
 			# we test with the ruby object or the string because some adapters don't return an object Date
           end
         end
