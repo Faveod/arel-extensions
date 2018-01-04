@@ -21,6 +21,7 @@ gemfile:
 - gemfiles/rails4.gemfile
 - gemfiles/rails5_0.gemfile
 - gemfiles/rails5_1.gemfile
+- gemfiles/rails5_2.gemfile
 services:
 - mysql
 - postgresql
@@ -95,9 +96,9 @@ matrix:
   - rvm: ruby-head
     jdk: oraclejdk8
   - rvm: 2.0.0
-    gemfile: gemfiles/rails5_1.gemfile
+    gemfile: gemfiles/rails5_1_4.gemfile
   - rvm: 2.1
-    gemfile: gemfiles/rails5_1.gemfile
+    gemfile: gemfiles/rails5_1_4.gemfile
   - rvm: ruby-head
     gemfile: gemfiles/rails4.gemfile
   - rvm: 2.0.0
@@ -105,25 +106,26 @@ matrix:
   - rvm: 2.1
     gemfile: gemfiles/rails5_0.gemfile  
   - rvm: jruby-9.0.5.0
-    gemfile: gemfiles/rails5_1.gemfile
+    gemfile: gemfiles/rails5_1_4.gemfile
   allow_failures:
   - rvm: rbx-2
-    gemfile: gemfiles/rails4.gemfile
+    gemfile: gemfiles/rails4.gemfile    
   - rvm: rbx-2
     gemfile: gemfiles/rails5_0.gemfile    
   - rvm: rbx-2
-    gemfile: gemfiles/rails5_1.gemfile
+    gemfile: gemfiles/rails5_1_4.gemfile    
+  - rvm: jruby-head 
+    gemfile: gemfiles/rails4.gemfile
   - rvm: jruby-9.0.5.0
     gemfile: gemfiles/rails5_0.gemfile
   - rvm: jruby-head
     gemfile: gemfiles/rails5_0.gemfile
   - rvm: rbx-2
-    gemfile: gemfiles/rails5_1.gemfile
+    gemfile: gemfiles/rails5_1_4.gemfile
   - rvm: jruby-head
-    gemfile: gemfiles/rails5_1.gemfile
-  - rvm: jruby-head 
-    gemfile: gemfiles/rails4.gemfile
-    jdk: oraclejdk9
+    gemfile: gemfiles/rails5_1_4.gemfile
+    jdk: oraclejdk9  
+  - gemfile: gemfiles/rails5_2_beta.gemfile
 bundler_args: "--jobs 3 --retry 2"
 notifications:
   email: 
