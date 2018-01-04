@@ -20,7 +20,7 @@ install:
 gemfile:
 - gemfiles/rails4.gemfile
 - gemfiles/rails5_0.gemfile
-- gemfiles/rails5.gemfile
+- gemfiles/rails5_1.gemfile
 services:
 - mysql
 - postgresql
@@ -95,34 +95,32 @@ matrix:
   - rvm: ruby-head
     jdk: oraclejdk8
   - rvm: 2.0.0
-    gemfile: gemfiles/rails5.gemfile
+    gemfile: gemfiles/rails5_1.gemfile
   - rvm: 2.1
-    gemfile: gemfiles/rails5.gemfile
-  - rvm: rbx-2
-    gemfile: gemfiles/rails5.gemfile
+    gemfile: gemfiles/rails5_1.gemfile
   - rvm: ruby-head
     gemfile: gemfiles/rails4.gemfile
   - rvm: 2.0.0
     gemfile: gemfiles/rails5_0.gemfile
   - rvm: 2.1
-    gemfile: gemfiles/rails5_0.gemfile
-  - rvm: rbx-2
-    gemfile: gemfiles/rails5_0.gemfile
+    gemfile: gemfiles/rails5_0.gemfile  
   - rvm: jruby-9.0.5.0
-    gemfile: gemfiles/rails5.gemfile
+    gemfile: gemfiles/rails5_1.gemfile
   allow_failures:
   - rvm: rbx-2
     gemfile: gemfiles/rails4.gemfile
   - rvm: rbx-2
-    gemfile: gemfiles/rails5_0.gemfile
+    gemfile: gemfiles/rails5_0.gemfile    
+  - rvm: rbx-2
+    gemfile: gemfiles/rails5_1.gemfile
   - rvm: jruby-9.0.5.0
     gemfile: gemfiles/rails5_0.gemfile
   - rvm: jruby-head
     gemfile: gemfiles/rails5_0.gemfile
   - rvm: rbx-2
-    gemfile: gemfiles/rails5.gemfile
+    gemfile: gemfiles/rails5_1.gemfile
   - rvm: jruby-head
-    gemfile: gemfiles/rails5.gemfile
+    gemfile: gemfiles/rails5_1.gemfile
   - rvm: jruby-head 
     gemfile: gemfiles/rails4.gemfile
     jdk: oraclejdk9
