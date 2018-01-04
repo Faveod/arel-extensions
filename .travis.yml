@@ -111,6 +111,10 @@ matrix:
     gemfile: gemfiles/rails5_2_beta.gemfile
   - rvm: 2.1
     gemfile: gemfiles/rails5_2_beta.gemfile
+  - rvm: jruby-9.0.5.0 
+    gemfile: gemfiles/rails5_2_beta.gemfile
+  - rvm: jruby-head 
+    gemfile: gemfiles/rails5_2_beta.gemfile
   allow_failures:
   - rvm: rbx-2
     gemfile: gemfiles/rails4.gemfile    

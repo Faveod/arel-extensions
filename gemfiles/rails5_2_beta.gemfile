@@ -4,9 +4,9 @@ gem 'rails', '~> 5.2.0.beta2'
 gem 'arel', '~> 9'
 
 group :development, :test do
-	gem 'activesupport', '~> 5.1.0'
-	gem 'activemodel', '~> 5.1.0'
-	gem 'activerecord', '~> 5.1.0'
+	gem 'activesupport', '~> 5.2.0.beta2'
+	gem 'activemodel', '~> 5.2.0.beta2'
+	gem 'activerecord', '~> 5.2.0.beta2'
 
 	gem "sqlite3", :platforms => [:mri, :mswin, :mingw]
 	gem "mysql2", :platforms => [:mri, :mswin, :mingw]
