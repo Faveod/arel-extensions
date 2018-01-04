@@ -107,7 +107,7 @@ matrix:
     gemfile: gemfiles/rails5_0.gemfile  
   - rvm: jruby-9.0.5.0
     gemfile: gemfiles/rails5_1_4.gemfile
-  - rvm: 2.0
+  - rvm: 2.0.0
     gemfile: gemfiles/rails5_2_beta.gemfile
   - rvm: 2.1
     gemfile: gemfiles/rails5_2_beta.gemfile
