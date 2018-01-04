@@ -3,17 +3,19 @@ sudo: required
 cache:
   bundler: true
   directories:
-  - $ORACLE_DOWNLOAD_DIR
+  - $ORACLE_HOME
 before_install:
   - chmod +x .travis/sqlite3/extension-functions.sh
   - chmod +x .travis/oracle/download.sh
   - chmod +x .travis/oracle/install.sh
+  - chmod +x .travis/setup_accounts.sh
   - sudo apt-get install -y sqlite3-pcre curl
   - .travis/sqlite3/extension-functions.sh
   - .travis/oracle/download.sh
   - .travis/oracle/install.sh
-  - gem install bundler
+  - .travis/setup_accounts.sh
 install:
+  - gem install bundler
   - bundle install
 gemfile:
 - gemfiles/rails4.gemfile
