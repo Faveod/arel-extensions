@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
+gem 'rails', '~> 5.1.4'
 gem 'arel', '~> 8'
 
 group :development, :test do
