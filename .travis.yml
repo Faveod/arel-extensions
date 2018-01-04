@@ -12,8 +12,8 @@ before_install:
   - .travis/sqlite3/extension-functions.sh
   - .travis/oracle/download.sh
   - .travis/oracle/install.sh
-install:
   - gem install bundler
+install:
   - bundle install
 gemfile:
 - gemfiles/rails4.gemfile
