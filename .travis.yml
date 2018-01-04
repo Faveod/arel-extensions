@@ -20,8 +20,8 @@ install:
 gemfile:
 - gemfiles/rails4.gemfile
 - gemfiles/rails5_0.gemfile
-- gemfiles/rails5_1.gemfile
-- gemfiles/rails5_2.gemfile
+- gemfiles/rails5_1_4.gemfile
+- gemfiles/rails5_2_beta.gemfile
 services:
 - mysql
 - postgresql
