@@ -68,7 +68,6 @@ module ArelExtensions
         collector << "GROUP_CONCAT("
         collector = visit o.left, collector
         if o.right && o.right != 'NULL'
-		  puts "++"+o.right.inspect+"++"
           collector << Arel::Visitors::ToSql::COMMA
           collector = visit o.right, collector
         end
