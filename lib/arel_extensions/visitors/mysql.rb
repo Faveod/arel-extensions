@@ -47,7 +47,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "GROUP_CONCAT("
         collector = visit o.left, collector
-        if o.right
+        if o.right && o.right != 'NULL'
           collector << ' SEPARATOR '
           collector = visit o.right, collector
         end

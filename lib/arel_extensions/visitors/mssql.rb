@@ -307,7 +307,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "(LISTAGG("
         collector = visit o.left, collector
-        if o.right
+        if o.right  && o.right != 'NULL'
           collector << Arel::Visitors::Oracle::COMMA
           collector = visit o.right, collector
         end

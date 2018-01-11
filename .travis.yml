@@ -79,8 +79,6 @@ matrix:
     jdk: openjdk7
   - rvm: ruby-head
     jdk: openjdk7  
-  - rvm: jruby-head
-    jdk: openjdk7
   - rvm: rbx-2
     jdk: oraclejdk8
   - rvm: 2.0.0
@@ -94,7 +92,9 @@ matrix:
   - rvm: 2.4.0
     jdk: oraclejdk8
   - rvm: ruby-head
-    jdk: oraclejdk8
+    jdk: oraclejdk8    
+  - rvm: jruby-head
+    jdk: openjdk7
   - rvm: 2.0.0
     gemfile: gemfiles/rails5_1_4.gemfile
   - rvm: 2.1

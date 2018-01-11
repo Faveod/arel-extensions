@@ -50,7 +50,7 @@ module ArelExtensions
         collector << "array_to_string(array_agg("
         collector = visit o.left, collector
         collector << ")"
-        if o.right
+        if o.right  && o.right != 'NULL'
           collector << Arel::Visitors::PostgreSQL::COMMA
           collector = visit o.right, collector
         else

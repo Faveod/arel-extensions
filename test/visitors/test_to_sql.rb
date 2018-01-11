@@ -174,6 +174,13 @@ module ArelExtensions
         ).must_be_like %{FLOOR(ROUND(LENGTH("users"."name") / 42, 2)) > CEIL(ABS(TIMEDIFF("users"."updated_at", '2000-03-31 00:00:00 UTC')))}
       end
       
+      it "should accept aggregator like GROUP CONCAT" do
+		@table.project(@table[:first_name].group_concat).group(@table[:last_name]).to_sql
+			.must_be_like %{SELECT GROUP_CONCAT("users"."first_name") FROM "users" GROUP BY "users"."last_name"}			
+		@table.project(@table[:first_name].group_concat('++')).group(@table[:last_name]).to_sql
+			.must_be_like %{SELECT GROUP_CONCAT("users"."first_name", '++') FROM "users" GROUP BY "users"."last_name"}
+      end
+      
       # Unions       
       it "should accept union operators on queries and union nodes" do
 		c = @table.project(@table[:name])
