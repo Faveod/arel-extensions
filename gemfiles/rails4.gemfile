@@ -9,7 +9,7 @@ group :development, :test do
 
 	gem "sqlite3", :platforms => [:mri, :mswin, :mingw]
 	gem "mysql2", :platforms => [:mri, :mswin, :mingw]
-    gem "pg", :platforms => [:mri, :mingw]
+    gem "pg",'< 1.0.0', :platforms => [:mri, :mingw]
 
     gem "tiny_tds", :platforms => [:mri, :mingw, :mswin] if RUBY_PLATFORM =~ /windows/
     gem "activerecord-sqlserver-adapter", '~> 4.2.0', :platforms => [:mri, :mingw, :mswin] if RUBY_PLATFORM =~ /windows/

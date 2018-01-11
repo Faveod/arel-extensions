@@ -5,7 +5,7 @@ gemspec
 group :development, :test do
   gem "sqlite3", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
   gem "mysql2", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
-  gem "pg", :platforms => [:mri, :mingw, :x64_mingw, :mswin]
+  gem "pg", '< 1.0.0', :platforms => [:mri, :mingw, :x64_mingw, :mswin]
 
   gem "jdbc-sqlite3", :platforms => :jruby
   gem "activerecord-jdbcsqlite3-adapter", :platforms => :jruby
