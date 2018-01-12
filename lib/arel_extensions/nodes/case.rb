@@ -2,11 +2,11 @@ module ArelExtensions
   module Nodes    
     if Arel::VERSION.to_i < 7 
 		class Case < Arel::Nodes::Node
+		  include ArelExtensions::Predications
 
 		  attr_accessor :case, :conditions, :default
 
 		  def initialize expression = nil, default = nil
-			puts 'cool'
 			@case = expression
 			@conditions = []
 			@default = default
@@ -46,21 +46,13 @@ module ArelExtensions
 		  end
 		  alias :== :eql?
 		end
-	else
-		class Case < Arel::Nodes::Case			
-			def initialize expression = nil, default = nil
-				super(expression,default)			
-			end
-			
-			
-	    end
-	end
+		
+		class When < Arel::Nodes::Binary # :nodoc:
+		end
 
-	class When < Binary # :nodoc:
-	end
-
-	class Else < Unary # :nodoc:
-	end
+		class Else < Arel::Nodes::Unary # :nodoc:
+		end
 	
+	end	
   end
 end

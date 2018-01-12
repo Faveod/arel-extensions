@@ -48,6 +48,7 @@ require 'arel_extensions/common_sql_functions'
 require 'arel_extensions/nodes/union'
 require 'arel_extensions/nodes/union_all'
 require 'arel_extensions/nodes/as'
+require 'arel_extensions/nodes/case'
 require 'arel_extensions/predications'
 
 

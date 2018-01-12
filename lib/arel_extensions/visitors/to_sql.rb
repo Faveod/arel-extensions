@@ -406,7 +406,7 @@ module ArelExtensions
 		end
 	end
 	
-	def visit_Arel_Nodes_Case o, collector
+	def visit_ArelExtensions_Nodes_Case o, collector
         collector << "CASE "
         if o.case
           visit o.case, collector
@@ -423,14 +423,14 @@ module ArelExtensions
         collector << "END"
 	end
 
-    def visit_Arel_Nodes_When o, collector
+    def visit_ArelExtensions_Nodes_When o, collector
         collector << "WHEN "
         visit o.left, collector
         collector << " THEN "
         visit o.right, collector
     end
 
-    def visit_Arel_Nodes_Else o, collector
+    def visit_ArelExtensions_Nodes_Else o, collector
         collector << "ELSE "
         visit o.expr, collector
     end
