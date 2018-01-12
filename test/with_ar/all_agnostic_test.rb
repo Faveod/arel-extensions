@@ -456,7 +456,6 @@ module ArelExtensions
 
 	  # Case clause
 	  def test_case
-		puts @ut.project(@score.when(20.16).then(1).else(0).sum.as('score_sum')).to_sql
 	    assert_equal 4, User.find_by_sql(@ut.project(@score.when(20.16).then(1).else(0).as('score_sum')).to_sql).sum(&:score_sum)
 	  end
 
