@@ -3,6 +3,7 @@ module ArelExtensions
     class Function < Arel::Nodes::Function
       include Arel::Math
       include Arel::Expressions
+      include Arel::Comparators
 
       cattr_accessor :return_type
 
