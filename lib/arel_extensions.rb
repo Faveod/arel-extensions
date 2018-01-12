@@ -9,6 +9,7 @@ require 'arel_extensions/railtie' if defined?(Rails::Railtie)
 # pure Arel internals improvements
 Arel::Nodes::Binary.class_eval do
   include Arel::AliasPredication
+  include Arel::Expressions
 end
 
 Arel::Nodes::Unary.class_eval do

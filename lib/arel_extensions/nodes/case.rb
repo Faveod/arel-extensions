@@ -50,15 +50,16 @@ module ArelExtensions
 				def as other
 					ArelExtensions::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
 				end
-			end		
+			end	
 			
 			class When < Arel::Nodes::Binary # :nodoc:
 			end
 
 			class Else < Arel::Nodes::Unary # :nodoc:
 			end	
+		
+		
+		end		
 
-			
-		end	
 	end
 end
