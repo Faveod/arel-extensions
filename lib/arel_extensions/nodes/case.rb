@@ -45,6 +45,10 @@ module ArelExtensions
 					self.default == other.default
 				end
 				alias :== :eql?
+				
+				def as other
+					ArelExtensions::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
+				end
 			end		
 			
 			class When < Arel::Nodes::Binary # :nodoc:
