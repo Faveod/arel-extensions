@@ -456,7 +456,7 @@ module ArelExtensions
 
 	  # Case clause
 	  def test_case
-	    assert_equal 1, User.find_by_sql(@ut.project(@name.when('Arthur').then(1).else(0).sum).to_sql).length
+	    assert_equal 1, User.find_by_sql(@ut.project(@name.when('Arthur').then(1).else(0).sum.as('arthur_sum')).to_sql).first.to_i
 	  end
 
     end
