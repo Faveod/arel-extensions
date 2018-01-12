@@ -1,6 +1,6 @@
 module ArelExtensions
   module Nodes
-    class Soundex < Function
+    class Soundex < Function	
     	@@return_type = :string
     end
   end

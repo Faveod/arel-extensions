@@ -48,6 +48,7 @@ require 'arel_extensions/common_sql_functions'
 require 'arel_extensions/nodes/union'
 require 'arel_extensions/nodes/union_all'
 require 'arel_extensions/nodes/as'
+require 'arel_extensions/predications'
 
 
 
@@ -69,6 +70,7 @@ Arel::Nodes::Function.class_eval do
   include ArelExtensions::StringFunctions
   include ArelExtensions::BooleanFunctions
   include ArelExtensions::NullFunctions
+  include ArelExtensions::Predications
 end
 
 Arel::Nodes::Unary.class_eval do
@@ -76,6 +78,7 @@ Arel::Nodes::Unary.class_eval do
   include ArelExtensions::Attributes
   include ArelExtensions::MathFunctions
   include ArelExtensions::Comparators
+  include ArelExtensions::Predications
 end
 
 Arel::Nodes::Binary.class_eval do
@@ -84,6 +87,7 @@ Arel::Nodes::Binary.class_eval do
   include ArelExtensions::MathFunctions
   include ArelExtensions::Comparators
   include ArelExtensions::BooleanFunctions
+  include ArelExtensions::Predications
 end
 
 Arel::Nodes::Equality.class_eval do

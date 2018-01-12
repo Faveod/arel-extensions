@@ -3,7 +3,6 @@ module ArelExtensions
     class Function < Arel::Nodes::Function
       include Arel::Math
       include Arel::Expressions
-      include Arel::Comparators
 
       cattr_accessor :return_type
 
@@ -128,7 +127,7 @@ module ArelExtensions
           raise(ArgumentError, "#{object.class} can not be converted to NUMBER arg")
         end
       end
-
+      
     end
   end
 end

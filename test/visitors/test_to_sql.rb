@@ -110,6 +110,10 @@ module ArelExtensions
         compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
       end
 
+	  it "should accept comparators on functions" do
+		  c = @table[:name]
+		  #compile(c.soundex == 'test').must_be_like %{SOUNDEX("users"."name") = 'test'}
+	  end
 
       # Maths
       # DateDiff
@@ -214,6 +218,12 @@ module ArelExtensions
 			.must_be_like %{((SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")) union_table}  			     
 			
 	 end
+	 
+	 # Case
+     it "should accept case clause" do
+		@table[:name].when("smith").then("cool").when("doe").then("fine").else("uncool").to_sql
+			.must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' WHEN 'doe' THEN 'fine' ELSE 'uncool' END}  			     
+     end
 	 
     end
   end
