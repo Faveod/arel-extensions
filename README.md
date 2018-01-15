@@ -138,7 +138,7 @@ t[:birthdate].format('%Y-%m-%d').to_sql
 Arel-extensions allows to use functions on case clause
 
 ```ruby
-(t[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
+t[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
 # => SUM(CASE "my_table"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END) 
 ```
 
