@@ -133,6 +133,16 @@ t[:birthdate].format('%Y-%m-%d').to_sql
 # => (SELECT * FROM my_table WHERE name='str') UNION (SELECT * FROM my_table WHERE name='test')
 ```
 
+## Case clause
+
+Arel-extensions allows to use functions on case clause
+
+```ruby
+(t[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
+# => SUM(CASE "my_table"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END) 
+```
+
+
 ## Stored Procedures and User-defined functions
 
 To optimize queries, some classical functions are defined in databases missing any alternative native functions.
