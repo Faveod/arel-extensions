@@ -219,14 +219,21 @@ module ArelExtensions
 			
 	 end
 	 
+	 
+	 #puts "AREL VERSION : " + Arel::VERSION.to_s
+	 
 	 # Case
-     it "should accept case clause" do
+     it "should accept case clause" do		
 		@table[:name].when("smith").then("cool").when("doe").then("fine").else("uncool").to_sql
 			.must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' WHEN 'doe' THEN 'fine' ELSE 'uncool' END}  			     
 		@table[:name].when("smith").then(1).when("doe").then(2).else(0).to_sql
-			.must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}  						
-		#@table[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
-		#	.must_be_like %{SUM(CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END)}  			
+			.must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}   
+		ArelExtensions::Nodes::Case.new.when("smith").then(1).when("doe").then(2).else(0).to_sql
+			.must_be_like %{CASE WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}  
+		ArelExtensions::Nodes::Case.new(@table[:name]).when("smith").then(1).when("doe").then(2).else(0).to_sql
+			.must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}  
+		@table[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
+			.must_be_like %{SUM(CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END)}  			
      end
 	 
     end

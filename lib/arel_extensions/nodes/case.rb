@@ -57,8 +57,12 @@ module ArelExtensions
 
 			class Else < Arel::Nodes::Unary # :nodoc:
 			end	
+			
+		else
 		
-		
+			class Case < Arel::Nodes::Case		
+			end
+			
 		end		
 
 	end

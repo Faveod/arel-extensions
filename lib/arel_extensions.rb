@@ -29,6 +29,13 @@ Arel::Nodes::Function.class_eval do
   include Arel::Expressions
 end
 
+if Arel::VERSION.to_i >= 7 
+	Arel::Nodes::Case.class_eval do
+	  include Arel::Math
+	  include Arel::Expressions
+	end
+end
+
 require 'arel_extensions/version'
 require 'arel_extensions/attributes'
 require 'arel_extensions/visitors'
