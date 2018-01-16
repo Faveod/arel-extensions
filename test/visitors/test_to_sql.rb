@@ -110,11 +110,6 @@ module ArelExtensions
         compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
       end
 
-	  it "should accept comparators on functions" do
-		  c = @table[:name]
-		  #compile(c.soundex == 'test').must_be_like %{SOUNDEX("users"."name") = 'test'}
-	  end
-
       # Maths
       # DateDiff
       it "should diff date col and date" do
@@ -235,7 +230,13 @@ module ArelExtensions
 		@table[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
 			.must_be_like %{SUM(CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END)}  			
      end
-	 
+     
+     
+	  it "should accept comparators on functions" do
+		  c = @table[:name]
+		  compile(c.soundex == 'test').must_be_like %{SOUNDEX("users"."name") = 'test'}
+	  end
+
     end
   end
 end 
