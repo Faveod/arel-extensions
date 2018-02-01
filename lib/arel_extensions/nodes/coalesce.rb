@@ -16,7 +16,7 @@ module ArelExtensions
         when ArelExtensions::Nodes::Coalesce, ArelExtensions::Nodes::Function
           @left_node_type = expr.first.try(:left_node_type)
         when Arel::Nodes::Node, Arel::Attributes::Attribute 
-          @left_node_type = expr.first
+          @left_node_type = type_of_attribute(expr.first)
         when Date
           @left_node_type = :ruby_date
         when DateTime, Time

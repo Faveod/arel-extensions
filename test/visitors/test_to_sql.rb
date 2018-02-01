@@ -261,7 +261,7 @@ module ArelExtensions
 	  
 	  puts "AREL VERSION : " + Arel::VERSION.to_s
 	  
-	  
+	  puts @table.respond_to?(:adapter_name)
 
     end
   end
