@@ -9,14 +9,14 @@ module ArelExtensions
         Arel::Table.engine = @conn
         @visitor = Arel::Visitors::ToSql.new @conn.connection
         @table = Arel::Table.new(:users)
-        @table.instance_variable_set(:@engine,@conn.class)
+        @table.instance_variable_set(:@engine,Class)
         def @table.engine
 			@engine
         end
         @attr = @table[:id]
         @date = Date.new(2016, 3, 31)
         @price = Arel::Table.new(:products)[:price]
-        @price.instance_variable_set(:@engine,@conn.class) 
+        @price.instance_variable_set(:@engine,Class) 
         def @price.engine
 			@engine
         end
