@@ -5,5 +5,13 @@ module ArelExtensions
 				ArelExtensions::Nodes::Case.new(self).when(right)
 			end
 		end
+		
+		def matches(other, escape=nil)
+			Arel::Nodes::Matches.new(self, Arel::Nodes.build_quoted(other), escape)
+		end
+		
+		def imatches(other, escape=nil)
+			ArelExtensions::Nodes::IMatches.new(self, other, escape)
+		end
 	end
 end

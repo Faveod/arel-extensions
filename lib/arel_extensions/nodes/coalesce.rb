@@ -2,6 +2,8 @@ module ArelExtensions
   module Nodes
     class Coalesce < Function
       include ArelExtensions::Math
+      include ArelExtensions::Comparators
+      
       attr_accessor :left_node_type
 
       def initialize expr
@@ -24,7 +26,7 @@ module ArelExtensions
         end
         return super(tab)
       end
-      
+
     end
   end
 end

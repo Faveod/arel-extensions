@@ -12,7 +12,6 @@ module ArelExtensions
           super(left, r, escape, false)
         end
       end
-
     end
 
     class IDoesNotMatch < IMatches

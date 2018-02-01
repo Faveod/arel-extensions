@@ -225,7 +225,11 @@ module ArelExtensions
 		ArelExtensions::Nodes::Case.new(@table[:name]).when("smith").then(1).when("doe").then(2).else(0).to_sql
 			.must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}  
 		@table[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
-			.must_be_like %{SUM(CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END)}  			
+			.must_be_like %{SUM(CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END)} 
+        @table[:name].when("smith").then("cool").else("uncool").matches('value',false).to_sql
+            .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END LIKE 'value'}  			     									
+        @table[:name].when("smith").then("cool").else("uncool").imatches('value',false).to_sql
+            .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END ILIKE 'value'}  			     									
      end
      
      
@@ -248,7 +252,11 @@ module ArelExtensions
 	    compile(fake_at['fake_attribute'].coalesce('other_value1','other_value2'))
 			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value1', 'other_value2')}
         compile(fake_at['fake_attribute'].coalesce('other_value1').coalesce('other_value2'))
-			.must_be_like %{COALESCE(COALESCE("fake_table"."fake_attribute", 'other_value1'), 'other_value2')}				
+			.must_be_like %{COALESCE(COALESCE("fake_table"."fake_attribute", 'other_value1'), 'other_value2')}	
+	    compile(fake_at['fake_attribute'].coalesce('other_value').matches('truc'))
+			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value') LIKE 'truc'}				
+		compile(fake_at['fake_attribute'].coalesce('other_value').imatches('truc'))
+			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value') ILIKE 'truc'}				
 	  end
 	  
 	  puts "AREL VERSION : " + Arel::VERSION.to_s

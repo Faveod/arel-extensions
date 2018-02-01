@@ -1,8 +1,11 @@
+require 'arel_extensions/predications'
+
 module ArelExtensions
   module Nodes
     class Function < Arel::Nodes::Function
       include Arel::Math
       include Arel::Expressions
+	  include ArelExtensions::Predications	
 
       cattr_accessor :return_type
 

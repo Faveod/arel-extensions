@@ -1,6 +1,9 @@
 module ArelExtensions
 	module Nodes
-		class Soundex < Function					
+		class Soundex < Function	
+			include Arel::Expressions
+			include ArelExtensions::Comparators			
+							
 			@@return_type = :string
 				
 			def ==(other)

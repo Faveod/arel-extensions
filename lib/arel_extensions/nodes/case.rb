@@ -2,8 +2,9 @@ module ArelExtensions
 	module Nodes    
 		if Arel::VERSION.to_i < 7 
 			class Case < Arel::Nodes::Node
-				include ArelExtensions::Predications	
 				include Arel::Expressions
+				include ArelExtensions::Comparators
+				include ArelExtensions::Predications	
 
 				attr_accessor :case, :conditions, :default
 
@@ -56,11 +57,12 @@ module ArelExtensions
 			end
 
 			class Else < Arel::Nodes::Unary # :nodoc:
-			end	
+			end		
 			
 		else
 		
 			class Case < Arel::Nodes::Case		
+				
 			end
 			
 		end		
