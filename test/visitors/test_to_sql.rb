@@ -9,17 +9,9 @@ module ArelExtensions
         Arel::Table.engine = @conn
         @visitor = Arel::Visitors::ToSql.new @conn.connection
         @table = Arel::Table.new(:users)
-        #@table.instance_variable_set(:@engine,Class)
-        #def @table.engine
-		#	Class
-        #end
         @attr = @table[:id]
         @date = Date.new(2016, 3, 31)
         @price = Arel::Table.new(:products)[:price]
-        #@price.instance_variable_set(:@engine,Class) 
-        #def @price.engine
-		#	Class
-        #end
       end
 
       def compile node
@@ -249,7 +241,7 @@ module ArelExtensions
 			.must_be_like %{"users"."name" IN (SELECT "users"."name" FROM "users")}
 	  end	  
 	  
-	  it "should accept coalesce function properly" do
+	  it "should accept coalesce function properly even on none actual tables and attributes" do
 		fake_at = Arel::Table.new('fake_table')
 	    compile(fake_at['fake_attribute'].coalesce('other_value'))
 			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value')}			
@@ -260,9 +252,7 @@ module ArelExtensions
 	  end
 	  
 	  puts "AREL VERSION : " + Arel::VERSION.to_s
-	  
-	  puts @table.respond_to?(:adapter_name)
-
+	
     end
   end
 end 

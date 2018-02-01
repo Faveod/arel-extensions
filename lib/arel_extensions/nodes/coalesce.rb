@@ -14,7 +14,7 @@ module ArelExtensions
         when Integer, Float
           @left_node_type = :number
         when ArelExtensions::Nodes::Coalesce, ArelExtensions::Nodes::Function
-          @left_node_type = expr.first.try(:left_node_type)
+          @left_node_type = expr.first.respond_to?(:left_node_type) ? expr.first.left_node_type : nil
         when Arel::Nodes::Node, Arel::Attributes::Attribute 
           @left_node_type = type_of_attribute(expr.first)
         when Date
