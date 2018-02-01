@@ -9,9 +9,17 @@ module ArelExtensions
         Arel::Table.engine = @conn
         @visitor = Arel::Visitors::ToSql.new @conn.connection
         @table = Arel::Table.new(:users)
+        @table.instance_variable_set(:@engine,@conn.class)
+        def @table.engine
+			@engine
+        end
         @attr = @table[:id]
         @date = Date.new(2016, 3, 31)
         @price = Arel::Table.new(:products)[:price]
+        @price.instance_variable_set(:@engine,@conn.class) 
+        def @price.engine
+			@engine
+        end
       end
 
       def compile node
@@ -214,9 +222,6 @@ module ArelExtensions
 			
 	 end
 	 
-	 
-	 puts "AREL VERSION : " + Arel::VERSION.to_s
-	 
 	 # Case
      it "should accept case clause" do		
 		@table[:name].when("smith").then("cool").when("doe").then("fine").else("uncool").to_sql
@@ -236,6 +241,27 @@ module ArelExtensions
 		  c = @table[:name]
 		  compile(c.soundex == 'test').must_be_like %{SOUNDEX("users"."name") = 'test'}
 	  end
+	  
+	  
+	  it "should accept in on select statement" do
+		c = @table[:name]
+		compile(c.in(@table.project(@table[:name])))
+			.must_be_like %{"users"."name" IN (SELECT "users"."name" FROM "users")}
+	  end	  
+	  
+	  it "should accept coalesce function properly" do
+		fake_at = Arel::Table.new('fake_table')
+	    compile(fake_at['fake_attribute'].coalesce('other_value'))
+			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value')}			
+	    compile(fake_at['fake_attribute'].coalesce('other_value1','other_value2'))
+			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value1', 'other_value2')}
+        compile(fake_at['fake_attribute'].coalesce('other_value1').coalesce('other_value2'))
+			.must_be_like %{COALESCE(COALESCE("fake_table"."fake_attribute", 'other_value1'), 'other_value2')}				
+	  end
+	  
+	  puts "AREL VERSION : " + Arel::VERSION.to_s
+	  
+	  
 
     end
   end

@@ -4,7 +4,6 @@ module ArelExtensions
       include ArelExtensions::Math
       attr_accessor :left_node_type
 
-
       def initialize expr
         tab = expr.map { |arg|
           convert_to_node(arg)

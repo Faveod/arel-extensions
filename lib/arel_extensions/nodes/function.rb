@@ -25,10 +25,14 @@ module ArelExtensions
         @expressions[1]
       end
 
-      def type_of_attribute(att)
+      def type_of_attribute(att)				
         case att
         when Arel::Attributes::Attribute
-          Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
+			if (att.relation.respond_to?(:engine))&&(att.relation.engine.inspect != "ActiveRecord::Base") #if att.relation is not a fake table
+				Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
+			else
+				nil
+			end
         when ArelExtensions::Nodes::Function
           att.class.return_type
 #        else
