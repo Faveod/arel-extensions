@@ -462,6 +462,7 @@ module ArelExtensions
 							then('-').
 							else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
 		sign_length = ArelExtensions::Nodes::Length.new([sign])
+		
 		if o.scientific_notation 
 			number = ArelExtensions::Nodes::Concat.new([
 							Arel::Nodes::NamedFunction.new('FORMAT',[
@@ -476,6 +477,7 @@ module ArelExtensions
 		else
 			number = Arel::Nodes::NamedFunction.new('FORMAT',[col.abs]+params)
 		end
+		
 		repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
 			when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
 			then(Arel::Nodes::NamedFunction.new('REPEAT',[
@@ -485,16 +487,16 @@ module ArelExtensions
 				Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)
 			])).
 			else('')
-		before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : '', 
-		middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : '',
-		after  = o.flags.include?('-') ? repeated_char : '',
+		before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
+		middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
+		after  = o.flags.include?('-') ? repeated_char : ''
 		full_number =  col.when(0).then(0).else(
 			ArelExtensions::Nodes::Concat.new([
 				before,
 				sign,
 				middle,
 				number,
-				after,
+				after
 			])
 		)				
 		collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), Arel::Collectors::SQLString.new
