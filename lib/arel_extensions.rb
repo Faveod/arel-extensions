@@ -117,16 +117,6 @@ Arel::SelectManager.class_eval do
   include ArelExtensions::Nodes
 end
 
-Arel::Nodes::Union.class_eval do	
-  include ArelExtensions::SetFunctions
-  include ArelExtensions::Nodes
-end
-
-Arel::Nodes::UnionAll.class_eval do	
-  include ArelExtensions::SetFunctions
-  include ArelExtensions::Nodes
-end
-
 Arel::Nodes::As.class_eval do	
   include ArelExtensions::Nodes
 end

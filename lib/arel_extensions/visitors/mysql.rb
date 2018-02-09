@@ -95,6 +95,8 @@ module ArelExtensions
         when :integer, :float, :decimal
           collector << "FORMAT("
           collector = visit o.left, collector
+          collector << Arel::Visitors::ToSql::COMMA          
+          collector << '2'
           collector << Arel::Visitors::ToSql::COMMA
           collector = visit o.right, collector
           collector << ")"

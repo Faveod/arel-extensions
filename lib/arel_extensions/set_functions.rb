@@ -16,6 +16,9 @@ module ArelExtensions
 			ArelExtensions::Nodes::UnionAll.new(self,other)
 		end
 
+		def uniq
+			self
+		end
 
 	end
 end

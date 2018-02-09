@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
-  	Arel::Visitors::ToSql.class_eval do
+  	Arel::Visitors::ToSql.class_eval do  
+
 
       # Math Functions
       def visit_ArelExtensions_Nodes_Abs o, collector
@@ -45,6 +46,23 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Round o, collector
         collector << "ROUND("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+      
+      def visit_ArelExtensions_Nodes_Log10 o, collector
+        collector << "LOG10("
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
+      
+      def visit_ArelExtensions_Nodes_Power o, collector
+        collector << "POW("
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::ToSql::COMMA unless i == 0
           collector = visit arg, collector
@@ -434,7 +452,56 @@ module ArelExtensions
         collector << "ELSE "
         visit o.expr, collector
     end
-	
+    
+    
+    
+	 def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
+		col = o.left
+		params = o.locale ? [o.precision,Arel::Nodes.build_quoted(o.locale)] : [o.precision]
+		sign = ArelExtensions::Nodes::Case.new.when(col<0).
+							then('-').
+							else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
+		sign_length = ArelExtensions::Nodes::Length.new([sign])
+		if o.scientific_notation 
+			number = ArelExtensions::Nodes::Concat.new([
+							Arel::Nodes::NamedFunction.new('FORMAT',[
+								col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor)
+							]+params),
+							o.type, 
+							Arel::Nodes::NamedFunction.new('FORMAT',[
+								col.abs.log10.floor,
+								0
+							])
+						])			
+		else
+			number = Arel::Nodes::NamedFunction.new('FORMAT',[col.abs]+params)
+		end
+		repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
+			when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
+			then(Arel::Nodes::NamedFunction.new('REPEAT',[
+				Arel::Nodes.build_quoted(
+					o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
+				),
+				Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)
+			])).
+			else('')
+		before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : '', 
+		middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : '',
+		after  = o.flags.include?('-') ? repeated_char : '',
+		full_number =  col.when(0).then(0).else(
+			ArelExtensions::Nodes::Concat.new([
+				before,
+				sign,
+				middle,
+				number,
+				after,
+			])
+		)				
+		collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), Arel::Collectors::SQLString.new
+		
+		collector		
+	  end
+		
   	end
   end
 end

@@ -43,6 +43,9 @@ module ArelExtensions
         compile(@price.abs + 42).must_be_like %{(ABS("products"."price") + 42)}
         compile(@price.ceil + 42).must_be_like %{(CEIL("products"."price") + 42)}
         compile(@price.floor + 42).must_be_like %{(FLOOR("products"."price") + 42)}
+        compile(@price.log10 + 42).must_be_like %{(LOG10("products"."price") + 42)}
+        compile(@price.power(42) + 42).must_be_like %{(POW("products"."price", 42) + 42)}
+        compile(@price.pow(42) + 42).must_be_like %{(POW("products"."price", 42) + 42)}
         compile(@price.ceil + @price.floor).must_be_like %{(CEIL("products"."price") + FLOOR("products"."price"))}
         compile((@price.ceil + @price.floor).abs).must_be_like %{ABS((CEIL("products"."price") + FLOOR("products"."price")))}
         compile(@price.round + 42).must_be_like %{(ROUND("products"."price") + 42)}
@@ -259,6 +262,10 @@ module ArelExtensions
 			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value') ILIKE 'truc'}				
 	  end
 	  
+	  it "should be possible to specify a cool format on number" do
+		compile(@price.format("$$ %+030.2e €€","fr_FR"))
+			.must_be_like %{CONCAT('$$ ', CASE \"products\".\"price\" WHEN 0 THEN 0 ELSE CONCAT(NULL, CASE WHEN \"products\".\"price\" < 0 THEN '-' ELSE '+' END, CASE WHEN (ABS(30) - (LENGTH(CONCAT(FORMAT(ABS(\"products\".\"price\") / POW(10, FLOOR(LOG10(ABS(\"products\".\"price\")))), 2, 'fr_FR'), 'e', FORMAT(FLOOR(LOG10(ABS(\"products\".\"price\"))), 0))) + LENGTH(CASE WHEN \"products\".\"price\" < 0 THEN '-' ELSE '+' END))) > 0 THEN REPEAT('0', (ABS(30) - (LENGTH(CONCAT(FORMAT(ABS(\"products\".\"price\") / POW(10, FLOOR(LOG10(ABS(\"products\".\"price\")))), 2, 'fr_FR'), 'e', FORMAT(FLOOR(LOG10(ABS(\"products\".\"price\"))), 0))) + LENGTH(CASE WHEN \"products\".\"price\" < 0 THEN '-' ELSE '+' END)))) ELSE '' END, CONCAT(FORMAT(ABS(\"products\".\"price\") / POW(10, FLOOR(LOG10(ABS(\"products\".\"price\")))), 2, 'fr_FR'), 'e', FORMAT(FLOOR(LOG10(ABS(\"products\".\"price\"))), 0)), '') END, ' €€')}
+	  end
 	  puts "AREL VERSION : " + Arel::VERSION.to_s
 	
     end

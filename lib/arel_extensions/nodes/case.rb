@@ -4,7 +4,7 @@ module ArelExtensions
 			class Case < Arel::Nodes::Node
 				include Arel::Expressions
 				include ArelExtensions::Comparators
-				include ArelExtensions::Predications	
+				include ArelExtensions::Predications
 
 				attr_accessor :case, :conditions, :default
 
@@ -61,7 +61,10 @@ module ArelExtensions
 			
 		else
 		
-			class Case < Arel::Nodes::Case		
+			class Case < Arel::Nodes::Case	
+				include Arel::Expressions
+				include ArelExtensions::Comparators
+				include ArelExtensions::Predications
 				
 			end
 			
