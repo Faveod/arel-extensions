@@ -463,6 +463,7 @@ module ArelExtensions
 		#score of Arthur = 65.62
 		if @env_db == 'mysql'
 			puts  @score.format_number("$ %.2f €","fr_FR").to_sql
+			puts  @arthur.select(@score.format_number("$ %.2f €","fr_FR").as('res')).to_sql
 			assert_equal "$ 65,62 €" , t(@arthur, @score.format_number("$ %.2f €","fr_FR"))
 			assert_equal "$ 65.62 €" , t(@arthur, @score.format_number("$ %.2f €","en_EN"))		
 			assert_equal "$ 0065,62 €" , t(@arthur, @score.format_number("$ %07.2f €","fr_FR"))
