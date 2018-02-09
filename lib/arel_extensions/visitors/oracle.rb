@@ -9,6 +9,28 @@ module ArelExtensions
         '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM',                   # hours
         '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz'                                # seconds, subseconds
       }
+      
+	  def visit_ArelExtensions_Nodes_Log10 o, collector
+        collector << "LOG("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ",10)"
+        collector
+      end
+	  
+	  def visit_ArelExtensions_Nodes_Power o, collector
+        collector << "POWER("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end      
+      
+      
 
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << '('
@@ -265,6 +287,15 @@ module ArelExtensions
         collector << ")"
         collector
       end
+      
+      def visit_ArelExtensions_Nodes_Repeat o, collector
+        collector << "LPAD('',"        
+	    collector = visit o.expressions[1], collector
+	    collector << Arel::Visitors::ToSql::COMMA
+	    collector = visit o.expressions[0], collector
+        collector << ")"
+        collector
+      end  
 
       # add primary_key if not present, avoid zip
     if Arel::VERSION.to_i < 7

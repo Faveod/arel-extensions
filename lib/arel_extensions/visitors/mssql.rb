@@ -28,6 +28,26 @@ module ArelExtensions
         collector << ")"
         collector
       end
+      
+	  def visit_ArelExtensions_Nodes_Log10 o, collector
+        collector << "LOG10("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+      
+      def visit_ArelExtensions_Nodes_Power o, collector
+        collector << "POWER("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector << "("
@@ -69,6 +89,17 @@ module ArelExtensions
         collector << ")"
         collector
       end
+       
+      def visit_ArelExtensions_Nodes_Repeat o, collector
+        collector << "REPLICATE("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time

@@ -9,6 +9,28 @@ module ArelExtensions
         '%M' => '%i', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => ''
       }
 
+
+	  #Math functions
+	  def visit_ArelExtensions_Nodes_Log10 o, collector
+        collector << "LOG10("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+	  
+	  def visit_ArelExtensions_Nodes_Power o, collector
+        collector << "POW("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
+
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
         collector = visit o.left, collector
@@ -78,6 +100,16 @@ module ArelExtensions
         collector = visit o.right, collector
         collector << " FROM "
         collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
+      
+      def visit_ArelExtensions_Nodes_Repeat o, collector
+        collector << "REPEAT("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
         collector << ")"
         collector
       end
