@@ -128,6 +128,16 @@ module ArelExtensions
         collector << ")"
         collector
       end
+      
+      def visit_ArelExtensions_Nodes_Repeat o, collector
+        collector << "REPEAT("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_FindInSet o, collector
         collector << "FIND_IN_SET("
@@ -480,12 +490,10 @@ module ArelExtensions
 		
 		repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
 			when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
-			then(Arel::Nodes::NamedFunction.new('REPEAT',[
-				Arel::Nodes.build_quoted(
+			then(Arel::Nodes.build_quoted(
 					o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-				),
-				Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)
-			])).
+				).repeat(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length))
+			).
 			else('')
 		before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
 		middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''

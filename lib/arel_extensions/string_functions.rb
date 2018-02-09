@@ -10,6 +10,7 @@ require 'arel_extensions/nodes/trim'
 require 'arel_extensions/nodes/change_case'
 require 'arel_extensions/nodes/blank'
 require 'arel_extensions/nodes/format'
+require 'arel_extensions/nodes/repeat'
 
 module ArelExtensions
   module StringFunctions
@@ -109,6 +110,10 @@ module ArelExtensions
 
     def not_blank
       ArelExtensions::Nodes::NotBlank.new [self]
+    end
+    
+    def repeat other = 1 
+	  ArelExtensions::Nodes::Repeat.new [self, other]
     end
 
   end
