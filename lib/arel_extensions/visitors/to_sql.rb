@@ -499,7 +499,7 @@ module ArelExtensions
 				after
 			])
 		)				
-		collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), Arel::Collectors::SQLString.new
+		collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector
 		
 		collector		
 	  end
