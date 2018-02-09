@@ -57,7 +57,7 @@ module ArelExtensions
     end
     
     # function returning a number at a specific format
-	def format format_string, locale=nil
+	def format_number format_string, locale=nil
 		begin
 			sprintf(format_string,0) # this line is to get the right error message if the format_string is not correct
 			m = /^(.*)%([ #+\-0]*)([1-9][0-9]+|[1-9]?)[.]?([0-9]*)([a-zA-Z])(.*)$/.match(format_string)		

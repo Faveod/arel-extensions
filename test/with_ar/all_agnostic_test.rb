@@ -462,16 +462,16 @@ module ArelExtensions
 	  def test_format_numbers
 		#score of Arthur = 65.62
 		if @env_db == 'mysql'
-			assert_equal "$ 65,62 €" ,t(@arthur,@score.format("$ %.2f €","fr_FR"))		
-			assert_equal "$ 65.62 €" ,t(@arthur,@score.format("$ %.2f €","en_EN"))		
-			assert_equal "$ 0065,62 €" ,t(@arthur,@score.format("$ %07.2f €","fr_FR"))
-			assert_equal "$ 65,62   €" ,t(@arthur,@score.format("$ %-07.2f €","fr_FR"))
-			assert_equal "$ 65,62   €" ,t(@arthur,@score.format("$ %-7.2f €","fr_FR"))
-			assert_equal "$   65,62 €" ,t(@arthur,@score.format("$ % 7.2f €","fr_FR"))
-			assert_equal "$  +65,62 €" ,t(@arthur,@score.format("$ % +7.2f €","fr_FR"))		
-			assert_equal "$ +065,62 €" ,t(@arthur,@score.format("$ %0+7.2f €","fr_FR"))	
-			assert_equal "$ 6,56e1 €" ,t(@arthur,@score.format("$ %.2e €","fr_FR"))			
-			assert_equal "$ 6,56E1 €" ,t(@arthur,@score.format("$ %.2E €","fr_FR"))
+			assert_equal "$ 65,62 €" ,t(@arthur,@score.format_number("$ %.2f €","fr_FR"))		
+			assert_equal "$ 65.62 €" ,t(@arthur,@score.format_number("$ %.2f €","en_EN"))		
+			assert_equal "$ 0065,62 €" ,t(@arthur,@score.format_number("$ %07.2f €","fr_FR"))
+			assert_equal "$ 65,62   €" ,t(@arthur,@score.format_number("$ %-07.2f €","fr_FR"))
+			assert_equal "$ 65,62   €" ,t(@arthur,@score.format_number("$ %-7.2f €","fr_FR"))
+			assert_equal "$   65,62 €" ,t(@arthur,@score.format_number("$ % 7.2f €","fr_FR"))
+			assert_equal "$  +65,62 €" ,t(@arthur,@score.format_number("$ % +7.2f €","fr_FR"))		
+			assert_equal "$ +065,62 €" ,t(@arthur,@score.format_number("$ %0+7.2f €","fr_FR"))	
+			assert_equal "$ 6,56e1 €" ,t(@arthur,@score.format_number("$ %.2e €","fr_FR"))			
+			assert_equal "$ 6,56E1 €" ,t(@arthur,@score.format_number("$ %.2E €","fr_FR"))
 		end
 	  end
 	  

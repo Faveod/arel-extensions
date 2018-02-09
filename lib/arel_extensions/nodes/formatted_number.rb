@@ -47,7 +47,6 @@ module ArelExtensions
 				@flags
 			end
 			
-			
 			def scientific_notation
 				@scientific_notation
 			end
