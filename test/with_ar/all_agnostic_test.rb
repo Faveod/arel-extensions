@@ -462,8 +462,6 @@ module ArelExtensions
 	  def test_format_numbers
 		#score of Arthur = 65.62
 		if @env_db == 'mysql'
-			puts  @score.format_number("$ %.2f €","fr_FR").to_sql
-			puts  @arthur.select(@score.format_number("$ %.2f €","fr_FR").as('res')).to_sql
 			assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))
 			assert_equal "65,62AZERTY" , t(@arthur, @score.format_number("%.2fAZERTY","fr_FR"))
 			assert_equal "$ 65.62 €" , t(@arthur, @score.format_number("$ %.2f €","en_EN"))		
@@ -474,7 +472,8 @@ module ArelExtensions
 			assert_equal "$  +65,62 €" , t(@arthur, @score.format_number("$ % +7.2f €","fr_FR"))		
 			assert_equal "$ +065,62 €" , t(@arthur, @score.format_number("$ %0+7.2f €","fr_FR"))	
 			assert_equal "$ 6,56e1 €" , t(@arthur, @score.format_number("$ %.2e €","fr_FR"))			
-			assert_equal "$ 6,56E1 €" , t(@arthur, @score.format_number("$ %.2E €","fr_FR"))
+			assert_equal "$ 6,56E1 €" , t(@arthur, @score.format_number("$ %.2E €","fr_FR"))	
+			assert_equal "Wrong Format" , t(@arthur, @score.format_number("$ %...234.6F €","fr_FR"))
 		end
 	  end
 	  
