@@ -1,12 +1,12 @@
 source "https://rubygems.org"
 
-gem 'rails', '~> 5.1.4'
+gem 'rails', '5.1.4'
 gem 'arel', '~> 8'
 
 group :development, :test do
-	gem 'activesupport', '~> 5.1.4'
-	gem 'activemodel', '~> 5.1.4'
-	gem 'activerecord', '~> 5.1.4'
+	gem 'activesupport', '5.1.4'
+	gem 'activemodel', '5.1.4'
+	gem 'activerecord', '5.1.4'
 
 	gem "sqlite3", :platforms => [:mri, :mswin, :mingw]
 	gem "mysql2", :platforms => [:mri, :mswin, :mingw]
