@@ -13,6 +13,10 @@ module ArelExtensions
       def +(other)
         return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
       end
+      
+      def concat(other)
+        return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
+      end
 
     end
 

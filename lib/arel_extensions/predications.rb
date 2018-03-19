@@ -13,5 +13,7 @@ module ArelExtensions
 		def imatches(other, escape=nil)
 			ArelExtensions::Nodes::IMatches.new(self, other, escape)
 		end
+		
+		
 	end
 end

@@ -249,6 +249,7 @@ module ArelExtensions
         skip "PostgreSql version can't load extension for soundex" if @env_db == 'postgresql'
         assert_equal "C540", t(@camille, @name.soundex)
         assert_equal 8, User.where(@name.soundex.eq(@name.soundex)).count
+        assert_equal 8, User.where(@name.soundex == @name.soundex).count
       end
 
       def test_change_case

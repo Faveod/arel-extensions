@@ -60,7 +60,13 @@ module ArelExtensions
         collector << "CONCAT("
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::MySQL::COMMA unless i == 0
-          collector = visit arg, collector
+          if (arg.is_a?(Numeric)) || (arg.is_a?(Arel::Attributes::Attribute))
+			collector << "CAST("
+			collector = visit arg, collector
+			collector << " AS char)"
+		  else
+			collector = visit arg, collector
+	   	  end
         }
         collector << ")"
         collector
