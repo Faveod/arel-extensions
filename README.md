@@ -142,6 +142,15 @@ t[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
 # => SUM(CASE "my_table"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END) 
 ```
 
+## Cast Function
+
+Arel-extensions allows to cast type on constants and attributes
+
+```ruby
+t[:id].cast('char').to_sql
+# => CAST("my_table"."id" AS char)
+```
+
 
 ## Stored Procedures and User-defined functions
 

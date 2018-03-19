@@ -251,6 +251,15 @@ module ArelExtensions
 
   	  #comparators
 
+      def visit_ArelExtensions_Nodes_Cast o, collector
+        collector << "CAST("
+        collector = visit o.left, collector
+        collector << " AS "
+        collector = visit o.right, collector
+        collector << ")"
+        collector
+      end
+      
       def visit_ArelExtensions_Nodes_Coalesce o, collector
         collector << "COALESCE("
         o.expressions.each_with_index { |arg, i|

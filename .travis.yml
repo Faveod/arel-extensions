@@ -78,6 +78,8 @@ matrix:
     jdk: openjdk7
   - rvm: 2.4.0
     jdk: openjdk7
+  - rvm: 2.5.0
+    jdk: openjdk7
   - rvm: ruby-head
     jdk: openjdk7  
   - rvm: rbx-2
@@ -91,6 +93,8 @@ matrix:
   - rvm: 2.3.1
     jdk: oraclejdk8
   - rvm: 2.4.0
+    jdk: oraclejdk8
+  - rvm: 2.5.0
     jdk: oraclejdk8
   - rvm: ruby-head
     jdk: oraclejdk8    
@@ -117,7 +121,6 @@ matrix:
   - rvm: jruby-head 
     gemfile: gemfiles/rails5_2_beta.gemfile
   allow_failures:
-  - rvm: 2.5.0
   - rvm: rbx-2
     gemfile: gemfiles/rails4.gemfile    
   - rvm: rbx-2

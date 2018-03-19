@@ -11,6 +11,8 @@ require 'arel_extensions/nodes/change_case'
 require 'arel_extensions/nodes/blank'
 require 'arel_extensions/nodes/format'
 require 'arel_extensions/nodes/repeat'
+require 'arel_extensions/nodes/cast'
+      
 
 module ArelExtensions
   module StringFunctions

@@ -58,6 +58,7 @@ require 'arel_extensions/nodes/union_all'
 require 'arel_extensions/nodes/as'
 require 'arel_extensions/nodes/case'
 require 'arel_extensions/nodes/soundex'
+require 'arel_extensions/nodes/cast'
 require 'arel_extensions/predications'
 
 
@@ -120,6 +121,7 @@ end
 Arel::Nodes::As.class_eval do	
   include ArelExtensions::Nodes
 end
+
 
 if Arel::VERSION.to_i >= 7 
 	Arel::Nodes::Case.class_eval do

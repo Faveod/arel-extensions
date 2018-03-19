@@ -1,5 +1,6 @@
 require 'arel_extensions/nodes'
 require 'arel_extensions/nodes/concat'
+require 'arel_extensions/nodes/cast'
 
 require 'arel_extensions/nodes/date_diff'
 require 'arel_extensions/nodes/duration'
@@ -14,6 +15,7 @@ module ArelExtensions
     #Date and integer adds or subtracts a specified time interval from a date.
     def +(other)
 	  return ArelExtensions::Nodes::Concat.new [self, other] if self.is_a?(Arel::Nodes::Quoted)
+	  
 	  if self.is_a?(Arel::Nodes::Grouping)
 		if self.expr.left.is_a?(String) || self.expr.right.is_a?(String)
 		  return ArelExtensions::Nodes::Concat.new [self, other]
@@ -21,6 +23,7 @@ module ArelExtensions
 		  return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
 		end
 	  end
+	  
 	  return case self.class.return_type
 	  when :string, :text
 		ArelExtensions::Nodes::Concat.new [self, other]
