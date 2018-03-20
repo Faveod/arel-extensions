@@ -536,6 +536,13 @@ module ArelExtensions
 		collector		
 	end
 		
+		remove_method(:visit_Arel_Nodes_LessThan) rescue nil 
+		def visit_Arel_Nodes_LessThan o, collector
+			collector = visit o.left, collector
+			collector << " < "
+			visit o.right, collector
+		end
+		
   	end
   end
 end

@@ -292,6 +292,8 @@ module ArelExtensions
 			.must_be_like %{CONCAT('$$ ', CASE \"products\".\"price\" WHEN 0 THEN 0 ELSE CONCAT('', CASE WHEN \"products\".\"price\" < 0 THEN '-' ELSE '+' END, CASE WHEN (ABS(30) - (LENGTH(CONCAT(FORMAT(ABS(\"products\".\"price\") / POW(10, FLOOR(LOG10(ABS(\"products\".\"price\")))), 2, 'fr_FR'), 'e', FORMAT(FLOOR(LOG10(ABS(\"products\".\"price\"))), 0))) + LENGTH(CASE WHEN \"products\".\"price\" < 0 THEN '-' ELSE '+' END))) > 0 THEN REPEAT('0', (ABS(30) - (LENGTH(CONCAT(FORMAT(ABS(\"products\".\"price\") / POW(10, FLOOR(LOG10(ABS(\"products\".\"price\")))), 2, 'fr_FR'), 'e', FORMAT(FLOOR(LOG10(ABS(\"products\".\"price\"))), 0))) + LENGTH(CASE WHEN \"products\".\"price\" < 0 THEN '-' ELSE '+' END)))) ELSE '' END, CONCAT(FORMAT(ABS(\"products\".\"price\") / POW(10, FLOOR(LOG10(ABS(\"products\".\"price\")))), 2, 'fr_FR'), 'e', FORMAT(FLOOR(LOG10(ABS(\"products\".\"price\"))), 0)), '') END, ' €€')}
 	  end
 	  
+	
+	  
 	  puts "AREL VERSION : " + Arel::VERSION.to_s
     end
   end

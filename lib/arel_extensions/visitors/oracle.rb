@@ -142,13 +142,13 @@ module ArelExtensions
 		
 	  def visit_ArelExtensions_Nodes_Cast o, collector
         collector << "CAST("
-        collector = visit o.left, collector
-        collector << " AS "
+        left = o.left
 		case o.as_attr
 		when :string
 			as_attr = Arel::Nodes::SqlLiteral.new('varchar(255)')
 		when :time
-			as_attr = Arel::Nodes::SqlLiteral.new('time')
+			left = Arel::Nodes::NamedFunction.new('TO_CHAR',[left,Arel::Nodes::SqlLiteral.new('HH24:MI:SS')])			
+			as_attr = Arel::Nodes::SqlLiteral.new('varchar(8)')
 		when :number 
 			as_attr = Arel::Nodes::SqlLiteral.new('int')
 		when :datetime 
@@ -158,6 +158,8 @@ module ArelExtensions
 		else
 			as_attr = Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
 		end
+        collector = visit left, collector
+        collector << " AS "
         collector = visit as_attr, collector
         collector << ")"
         collector
@@ -371,7 +373,8 @@ module ArelExtensions
               else
                 collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
               end
-              collector << Arel::Visitors::Oracle::COMMA unless i == len
+              collector << Arel::Visitors::Ora
+              cle::COMMA unless i == len
           }
           collector << ')'
         end
@@ -380,6 +383,33 @@ module ArelExtensions
       end
     end
 
+	remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil 
+	def visit_Arel_Nodes_GreaterThanOrEqual o, collector
+		collector = visit o.left, collector
+		collector << " >= "
+		visit o.right, collector
+	end
+
+	remove_method(:visit_Arel_Nodes_GreaterThan) rescue nil 
+	def visit_Arel_Nodes_GreaterThan o, collector
+		collector = visit o.left, collector
+		collector << " > "
+		visit o.right, collector
+	end
+
+	remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil 
+	def visit_Arel_Nodes_LessThanOrEqual o, collector
+		collector = visit o.left, collector
+		collector << " <= "
+		visit o.right, collector
+	end
+	
+	remove_method(:visit_Arel_Nodes_LessThan) rescue nil 
+	def visit_Arel_Nodes_LessThan o, collector
+		collector = visit o.left, collector
+		collector << " < "
+		visit o.right, collector
+	end
 
 
     end
