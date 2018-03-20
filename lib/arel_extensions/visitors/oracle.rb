@@ -373,8 +373,7 @@ module ArelExtensions
               else
                 collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
               end
-              collector << Arel::Visitors::Ora
-              cle::COMMA unless i == len
+              collector << Arel::Visitors::Oracle::COMMA unless i == len
           }
           collector << ')'
         end
