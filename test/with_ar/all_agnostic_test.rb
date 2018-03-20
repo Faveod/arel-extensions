@@ -389,7 +389,9 @@ module ArelExtensions
 
       # TODO; cast types
       def test_cast_types
-        assert_equal true, t(@laure, @duration.cast('time') > @updated_at.cast('time'))
+		puts t(@laure, @duration.cast('time') > @updated_at.cast('time')).to_sql
+        assert_includes [true,1,'t'], t(@laure, @duration.cast('time') > @updated_at.cast('time'))
+        puts t(@laure, @duration.cast('time').cast(:string)).to_sql
         assert_equal "12:42:00", t(@laure, @duration.cast('time').cast(:string))
       end
 
