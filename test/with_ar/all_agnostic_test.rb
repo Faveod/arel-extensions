@@ -389,10 +389,11 @@ module ArelExtensions
 
       # TODO; cast types
       def test_cast_types
-		puts @laure.select(@duration.cast('time') > @updated_at.cast('time')).to_sql		
-        assert_includes [true,1,'t'], t(@laure, @duration.cast('time') > @updated_at.cast('time'))
-        puts @laure.select(@duration.cast('time').cast(:string)).to_sql
-        assert_equal "12:42:00", t(@laure, @duration.cast('time').cast(:string))
+		puts @laure.select(@duration.cast('time').cast(:string)).to_sql
+        assert_equal "12:42:21", t(@laure, @duration.cast('time').cast(:string))
+		puts @laure.select(@duration.cast('time').cast(:string) > @updated_at.cast('time').cast(:string)).to_sql		
+        assert_includes [true,1,'t'], t(@laure, @duration.cast('time').cast(:string) > @updated_at.cast('time').cast(:string))
+        assert_includes [false,0,'f'], t(@laure, @duration.cast('time').cast(:string) < @updated_at.cast('time').cast(:string))        
       end
 
       def test_is_null
