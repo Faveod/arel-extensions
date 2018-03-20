@@ -3,8 +3,10 @@ module ArelExtensions
 		class Cast < Function  
 			@@return_type= :string
 
+			attr_accessor :as_attr
+
 			def initialize expr 
-				as_attr = expr[1]
+				@as_attr = expr[1]
 				case expr[1]
 				when 'bigint', 'int', 'smallint', 'tinyint', 'bit', 'decimal', 'numeric', 'money', 'smallmoney', 'float', 'real'
 					@@return_type= :number
@@ -16,21 +18,22 @@ module ArelExtensions
 					@@return_type= :binary			
 				when :number 
 					@@return_type= :number
-					as_attr = 'int'
+					#as_attr = 'int'
 				when :datetime 
 					@@return_type= :ruby_time
-					as_attr = 'datetime'
+					#as_attr = 'datetime'
 				when :string 
 					@@return_type= :string
-					as_attr = 'char'
+					#as_attr = 'char' 
 				when :binary
 					@@return_type= :binary			
-					as_attr = 'binary'
+					#as_attr = 'binary'
 				else
 					@@return_type= :string
-					as_attr =  'char'
+					#as_attr =  'char'
+					@as_attr = :string
 				end
-				tab = [convert_to_node(expr.first), Arel::Nodes::SqlLiteral.new(as_attr)]
+				tab = [convert_to_node(expr.first)]
 				return super(tab)
 			end
 

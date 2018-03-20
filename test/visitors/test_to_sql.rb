@@ -265,9 +265,6 @@ module ArelExtensions
 	  it "should be possible to cast nodes types" do
 	  		
 	    
-		compile(@table[:id].cast_as_char)
-			.must_be_like %{CAST("users"."id" AS char)}
-		
 		compile(@table[:id].cast('char'))
 			.must_be_like %{CAST("users"."id" AS char)}
 		

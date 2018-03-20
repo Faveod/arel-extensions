@@ -13,10 +13,6 @@ module ArelExtensions
 		def imatches(other, escape=nil)
 			ArelExtensions::Nodes::IMatches.new(self, other, escape)
 		end			
-			
-		def cast_as_char
-		  ArelExtensions::Nodes::Cast.new([self,'char'])
-		end
 		
 		def cast right	
 		  ArelExtensions::Nodes::Cast.new([self,right])
