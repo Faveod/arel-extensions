@@ -8,29 +8,26 @@ module ArelExtensions
 			def initialize expr 
 				@as_attr = expr[1]
 				case expr[1]
-				when 'bigint', 'int', 'smallint', 'tinyint', 'bit', 'decimal', 'numeric', 'money', 'smallmoney', 'float', 'real'
-					@@return_type= :number
+				when 'bigint', 'int', 'smallint', 'tinyint', 'bit'
+					@@return_type= :int
+				when 'decimal', 'numeric', 'money', 'smallmoney', 'float', 'real'
+					@@return_type= :decimal
 				when 'datetime', 'smalldatetime','time','date'		
 					@@return_type= :ruby_time
 				when 'char', 'varchar', 'text', 'nchar', 'nvarchar', 'ntext'
 					@@return_type= :string
 				when 'binary', 'varbinary', 'image'
 					@@return_type= :binary			
-				when :number 
-					@@return_type= :number
-					#as_attr = 'int'
-				when :datetime 
+				when :int 
+					@@return_type= :number			
+				when :float, :decimal
+					@@return_type= :decimal
+				when :datetime, :time, :date
 					@@return_type= :ruby_time
-					#as_attr = 'datetime'
-				when :string 
-					@@return_type= :string
-					#as_attr = 'char' 
 				when :binary
-					@@return_type= :binary			
-					#as_attr = 'binary'
+					@@return_type= :binary	
 				else
 					@@return_type= :string
-					#as_attr =  'char'
 					@as_attr = :string
 				end
 				tab = [convert_to_node(expr.first)]

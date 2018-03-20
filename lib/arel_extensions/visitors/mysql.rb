@@ -203,7 +203,7 @@ module ArelExtensions
         collector << "CAST("
         collector = visit o.left, collector
         collector << " AS "
-        case o.as_attr
+		case o.as_attr
 		when :string
 			as_attr = Arel::Nodes::SqlLiteral.new('char')
 		when :time
@@ -220,7 +220,7 @@ module ArelExtensions
         collector = visit as_attr, collector
         collector << ")"
         collector
-      end
+	  end
 		
     end
   end

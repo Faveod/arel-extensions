@@ -139,6 +139,30 @@ module ArelExtensions
         collector << ")"
         collector
       end
+		
+	  def visit_ArelExtensions_Nodes_Cast o, collector
+        collector << "CAST("
+        collector = visit o.left, collector
+        collector << " AS "
+		case o.as_attr
+		when :string
+			as_attr = Arel::Nodes::SqlLiteral.new('varchar(255)')
+		when :time
+			as_attr = Arel::Nodes::SqlLiteral.new('time')
+		when :number 
+			as_attr = Arel::Nodes::SqlLiteral.new('int')
+		when :datetime 
+			as_attr = Arel::Nodes::SqlLiteral.new('timestamp')
+		when :binary			
+			as_attr = Arel::Nodes::SqlLiteral.new('binary')		
+		else
+			as_attr = Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
+		end
+        collector = visit as_attr, collector
+        collector << ")"
+        collector
+	  end
+
 
 
       def visit_ArelExtensions_Nodes_Length o, collector
