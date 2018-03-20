@@ -19,38 +19,6 @@ module ArelExtensions
 				super [col]
 			end
 			
-			def locale 
-				@locale
-			end
-					
-			def prefix
-				@prefix
-			end
-			
-			def suffix
-				@suffix
-			end
-			
-			def width
-				@width
-			end
-			
-			def precision
-				@precision	
-			end
-			
-			def type
-				@type
-			end
-			
-			def flags
-				@flags
-			end
-			
-			def scientific_notation
-				@scientific_notation
-			end
-    	end
-				
+		end				
 	end
 end

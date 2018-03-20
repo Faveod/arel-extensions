@@ -1,6 +1,6 @@
 module ArelExtensions
   module Visitors
-    Arel::Visitors::MySQL.class_eval do
+	Arel::Visitors::MySQL.class_eval do
       Arel::Visitors::MySQL::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'WEEKDAY', 'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'}
       Arel::Visitors::MySQL::DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
         '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b',  # year, month
@@ -19,7 +19,7 @@ module ArelExtensions
         }
         collector << ")"
         collector
-      end
+	  end
 	  
 	  def visit_ArelExtensions_Nodes_Power o, collector
         collector << "POW("
@@ -29,7 +29,7 @@ module ArelExtensions
         }
         collector << ")"
         collector
-      end
+	  end
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
@@ -57,16 +57,16 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Concat o, collector
-        collector << "CONCAT("
-        o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MySQL::COMMA unless i == 0
-          if (arg.is_a?(Numeric)) || (arg.is_a?(Arel::Attributes::Attribute))
+		collector << "CONCAT("
+		o.expressions.each_with_index { |arg, i|
+		collector << Arel::Visitors::MySQL::COMMA unless i == 0
+		  if (arg.is_a?(Numeric)) || (arg.is_a?(Arel::Attributes::Attribute))
 			collector << "CAST("
 			collector = visit arg, collector
 			collector << " AS char)"
 		  else
 			collector = visit arg, collector
-	   	  end
+		  end
         }
         collector << ")"
         collector

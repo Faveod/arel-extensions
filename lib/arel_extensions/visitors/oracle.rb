@@ -18,7 +18,7 @@ module ArelExtensions
         }
         collector << ",10)"
         collector
-      end
+	  end
 	  
 	  def visit_ArelExtensions_Nodes_Power o, collector
         collector << "POWER("
@@ -28,10 +28,8 @@ module ArelExtensions
         }
         collector << ")"
         collector
-      end      
-      
-      
-
+	  end    
+	  
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << '('
         o.expressions.each_with_index { |arg, i|
