@@ -40,4 +40,9 @@ environment:
     - RUBY_VERSION: 21
     - RUBY_VERSION: 22
     - RUBY_VERSION: 23
-    - RUBY_VERSION: "23-x64"
+    - RUBY_VERSION: 23-x64
+    - RUBY_VERSION: 24
+    - RUBY_VERSION: 24-x64
+    - RUBY_VERSION: 25
+    - RUBY_VERSION: 25-x64
+    

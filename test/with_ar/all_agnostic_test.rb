@@ -61,7 +61,7 @@ module ArelExtensions
         @arthur = User.where(:id => u.id)
         u = User.create :age => 23, :name => "Myung", :created_at => d, :score => 20.16, :comments => ' '
         @myung = User.where(:id => u.id)
-        u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16, :duration => Time.utc(0, 0, 0, 12, 42, 21),:updated_at => Time.utc(2014, 3, 3, 12, 42, 0)
+        u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16, :duration => Time.utc(2001, 1, 1, 12, 42, 21),:updated_at => Time.utc(2014, 3, 3, 12, 42, 0)
         @laure = User.where(:id => u.id)
         u = User.create :age => nil, :name => "Test", :created_at => d, :score => 1.62
         @test = User.where(:id => u.id)
