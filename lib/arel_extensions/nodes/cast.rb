@@ -8,7 +8,7 @@ module ArelExtensions
 				case expr[1]
 				when 'bigint', 'int', 'smallint', 'tinyint', 'bit', 'decimal', 'numeric', 'money', 'smallmoney', 'float', 'real'
 					@@return_type= :number
-				when 'datetime', 'smalldatetime'		
+				when 'datetime', 'smalldatetime','time','date'		
 					@@return_type= :ruby_time
 				when 'char', 'varchar', 'text', 'nchar', 'nvarchar', 'ntext'
 					@@return_type= :string

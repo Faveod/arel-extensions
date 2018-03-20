@@ -31,6 +31,7 @@ module ArelExtensions
           t.column :comments, :text
           t.column :created_at, :date
           t.column :updated_at, :datetime
+          t.column :duration, :time
           t.column :score, :decimal, :precision => 20, :scale => 10
         end
         @cnx.drop_table(:product_tests) rescue nil
@@ -60,12 +61,13 @@ module ArelExtensions
         @arthur = User.where(:id => u.id)
         u = User.create :age => 23, :name => "Myung", :created_at => d, :score => 20.16, :comments => ' '
         @myung = User.where(:id => u.id)
-        u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16
+        u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16, :duration => Time.utc(0, 0, 0, 12, 42, 21),:updated_at => Time.utc(2014, 3, 3, 12, 42, 0)
         @laure = User.where(:id => u.id)
         u = User.create :age => nil, :name => "Test", :created_at => d, :score => 1.62
         @test = User.where(:id => u.id)
         u = User.create :age => -42, :name => "Negatif", :comments => '1,22,3,42,2', :created_at => d, :updated_at => d.to_time, :score => 0.17
         @neg = User.where(:id => u.id)
+        
 
         @age = User.arel_table[:age]
         @name = User.arel_table[:name]
@@ -73,6 +75,7 @@ module ArelExtensions
         @created_at = User.arel_table[:created_at]
         @updated_at = User.arel_table[:updated_at]
         @comments = User.arel_table[:comments]
+        @duration = User.arel_table[:duration]
         @price = Product.arel_table[:price]
         @not_in_table = User.arel_table[:not_in_table]
         
@@ -386,8 +389,8 @@ module ArelExtensions
 
       # TODO; cast types
       def test_cast_types
-        skip "not implemented yet"
-        assert_equal true, t(@arthur, @score =~ /22/)
+        assert_equal true, t(@laure, @duration.cast('time') > @updated.cast('time'))
+        assert_equal "12:42:00", t(@laure, @duration.cast('time').cast(:string))
       end
 
       def test_is_null
