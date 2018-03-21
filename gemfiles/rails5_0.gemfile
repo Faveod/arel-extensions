@@ -8,7 +8,7 @@ group :development, :test do
 	gem 'activerecord', '~> 5.0'
 
 	gem "sqlite3", :platforms => [:mri, :mswin, :mingw]
-	gem "mysql2", :platforms => [:mri, :mswin, :mingw]
+	gem "mysql2", '0.4.10', :platforms => [:mri, :mswin, :mingw]
     gem "pg",'< 1.0.0', :platforms => [:mri, :mingw]
 
     gem "tiny_tds", :platforms => [:mri, :mingw] if RUBY_PLATFORM =~ /windows/
