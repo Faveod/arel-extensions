@@ -217,9 +217,9 @@ module ArelExtensions
           assert t(@neg, @name <= (@name + 'Z')) == true || t(@neg, @name <= (@name + 'Z')) == 't'
         elsif @env_db == 'oracle' 
 		  assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name >= 'Mest').then(1).else(0))
-          assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name <= (@name + 'Z').then(1).else(0))
+          assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name <= (@name + 'Z')).then(1).else(0))
           assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name > 'Mest').then(1).else(0))
-          assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name < (@name + 'Z').then(1).else(0))
+          assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name < (@name + 'Z')).then(1).else(0))
         else
           assert_equal 1, t(@neg, @name >= 'Mest')
           assert_equal 1, t(@neg, @name <= (@name + 'Z'))
