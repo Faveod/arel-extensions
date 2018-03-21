@@ -262,9 +262,7 @@ module ArelExtensions
 			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value') ILIKE 'truc'}				
 	  end
 	  
-	  it "should be possible to cast nodes types" do
-	  		
-	    
+	  it "should be possible to cast nodes types" do	    
 		compile(@table[:id].cast('char'))
 			.must_be_like %{CAST("users"."id" AS char)}
 		
@@ -282,9 +280,8 @@ module ArelExtensions
 			
 		compile(@table[:id].cast('int') + 2)
 			.must_be_like %{(CAST("users"."id" AS int) + 2)}
-		
 	  end
-	  
+	  	  
 	  
 	  it "should be possible to specify a cool format on number" do	  
 		#puts @price.format_number("$$ %+030.2e €€","fr_FR").to_sql

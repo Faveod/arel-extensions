@@ -210,11 +210,16 @@ module ArelExtensions
       end
 
       def test_string_comparators
-        skip "Oracle can't use math operators to compare strings" if @env_db == 'oracle' # use GREATEST ?
+        #skip "Oracle can't use math operators to compare strings" if @env_db == 'oracle' # use GREATEST ?
         skip "SQL Server can't use math operators to compare strings" if @env_db == 'mssql' # use GREATEST ?
         if @env_db == 'postgresql' # may return real boolean
           assert t(@neg, @name >= 'Mest') == true || t(@neg, @name >= 'Mest') == 't' # depends of ar version
           assert t(@neg, @name <= (@name + 'Z')) == true || t(@neg, @name <= (@name + 'Z')) == 't'
+        elsif @env_db == 'oracle' 
+		  assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name >= 'Mest').then(1).else(0))
+          assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name <= (@name + 'Z').then(1).else(0))
+          assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name > 'Mest').then(1).else(0))
+          assert_equal 1, t(@neg, ArelExtensions::Nodes::Case.new.when(@name < (@name + 'Z').then(1).else(0))
         else
           assert_equal 1, t(@neg, @name >= 'Mest')
           assert_equal 1, t(@neg, @name <= (@name + 'Z'))
@@ -222,6 +227,17 @@ module ArelExtensions
           assert_equal 1, t(@neg, @name < (@name + 'Z'))
         end
       end
+      
+      def test_compare_on_date_time_types
+        #skip "Not ready yet"
+        assert_equal 1, t(@laure, ArelExtensions::Nodes::Case.new.when(@created_at >= '2018-01-01').then(1).else(0))
+        assert_equal 0, t(@laure, ArelExtensions::Nodes::Case.new.when(@created_at >= '2014-01-01').then(1).else(0))
+	    assert_equal 1, t(@laure, ArelExtensions::Nodes::Case.new.when(@updated_at >= '2014-03-03 10:10:10').then(1).else(0))
+	    assert_equal 0, t(@laure, ArelExtensions::Nodes::Case.new.when(@updated_at >= '2014-03-03 13:10:10').then(1).else(0))
+	    assert_equal 1, t(@laure, ArelExtensions::Nodes::Case.new.when(@duration >= '10:10:10').then(1).else(0))
+	    assert_equal 0, t(@laure, ArelExtensions::Nodes::Case.new.when(@duration >= '14:10:10').then(1).else(0))
+      end
+      
 
       def test_regexp_not_regexp
         skip "Sqlite version can't load extension for regexp" if $sqlite && $load_extension_disabled
