@@ -4,7 +4,7 @@ gemspec
 
 group :development, :test do
   gem "sqlite3", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
-  gem "mysql2", '0.4.10', :platforms => [:mri, :mswin, :x64_mingw, :mingw]
+  gem "mysql2", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
   gem "pg", '< 1.0.0', :platforms => [:mri, :mingw, :x64_mingw, :mswin]
 
   gem "jdbc-sqlite3", :platforms => :jruby

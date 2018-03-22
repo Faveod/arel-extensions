@@ -384,65 +384,129 @@ module ArelExtensions
 
 	remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil 
 	def visit_Arel_Nodes_GreaterThanOrEqual o, collector
-		if o.left.of_type?(:time)
-			collector = visit ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S'], collector
+		if o.left.class.return_type == :time
+			left = ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S']
+		elsif o.left.is_a?(Arel::Attributes::Attribute)
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(o.left.relation.table_name)[o.left.name.to_s]
+			if (col)&& (col.type == :time)							
+				left = ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S']
+			else
+				left = o.left
+			end
 		else
-			collector = visit o.left, collector
+			left = o.left
 		end
+		collector = visit left, collector
 		collector << " >= "
-		if o.right.of_type?(:time)
-			collector = visit ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S'], collector
+		if o.right.class.return_type == :time
+			right = ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S']
+		elsif o.right.is_a?(Arel::Attributes::Attribute)
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(o.right.relation.table_name)[o.right.name.to_s]
+			if (col)&& (col.type == :time)							
+				right = ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S']
+			else
+				right = o.right
+			end
 		else
-			collector = visit o.right, collector
+			right = o.right
 		end
+		collector = visit right, collector
 		collector
 	end
 
 	remove_method(:visit_Arel_Nodes_GreaterThan) rescue nil 
 	def visit_Arel_Nodes_GreaterThan o, collector
-		if o.left.of_type?(:time)
-			collector = visit ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S'], collector
+		if o.left.class.return_type == :time
+			left = ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S']
+		elsif o.left.is_a?(Arel::Attributes::Attribute)
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(o.left.relation.table_name)[o.left.name.to_s]
+			if (col)&& (col.type == :time)							
+				left = ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S']
+			else
+				left = o.left
+			end
 		else
-			collector = visit o.left, collector
+			left = o.left
 		end
+		collector = visit left, collector
 		collector << " > "
-		if o.right.of_type?(:time)
-			collector = visit ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S'], collector
+		if o.right.class.return_type == :time
+			right = ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S']
+		elsif o.right.is_a?(Arel::Attributes::Attribute)
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(o.right.relation.table_name)[o.right.name.to_s]
+			if (col)&& (col.type == :time)							
+				right = ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S']
+			else
+				right = o.right
+			end
 		else
-			collector = visit o.right, collector
+			right = o.right
 		end
+		collector = visit right, collector
 		collector
 	end
 
 	remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil 
 	def visit_Arel_Nodes_LessThanOrEqual o, collector
-		if o.left.of_type?(:time)
-			collector = visit ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S'], collector
+		if o.left.class.return_type == :time
+			left = ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S']
+		elsif o.left.is_a?(Arel::Attributes::Attribute)
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(o.left.relation.table_name)[o.left.name.to_s]
+			if (col)&& (col.type == :time)							
+				left = ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S']
+			else
+				left = o.left
+			end
 		else
-			collector = visit o.left, collector
+			left = o.left
 		end
+		collector = visit left, collector
 		collector << " <= "
-		if o.right.of_type?(:time)
-			collector = visit ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S'], collector
+		if o.right.class.return_type == :time
+			right = ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S']
+		elsif o.right.is_a?(Arel::Attributes::Attribute)
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(o.right.relation.table_name)[o.right.name.to_s]
+			if (col)&& (col.type == :time)							
+				right = ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S']
+			else
+				right = o.right
+			end
 		else
-			collector = visit o.right, collector
+			right = o.right
 		end
+		collector = visit right, collector
 		collector
 	end
 	
 	remove_method(:visit_Arel_Nodes_LessThan) rescue nil 
 	def visit_Arel_Nodes_LessThan o, collector
-		if o.left.of_type?(:time)
-			collector = visit ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S'], collector
+		if o.left.class.return_type == :time
+			left = ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S']
+		elsif o.left.is_a?(Arel::Attributes::Attribute)
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(o.left.relation.table_name)[o.left.name.to_s]
+			if (col)&& (col.type == :time)							
+				left = ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S']
+			else
+				left = o.left
+			end
 		else
-			collector = visit o.left, collector
+			left = o.left
 		end
+		collector = visit left, collector
 		collector << " < "
-		if o.right.of_type?(:time)
-			collector = visit ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S'], collector
+		if o.right.class.return_type == :time
+			right = ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S']
+		elsif o.right.is_a?(Arel::Attributes::Attribute)
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(o.right.relation.table_name)[o.right.name.to_s]
+			if (col)&& (col.type == :time)							
+				right = ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S']
+			else
+				right = o.right
+			end
 		else
-			collector = visit o.right, collector
+			right = o.right
 		end
+		collector = visit right, collector
 		collector
 	end
 

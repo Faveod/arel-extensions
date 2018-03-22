@@ -37,7 +37,7 @@ module ArelExtensions
         }
         collector << ")"
         collector
-      end
+	  end
       
       def visit_ArelExtensions_Nodes_Power o, collector
         collector << "POWER("
