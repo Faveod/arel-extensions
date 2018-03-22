@@ -384,30 +384,66 @@ module ArelExtensions
 
 	remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil 
 	def visit_Arel_Nodes_GreaterThanOrEqual o, collector
-		collector = visit o.left, collector
+		if o.left.of_type?(:time)
+			collector = visit ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S'], collector
+		else
+			collector = visit o.left, collector
+		end
 		collector << " >= "
-		visit o.right, collector
+		if o.right.of_type?(:time)
+			collector = visit ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S'], collector
+		else
+			collector = visit o.right, collector
+		end
+		collector
 	end
 
 	remove_method(:visit_Arel_Nodes_GreaterThan) rescue nil 
 	def visit_Arel_Nodes_GreaterThan o, collector
-		collector = visit o.left, collector
+		if o.left.of_type?(:time)
+			collector = visit ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S'], collector
+		else
+			collector = visit o.left, collector
+		end
 		collector << " > "
-		visit o.right, collector
+		if o.right.of_type?(:time)
+			collector = visit ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S'], collector
+		else
+			collector = visit o.right, collector
+		end
+		collector
 	end
 
 	remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil 
 	def visit_Arel_Nodes_LessThanOrEqual o, collector
-		collector = visit o.left, collector
+		if o.left.of_type?(:time)
+			collector = visit ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S'], collector
+		else
+			collector = visit o.left, collector
+		end
 		collector << " <= "
-		visit o.right, collector
+		if o.right.of_type?(:time)
+			collector = visit ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S'], collector
+		else
+			collector = visit o.right, collector
+		end
+		collector
 	end
 	
 	remove_method(:visit_Arel_Nodes_LessThan) rescue nil 
 	def visit_Arel_Nodes_LessThan o, collector
-		collector = visit o.left, collector
+		if o.left.of_type?(:time)
+			collector = visit ArelExtensions::Nodes::Format.new [o.left, '%H:%M:%S'], collector
+		else
+			collector = visit o.left, collector
+		end
 		collector << " < "
-		visit o.right, collector
+		if o.right.of_type?(:time)
+			collector = visit ArelExtensions::Nodes::Format.new [o.right, '%H:%M:%S'], collector
+		else
+			collector = visit o.right, collector
+		end
+		collector
 	end
 
 
