@@ -231,7 +231,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Format o, collector
         case o.col_type
-        when :date, :datetime
+        when :date, :datetime, :time
           collector << "STRFTIME("
           collector = visit o.right, collector
           collector << Arel::Visitors::ToSql::COMMA

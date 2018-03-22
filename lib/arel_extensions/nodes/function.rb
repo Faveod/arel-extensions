@@ -47,8 +47,10 @@ module ArelExtensions
         case object
         when Arel::Attributes::Attribute, Arel::Nodes::Node, Integer
           object
-        when DateTime, Time
-          Arel::Nodes.build_quoted(Date.new(object.year, object.month, object.day), self)
+        when DateTime
+		  Arel::Nodes.build_quoted(object, self)
+        when Time
+          Arel::Nodes.build_quoted(object.strftime('%H:%M:%S'), self)
         when String
           Arel::Nodes.build_quoted(object)
         when Date
@@ -72,11 +74,15 @@ module ArelExtensions
           case self.type_of_attribute(object)
           when :date
             ArelExtensions::Nodes::Format.new [object, 'yyyy-mm-dd']
+          when :time
+            ArelExtensions::Nodes::Format.new [object, '%H:%M:%S']
           else
             object
           end
-        when DateTime, Time
-          Arel::Nodes.build_quoted(Date.new(object.year, object.month, object.day), self)
+        when DateTime
+		  Arel::Nodes.build_quoted(object, self)
+        when Time
+          Arel::Nodes.build_quoted(object.strftime('%H:%M:%S'), self)
         when String
           Arel::Nodes.build_quoted(object)
         when Date
