@@ -242,6 +242,54 @@ module ArelExtensions
 			collector
 		end
 
+		
+		def get_time_converted element
+			if element.is_a?(Time)
+				return Arel::Nodes::NamedFunction.new('STRFTIME',[element, '%H:%M:%S'])
+			elsif element.is_a?(Arel::Attributes::Attribute)
+				col = Arel::Table.engine.connection.schema_cache.columns_hash(element.relation.table_name)[element.name.to_s]
+				if col && (col.type == :time)
+					return Arel::Nodes::NamedFunction.new('STRFTIME',[element, '%H:%M:%S'])
+				else
+					return element
+				end
+			else
+				return element
+			end
+		end
+		
+		remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil 
+		def visit_Arel_Nodes_GreaterThanOrEqual o, collector
+			collector = visit get_time_converted(o.left), collector
+			collector << " >= "		
+			collector = visit get_time_converted(o.right), collector
+			collector
+		end
+
+		remove_method(:visit_Arel_Nodes_GreaterThan) rescue nil 
+		def visit_Arel_Nodes_GreaterThan o, collector
+					collector = visit get_time_converted(o.left), collector
+			collector << " > "		
+			collector = visit get_time_converted(o.right), collector
+			collector
+		end
+
+		remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil 
+		def visit_Arel_Nodes_LessThanOrEqual o, collector
+					collector = visit get_time_converted(o.left), collector
+			collector << " <= "		
+			collector = visit get_time_converted(o.right), collector
+			collector
+		end
+		
+		remove_method(:visit_Arel_Nodes_LessThan) rescue nil 
+		def visit_Arel_Nodes_LessThan o, collector
+					collector = visit get_time_converted(o.left), collector
+			collector << " < "		
+			collector = visit get_time_converted(o.right), collector
+			collector
+		end
+
     end
   end
 end
