@@ -1,5 +1,5 @@
 require 'bundler'
-Bundler::GemHelper.install_tasks
+Bundler::GemHelper.install_tasks :name => "arel_extensions"
 
 require 'rake/testtask'
 

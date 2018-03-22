@@ -229,7 +229,8 @@ module ArelExtensions
       end
       
       def test_compare_on_date_time_types 
-		skip "Sqlite version can't compare time" if $sqlite 
+		skip "Sqlite can't compare time" if $sqlite 		
+		skip "Oracle can't compare time" if @env_db == 'oracle'
 		#@created_at == 2016-05-23
         assert_includes [true,'t',1], t(@laure, ArelExtensions::Nodes::Case.new.when(@created_at >= '2014-01-01').then(1).else(0))
         assert_includes [false,'f',0], t(@laure, ArelExtensions::Nodes::Case.new.when(@created_at >= '2018-01-01').then(1).else(0))
