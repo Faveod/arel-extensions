@@ -388,7 +388,6 @@ module ArelExtensions
 			res = ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
 		elsif element.is_a?(Arel::Attributes::Attribute)
 			col = Arel::Table.engine.connection.schema_cache.columns_hash(element.relation.table_name)[element.name.to_s]
-			puts col.inspect
 			if col && (col.type == :time)
 				res = ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
 			else
@@ -402,7 +401,6 @@ module ArelExtensions
 	
 	remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil 
 	def visit_Arel_Nodes_GreaterThanOrEqual o, collector
-		puts o.inspect
 		collector = visit get_time_converted(o.left), collector
 		collector << " >= "		
 		collector = visit get_time_converted(o.right), collector
