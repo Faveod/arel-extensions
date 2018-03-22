@@ -384,7 +384,6 @@ module ArelExtensions
 
 
 	def get_time_converted element
-		puts element.inspect
 		if element.is_a?(Time)
 			res = ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
 		elsif element.is_a?(Arel::Attributes::Attribute)
@@ -397,12 +396,12 @@ module ArelExtensions
 		else
 			res = element
 		end
-		puts res.inspect
 		return res
 	end
 	
 	remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil 
 	def visit_Arel_Nodes_GreaterThanOrEqual o, collector
+		puts o.inspect
 		collector = visit get_time_converted(o.left), collector
 		collector << " >= "		
 		collector = visit get_time_converted(o.right), collector
