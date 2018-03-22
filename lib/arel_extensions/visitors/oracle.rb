@@ -384,18 +384,21 @@ module ArelExtensions
 
 
 	def get_time_converted element
+		puts element.inspect
 		if element.is_a?(Time)
-			return ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
+			res = ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
 		elsif element.is_a?(Arel::Attributes::Attribute)
 			col = Arel::Table.engine.connection.schema_cache.columns_hash(element.relation.table_name)[element.name.to_s]
 			if col && (col.type == :time)
-				return ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
+				res = ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
 			else
-				return element
+				res = element
 			end
 		else
-			return element
+			res = element
 		end
+		puts res.inspect
+		return res
 	end
 	
 	remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil 
@@ -408,7 +411,7 @@ module ArelExtensions
 
 	remove_method(:visit_Arel_Nodes_GreaterThan) rescue nil 
 	def visit_Arel_Nodes_GreaterThan o, collector
-				collector = visit get_time_converted(o.left), collector
+		collector = visit get_time_converted(o.left), collector
 		collector << " > "		
 		collector = visit get_time_converted(o.right), collector
 		collector
@@ -416,7 +419,7 @@ module ArelExtensions
 
 	remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil 
 	def visit_Arel_Nodes_LessThanOrEqual o, collector
-				collector = visit get_time_converted(o.left), collector
+		collector = visit get_time_converted(o.left), collector
 		collector << " <= "		
 		collector = visit get_time_converted(o.right), collector
 		collector
@@ -424,7 +427,7 @@ module ArelExtensions
 	
 	remove_method(:visit_Arel_Nodes_LessThan) rescue nil 
 	def visit_Arel_Nodes_LessThan o, collector
-				collector = visit get_time_converted(o.left), collector
+		collector = visit get_time_converted(o.left), collector
 		collector << " < "		
 		collector = visit get_time_converted(o.right), collector
 		collector
