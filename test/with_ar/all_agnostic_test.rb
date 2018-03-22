@@ -230,12 +230,15 @@ module ArelExtensions
       
       def test_compare_on_date_time_types
         #skip "Not ready yet"
-        assert_equal 1, t(@laure, ArelExtensions::Nodes::Case.new.when(@created_at >= '2018-01-01').then(1).else(0))
-        assert_equal 0, t(@laure, ArelExtensions::Nodes::Case.new.when(@created_at >= '2014-01-01').then(1).else(0))
-	    assert_equal 1, t(@laure, ArelExtensions::Nodes::Case.new.when(@updated_at >= '2014-03-03 10:10:10').then(1).else(0))
-	    assert_equal 0, t(@laure, ArelExtensions::Nodes::Case.new.when(@updated_at >= '2014-03-03 13:10:10').then(1).else(0))
-	    assert_equal 1, t(@laure, ArelExtensions::Nodes::Case.new.when(@duration >= '10:10:10').then(1).else(0))
-	    assert_equal 0, t(@laure, ArelExtensions::Nodes::Case.new.when(@duration >= '14:10:10').then(1).else(0))
+		#@created_at == 2016-05-23
+        assert_includes [true,'t',1], t(@laure, ArelExtensions::Nodes::Case.new.when(@created_at >= '2014-01-01').then(1).else(0))
+        assert_includes [false,'f',0], t(@laure, ArelExtensions::Nodes::Case.new.when(@created_at >= '2018-01-01').then(1).else(0))
+        #@updated_at == 2014-03-03 12:42:00
+	    assert_includes [true,'t',1], t(@laure, ArelExtensions::Nodes::Case.new.when(@updated_at >= '2014-03-03 10:10:10').then(1).else(0))
+	    assert_includes [false,'f',0], t(@laure, ArelExtensions::Nodes::Case.new.when(@updated_at >= '2014-03-03 13:10:10').then(1).else(0))
+	    #@duration == 12:42:21
+	    assert_includes [true,'t',1], t(@laure, ArelExtensions::Nodes::Case.new.when(@duration >= '10:10:10').then(1).else(0))
+	    assert_includes [false,'f',0], t(@laure, ArelExtensions::Nodes::Case.new.when(@duration >= '14:10:10').then(1).else(0))
       end
       
 
