@@ -384,7 +384,7 @@ module ArelExtensions
 
 
 	def get_time_converted element
-		if element.is_a?(:time)
+		if element.is_a?(Time)
 			return ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
 		elsif element.is_a?(Arel::Attributes::Attribute)
 			col = Arel::Table.engine.connection.schema_cache.columns_hash(element.relation.table_name)[element.name.to_s]
