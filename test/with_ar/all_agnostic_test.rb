@@ -413,12 +413,13 @@ module ArelExtensions
 
       # TODO; cast types
       def test_cast_types
+		assert_equal "5", t(@lucas, @age.cast(:string))
 		if @env_db == 'mysql' || @env_db == 'postgresql'
 			assert_equal "12:42:21", t(@laure, @duration.cast(:time).cast(:string))
 			assert_equal "12:42:21", t(@laure, @duration.cast(:string))
 			assert_includes [true,1,'t'], t(@laure, @duration.cast('time').cast(:string) > @updated_at.cast('time').cast(:string))
 			assert_includes [false,0,'f'], t(@laure, @duration.cast('time').cast(:string) < @updated_at.cast('time').cast(:string))        
-        end
+		end
       end
 
       def test_is_null
