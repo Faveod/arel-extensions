@@ -415,7 +415,7 @@ module ArelExtensions
       def test_cast_types
 		assert_equal "5", t(@lucas, @age.cast(:string))
 		if @env_db == 'mysql' || @env_db == 'postgresql' || @env_db == 'oracle'			
-			assert_equal "12:42:21", t(@laure, @duration.cast(:string))
+			assert_equal "12:42:21", t(@laure, @duration.cast(:time).cast(:string))
 		end
       end
 
