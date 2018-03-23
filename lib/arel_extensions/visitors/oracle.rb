@@ -140,15 +140,14 @@ module ArelExtensions
         collector
       end
 		
-	  def visit_ArelExtensions_Nodes_Cast o, collector
-        collector << "CAST("
-        left = o.left
+	  def visit_ArelExtensions_Nodes_Cast o, collector	
 		case o.as_attr
 		when :string
 			as_attr = Arel::Nodes::SqlLiteral.new('varchar(255)')
 		when :time
-			left = Arel::Nodes::NamedFunction.new('TO_CHAR',[left,Arel::Nodes.build_quoted('HH24:MI:SS')])			
-			#as_attr = Arel::Nodes::SqlLiteral.new('varchar(8)')
+			left = Arel::Nodes::NamedFunction.new('TO_CHAR',[o.left,Arel::Nodes.build_quoted('HH24:MI:SS')])			
+			collector = visit left, collector
+			return collector
 		when :number 
 			as_attr = Arel::Nodes::SqlLiteral.new('int')
 		when :datetime 
@@ -158,7 +157,8 @@ module ArelExtensions
 		else
 			as_attr = Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
 		end
-        collector = visit left, collector
+		collector << "CAST("
+        collector = visit o.left, collector
         collector << " AS "
         collector = visit as_attr, collector
         collector << ")"
