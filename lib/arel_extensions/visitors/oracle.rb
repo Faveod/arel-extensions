@@ -147,8 +147,8 @@ module ArelExtensions
 		when :string
 			as_attr = Arel::Nodes::SqlLiteral.new('varchar(255)')
 		when :time
-			left = Arel::Nodes::NamedFunction.new('TO_CHAR',[left,Arel::Nodes::SqlLiteral.new('HH24:MI:SS')])			
-			as_attr = Arel::Nodes::SqlLiteral.new('varchar(8)')
+			left = Arel::Nodes::NamedFunction.new('TO_CHAR',[left,Arel::Nodes.build_quoted.new('HH24:MI:SS')])			
+			#as_attr = Arel::Nodes::SqlLiteral.new('varchar(8)')
 		when :number 
 			as_attr = Arel::Nodes::SqlLiteral.new('int')
 		when :datetime 
@@ -398,6 +398,7 @@ module ArelExtensions
 		end
 		return res
 	end
+	
 	
 	remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil 
 	def visit_Arel_Nodes_GreaterThanOrEqual o, collector

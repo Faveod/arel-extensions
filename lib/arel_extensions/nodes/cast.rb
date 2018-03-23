@@ -12,19 +12,19 @@ module ArelExtensions
 					@@return_type= :int
 				when 'decimal', 'numeric', 'money', 'smallmoney', 'float', 'real'
 					@@return_type= :decimal
-				when 'datetime', 'smalldatetime','time','date'		
-					@@return_type= :ruby_time
 				when 'char', 'varchar', 'text', 'nchar', 'nvarchar', 'ntext'
-					@@return_type= :string
-				when 'binary', 'varbinary', 'image'
-					@@return_type= :binary			
+					@@return_type= :string		
 				when :int 
 					@@return_type= :number			
 				when :float, :decimal
 					@@return_type= :decimal
-				when :datetime, :time, :date
-					@@return_type= :ruby_time
-				when :binary
+				when :datetime, 'datetime','smalldatetime'
+					@@return_type= :datetime
+				when :time,'time'
+					@@return_type= :time
+				when :date,'date'
+					@@return_type= :date
+				when :binary, 'binary', 'varbinary', 'image'
 					@@return_type= :binary	
 				else
 					@@return_type= :string
