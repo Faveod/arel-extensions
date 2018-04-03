@@ -256,6 +256,7 @@ module ArelExtensions
 	  it "should accept comparators on functions" do
 		  c = @table[:name]
 		  compile(c.soundex == 'test').must_be_like %{SOUNDEX("users"."name") = 'test'}
+		  compile(c.soundex != 'test').must_be_like %{SOUNDEX("users"."name") != 'test'}
 	  end
 	  
 	  
