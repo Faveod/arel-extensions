@@ -1,4 +1,5 @@
 require 'arel_extensions/nodes'
+require 'arel_extensions/nodes/function'
 require 'arel_extensions/nodes/concat'
 require 'arel_extensions/nodes/cast'
 
@@ -14,26 +15,29 @@ module ArelExtensions
     #String and others (convert in string)  allows you to concatenate 2 or more strings together.
     #Date and integer adds or subtracts a specified time interval from a date.
     def +(other)
-	  return ArelExtensions::Nodes::Concat.new [self, other] if self.is_a?(Arel::Nodes::Quoted)
-	  
+	  return ArelExtensions::Nodes::Concat.new [self, other] if self.is_a?(Arel::Nodes::Quoted)	  
 	  if self.is_a?(Arel::Nodes::Grouping)
-		if self.expr.left.is_a?(String) || self.expr.right.is_a?(String)
+		if self.expr.left.is_a?(String) || self.expr.right.is_a?(String) 
 		  return ArelExtensions::Nodes::Concat.new [self, other]
-		else
+		else		
 		  return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
 		end
+	  end	  
+	  if self.is_a?(ArelExtensions::Nodes::Function)		  
+		  return case self.return_type
+		  when :string, :text			
+			ArelExtensions::Nodes::Concat.new [self, other]
+		  when :integer, :decimal, :float, :number, :int
+			Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
+		  when :date, :datetime
+			ArelExtensions::Nodes::DateAdd.new [self, other]
+		  else
+			ArelExtensions::Nodes::Concat.new [self, other]
+		  end 
 	  end
-	  
-	  return case self.class.return_type
-	  when :string, :text
-		ArelExtensions::Nodes::Concat.new [self, other]
-	  when :integer, :decimal, :float, :number
-		Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
-	  when :date, :datetime
-		ArelExtensions::Nodes::DateAdd.new [self, other]
-	  else
-		ArelExtensions::Nodes::Concat.new [self, other]
-	  end if self.is_a?(ArelExtensions::Nodes::Function)
+	  if self.is_a?(Arel::Nodes::Function)
+		return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
+	  end
 	  col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
 	  if (!col) #if the column doesn't exist in the database
 		Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new(self, other))
@@ -56,7 +60,7 @@ module ArelExtensions
     #function returns the time between two dates
     #function returns the substraction between two ints
     def -(other)
-	  return case self.class.return_type
+	  return case self.return_type
 	  when :string, :text # ???
 		Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other)) # ??
 	  when :integer, :decimal, :float, :number

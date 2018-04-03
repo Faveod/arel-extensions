@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Blank < Function
-    	@@return_type = :boolean
+    	RETURN_TYPE = :boolean
 
     	def initialize expr
 #        	super [expr.first.coalesce('').trim.trim("\t").trim("\n")]
@@ -10,7 +10,7 @@ module ArelExtensions
     end
 
     class NotBlank < Function
-    	@@return_type = :boolean
+    	RETURN_TYPE = :boolean
 
     	def initialize expr
         	super expr

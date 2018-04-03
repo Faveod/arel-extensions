@@ -4,7 +4,7 @@ module ArelExtensions
 			include Arel::Expressions
 			include ArelExtensions::Comparators			
 							
-			@@return_type = :string
+			RETURN_TYPE = :string
 				
 			def ==(other)
 				Arel::Nodes::Equality.new self, Arel::Nodes.build_quoted(other, self)

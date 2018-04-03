@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Locate < Function
-    	@@return_type = :integer
+    	RETURN_TYPE = :integer
 
 		def initialize expr
 			tab = expr.map do |arg|

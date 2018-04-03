@@ -40,6 +40,7 @@ module ArelExtensions
       end
 
       it "should return right calculations on numbers" do
+		#puts (@price.abs + 42).inspect
         compile(@price.abs + 42).must_be_like %{(ABS("products"."price") + 42)}
         compile(@price.ceil + 42).must_be_like %{(CEIL("products"."price") + 42)}
         compile(@price.floor + 42).must_be_like %{(FLOOR("products"."price") + 42)}
@@ -62,8 +63,9 @@ module ArelExtensions
       it "should accept functions on strings" do
         c = @table[:name]
         compile(c + 'test').must_be_like %{CONCAT(\"users\".\"name\", 'test')}
-        compile(c + 'test' + ' chain').must_be_like %{CONCAT(\"users\".\"name\", 'test', ' chain')}
+        compile(c + 'test' + ' chain').must_be_like %{CONCAT(CONCAT(\"users\".\"name\", 'test'), ' chain')}
         compile(c.length).must_be_like %{LENGTH("users"."name")}
+        #puts (c.length.round + 42).inspect
         compile(c.length.round + 42).must_be_like %{(ROUND(LENGTH("users"."name")) + 42)}
         compile(c.locate('test')).must_be_like %{LOCATE('test', "users"."name")}
         compile(c & 42).must_be_like %{FIND_IN_SET(42, "users"."name")}
@@ -75,6 +77,10 @@ module ArelExtensions
         compile(c.imatches('%test%')).must_be_like %{"users"."name" ILIKE '%test%'}
         compile(c.imatches_any(['%test%', 't2'])).must_be_like %{("users"."name" ILIKE '%test%' OR "users"."name" ILIKE 't2')}
         compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
+        
+        compile(c.substring(1)).must_be_like %{SUBSTRING("users"."name", 1)}        
+        compile(c + 'MACHIN').must_be_like %{CONCAT("users"."name", 'MACHIN')}
+        compile(c.substring(1) + '0').must_be_like %{CONCAT(SUBSTRING("users"."name", 1), '0')}
       end
 
       # Comparators
@@ -235,6 +241,17 @@ module ArelExtensions
             .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END ILIKE 'value'}  			     									
      end
      
+     it "should be possible to use as on anything" do
+		compile(@table[:name].as('alias')).must_be_like %{"users"."name" AS alias}
+		compile(@table[:name].concat(' test').as('alias')).must_be_like %{CONCAT("users"."name", ' test') AS alias}		
+		compile((@table[:name] + ' test').as('alias')).must_be_like %{CONCAT("users"."name", ' test') AS alias}
+		compile((@table[:age] + 42).as('alias')).must_be_like %{("users"."age" + 42) AS alias}		
+		compile(@table[:name].coalesce('').as('alias')).must_be_like %{COALESCE("users"."name", '') AS alias}
+		compile(Arel::Nodes.build_quoted('test').as('alias')).must_be_like %{'test' AS alias}
+		compile(@table.project(@table[:name]).as('alias')).must_be_like %{(SELECT "users"."name" FROM "users") alias}
+		compile(@table[:name].when("smith").then("cool").else("uncool").as('alias')).
+			must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END AS alias}  			     									
+     end
      
 	  it "should accept comparators on functions" do
 		  c = @table[:name]

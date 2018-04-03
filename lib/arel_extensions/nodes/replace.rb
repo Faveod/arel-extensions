@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Replace < Function
-      @@return_type = :string
+      RETURN_TYPE = :string
 
       def initialize expr
         tab = expr.map { |arg|

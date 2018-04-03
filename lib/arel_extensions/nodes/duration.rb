@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Duration < Function
-      @@return_type = :number
+      RETURN_TYPE = :number
 
       def initialize left, right, aliaz = nil
         tab = Array.new

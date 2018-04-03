@@ -1,8 +1,7 @@
 module ArelExtensions
   module Nodes
     class Coalesce < Function
-      include ArelExtensions::Math
-      include ArelExtensions::Comparators
+	  RETURN_TYPE = :string
       
       attr_accessor :left_node_type
 

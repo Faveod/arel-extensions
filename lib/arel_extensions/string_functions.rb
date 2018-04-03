@@ -1,4 +1,4 @@
-require 'arel_extensions/nodes/concat' if Arel::VERSION.to_i < 7
+require 'arel_extensions/nodes/concat' #if Arel::VERSION.to_i < 7
 require 'arel_extensions/nodes/length'
 require 'arel_extensions/nodes/locate'
 require 'arel_extensions/nodes/substring'
@@ -36,6 +36,7 @@ module ArelExtensions
     def substring start, len = nil
       ArelExtensions::Nodes::Substring.new [self, start, len]
     end
+    
     def [](start, ind = nil)
       start += 1 if start.is_a?(Integer)
       if start.is_a?(Range)
@@ -79,6 +80,10 @@ module ArelExtensions
     #REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.
     def replace left, right
       ArelExtensions::Nodes::Replace.new [self, left, right]
+    end
+    
+    def concat other
+      ArelExtensions::Nodes::Concat.new [self, other]
     end
 
     def group_concat sep = nil

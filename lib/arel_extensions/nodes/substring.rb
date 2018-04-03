@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Substring < Function
-    	@@return_type = :string
+    	RETURN_TYPE = :string
 
 		def initialize expr
 			tab = [convert_to_node(expr[0]), convert_to_node(expr[1])]

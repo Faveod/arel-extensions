@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Trim < Function
-      @@return_type = :string
+      RETURN_TYPE = :string
       
       def initialize expr
         tab = expr.map { |arg|
@@ -17,9 +17,11 @@ module ArelExtensions
     end
 
     class Ltrim < Trim
+	  RETURN_TYPE = :string
     end
 
     class Rtrim < Trim
+      RETURN_TYPE = :string
     end
 
   end

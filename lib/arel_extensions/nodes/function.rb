@@ -2,16 +2,20 @@ require 'arel_extensions/predications'
 
 module ArelExtensions
   module Nodes
-    class Function < Arel::Nodes::Function
+    class Function < Arel::Nodes::Function    
       include Arel::Math
       include Arel::Expressions
 	  include ArelExtensions::Predications	
-
-      cattr_accessor :return_type
-
-      @@return_type = :string # by default...
+	  
+	  RETURN_TYPE = :string # by default...
 
     	# overrides as to make new Node like AliasPredication
+    
+	  def return_type 
+		self.class.const_get(:RETURN_TYPE)
+	  end
+    	
+    	
       def as other
         ArelExtensions::Nodes::As.new(self, Arel.sql(other))
       end
@@ -37,7 +41,7 @@ module ArelExtensions
 				att
 			end
         when ArelExtensions::Nodes::Function
-          att.class.return_type
+          att.return_type
 #        else
 #          nil
         end

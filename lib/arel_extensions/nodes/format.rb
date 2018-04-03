@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
-    class Format < Function
-      @@return_type = :string
+    class Format < Function      
+      RETURN_TYPE = :string
 
     	attr_accessor :col_type, :iso_format
     	def initialize expr

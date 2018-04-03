@@ -6,7 +6,7 @@ module ArelExtensions
       attr_accessor :left_node_type
       attr_accessor :right_node_type
 
-      @@return_type = :integer # by default...
+      RETURN_TYPE = :integer # by default...
 
       def initialize(expr)
         res = []
@@ -34,7 +34,7 @@ module ArelExtensions
     end
 
     class DateAdd < Function
-      @@return_type = :date
+      RETURN_TYPE = :date
       attr_accessor :date_type
 
       def initialize expr
@@ -140,7 +140,7 @@ module ArelExtensions
     end
 
     class DateSub < Function #difference entre colonne date et date string/date
-      @@return_type = :integer
+      RETURN_TYPE = :integer
 
       def initialize(expr)
         super [expr.first, convert_number(expr[1])]

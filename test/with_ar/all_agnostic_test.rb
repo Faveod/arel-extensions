@@ -200,6 +200,10 @@ module ArelExtensions
         end
         assert_equal 'Lu', t(@lucas, @name[0,2])
         assert_equal 'Lu', t(@lucas, @name[0..1])
+        
+        #substring should accept string function
+        assert_equal 'Ce', t(@camille, @name.substring(1, 1).concat('e'))
+        assert_equal 'Ce', t(@camille, @name.substring(1, 1)+'e')
       end
 
       def test_find_in_set
@@ -415,11 +419,13 @@ module ArelExtensions
       def test_cast_types
 		assert_equal "5", t(@lucas, @age.cast(:string))
 		if @env_db == 'mysql' || @env_db == 'postgresql' || @env_db == 'oracle'			
-			assert_equal "12:42:21", t(@laure, @duration.cast(:time).cast(:string))
+			assert_equal 1, t(@laure,ArelExtensions::Nodes::Case.new.when(@duration.cast(:time).cast(:string).eq("12:42:21")).then(1).else(0))
+			assert_equal 1, t(@laure,ArelExtensions::Nodes::Case.new.when(@duration.cast(:time).eq("12:42:21")).then(1).else(0))
 		end
       end
 
-      def test_is_null
+      def test_is_null	
+		#puts User.where(@age.is_null).select(@name).to_sql
         assert_equal "Test", User.where(@age.is_null).select(@name).first.name
       end
 

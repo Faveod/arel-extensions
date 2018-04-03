@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Round < Function
-      @@return_type = :number
+      RETURN_TYPE = :number
 
       def initialize expr
       	if expr && expr.length == 1

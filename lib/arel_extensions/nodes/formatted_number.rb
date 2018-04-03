@@ -1,7 +1,7 @@
 module ArelExtensions
 	module Nodes
 		class FormattedNumber < Function		
-			@@return_type = :string
+			RETURN_TYPE = :string
 			
 			attr_accessor :locale, :prefix, :suffix, :flags, :scientific_notation, :width,:precision, :type
 			

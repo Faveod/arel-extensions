@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Ceil < Function
-    	@@return_type = :number
+    	RETURN_TYPE = :number
     end
   end
 end

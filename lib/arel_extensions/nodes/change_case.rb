@@ -1,11 +1,11 @@
 module ArelExtensions
   module Nodes
     class Downcase < Function
-    	@@return_type = :string
+    	RETURN_TYPE = :string
     end
 
     class Upcase < Function
-    	@@return_type = :string
+    	RETURN_TYPE = :string
     end
   end
 end

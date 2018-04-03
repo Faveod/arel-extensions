@@ -1,8 +1,7 @@
 module ArelExtensions
   module Nodes
     class Floor < Function
-    	@@return_type = :number
-
+    	RETURN_TYPE = :number
     end
   end
 end

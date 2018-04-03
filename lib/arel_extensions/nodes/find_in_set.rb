@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class FindInSet < Function
-      @@return_type = :integer
+      RETURN_TYPE = :integer
 
     end
   end

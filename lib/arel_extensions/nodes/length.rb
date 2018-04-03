@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Length < Function
-      @@return_type = :integer
+      RETURN_TYPE = :integer
 
     end
   end

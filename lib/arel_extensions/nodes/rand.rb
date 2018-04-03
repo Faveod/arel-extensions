@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Rand < Function
-      @@return_type = :number
+      RETURN_TYPE = :number
 
       def initialize(seed = nil)
         if seed && seed.length == 1

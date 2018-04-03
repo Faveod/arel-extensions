@@ -1,7 +1,7 @@
 module ArelExtensions
   module Nodes
     class Concat < Function
-      @@return_type = :string
+      RETURN_TYPE = :string
       
       def initialize expr
         tab = expr.map { |arg|
@@ -10,9 +10,9 @@ module ArelExtensions
         return super(tab)
       end
 
-      def +(other)
-        return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
-      end
+      #def +(other)
+      #  return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
+      #end
       
       def concat(other)
         return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
@@ -21,7 +21,7 @@ module ArelExtensions
     end
 
     class GroupConcat < Function
-      @@return_type = :string
+      RETURN_TYPE = :string
 
       def initialize expr
         tab = expr.map { |arg|
@@ -30,9 +30,9 @@ module ArelExtensions
         return super(tab)
       end
 
-      def +(other)
-        return ArelExtensions::Nodes::Concat.new([self, other]) 
-      end
+      #def +(other)
+      #  return ArelExtensions::Nodes::Concat.new([self, other]) 
+      #end
 
     end
 

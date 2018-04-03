@@ -48,6 +48,7 @@ require 'arel_extensions/math'
 require 'arel_extensions/math_functions'
 require 'arel_extensions/string_functions'
 require 'arel_extensions/set_functions'
+require 'arel_extensions/predications'
 
 require 'arel_extensions/insert_manager'
 
@@ -59,7 +60,6 @@ require 'arel_extensions/nodes/as'
 require 'arel_extensions/nodes/case'
 require 'arel_extensions/nodes/soundex'
 require 'arel_extensions/nodes/cast'
-require 'arel_extensions/predications'
 
 
 
@@ -75,6 +75,7 @@ Arel::Attributes::Attribute.class_eval do
 end
 
 Arel::Nodes::Function.class_eval do
+  include ArelExtensions::Math
   include ArelExtensions::Comparators
   include ArelExtensions::DateDuration
   include ArelExtensions::MathFunctions
