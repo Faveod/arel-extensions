@@ -79,8 +79,9 @@ module ArelExtensions
         compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
         
         compile(c.substring(1)).must_be_like %{SUBSTRING("users"."name", 1)}        
-        compile(c + 'MACHIN').must_be_like %{CONCAT("users"."name", 'MACHIN')}
+        compile(c + '0').must_be_like %{CONCAT("users"."name", '0')}
         compile(c.substring(1) + '0').must_be_like %{CONCAT(SUBSTRING("users"."name", 1), '0')}
+        compile(c.substring(1) + c.substring(2)).must_be_like %{CONCAT(SUBSTRING("users"."name", 1), SUBSTRING("users"."name", 2))}
       end
 
       # Comparators
@@ -257,6 +258,7 @@ module ArelExtensions
 		  c = @table[:name]
 		  compile(c.soundex == 'test').must_be_like %{SOUNDEX("users"."name") = 'test'}
 		  compile(c.soundex != 'test').must_be_like %{SOUNDEX("users"."name") != 'test'}
+		  compile(c.length >= 0 ).must_be_like %{LENGTH("users"."name") >= 0}
 	  end
 	  
 	  

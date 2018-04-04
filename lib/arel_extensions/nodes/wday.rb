@@ -14,9 +14,9 @@ module ArelExtensions
         @expressions.first
       end
 
-      def as other
-        Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
-      end
+      #def as other
+      #  Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
+      #end
 
     end
   end

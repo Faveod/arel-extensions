@@ -364,7 +364,7 @@ module ArelExtensions
 
       def test_date_duration
         #Year
-        assert_equal 2016, t(@lucas, @created_at.year).to_i
+        assert_equal 2016, t(@lucas, @created_at.year).to_i        
         assert_equal 0, User.where(@created_at.year.eq("2012")).count
         #Month
         assert_equal 5, t(@camille, @created_at.month).to_i
