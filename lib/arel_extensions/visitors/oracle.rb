@@ -41,9 +41,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IMatches o, collector
-        collector = visit o.left.lower, collector
-        collector << ' LIKE '
-        collector = visit o.right.lower(o.right), collector
+		collector << 'LOWER('
+        collector = visit o.left, collector
+        collector << ') LIKE LOWER('
+        collector = visit o.right, collector
+        collector << ')'
         if o.escape
           collector << ' ESCAPE '
           visit o.escape, collector
@@ -53,9 +55,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
-        collector = visit o.left.lower, collector
-        collector << ' NOT LIKE '
-        collector = visit o.right.lower(o.right), collector
+        collector << 'LOWER('
+        collector = visit o.left, collector
+        collector << ') NOT LIKE LOWER('
+        collector = visit o.right, collector
+        collector << ')'
         if o.escape
           collector << ' ESCAPE '
           visit o.escape, collector
@@ -96,6 +100,22 @@ module ArelExtensions
         collector << ")"
         collector
       end
+      
+      def visit_ArelExtensions_Nodes_Collate o, collector
+        collector << "NLSSORT("
+        collector = visit o.expressions.first, collector
+		if o.ai
+			collector << Arel::Visitors::Oracle::COMMA 
+			collector << "'NLS_SORT = BINARY_AI NLS_COMP = LINGUISTIC'"
+		elsif o.ci
+			collector << Arel::Visitors::Oracle::COMMA 
+			collector << "'NLS_SORT = BINARY_CI NLS_COMP = LINGUISTIC'"
+		end
+        collector << ")"
+       
+        collector
+      end
+      
 
       # :date is not possible in Oracle since this type does not really exist
       def visit_ArelExtensions_Nodes_DateDiff o, collector

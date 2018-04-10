@@ -55,6 +55,16 @@ module ArelExtensions
           collector
         end
       end
+      
+	  def visit_ArelExtensions_Nodes_Collate o, collector
+        collector = visit o.expressions.first, collector
+		if o.ai
+			#collector << " COLLATE utf8_unicode_ci"
+		elsif o.ci
+			#collector << " COLLATE latin1_general_ci"
+		end       
+        collector
+	  end
 
       def visit_ArelExtensions_Nodes_Concat o, collector
 		collector << "CONCAT("

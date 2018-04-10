@@ -12,6 +12,7 @@ require 'arel_extensions/nodes/blank'
 require 'arel_extensions/nodes/format'
 require 'arel_extensions/nodes/repeat'
 require 'arel_extensions/nodes/cast'
+require 'arel_extensions/nodes/collate'
       
 
 module ArelExtensions
@@ -75,6 +76,22 @@ module ArelExtensions
 
     def idoes_not_match_all others, escape = nil
       grouping_all :idoes_not_match, others, escape
+    end
+    
+    def ai_matches other
+      ArelExtensions::Nodes::Collate.new(self,true,false).matches(ArelExtensions::Nodes::Collate.new(other,true,false))
+    end
+    
+    def ai_imatches other
+      ArelExtensions::Nodes::Collate.new(self,true,true).imatches(ArelExtensions::Nodes::Collate.new(other,true,true))
+    end
+    
+    def ai_collate
+		ArelExtensions::Nodes::Collate.new(self,true,false)
+    end
+    
+    def ci_collate
+		ArelExtensions::Nodes::Collate.new(self,false,true)
     end
 
     #REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.
