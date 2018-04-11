@@ -515,7 +515,7 @@ module ArelExtensions
 	  
 	  def test_accent_insensitive
 		skip "SQLite is natively Case Insensitive and Accent Sensitive" if $sqlite
-		skip "SQLite is natively Case Insensitive and Accent Sensitive" if @env_db == 'mysql'
+		skip "Not finished" if @env_db == 'mysql'
 		# actual comments value: "arrêté"		
 		#AI & CI	
 		if !['postgresql'].include?(@env_db) # Extension unaccent required on PG
