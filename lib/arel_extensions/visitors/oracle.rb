@@ -53,6 +53,43 @@ module ArelExtensions
           collector
         end
       end
+      
+      def visit_ArelExtensions_Nodes_AiMatches o, collector
+        collector = visit o.left.ai_collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.ai_collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+      
+      def visit_ArelExtensions_Nodes_AiIMatches o, collector
+        collector = visit o.left.ai_collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.ai_collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+      
+      def visit_ArelExtensions_Nodes_SMatches o, collector
+		collector = visit o.left, collector
+        collector << ' LIKE '
+        collector = visit o.right, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end  
+      
 
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
         collector << 'LOWER('
@@ -67,6 +104,26 @@ module ArelExtensions
           collector
         end
       end
+      
+      def visit_ArelExtensions_Nodes_Collate o, collector        
+		if o.ai
+			collector << "NLSSORT("
+			collector = visit o.expressions.first, collector
+			collector << Arel::Visitors::Oracle::COMMA 
+			collector << "'NLS_SORT = BINARY_AI NLS_COMP = LINGUISTIC'"			
+			collector << ")"
+		elsif o.ci
+			collector << "NLSSORT("
+			collector = visit o.expressions.first, collector
+			collector << Arel::Visitors::Oracle::COMMA 
+			collector << "'NLS_SORT = BINARY_CI NLS_COMP = LINGUISTIC'"			
+			collector << ")"
+		else
+			collector = visit o.expressions.first, collector
+		end       
+        collector
+      end
+      
 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "(LISTAGG("
@@ -99,23 +156,7 @@ module ArelExtensions
         }
         collector << ")"
         collector
-      end
-      
-      def visit_ArelExtensions_Nodes_Collate o, collector
-        collector << "NLSSORT("
-        collector = visit o.expressions.first, collector
-		if o.ai
-			collector << Arel::Visitors::Oracle::COMMA 
-			collector << "'NLS_SORT = BINARY_AI NLS_COMP = LINGUISTIC'"
-		elsif o.ci
-			collector << Arel::Visitors::Oracle::COMMA 
-			collector << "'NLS_SORT = BINARY_CI NLS_COMP = LINGUISTIC'"
-		end
-        collector << ")"
-       
-        collector
-      end
-      
+      end     
 
       # :date is not possible in Oracle since this type does not really exist
       def visit_ArelExtensions_Nodes_DateDiff o, collector

@@ -515,22 +515,45 @@ module ArelExtensions
 	  end
 	  
 	  def test_accent_insensitive
-		if (@env_db == 'oracle') #|| (@env_db == 'mysql')
-		  assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arrete")).then("1").else("0"))		  		  
-		  assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("àrrétè")).then("1").else("0"))		  		  
-		  assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arretez")).then("1").else("0"))
-		  if (@env_db != 'oracle') #|| (@env_db != 'mysql')  #in oracle and Mysql Accent Insensitive implie Case Insensitive
-			#assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("Arrete")).then("1").else("0"))
-			#assert_equal "0", t(@arthur,Arel.sql(%Q[CASE WHEN REGEXP_LIKE(LOWER(NLSSORT("USER_TESTS"."COMMENTS", 'NLS_SORT = BINARY_AI NLS_COMP = LINGUISTIC')),LOWER(NLSSORT('Arrete', 'NLS_SORT = BINARY_AI NLS_COMP = LINGUISTIC')),'c') THEN '1' ELSE '0' END]))
-			#assert_equal "0", t(@arthur,Arel.sql(%Q[CASE WHEN "USER_TESTS"."COMMENTS" LIKE 'Arrete' COLLATE utf8_general_ci THEN '1' ELSE '0' END]))
-		  end	
-		  assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arrete")).then("1").else("0"))
-		  assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("Arrete")).then("1").else("0"))		  	  		  		  
-		  assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("ÀrrÈte")).then("1").else("0"))
-		  assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arretez")).then("1").else("0"))
-		end	  
+		skip "SQLite is natively Case Insensitive and Accent Sensitive" if $sqlite
+		# actual comments value: "arrêté"		
+		#AI & CI	
+		if !['postgresql'].include?(@env_db) # Extension unaccent required on PG
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arrêté")).then("1").else("0"))
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arrete")).then("1").else("0"))		  		  
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("àrrétè")).then("1").else("0"))		  		  
+			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arretez")).then("1").else("0"))		  
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("Arrete")).then("1").else("0"))
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("Arrêté")).then("1").else("0"))
+			#AI & CS
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arrêté")).then("1").else("0"))
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arrete")).then("1").else("0"))		  		  
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("àrrétè")).then("1").else("0"))		  		  
+			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arretez")).then("1").else("0"))		  
+			if !['oracle','postgresql','mysql'].include?(@env_db) # AI => CI
+				assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("Arrete")).then("1").else("0"))
+				assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("Arrêté")).then("1").else("0"))
+			end			
+		end
+		#AS & CI
+		assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("arrêté")).then("1").else("0"))
+		if !['mysql'].include?(@env_db) # CI => AI in utf8 (AI not possible in latin1)
+			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("arrete")).then("1").else("0"))		  		  
+			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("àrrétè")).then("1").else("0"))		  		  
+		end		  
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("arretez")).then("1").else("0"))		  
+		if !['mysql'].include?(@env_db) # CI => AI in utf8 (AI not possible in latin1)
+			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("Arrete")).then("1").else("0"))
+		end
+		assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("Arrêté")).then("1").else("0"))
+		#AS & CS
+		assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arrêté")).then("1").else("0"))
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arrete")).then("1").else("0"))		  		  
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("àrrétè")).then("1").else("0"))		  		  
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arretez")).then("1").else("0"))		  
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrete")).then("1").else("0"))
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrêté")).then("1").else("0"))  
 	  end
-
     end
   end
 end

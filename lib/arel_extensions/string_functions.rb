@@ -78,20 +78,28 @@ module ArelExtensions
       grouping_all :idoes_not_match, others, escape
     end
     
-    def ai_matches other
-      ArelExtensions::Nodes::Collate.new(self,true,false).matches(ArelExtensions::Nodes::Collate.new(other,true,false))
+    def ai_matches other # accent insensitive & case sensitive
+      ArelExtensions::Nodes::AiMatches.new(self,other)
     end
     
-    def ai_imatches other
-      ArelExtensions::Nodes::Collate.new(self,true,true).imatches(ArelExtensions::Nodes::Collate.new(other,true,true))
+    def ai_imatches other # accent insensitive & case insensitive
+      ArelExtensions::Nodes::AiIMatches.new(self,other)
     end
     
-    def ai_collate
-		ArelExtensions::Nodes::Collate.new(self,true,false)
+    def smatches other # accent sensitive & case sensitive
+      ArelExtensions::Nodes::SMatches.new(self,other)
+    end
+    
+    def ai_collate 
+		ArelExtensions::Nodes::Collate.new(self,nil,true,false)
     end
     
     def ci_collate
-		ArelExtensions::Nodes::Collate.new(self,false,true)
+		ArelExtensions::Nodes::Collate.new(self,nil,false,true)
+    end
+    
+    def collate ai=false,ci=false, option=nil
+		ArelExtensions::Nodes::Collate.new(self,option,ai,ci)
     end
 
     #REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.

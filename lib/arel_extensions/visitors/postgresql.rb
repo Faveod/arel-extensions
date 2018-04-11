@@ -131,6 +131,55 @@ module ArelExtensions
         collector << ")"
         collector
       end      
+      
+      def visit_ArelExtensions_Nodes_AiMatches o, collector 
+        collector = visit o.left.ai_collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.ai_collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+      
+      def visit_ArelExtensions_Nodes_AiIMatches o, collector 
+        collector = visit o.left.ai_collate, collector
+        collector << ' ILIKE '
+        collector = visit o.right.ai_collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+      
+      def visit_ArelExtensions_Nodes_SMatches o, collector 
+        collector = visit o.left, collector
+        collector << ' LIKE '
+        collector = visit o.right, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+      
+	  def visit_ArelExtensions_Nodes_Collate o, collector        
+		if o.ai
+			collector << "unaccent("
+			collector = visit o.expressions.first, collector
+			collector << ")"
+		elsif o.ci
+			collector = visit o.expressions.first, collector
+		else
+			collector = visit o.expressions.first, collector
+		end       
+        collector
+	  end
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector = visit o.left, collector

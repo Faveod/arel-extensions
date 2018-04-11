@@ -302,7 +302,9 @@ module ArelExtensions
 
       # TODO; manage case insensitivity
       def visit_ArelExtensions_Nodes_IMatches o, collector
-        collector = infix_value o, collector, ' LIKE '
+        collector = visit o.left.ci_collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.ci_collate, collector
         if o.escape
           collector << ' ESCAPE '
           visit o.escape, collector
@@ -313,13 +315,72 @@ module ArelExtensions
 
       # TODO; manage case insensitivity
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
-        collector = infix_value o, collector, ' NOT LIKE '
+        collector = visit o.left.ci_collate, collector
+        collector << ' NOT LIKE '
+        collector = visit o.right.ci_collate, collector
         if o.escape
           collector << ' ESCAPE '
-          collector = visit o.escape, collector
+          visit o.escape, collector
+        else
+          collector
         end
-        collector
       end
+      
+	  def visit_ArelExtensions_Nodes_AiMatches o, collector 
+        collector = visit o.left.ai_collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.ai_collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+	  end
+      
+	  def visit_ArelExtensions_Nodes_AiIMatches o, collector 
+        collector = visit o.left.collate(true,true), collector
+        collector << ' LIKE '
+        collector = visit o.right.collate(true,true), collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+	  end
+
+	  def visit_ArelExtensions_Nodes_SMatches o, collector 
+        collector = visit o.left.collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+	  end
+	  
+	  def visit_ArelExtensions_Nodes_Collate o, collector        
+		if o.ai && o.ci
+			collector = visit o.expressions.first, collector
+			collector << ' COLLATE Latin1_General_CI_AI'
+		elsif o.ai
+			collector = visit o.expressions.first, collector
+			collector << ' COLLATE Latin1_General_CS_AI'
+		elsif o.ci
+			collector = visit o.expressions.first, collector
+			collector << ' COLLATE Latin1_General_CI_AS'
+		else
+			collector = visit o.expressions.first, collector
+			collector << ' COLLATE Latin1_General_CS_AS'
+		end       
+        collector
+	  end 
+      
+      
+      
 
       # SQL Server does not know about REGEXP
       def visit_Arel_Nodes_Regexp o, collector

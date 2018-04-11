@@ -247,7 +247,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <th class="tg-ffjm" rowspan="13"><div>String functions</div></th>
+    <th class="tg-ffjm" rowspan="17"><div>String functions</div></th>
     <td class="tg-yw4l">CONCAT<br>column + "string"</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -364,6 +364,43 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-j6lv">LTRIM(RTRIM())</td>
     <td class="tg-j6lv">TRIM()</td>
   </tr>
+  <tr>
+    <td class="tg-yw4l">Matching Accent/Case Insensitive<br>column.ai_imatches('blah')</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">unaccent required</td>
+    <td class="tg-j6lv">not supported</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">✔</td>
+    <td class="tg-j6lv">?</td>
+  </tr>  
+  <tr>
+    <td class="tg-yw4l">Matching Accent Insensitive<br>column.ai_matches('blah')</td>
+    <td class="ok">not supported</td>
+    <td class="tg-j6lv">not supported</td>
+    <td class="tg-j6lv">not supported</td>
+    <td class="ok">not supported</td>
+    <td class="tg-j6lv">✔</td>
+    <td class="tg-j6lv">?</td>
+  </tr>  
+  <tr>
+    <td class="tg-yw4l">Matching Case Insensitive<br>column.imatches('blah')</td>
+    <td class="ok">not supported</td>
+    <td class="tg-j6lv">✔</td>
+    <td class="tg-j6lv">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">✔</td>
+    <td class="tg-j6lv">?</td>
+  </tr>  
+  <tr>
+    <td class="tg-yw4l">Matching Accent/Case Sensitive<br>column.smatches('blah')</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">✔</td>
+    <td class="tg-j6lv">not supported</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">✔</td>
+    <td class="tg-j6lv">?</td>
+  </tr>  
+    
   <tr>
     <th class="tg-4rp9" rowspan="6"><div>Date functions</div></th>
     <td class="tg-yw4l">DATEADD<br>column + 2.year<br></td>

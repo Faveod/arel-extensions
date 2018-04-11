@@ -11,9 +11,9 @@ module ArelExtensions
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
-        collector = visit o.left, collector
+        collector = visit o.left.ci_collate, collector
         collector << ' LIKE '
-        collector = visit o.right, collector
+        collector = visit o.right.ci_collate, collector
         if o.escape
           collector << ' ESCAPE '
           visit o.escape, collector
@@ -21,6 +21,57 @@ module ArelExtensions
           collector
         end
       end
+      
+	  def visit_ArelExtensions_Nodes_AiMatches o, collector 
+        collector = visit o.left.ai_collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.ai_collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+	  end
+      
+	  def visit_ArelExtensions_Nodes_AiIMatches o, collector 
+        collector = visit o.left.collate(true,true), collector
+        collector << ' LIKE '
+        collector = visit o.right.collate(true,true), collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+	  end
+
+	  def visit_ArelExtensions_Nodes_SMatches o, collector 
+        collector = visit o.left.collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+	  end
+	  
+	  def visit_ArelExtensions_Nodes_Collate o, collector        
+		if o.ai
+			collector = visit o.expressions.first, collector
+			collector << ' COLLATE NOACCENTS'
+		elsif o.ci
+			collector = visit o.expressions.first, collector
+			collector << ' COLLATE NOCASE'
+		else
+			collector = visit o.expressions.first, collector
+			collector << ' COLLATE BINARY'
+		end       
+        collector
+	  end 
+      
 
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
         collector = visit o.left.lower, collector

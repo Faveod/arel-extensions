@@ -33,9 +33,11 @@ module ArelExtensions
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
-        collector = visit o.left, collector
-        collector << ' LIKE '
-        collector = visit o.right, collector
+		collector << 'LOWER('
+        collector = visit o.left.collate, collector
+        collector << ') LIKE LOWER('
+        collector = visit o.right.collate, collector
+        collector << ')'
         if o.escape
           collector << ' ESCAPE '
           visit o.escape, collector
@@ -43,6 +45,42 @@ module ArelExtensions
           collector
         end
       end
+      
+      def visit_ArelExtensions_Nodes_AiMatches o, collector 
+        collector = visit o.left.ai_collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.ai_collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+      
+      def visit_ArelExtensions_Nodes_AiIMatches o, collector 
+        collector = visit o.left.ai_collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.ai_collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+      end
+
+	  def visit_ArelExtensions_Nodes_SMatches o, collector 
+        collector = visit o.left.collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
+	  end     
 
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
         collector = visit o.left.lower, collector
@@ -57,11 +95,25 @@ module ArelExtensions
       end
       
 	  def visit_ArelExtensions_Nodes_Collate o, collector
+		case o.expressions.first
+		when Arel::Attributes::Attribute
+			charset = case o.option
+				when 'latin1','utf8'
+					o.option
+				else
+					Arel::Table.engine.connection.charset || 'utf8'
+				end
+		else
+			charset = (o.option == 'latin1') ? 'latin1' : 'utf8'
+		end	
         collector = visit o.expressions.first, collector
-		if o.ai
-			#collector << " COLLATE utf8_unicode_ci"
+		if o.ai  
+			collector << " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
+			#doesn't work in latin1
 		elsif o.ci
-			#collector << " COLLATE latin1_general_ci"
+			collector << " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
+		else
+			collector << " COLLATE #{charset}_bin"
 		end       
         collector
 	  end
