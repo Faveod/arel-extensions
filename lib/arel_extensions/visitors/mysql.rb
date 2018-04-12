@@ -34,9 +34,9 @@ module ArelExtensions
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
 		collector << 'LOWER('
-        collector = visit o.left.collate, collector
+        collector = visit o.left, collector
         collector << ') LIKE LOWER('
-        collector = visit o.right.collate, collector
+        collector = visit o.right, collector
         collector << ')'
         if o.escape
           collector << ' ESCAPE '
@@ -83,9 +83,11 @@ module ArelExtensions
 	  end     
 
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
-        collector = visit o.left.lower, collector
-        collector << ' NOT LIKE '
-        collector = visit o.right.lower(o.right), collector
+        collector << 'LOWER('
+        collector = visit o.left, collector
+        collector << ') NOT LIKE LOWER('
+        collector = visit o.right, collector
+        collector << ')'
         if o.escape
           collector << ' ESCAPE '
           visit o.escape, collector
