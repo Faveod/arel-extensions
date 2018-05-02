@@ -438,7 +438,7 @@ module ArelExtensions
 			o = o.dup
 			o.orders = []
 		end
-		Arel::Visitors::MSSQL.new.visit_Arel_Nodes_SelectStatement(o,collector)
+		super(o,collector)
 	  end	
 
     end
