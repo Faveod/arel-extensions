@@ -7,6 +7,15 @@ require 'arel_extensions/visitors/mssql'
 
 Arel::Visitors::MSSQL.class_eval do
 	include ArelExtensions::Visitors::MSSQL
+	
+	alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
+	def visit_Arel_Nodes_SelectStatement o, collector	
+		if !collector.value.blank? && o.limit.blank? 			
+			o = o.dup
+			o.orders = []
+		end
+		old_visit_Arel_Nodes_SelectStatement(o,collector)
+	end	
 end
 
 begin 
@@ -15,6 +24,15 @@ begin
 		if Arel::Visitors::VISITORS['sqlserver'] && Arel::Visitors::VISITORS['sqlserver'] != Arel::Visitors::MSSQL
 			Arel::Visitors::VISITORS['sqlserver'].class_eval do
 		  		include ArelExtensions::Visitors::MSSQL
+		  		
+		  		alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
+				def visit_Arel_Nodes_SelectStatement o, collector	
+					if !collector.value.blank? && o.limit.blank? 			
+						o = o.dup
+						o.orders = []
+					end
+					old_visit_Arel_Nodes_SelectStatement(o,collector)
+				end	
 			end 
 		end
 	end
