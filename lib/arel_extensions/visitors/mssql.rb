@@ -433,12 +433,13 @@ module ArelExtensions
         collector
 	  end
 	  
-	  def visit_Arel_Nodes_SelectStatement o, collector	
-		if !collector.value.blank? && o.limit.blank? 			
+	  def visit_Arel_Nodes_SelectStatement o, collector	 
+		puts "cool"
+		if !collector.value.blank? && o.limit.blank? && o.offset.blank?
 			o = o.dup
 			o.orders = []
 		end
-		super(o,collector)
+		#super(o,collector)
 	  end	
 
     end
