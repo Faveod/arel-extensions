@@ -554,6 +554,15 @@ module ArelExtensions
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrete")).then("1").else("0"))
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrêté")).then("1").else("0"))  
 	  end
+	  
+	  def test_subquery_with_order
+		assert_equal 8, User.where(:name => User.select(:name).order(:name)).count 
+		if !['mysql'].include?(@env_db)	# In MySql can't have limit in IN subquery
+			assert_equal 2, User.where(:name => User.select(:name).order(:name).limit(2)).count 
+		end
+	  
+	  end
+	 
     end
   end
 end

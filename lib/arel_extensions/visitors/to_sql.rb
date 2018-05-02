@@ -434,109 +434,109 @@ module ArelExtensions
       end
     end
 
-	def visit_ArelExtensions_Nodes_Union o, collector
-		collector = visit o.left, collector
-		collector << " UNION "
-		collector = visit o.right, collector
-		collector
-	end
-	
-	def visit_ArelExtensions_Nodes_UnionAll o, collector
-		collector = visit o.left, collector
-		collector << " UNION ALL "
-		collector = visit o.right, collector
-		collector
-	end
-	
-	def visit_ArelExtensions_Nodes_As o, collector
-		if o.left.is_a?(ArelExtensions::Nodes::Union) || o.left.is_a?(ArelExtensions::Nodes::UnionAll)
-			collector << "("
+		def visit_ArelExtensions_Nodes_Union o, collector
 			collector = visit o.left, collector
-			collector << ") "			
-			visit o.right, collector
-		else
-			collector = visit o.left, collector
-			collector << " AS "
-			visit o.right, collector
-		end
-	end
-	
-	def visit_ArelExtensions_Nodes_Case o, collector
-        collector << "CASE "
-        if o.case
-          visit o.case, collector
-          collector << " "
-        end
-        o.conditions.each do |condition|
-          visit condition, collector
-          collector << " "
-        end
-        if o.default
-          visit o.default, collector
-          collector << " "
-        end
-        collector << "END"
-	end
-
-    def visit_ArelExtensions_Nodes_When o, collector
-        collector << "WHEN "
-        visit o.left, collector
-        collector << " THEN "
-        visit o.right, collector
-    end
-
-    def visit_ArelExtensions_Nodes_Else o, collector
-        collector << "ELSE "
-        visit o.expr, collector
-    end
-    
-    
-    
-	def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
-		col = o.left
-		params = o.locale ? [o.precision,Arel::Nodes.build_quoted(o.locale)] : [o.precision]
-		sign = ArelExtensions::Nodes::Case.new.when(col<0).
-							then('-').
-							else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
-		sign_length = ArelExtensions::Nodes::Length.new([sign])
-		
-		if o.scientific_notation 
-			number = ArelExtensions::Nodes::Concat.new([
-							Arel::Nodes::NamedFunction.new('FORMAT',[
-								col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor)
-							]+params),
-							o.type, 
-							Arel::Nodes::NamedFunction.new('FORMAT',[
-								col.abs.log10.floor,
-								0
-							])
-						])			
-		else
-			number = Arel::Nodes::NamedFunction.new('FORMAT',[col.abs]+params)
+			collector << " UNION "
+			collector = visit o.right, collector
+			collector
 		end
 		
-		repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
-			when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
-			then(Arel::Nodes.build_quoted(
-					o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-				).repeat(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length))
-			).
-			else('')
-		before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
-		middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
-		after  = o.flags.include?('-') ? repeated_char : ''
-		full_number =  col.when(0).then(0).else(
-			ArelExtensions::Nodes::Concat.new([
-				before,
-				sign,
-				middle,
-				number,
-				after
-			])
-		)				
-		collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
-		collector		
-	end
+		def visit_ArelExtensions_Nodes_UnionAll o, collector
+			collector = visit o.left, collector
+			collector << " UNION ALL "
+			collector = visit o.right, collector
+			collector
+		end
+		
+		def visit_ArelExtensions_Nodes_As o, collector
+			if o.left.is_a?(ArelExtensions::Nodes::Union) || o.left.is_a?(ArelExtensions::Nodes::UnionAll)
+				collector << "("
+				collector = visit o.left, collector
+				collector << ") "			
+				visit o.right, collector
+			else
+				collector = visit o.left, collector
+				collector << " AS "
+				visit o.right, collector
+			end
+		end
+		
+		def visit_ArelExtensions_Nodes_Case o, collector
+			collector << "CASE "
+			if o.case
+			  visit o.case, collector
+			  collector << " "
+			end
+			o.conditions.each do |condition|
+			  visit condition, collector
+			  collector << " "
+			end
+			if o.default
+			  visit o.default, collector
+			  collector << " "
+			end
+			collector << "END"
+		end
+
+		def visit_ArelExtensions_Nodes_When o, collector
+			collector << "WHEN "
+			visit o.left, collector
+			collector << " THEN "
+			visit o.right, collector
+		end
+
+		def visit_ArelExtensions_Nodes_Else o, collector
+			collector << "ELSE "
+			visit o.expr, collector
+		end
+		
+		
+		
+		def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
+			col = o.left
+			params = o.locale ? [o.precision,Arel::Nodes.build_quoted(o.locale)] : [o.precision]
+			sign = ArelExtensions::Nodes::Case.new.when(col<0).
+								then('-').
+								else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
+			sign_length = ArelExtensions::Nodes::Length.new([sign])
+			
+			if o.scientific_notation 
+				number = ArelExtensions::Nodes::Concat.new([
+								Arel::Nodes::NamedFunction.new('FORMAT',[
+									col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor)
+								]+params),
+								o.type, 
+								Arel::Nodes::NamedFunction.new('FORMAT',[
+									col.abs.log10.floor,
+									0
+								])
+							])			
+			else
+				number = Arel::Nodes::NamedFunction.new('FORMAT',[col.abs]+params)
+			end
+			
+			repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
+				when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
+				then(Arel::Nodes.build_quoted(
+						o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
+					).repeat(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length))
+				).
+				else('')
+			before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
+			middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
+			after  = o.flags.include?('-') ? repeated_char : ''
+			full_number =  col.when(0).then(0).else(
+				ArelExtensions::Nodes::Concat.new([
+					before,
+					sign,
+					middle,
+					number,
+					after
+				])
+			)				
+			collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
+			collector		
+		end
 		
 		remove_method(:visit_Arel_Nodes_LessThan) rescue nil 
 		def visit_Arel_Nodes_LessThan o, collector
@@ -544,6 +544,8 @@ module ArelExtensions
 			collector << " < "
 			visit o.right, collector
 		end
+		
+
 		
   	end
   end
