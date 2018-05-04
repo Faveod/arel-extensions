@@ -8,6 +8,7 @@ module ArelExtensions
         '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM', # hours
         '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz' # seconds, subseconds
       }
+      Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING = { 'en_EN' => '.', 'fr_FR' => ',' }
 
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "RANDOM("
@@ -272,10 +273,62 @@ module ArelExtensions
         collector
 	  end
 
+	  def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
+			col = o.left
+			comma = Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale] || '.'			
+			nines_after = (1..o.precision).map{'9'}.join('')
+			nines_before = (1..16).map{'9'}.join('')
+			sign = ArelExtensions::Nodes::Case.new.when(col<0).
+								then('-').
+								else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
+			sign_length = ArelExtensions::Nodes::Length.new([sign])
+			
+			if o.scientific_notation 
+				number = ArelExtensions::Nodes::Concat.new([
+								Arel::Nodes::NamedFunction.new('TO_CHAR',[
+									col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor),
+									Arel::Nodes.build_quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
+								]),
+								o.type, 
+								Arel::Nodes::NamedFunction.new('TO_CHAR',[
+									col.abs.log10.floor,
+									Arel::Nodes.build_quoted('FM'+nines_before)
+								])
+							])			
+			else			
+				number = Arel::Nodes::NamedFunction.new('TO_CHAR',[
+							Arel::Nodes.build_quoted(col.abs),
+							Arel::Nodes.build_quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
+						])				
+			end
+			
+			repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
+				when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
+				then(Arel::Nodes.build_quoted(
+						o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
+					).repeat(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length))
+				).
+				else('')
+			before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
+			middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
+			after  = o.flags.include?('-') ? repeated_char : ''
+			full_number =  col.when(0).then('0').else(
+				ArelExtensions::Nodes::Concat.new([
+					before,
+					sign,
+					middle,
+					number,
+					after
+				])
+			)				
+			collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
+			collector		
+		end
+
 
 		alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
 		def visit_Arel_Nodes_SelectStatement o, collector	
-			if !collector.value.blank? && o.limit.blank? 			
+			if !collector.value.blank? && o.limit.blank? && o.offset.blank?  			
 				o = o.dup
 				o.orders = []
 			end

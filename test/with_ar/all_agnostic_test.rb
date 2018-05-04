@@ -497,7 +497,7 @@ module ArelExtensions
 	  end
 	  
 	  def test_format_numbers
-		skip "Not yet implemented" if @env_db != 'mysql'
+		skip "Not yet implemented" if @env_db != 'mysql' && @env_db != 'postgresql'
 		#score of Arthur = 65.62
 		assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))
 		assert_equal "65,62AZERTY" , t(@arthur, @score.format_number("%.2fAZERTY","fr_FR"))
@@ -506,10 +506,12 @@ module ArelExtensions
 		assert_equal "$ 65,62   €" , t(@arthur, @score.format_number("$ %-07.2f €","fr_FR"))
 		assert_equal "$ 65,62   €" , t(@arthur, @score.format_number("$ %-7.2f €","fr_FR"))
 		assert_equal "$   65,62 €" , t(@arthur, @score.format_number("$ % 7.2f €","fr_FR"))
+		assert_equal "$    65,6 €" , t(@arthur, @score.format_number("$ % 7.1f €","fr_FR"))
 		assert_equal "$  +65,62 €" , t(@arthur, @score.format_number("$ % +7.2f €","fr_FR"))		
 		assert_equal "$ +065,62 €" , t(@arthur, @score.format_number("$ %0+7.2f €","fr_FR"))	
 		assert_equal "$ 6,56e1 €" , t(@arthur, @score.format_number("$ %.2e €","fr_FR"))			
-		assert_equal "$ 6,56E1 €" , t(@arthur, @score.format_number("$ %.2E €","fr_FR"))	
+		assert_equal "$ 6,56E1 €" , t(@arthur, @score.format_number("$ %.2E €","fr_FR"))			
+		assert_equal "$ 6,562E1 €" , t(@arthur, @score.format_number("$ %.3E €","fr_FR"))	
 		assert_equal "Wrong Format" , t(@arthur, @score.format_number("$ %...234.6F €","fr_FR"))
 	  end
 	  
@@ -555,12 +557,13 @@ module ArelExtensions
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrêté")).then("1").else("0"))  
 	  end
 	  
-	  def test_subquery_with_order
+	  def test_subquery_with_order	  
 		assert_equal 8, User.where(:name => User.select(:name).order(:name)).count 
-		if !['mysql'].include?(@env_db)	# In MySql can't have limit in IN subquery
+		assert_equal 8, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count 
+		if !['mysql'].include?(@env_db)	# MySql can't have limit in IN subquery	
 			assert_equal 2, User.where(:name => User.select(:name).order(:name).limit(2)).count 
+			#assert_equal 6, User.where(:name => User.select(:name).order(:name).offset(2)).count 
 		end
-	  
 	  end
 	 
     end

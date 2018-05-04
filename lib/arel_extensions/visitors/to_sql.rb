@@ -525,7 +525,7 @@ module ArelExtensions
 			before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
 			middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
 			after  = o.flags.include?('-') ? repeated_char : ''
-			full_number =  col.when(0).then(0).else(
+			full_number =  col.when(0).then('0').else(
 				ArelExtensions::Nodes::Concat.new([
 					before,
 					sign,

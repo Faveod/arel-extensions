@@ -10,7 +10,7 @@ Arel::Visitors::MSSQL.class_eval do
 	
 	alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
 	def visit_Arel_Nodes_SelectStatement o, collector	
-		if !collector.value.blank? && o.limit.blank? 			
+		if !collector.value.blank? && o.limit.blank? && o.offset.blank? 		
 			o = o.dup
 			o.orders = []
 		end
@@ -27,7 +27,7 @@ begin
 		  		
 		  		alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
 				def visit_Arel_Nodes_SelectStatement o, collector	
-					if !collector.value.blank? && o.limit.blank? 			
+					if !collector.value.blank? && o.limit.blank? && o.offset.blank? 					
 						o = o.dup
 						o.orders = []
 					end
