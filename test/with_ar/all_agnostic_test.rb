@@ -504,7 +504,7 @@ module ArelExtensions
 		#score of Arthur = 65.62
 		assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))
 		assert_equal "65,62AZERTY" , t(@arthur, @score.format_number("%.2fAZERTY","fr_FR"))
-		assert_equal "$ 65.62 €" , t(@arthur, @score.format_number("$ %.2f €","en_EN"))
+		assert_equal "$ 65.62 €" , t(@arthur, @score.format_number("$ %.2f €","en_US"))
 		assert_equal "$ 0065,62 €" , t(@arthur, @score.format_number("$ %07.2f €","fr_FR"))
 		assert_equal "$ 65,62   €" , t(@arthur, @score.format_number("$ %-07.2f €","fr_FR"))
 		assert_equal "$ 65,62   €" , t(@arthur, @score.format_number("$ %-7.2f €","fr_FR"))
