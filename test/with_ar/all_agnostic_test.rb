@@ -500,7 +500,7 @@ module ArelExtensions
 	  end
 	  
 	  def test_format_numbers
-		skip "Not yet implemented" if @env_db == 'mssql' || @env_db == 'sqlite'
+		skip "Not yet implemented" if @env_db == 'sqlite' #|| @env_db == 'mssql' 
 		#score of Arthur = 65.62
 		assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))
 		assert_equal "65,62AZERTY" , t(@arthur, @score.format_number("%.2fAZERTY","fr_FR"))
