@@ -437,9 +437,12 @@ module ArelExtensions
         assert_equal "Sophie2", t(@sophie, @name + 2)
         assert_equal "Sophie1997-06-15", t(@sophie, @name + d)
         assert_equal "Sophie15", t(@sophie, @name + @age)
-        assert_equal "SophieSophie", t(@sophie, @name + @name)
+        assert_equal "SophieSophie", t(@sophie, @name + @name)        
+        assert_equal "SophieSophieSophie", t(@sophie, @name + @name + @name)
+        assert_equal "SophieSophieSophie", t(@sophie, @name.concat(@name.concat(@name)))
+        assert_equal "SophieSophieSophie", t(@sophie, @name.concat(@name).concat(@name))
         #FIXME: should work as expected in Oracle
-        assert_equal "Sophie2016-05-23", t(@sophie, @name + @created_at) unless @env_db == 'oracle'
+        assert_equal "Sophie2016-05-23", t(@sophie, @name + @created_at) unless @env_db == 'oracle' 
         #concat Integer
         assert_equal 1, User.where((@age + 10).eq(33)).count
         assert_equal 1, User.where((@age + "1").eq(6)).count
@@ -497,21 +500,21 @@ module ArelExtensions
 	  end
 	  
 	  def test_format_numbers
-		skip "Not yet implemented" if @env_db != 'mysql' && @env_db != 'postgresql'
+		skip "Not yet implemented" if @env_db == 'mssql' || @env_db == 'sqlite'
 		#score of Arthur = 65.62
 		assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))
 		assert_equal "65,62AZERTY" , t(@arthur, @score.format_number("%.2fAZERTY","fr_FR"))
-		assert_equal "$ 65.62 €" , t(@arthur, @score.format_number("$ %.2f €","en_EN"))		
+		assert_equal "$ 65.62 €" , t(@arthur, @score.format_number("$ %.2f €","en_EN"))
 		assert_equal "$ 0065,62 €" , t(@arthur, @score.format_number("$ %07.2f €","fr_FR"))
 		assert_equal "$ 65,62   €" , t(@arthur, @score.format_number("$ %-07.2f €","fr_FR"))
 		assert_equal "$ 65,62   €" , t(@arthur, @score.format_number("$ %-7.2f €","fr_FR"))
 		assert_equal "$   65,62 €" , t(@arthur, @score.format_number("$ % 7.2f €","fr_FR"))
 		assert_equal "$    65,6 €" , t(@arthur, @score.format_number("$ % 7.1f €","fr_FR"))
 		assert_equal "$  +65,62 €" , t(@arthur, @score.format_number("$ % +7.2f €","fr_FR"))		
-		assert_equal "$ +065,62 €" , t(@arthur, @score.format_number("$ %0+7.2f €","fr_FR"))	
-		assert_equal "$ 6,56e1 €" , t(@arthur, @score.format_number("$ %.2e €","fr_FR"))			
-		assert_equal "$ 6,56E1 €" , t(@arthur, @score.format_number("$ %.2E €","fr_FR"))			
-		assert_equal "$ 6,562E1 €" , t(@arthur, @score.format_number("$ %.3E €","fr_FR"))	
+		assert_equal "$ +065,62 €" , t(@arthur, @score.format_number("$ %0+7.2f €","fr_FR"))
+		assert_includes ["$ 6,56e1 €","$ 6,56e+01 €"], t(@arthur, @score.format_number("$ %.2e €","fr_FR"))			
+		assert_includes ["$ 6,56E1 €","$ 6,56E+01 €"], t(@arthur, @score.format_number("$ %.2E €","fr_FR"))			
+		assert_includes ["$ 6,562E1 €","$ 6,562E+01 €"], t(@arthur, @score.format_number("$ %.3E €","fr_FR"))	
 		assert_equal "Wrong Format" , t(@arthur, @score.format_number("$ %...234.6F €","fr_FR"))
 	  end
 	  
