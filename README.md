@@ -250,7 +250,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">POSIX FORMATTING<br>column.format_number("$ %7.2f","en_US")</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="ko">not implemented</td>
+    <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ko">not implemented</td>
