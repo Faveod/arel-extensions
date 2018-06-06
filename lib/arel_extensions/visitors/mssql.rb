@@ -487,7 +487,7 @@ module ArelExtensions
 			)				
 			collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
 			collector		
-	  end
+		end
 
     end
   end

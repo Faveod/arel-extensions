@@ -55,7 +55,7 @@ module ArelExtensions
         @lucas = User.where(:id => u.id)
         u = User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
         @sophie = User.where(:id => u.id)
-        u = User.create :age => 20, :name => "Camille", :created_at => d, :score => -20.16
+        u = User.create :age => 20, :name => "Camille", :created_at => d, :score => -20.16, :comments => ''
         @camille = User.where(:id => u.id)
         u = User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62, :comments => 'arrêté'
         @arthur = User.where(:id => u.id)
@@ -310,9 +310,13 @@ module ArelExtensions
         assert_equal 0, @myung.where(@name.blank).count
         assert_equal 1, @myung.where(@name.not_blank).count
         assert_equal 1, @myung.where(@comments.blank).count
+        assert_equal 0, @myung.where(@comments.not_blank).count
+        assert_equal 1, @sophie.where(@comments.blank).count
+        assert_equal 0, @sophie.where(@comments.not_blank).count
+        assert_equal 1, @camille.where(@comments.blank).count
+        assert_equal 0, @camille.where(@comments.not_blank).count
         assert_equal 0, @neg.where(@comments.blank).count
         assert_equal 1, @neg.where(@comments.not_blank).count
-        assert_equal 0, @myung.where(@comments.not_blank).count
         assert_equal 'false', t(@myung, @name.blank.then('true', 'false'))
         assert_equal 'true', t(@myung, @name.not_blank.then('true', 'false'))
         assert_equal 'true', t(@myung, @comments.blank.then('true', 'false'))
@@ -501,6 +505,7 @@ module ArelExtensions
 	  
 	  def test_format_numbers 
 		#score of Arthur = 65.62
+		skip " Works with SQLite if the version used knows printf" if @env_db = $sqlite
 		assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))
 		assert_equal "65,62AZERTY" , t(@arthur, @score.format_number("%.2fAZERTY","fr_FR"))
 		assert_equal "$ 65.62 €" , t(@arthur, @score.format_number("$ %.2f €","en_US"))
