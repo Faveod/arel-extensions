@@ -8,6 +8,7 @@ module ArelExtensions
         '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p', # hours
         '%M' => '%M', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => '' # seconds, subseconds
       }
+      Arel::Visitors::SQLite::NUMBER_COMMA_MAPPING = { 'fr_FR' => {',' => ' ','.' =>','} }
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
@@ -319,7 +320,7 @@ module ArelExtensions
 
 		remove_method(:visit_Arel_Nodes_GreaterThan) rescue nil 
 		def visit_Arel_Nodes_GreaterThan o, collector
-					collector = visit get_time_converted(o.left), collector
+			collector = visit get_time_converted(o.left), collector
 			collector << " > "		
 			collector = visit get_time_converted(o.right), collector
 			collector
@@ -327,7 +328,7 @@ module ArelExtensions
 
 		remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil 
 		def visit_Arel_Nodes_LessThanOrEqual o, collector
-					collector = visit get_time_converted(o.left), collector
+			collector = visit get_time_converted(o.left), collector
 			collector << " <= "		
 			collector = visit get_time_converted(o.right), collector
 			collector
@@ -335,7 +336,7 @@ module ArelExtensions
 		
 		remove_method(:visit_Arel_Nodes_LessThan) rescue nil 
 		def visit_Arel_Nodes_LessThan o, collector
-					collector = visit get_time_converted(o.left), collector
+			collector = visit get_time_converted(o.left), collector
 			collector << " < "		
 			collector = visit get_time_converted(o.right), collector
 			collector
@@ -351,6 +352,17 @@ module ArelExtensions
 			old_visit_Arel_Nodes_SelectStatement(o,collector)
 		end	
 
+		def visit_ArelExtensions_Nodes_FormattedNumber o, collector	
+		
+			format = Arel::Nodes::NamedFunction.new('printf',[Arel::Nodes.build_quoted(o.original_string),o.left])					
+			locale_map = Arel::Visitors::SQLite::NUMBER_COMMA_MAPPING[o.locale]
+			if locale_map
+				format = format.replace(',',locale_map[',']).replace('.',locale_map['.'])
+			end
+			visit format, collector
+			collector
+		end
+		
     end
   end
 end

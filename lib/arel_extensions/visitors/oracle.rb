@@ -9,7 +9,7 @@ module ArelExtensions
         '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM',                   # hours
         '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz'                                # seconds, subseconds
       }
-      Arel::Visitors::Oracle::NUMBER_COMMA_MAPPING = { 'en_EN' => '.,', 'fr_FR' => ', ' }
+      Arel::Visitors::Oracle::NUMBER_COMMA_MAPPING = { 'en_US' => '.,', 'fr_FR' => ', ' }
       
 	  def visit_ArelExtensions_Nodes_Log10 o, collector
         collector << "LOG("

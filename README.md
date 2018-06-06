@@ -192,7 +192,7 @@ User.connection.execute(insert_manager.to_sql)
   </thead>
   <tbody>
   <tr>
-    <th class="tg-82sq" rowspan="6"><div>Number functions</div></th>
+    <th class="tg-82sq" rowspan="7"><div>Number functions</div></th>
     <td class="tg-yw4l">ABS<br>column.abs<br></td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -245,6 +245,15 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">POSIX FORMATTING<br>column.format_number("$ %7.2f","en_US")</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ko">not implemented</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ko">not implemented</td>
   </tr>
   <tr>
     <th class="tg-ffjm" rowspan="17"><div>String functions</div></th>

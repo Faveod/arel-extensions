@@ -68,7 +68,8 @@ module ArelExtensions
 				:precision  => m[4] != '' ? m[4].to_i : 6,
 				:type       => m[5],
 				:suffix     => m[6],
-				:locale		=> locale
+				:locale		=> locale,
+				:original_string => format_string
 			}
 			# opts = {:locale => 'fr_FR', :type => "e"/"f"/"d", :prefix => "$ ", :suffix => " %", :flags => " +-#0", :width => 5, :precision => 6}
 			ArelExtensions::Nodes::FormattedNumber.new [self,opts]

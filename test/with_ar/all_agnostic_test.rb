@@ -499,8 +499,7 @@ module ArelExtensions
 	    assert_equal 4, User.find_by_sql(@ut.project(@score.when(20.16).then(1).else(0).as('score_bin')).to_sql).sum(&:score_bin)
 	  end
 	  
-	  def test_format_numbers
-		skip "Not yet implemented" if @env_db == 'sqlite' #|| @env_db == 'mssql' 
+	  def test_format_numbers 
 		#score of Arthur = 65.62
 		assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))
 		assert_equal "65,62AZERTY" , t(@arthur, @score.format_number("%.2fAZERTY","fr_FR"))
