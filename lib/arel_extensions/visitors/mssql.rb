@@ -231,11 +231,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        visit o.coaslesce('').left.trim.length.eq(0), collector
+        visit o.coalesce('').left.trim.length.eq(0), collector
       end
 
       def visit_ArelExtensions_Nodes_NotBlank o, collector
-        visit o.coaslesce('').left.trim.length.gt(0), collector
+        visit o.coalesce('').left.trim.length.gt(0), collector
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
