@@ -12,13 +12,13 @@ group :development, :test do
   gem "activerecord-jdbcmysql-adapter", :platforms => :jruby
   gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
 
-  gem "tiny_tds", '~> 1.3.0' ,:require => false, :platforms => [:mingw, :x64_mingw, :mswin]
-  gem "activerecord-sqlserver-adapter", :platforms => [:mingw, :x64_mingw, :mswin]
+  gem "tiny_tds", :require => false, :platforms => [:mingw, :x64_mingw, :mswin]
+  gem "activerecord-sqlserver-adapter", '~> 5.1.6', :platforms => [:mingw, :x64_mingw, :mswin]
   
   gem 'ruby-oci8', :platforms => [:mri, :mswin, :x64_mingw, :mingw] 
   gem 'activerecord-oracle_enhanced-adapter', '~> 1.6.0'
 
-  gem 'activesupport', '~> 4.0'
-  gem 'activemodel', '~> 4.0'
-  gem 'activerecord', '~> 4.0'
+  gem 'activesupport', '~> 5.1'
+  gem 'activemodel', '~> 5.1'
+  gem 'activerecord', '~> 5.1'
 end
