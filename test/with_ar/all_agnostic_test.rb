@@ -315,6 +315,7 @@ module ArelExtensions
         #assert_equal 0, @sophie.where(@comments.not_blank).count
         #assert_equal 1, @camille.where(@comments.blank).count
         #assert_equal 0, @camille.where(@comments.not_blank).count
+        
         assert_equal 0, @neg.where(@comments.blank).count
         assert_equal 1, @neg.where(@comments.not_blank).count
         assert_equal 'false', t(@myung, @name.blank.then('true', 'false'))
