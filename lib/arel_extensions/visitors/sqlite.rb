@@ -154,6 +154,12 @@ module ArelExtensions
         collector << ' IS NULL'
         collector
       end
+      
+	  def visit_ArelExtensions_Nodes_IsNotNull o, collector
+        collector = visit o.left, collector
+        collector << ' IS NOT NULL'
+        collector
+	  end
 
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "RANDOM("

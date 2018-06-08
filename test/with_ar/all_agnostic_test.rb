@@ -573,6 +573,50 @@ module ArelExtensions
 			#assert_equal 6, User.where(:name => User.select(:name).order(:name).offset(2)).count 
 		end
 	  end
+	  
+	  def test_in_with_nil
+		assert_equal true  , @myung.where(@age.in(1)).blank?		
+		assert_equal false , @myung.where(@age.in(23)).blank?
+		assert_equal true  , @myung.where(@age.in([1])).blank?
+		assert_equal true  , @myung.where(@age.in([1,2])).blank?
+		assert_equal false , @myung.where(@age.in([1,23])).blank?
+		assert_equal true  , @myung.where(@age.in(nil)).blank?
+		assert_equal true  , @myung.where(@age.in([nil])).blank?
+		assert_equal true  , @myung.where(@age.in([nil,1])).blank?
+		assert_equal false , @myung.where(@age.in([nil,23])).blank?
+		assert_equal true  , @myung.where(@age.in([nil,1,2])).blank?
+		assert_equal false , @myung.where(@age.in([nil,1,23])).blank?
+		assert_equal true  , @test.where(@age.in(1)).blank?
+		assert_equal true  , @test.where(@age.in([1])).blank?
+		assert_equal true  , @test.where(@age.in([1,2])).blank?
+		assert_equal false , @test.where(@age.in(nil)).blank?
+		assert_equal false , @test.where(@age.in([nil])).blank?
+		assert_equal false , @test.where(@age.in([nil,1])).blank?
+		assert_equal false , @test.where(@age.in([nil,1,2])).blank?
+	  end
+	  
+	  def test_not_in_with_nil
+		assert_equal false , @myung.where(@age.not_in(1)).blank?		
+		assert_equal true  , @myung.where(@age.not_in(23)).blank?
+		assert_equal false , @myung.where(@age.not_in([1])).blank?
+		assert_equal false , @myung.where(@age.not_in([1,2])).blank?
+		assert_equal true  , @myung.where(@age.not_in([1,23])).blank?
+		assert_equal false , @myung.where(@age.not_in(nil)).blank?
+		assert_equal false , @myung.where(@age.not_in([nil])).blank?
+		assert_equal false , @myung.where(@age.not_in([nil,1])).blank?
+		assert_equal true  , @myung.where(@age.not_in([nil,23])).blank?
+		assert_equal false , @myung.where(@age.not_in([nil,1,2])).blank?
+		assert_equal true  , @myung.where(@age.not_in([nil,1,23])).blank?
+		
+		#if the column is null, the entry will never be selected with not in (like every DBMS does)
+		#assert_equal false , @test.where(@age.not_in(1)).blank?
+		#assert_equal false , @test.where(@age.not_in([1])).blank?
+		#assert_equal false , @test.where(@age.not_in([1,2])).blank?
+		#assert_equal true  , @test.where(@age.not_in(nil)).blank?
+		#assert_equal true  , @test.where(@age.not_in([nil])).blank?
+		#assert_equal true  , @test.where(@age.not_in([nil,1])).blank?
+		#assert_equal true  , @test.where(@age.not_in([nil,1,2])).blank?
+	  end
 	 
     end
   end

@@ -366,6 +366,13 @@ module ArelExtensions
         collector << ")"
         collector
       end
+      
+	  def visit_ArelExtensions_Nodes_IsNotNull o, collector
+        collector << "NOT ISNULL("
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+	  end
 
       def visit_ArelExtensions_Nodes_Then o, collector
         collector << "CASE WHEN ("

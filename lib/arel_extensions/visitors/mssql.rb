@@ -56,6 +56,14 @@ module ArelExtensions
         collector << " IS NULL)"
         collector
       end
+      
+	  def visit_ArelExtensions_Nodes_IsNotNull o, collector
+        collector << "("
+        collector = visit o.left, collector
+#         collector << Arel::Visitors::MSSQL::COMMA
+        collector << " IS NOT NULL)"
+        collector
+	  end
 
       # Deprecated
       def visit_ArelExtensions_Nodes_ConcatOld o, collector

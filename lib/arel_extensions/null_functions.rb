@@ -8,6 +8,12 @@ module ArelExtensions
     def is_null
       ArelExtensions::Nodes::IsNull.new [self]
     end
+    
+    #ISNOTNULL function lets you return an alternative value when an expression is NOT NULL.
+    def is_not_null
+      ArelExtensions::Nodes::IsNotNull.new [self]
+    end
+    
     # returns the first non-null expr in the expression list. You must specify at least two expressions.
     #If all occurrences of expr evaluate to null, then the function returns null.
     def coalesce *args

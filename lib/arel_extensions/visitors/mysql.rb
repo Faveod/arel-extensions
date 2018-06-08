@@ -255,6 +255,17 @@ module ArelExtensions
         collector << ")"
         collector
       end
+      
+	  def visit_ArelExtensions_Nodes_IsNotNull o, collector
+        collector << "NOT ISNULL("
+        collector = visit o.left, collector
+        if o.right
+          collector << Arel::Visitors::MySQL::COMMA
+          collector = visit o.right, collector
+        end
+        collector << ")"
+        collector
+	  end
 
       def visit_ArelExtensions_Nodes_Wday o, collector
         collector << "(WEEKDAY("

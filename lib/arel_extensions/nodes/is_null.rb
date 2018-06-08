@@ -4,5 +4,10 @@ module ArelExtensions
     	RETURN_TYPE = :boolean
     	
     end
+    
+    class IsNotNull < Function
+    	RETURN_TYPE = :boolean
+    	
+    end    
   end
 end

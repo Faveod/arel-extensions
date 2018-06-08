@@ -302,7 +302,23 @@ module ArelExtensions
 			.must_be_like %{(CAST("users"."id" AS int) + 2)}
 	  end
 	  	  
+	  it "should be possible to to have nil element in the function NIL" do	 
+		compile(@table[:id].in(nil))
+			.must_be_like %{ISNULL("users"."id")}			
+		compile(@table[:id].in([nil]))
+			.must_be_like %{ISNULL("users"."id")}
+		compile(@table[:id].in([nil,1]))
+			.must_be_like %{(ISNULL("users"."id") OR "users"."id" = 1)}
+		compile(@table[:id].in([nil,1,2]))
+			.must_be_like %{(ISNULL("users"."id") OR "users"."id" IN (1, 2))}
+		compile(@table[:id].in(1))
+			.must_be_like %{"users"."id" IN (1)}
+		compile(@table[:id].in([1]))
+			.must_be_like %{"users"."id" IN (1)}
+		compile(@table[:id].in([1,2]))
+			.must_be_like %{"users"."id" IN (1, 2)}
 	  
+	  end
 	 	  
 	  puts "AREL VERSION : " + Arel::VERSION.to_s
     end
