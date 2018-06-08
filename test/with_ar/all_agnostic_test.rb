@@ -595,6 +595,11 @@ module ArelExtensions
 		assert_equal false , @test.where(@age.in([nil,1,2])).blank?
 	  end
 	  
+	  def test_is_not_null
+		assert_equal false , @myung.where(@age.is_not_null).blank?
+		assert_equal true  , @test.where(@age.is_not_null).blank?
+	  end
+	  
 	  def test_not_in_with_nil
 		assert_equal false , @myung.where(@age.not_in(1)).blank?		
 		assert_equal true  , @myung.where(@age.not_in(23)).blank?
