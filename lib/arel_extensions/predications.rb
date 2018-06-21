@@ -30,10 +30,10 @@ module ArelExtensions
 					when 1
 						res = self.is_null.or(self==other[0])
 					else
-						res = self.is_null.or(Arel::Nodes::In.new(self,other.map{|e| convert_to_node(e)}))
+						res = self.is_null.or(Arel::Nodes::In.new(self,quoted_array(other)))
 					end
 				else
-					res = Arel::Nodes::In.new(self,other.map{|e| convert_to_node(e)})
+					res = Arel::Nodes::In.new(self,quoted_array(other))
 				end
 			when nil
 				res = self.is_null
@@ -42,9 +42,9 @@ module ArelExtensions
 			when Range
 				res = self.between(other)
 			else
-				res = Arel::Nodes::In.new(self,convert_to_node(other))
+				res = Arel::Nodes::In.new(self,quoted_node(other))
 			end
-			res
+			res			 
 		end
 		
 		def not_in(other) #In should handle nil element in the Array
@@ -59,17 +59,17 @@ module ArelExtensions
 					when 1
 						res = self.is_not_null.and(self!=other[0])
 					else
-						res = self.is_not_null.and(Arel::Nodes::NotIn.new(self,other.map{|e| convert_to_node(e)}))
+						res = self.is_not_null.and(Arel::Nodes::NotIn.new(self,quoted_array(other)))
 					end
 				else
-					res = Arel::Nodes::NotIn.new(self,other.map{|e| convert_to_node(e)})
+					res = Arel::Nodes::NotIn.new(self,quoted_array(other))
 				end
 			when nil
 				res = self.is_not_null
 			when Arel::SelectManager
 				res = Arel::Nodes::NotIn.new(self, other.ast)
 			else
-				res = Arel::Nodes::NotIn.new(self,convert_to_node(other))
+				res = Arel::Nodes::NotIn.new(self,quoted_node(other))
 			end
 			res
 		end

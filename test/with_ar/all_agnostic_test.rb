@@ -595,6 +595,16 @@ module ArelExtensions
 		assert_equal false , @test.where(@age.in([nil,1,2])).blank?
 	  end
 	  
+	  def test_scope_with_in_plus_new
+		begin
+			@test.where(@age.in([1,2])).new		
+			@test.where(@age.not_in([1,2])).new
+			assert true
+		rescue
+			assert false
+		end
+	  end
+	  
 	  def test_is_not_null
 		assert_equal false , @myung.where(@age.is_not_null).blank?
 		assert_equal true  , @test.where(@age.is_not_null).blank?
