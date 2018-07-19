@@ -60,6 +60,13 @@ module ArelExtensions
     #function returns the time between two dates
     #function returns the substraction between two ints
     def -(other)
+	  if self.is_a?(Arel::Nodes::Grouping)
+		if self.expr.left.is_a?(Date) || self.expr.left.is_a?(DateTime) 
+		  return Arel::Nodes::Grouping.new(ArelExtensions::Nodes::DateSub.new [self, other])
+		else		
+		  return Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
+		end
+	  end
 	  return case self.return_type
 	  when :string, :text # ???
 		Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other)) # ??

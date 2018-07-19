@@ -302,7 +302,7 @@ module ArelExtensions
 			.must_be_like %{(CAST("users"."id" AS int) + 2)}
 	  end
 	  	  
-	  it "should be possible to to have nil element in the function NIL" do	 
+	  it "should be possible to have nil element in the function NIL" do	 
 		compile(@table[:id].in(nil))
 			.must_be_like %{ISNULL("users"."id")}			
 		compile(@table[:id].in([nil]))
@@ -319,6 +319,19 @@ module ArelExtensions
 			.must_be_like %{"users"."id" IN (1, 2)}
 	  
 	  end
+	  
+	  it "should be possible to add and substract as much as we want" do
+		c = @table[:name]
+		compile(c.locate('test')+1)
+			.must_be_like %{(LOCATE('test', "users"."name") + 1)}
+		compile(c.locate('test')-1)
+			.must_be_like %{(LOCATE('test', "users"."name") - 1)}
+		compile(c.locate('test')+c.locate('test'))
+			.must_be_like %{(LOCATE('test', "users"."name") + LOCATE('test', "users"."name"))}
+		compile(c.locate('test')+1+c.locate('test')-1 + 1)
+			.must_be_like %{((((LOCATE('test', "users"."name") + 1) + LOCATE('test', "users"."name")) - 1) + 1)}
+	  end
+	  
 	 	  
 	  puts "AREL VERSION : " + Arel::VERSION.to_s
     end
