@@ -4,7 +4,8 @@ module ArelExtensions
   module Nodes
     class Function < Arel::Nodes::Function    
       include Arel::Math
-      include Arel::Expressions
+      include Arel::Expressions      
+      include Arel::OrderPredications
 	  include ArelExtensions::Predications	
 	  
 	  RETURN_TYPE = :string # by default...

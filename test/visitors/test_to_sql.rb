@@ -332,6 +332,17 @@ module ArelExtensions
 			.must_be_like %{((((LOCATE('test', "users"."name") + 1) + LOCATE('test', "users"."name")) - 1) + 1)}
 	  end
 	  
+	  it "should be possible to desc and asc on functions" do
+		c = @table[:name]
+		compile(c.asc)
+			.must_be_like %{"users"."name" ASC}
+		compile(c.substring(2).asc)
+			.must_be_like %{SUBSTRING("users"."name", 2) ASC}			
+		compile(c.substring(2).desc)
+			.must_be_like %{SUBSTRING("users"."name", 2) DESC}
+		compile((c.locate('test')+1).asc)
+			.must_be_like %{(LOCATE('test', "users"."name") + 1) ASC}
+	  end
 	 	  
 	  puts "AREL VERSION : " + Arel::VERSION.to_s
     end

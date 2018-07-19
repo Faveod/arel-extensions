@@ -21,6 +21,7 @@ end
 Arel::Nodes::Grouping.class_eval do
   include Arel::Math
   include Arel::AliasPredication
+  include Arel::OrderPredications
   include Arel::Expressions
 end
 

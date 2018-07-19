@@ -3,6 +3,7 @@ module ArelExtensions
 		if Arel::VERSION.to_i < 7 
 			class Case < Arel::Nodes::Node
 				include Arel::Expressions
+				include Arel::OrderPredications
 				include ArelExtensions::Comparators
 				include ArelExtensions::Predications
 
