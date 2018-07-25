@@ -281,7 +281,7 @@ module ArelExtensions
 
 	  def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
 			col = o.left
-			comma = Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale] || '.'			
+			comma = o.precision == 0 ? '' : (Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale] || '.')			
 			nines_after = (1..o.precision).map{'9'}.join('')
 			nines_before = (1..16).map{'9'}.join('')
 			sign = ArelExtensions::Nodes::Case.new.when(col<0).

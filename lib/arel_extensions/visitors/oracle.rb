@@ -514,7 +514,8 @@ module ArelExtensions
 
 	def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
 		col = o.left
-		comma = Arel::Visitors::Oracle::NUMBER_COMMA_MAPPING[o.locale] || '.,'	
+		comma = Arel::Visitors::Oracle::NUMBER_COMMA_MAPPING[o.locale] || '.,'
+		comma_in_format = o.precision == 0 ? '' : 'D'
 		options = Arel::Nodes.build_quoted("NLS_NUMERIC_CHARACTERS = '"+comma+"'")		
 		nines_after = (1..o.precision).map{'9'}.join('')
 		nines_before = (1..16).map{'9'}.join('')
@@ -528,7 +529,7 @@ module ArelExtensions
 		if o.scientific_notation 
 			number = Arel::Nodes::NamedFunction.new('TO_CHAR',[
 						Arel::Nodes.build_quoted(col.abs),
-						Arel::Nodes.build_quoted('FM'+nines_before+'D'+nines_after+'EEEE'),
+						Arel::Nodes.build_quoted('FM'+nines_before+comma_in_format+nines_after+'EEEE'),
 						options								
 					])	
 			if o.type == 'e'
@@ -537,7 +538,7 @@ module ArelExtensions
 		else			
 			number = Arel::Nodes::NamedFunction.new('TO_CHAR',[
 						Arel::Nodes.build_quoted(col.abs),
-						Arel::Nodes.build_quoted('FM'+nines_before+'D'+nines_after),
+						Arel::Nodes.build_quoted('FM'+nines_before+comma_in_format+nines_after),
 						options
 					])				
 		end
