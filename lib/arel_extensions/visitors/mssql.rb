@@ -65,29 +65,6 @@ module ArelExtensions
         collector
 	  end
 
-      # Deprecated
-      def visit_ArelExtensions_Nodes_ConcatOld o, collector
-        arg = o.left.relation.engine.columns.find{|c| c.name == o.left.name.to_s}.type
-        if(o.right.is_a?(Arel::Attributes::Attribute))
-          collector = visit o.left, collector
-          collector << ' + '
-          collector = visit o.right, collector
-          collector
-        elsif ( arg == :date || arg == :datetime)
-          collector << "DATEADD(day"
-          collector << Arel::Visitors::MSSQL::COMMA
-          collector = visit o.right, collector
-          collector << Arel::Visitors::MSSQL::COMMA
-          collector = visit o.left, collector
-          collector
-        else
-          collector = visit o.left, collector
-          collector << " + '"
-          collector = visit o.right, collector
-          collector
-        end
-      end
-
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
         o.expressions.each_with_index { |arg, i|
