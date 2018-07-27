@@ -63,7 +63,7 @@ module ArelExtensions
       it "should accept functions on strings" do
         c = @table[:name]
         compile(c + 'test').must_be_like %{CONCAT(\"users\".\"name\", 'test')}
-        compile(c + 'test' + ' chain').must_be_like %{CONCAT(CONCAT(\"users\".\"name\", 'test'), ' chain')}
+        compile(c + 'test' + ' chain').must_be_like %{CONCAT(\"users\".\"name\", 'test', ' chain')}
         compile(c.length).must_be_like %{LENGTH("users"."name")}
         #puts (c.length.round + 42).inspect
         compile(c.length.round + 42).must_be_like %{(ROUND(LENGTH("users"."name")) + 42)}
@@ -82,6 +82,8 @@ module ArelExtensions
         compile(c + '0').must_be_like %{CONCAT("users"."name", '0')}
         compile(c.substring(1) + '0').must_be_like %{CONCAT(SUBSTRING("users"."name", 1), '0')}
         compile(c.substring(1) + c.substring(2)).must_be_like %{CONCAT(SUBSTRING("users"."name", 1), SUBSTRING("users"."name", 2))}
+        compile(c.concat(c).concat(c)).must_be_like %{CONCAT("users"."name", "users"."name", "users"."name")}
+        compile(c + c + c).must_be_like %{CONCAT("users"."name", "users"."name", "users"."name")}
       end
 
       # Comparators

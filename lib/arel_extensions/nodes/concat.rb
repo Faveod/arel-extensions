@@ -5,8 +5,13 @@ module ArelExtensions
       
       def initialize expr
         tab = expr.map { |arg|
-          convert_to_node(arg)
-        }
+          node = convert_to_node(arg)
+          if node.is_a?(Concat)
+			node.expressions
+          else
+			node
+          end
+        }.flatten
         return super(tab)
       end
 
