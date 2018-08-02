@@ -511,6 +511,14 @@ module ArelExtensions
 		end
 		old_visit_Arel_Nodes_SelectStatement(o,collector)
 	end	
+	
+	alias_method :old_visit_Arel_Nodes_TableAlias, :visit_Arel_Nodes_TableAlias  
+	def visit_Arel_Nodes_TableAlias o, collector
+		if o.name.length > 63
+			o = Arel::Table.new(o.table_name).alias(Base64.urlsafe_encode64(Digest::MD5.new.digest(o.name)).tr('=', '').tr('-', '_'))
+		end
+		old_visit_Arel_Nodes_TableAlias(o,collector)		
+	end
 
 	def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
 		col = o.left
@@ -565,6 +573,8 @@ module ArelExtensions
 		collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
 		collector		
 	end
+
+
 
 
     end

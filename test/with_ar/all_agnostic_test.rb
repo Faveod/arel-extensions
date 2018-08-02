@@ -564,6 +564,12 @@ module ArelExtensions
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arretez")).then("1").else("0"))		  
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrete")).then("1").else("0"))
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrêté")).then("1").else("0"))  
+		
+		assert_equal "0", t(
+			@arthur,ArelExtensions::Nodes::Case.new.when(
+				@comments.ai_collate.matches(@comments.collate)
+			).then("1").else("0")
+		)  	
 	  end
 	  
 	  def test_subquery_with_order	  
@@ -632,6 +638,14 @@ module ArelExtensions
 		#assert_equal true  , @test.where(@age.not_in([nil])).blank?
 		#assert_equal true  , @test.where(@age.not_in([nil,1])).blank?
 		#assert_equal true  , @test.where(@age.not_in([nil,1,2])).blank?
+	  end
+	 
+	  def test_alias_shortened
+		if ['postgresql','oracle'].include?(@env_db)
+			new_alias = Base64.urlsafe_encode64(Digest::MD5.new.digest('azerty' * 15)).tr('=', '').tr('-', '_')
+			assert_equal "\"user_tests\" \"#{new_alias}\"".downcase, User.arel_table.alias('azerty' * 15).to_sql.downcase
+			assert_equal '"user_tests" "u"'.downcase, User.arel_table.alias('u').to_sql.downcase
+		end
 	  end
 	 
     end
