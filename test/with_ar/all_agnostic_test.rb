@@ -564,12 +564,7 @@ module ArelExtensions
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arretez")).then("1").else("0"))		  
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrete")).then("1").else("0"))
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrêté")).then("1").else("0"))  
-		
-		assert_equal "0", t(
-			@arthur,ArelExtensions::Nodes::Case.new.when(
-				@comments.ai_collate.matches(@comments.collate)
-			).then("1").else("0")
-		)  	
+		 	
 	  end
 	  
 	  def test_subquery_with_order	  
