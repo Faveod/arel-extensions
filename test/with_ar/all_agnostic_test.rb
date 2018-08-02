@@ -642,9 +642,12 @@ module ArelExtensions
 	 
 	  def test_alias_shortened
 		if ['postgresql','oracle'].include?(@env_db)
-			new_alias = Base64.urlsafe_encode64(Digest::MD5.new.digest('azerty' * 15)).tr('=', '').tr('-', '_')
+			new_alias = Arel.shorten('azerty' * 15)
+			at = User.arel_table.alias('azerty' * 15)
 			assert_equal "\"user_tests\" \"#{new_alias}\"".downcase, User.arel_table.alias('azerty' * 15).to_sql.downcase
 			assert_equal '"user_tests" "u"'.downcase, User.arel_table.alias('u').to_sql.downcase
+			assert_equal  %Q[SELECT "#{new_alias}"."id" FROM "user_tests" "#{new_alias}"].downcase,
+						User.select(at[:id]).from(at).to_sql.downcase
 		end
 	  end
 	 
