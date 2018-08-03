@@ -1,44 +1,42 @@
-module ArelExtensions
-  module Nodes
-    class Concat < Function
-      RETURN_TYPE = :string
-      
-      def initialize expr
-        tab = expr.map { |arg|
-          node = convert_to_node(arg)
-          if node.is_a?(Concat)
-            node.expressions
-          else
-            node
-          end
-        }.flatten
-        return super(tab)
-      end
+module ArelExtensions::Nodes
+  class Concat < Function
+    RETURN_TYPE = :string
 
-      #def +(other)
-      #  return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
-      #end
-      
-      def concat(other)
-        return ArelExtensions::Nodes::Concat.new(self.expressions + [other]) 
-      end
-
+    def initialize expr
+      tab = expr.map { |arg|
+        node = convert_to_node(arg)
+        if node.is_a?(Concat)
+          node.expressions
+        else
+          node
+        end
+      }.flatten
+      super(tab)
     end
 
-    class GroupConcat < Function
-      RETURN_TYPE = :string
+    #def +(other)
+    #  Concat.new(self.expressions + [other])
+    #end
 
-      def initialize expr
-        tab = expr.map { |arg|
-          convert_to_node(arg)
-        }
-        return super(tab)
-      end
-
-      #def +(other)
-      #  return ArelExtensions::Nodes::Concat.new([self, other]) 
-      #end
-
+    def concat(other)
+      Concat.new(self.expressions + [other])
     end
+
+  end
+
+  class GroupConcat < Function
+    RETURN_TYPE = :string
+
+    def initialize expr
+      tab = expr.map { |arg|
+        convert_to_node(arg)
+      }
+      super(tab)
+    end
+
+    #def +(other)
+    #  return Concat.new([self, other])
+    #end
+
   end
 end
