@@ -419,7 +419,7 @@ module ArelExtensions
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
 		collector << "("
         o.left.each_with_index do |row, idx|
-		  collector << " UNION ALL" if idx != 0
+		  collector << " UNION ALL " if idx != 0
           collector << "(SELECT "
           v = Arel::Nodes::Values.new(row, o.cols)
           len = v.expressions.length - 1
