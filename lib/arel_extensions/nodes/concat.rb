@@ -7,9 +7,9 @@ module ArelExtensions
         tab = expr.map { |arg|
           node = convert_to_node(arg)
           if node.is_a?(Concat)
-			node.expressions
+            node.expressions
           else
-			node
+            node
           end
         }.flatten
         return super(tab)
@@ -40,6 +40,5 @@ module ArelExtensions
       #end
 
     end
-
   end
 end
