@@ -108,7 +108,12 @@ module ArelExtensions
     end
     
     def concat other
-      ArelExtensions::Nodes::Concat.new [self, other]
+      res = ArelExtensions::Nodes::Concat.new [self, other]
+      if res.expressions.length == 1
+		res.expressions.first
+	  else
+		res
+      end
     end
 
     def group_concat sep = nil

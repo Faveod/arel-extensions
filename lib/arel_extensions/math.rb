@@ -18,7 +18,7 @@ module ArelExtensions
 	  return ArelExtensions::Nodes::Concat.new [self, other] if self.is_a?(Arel::Nodes::Quoted)	  
 	  if self.is_a?(Arel::Nodes::Grouping)
 		if self.expr.left.is_a?(String) || self.expr.right.is_a?(String) 
-		  return ArelExtensions::Nodes::Concat.new [self, other]
+		  return self.concat(other)
 		else		
 		  return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
 		end
@@ -26,13 +26,13 @@ module ArelExtensions
 	  if self.is_a?(ArelExtensions::Nodes::Function)		  
 		  return case self.return_type
 		  when :string, :text			
-			ArelExtensions::Nodes::Concat.new [self, other]
+			self.concat(other)
 		  when :integer, :decimal, :float, :number, :int
 			Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
 		  when :date, :datetime
 			ArelExtensions::Nodes::DateAdd.new [self, other]
 		  else
-			ArelExtensions::Nodes::Concat.new [self, other]
+			self.concat(other)
 		  end 
 	  end
 	  if self.is_a?(Arel::Nodes::Function)
@@ -52,7 +52,7 @@ module ArelExtensions
 		elsif arg == :datetime || arg == :date
 		  ArelExtensions::Nodes::DateAdd.new [self, other]
 		elsif arg == :string || arg == :text
-		  ArelExtensions::Nodes::Concat.new [self, other]
+		  self.concat(other)
 		end        
 	  end
     end
