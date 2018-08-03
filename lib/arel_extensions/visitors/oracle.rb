@@ -394,21 +394,10 @@ module ArelExtensions
       # add primary_key if not present, avoid zip
     if Arel::VERSION.to_i < 7
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
-        raise ArgumentError, "missing columns" if o.cols.empty?
-        table = collector.value.sub(/\AINSERT INTO/, '')
-        into = " INTO#{table}"
-        collector = Arel::Collectors::SQLString.new
-        collector << "INSERT ALL\n"
-        pk_name = @connection.primary_key(o.cols.first.relation.name)
-        if pk_name
-          pk_missing = !o.cols.detect{|c| c.name == pk_name }
-          into.sub!(/\(/, %Q[("#{pk_name.upcase}", ]) if pk_missing
-        else
-          pk_missing = false
-        end
+		collector << "("
         o.left.each_with_index do |row, idx| # values
-          collector << "#{into} VALUES ("
-          collector << "NULL, " if pk_missing # expects to have a trigger to set the value before insert
+		  collector << " UNION ALL " if idx != 0
+          collector << "(SELECT "
           v = Arel::Nodes::Values.new(row, o.cols)
           len = v.expressions.length - 1
           v.expressions.each_with_index { |value, i|
@@ -421,19 +410,17 @@ module ArelExtensions
               end
               collector << Arel::Visitors::Oracle::COMMA unless i == len
           }
-          collector << ')'
+          collector << ' FROM DUAL)'
         end
-        collector << ' SELECT 1 FROM dual'
+        collector << ")"
         collector
       end
     else
       def visit_ArelExtensions_InsertManager_BulkValues o, collector
-        table = collector.value.sub(/\AINSERT INTO/, '')
-        into = " INTO#{table}"
-        collector = Arel::Collectors::SQLString.new
-        collector << "INSERT ALL\n"
+		collector << "("
         o.left.each_with_index do |row, idx|
-          collector << "#{into} VALUES ("
+		  collector << " UNION ALL" if idx != 0
+          collector << " (SELECT "
           v = Arel::Nodes::Values.new(row, o.cols)
           len = v.expressions.length - 1
           v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
@@ -445,9 +432,9 @@ module ArelExtensions
               end
               collector << Arel::Visitors::Oracle::COMMA unless i == len
           }
-          collector << ')'
+          collector << ' FROM DUAL)'
         end
-        collector << ' SELECT 1 FROM dual'
+        collector << ")"
         collector
       end
     end

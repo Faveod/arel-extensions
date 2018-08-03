@@ -12,7 +12,7 @@ before_install:
   - sudo apt-get install -y sqlite3-pcre curl
   - .travis/sqlite3/extension-functions.sh
   - .travis/oracle/download.sh
-  - .travis/oracle/install.sh
+  - sh -ex .travis/oracle/install.sh
   - .travis/setup_accounts.sh
 install:
   - gem install bundler
