@@ -4,13 +4,22 @@ module ArelExtensions::Nodes
 
     def initialize expr
       tab = expr.map { |arg|
+        # flatten nested concats.
         node = convert_to_node(arg)
         if node.is_a?(Concat)
           node.expressions
         else
           node
         end
-      }.flatten
+      }.flatten.reduce([]) { | res, b |
+        # concatenate successive literal strings.
+        if res.last && res.last.is_a?(Arel::Nodes::Quoted) && b.is_a?(Arel::Nodes::Quoted)
+          res[-1] = quotedArel::Nodes.build_quoted(res.last.expr + b.expr)
+        else
+          res << b
+        end
+        res
+      }
       super(tab)
     end
 
