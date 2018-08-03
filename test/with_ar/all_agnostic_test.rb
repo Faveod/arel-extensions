@@ -507,6 +507,8 @@ module ArelExtensions
 	  def test_format_numbers 
 		#score of Arthur = 65.62
 		skip " Works with SQLite if the version used knows printf" if @env_db = $sqlite
+			
+		assert_equal "Wrong Format" , t(@arthur, @score.format_number("$ %...234.6F €","fr_FR"))
 		assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))
 		assert_equal "65,62AZERTY" , t(@arthur, @score.format_number("%.2fAZERTY","fr_FR"))
 		assert_equal "$ 65.62 €" , t(@arthur, @score.format_number("$ %.2f €","en_US"))
@@ -520,8 +522,7 @@ module ArelExtensions
 		assert_equal "$ +065,62 €" , t(@arthur, @score.format_number("$ %0+7.2f €","fr_FR"))
 		assert_includes ["$ 6,56e1 €","$ 6,56e+01 €"], t(@arthur, @score.format_number("$ %.2e €","fr_FR"))			
 		assert_includes ["$ 6,56E1 €","$ 6,56E+01 €"], t(@arthur, @score.format_number("$ %.2E €","fr_FR"))			
-		assert_includes ["$ 6,562E1 €","$ 6,562E+01 €"], t(@arthur, @score.format_number("$ %.3E €","fr_FR"))	
-		assert_equal "Wrong Format" , t(@arthur, @score.format_number("$ %...234.6F €","fr_FR"))
+		assert_includes ["$ 6,562E1 €","$ 6,562E+01 €"], t(@arthur, @score.format_number("$ %.3E €","fr_FR"))
 	  end
 	  
 	  def test_accent_insensitive

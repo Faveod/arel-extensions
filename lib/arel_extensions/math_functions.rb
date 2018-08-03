@@ -59,7 +59,7 @@ module ArelExtensions
     # function returning a number at a specific format
 	def format_number format_string, locale=nil
 		begin
-			sprintf(format_string,0) # this line is to get the right error message if the format_string is not correct
+			sprintf(format_string,0) # this line is to get the right error message if the format_string is not correct			
 			m = /^(.*)%([ #+\-0]*)([1-9][0-9]+|[1-9]?)[.]?([0-9]*)([a-zA-Z])(.*)$/.match(format_string)		
 			opts = {
 				:prefix     => m[1],
@@ -73,7 +73,7 @@ module ArelExtensions
 			}
 			# opts = {:locale => 'fr_FR', :type => "e"/"f"/"d", :prefix => "$ ", :suffix => " %", :flags => " +-#0", :width => 5, :precision => 6}
 			ArelExtensions::Nodes::FormattedNumber.new [self,opts]
-		rescue
+		rescue Exception => e
 			Arel::Nodes.build_quoted('Wrong Format')
 		end
 	end	

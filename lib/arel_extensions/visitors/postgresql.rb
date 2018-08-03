@@ -279,7 +279,7 @@ module ArelExtensions
         collector
 	  end
 
-	  def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
+	  def visit_ArelExtensions_Nodes_FormattedNumber o, collector	
 			col = o.left
 			comma = o.precision == 0 ? '' : (Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale] || '.')			
 			nines_after = (1..o.precision).map{'9'}.join('')
@@ -327,8 +327,8 @@ module ArelExtensions
 					after
 				])
 			)				
-			collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
-			collector		
+			collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector
+			collector
 	  end
 
 

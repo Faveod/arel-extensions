@@ -12,6 +12,10 @@ Arel::Nodes::Binary.class_eval do
   include Arel::Expressions
 end
 
+Arel::Nodes::Casted.class_eval do
+  include Arel::AliasPredication
+end
+
 Arel::Nodes::Unary.class_eval do
   include Arel::Math
   include Arel::AliasPredication

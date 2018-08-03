@@ -15,15 +15,16 @@ module ArelExtensions
     #String and others (convert in string)  allows you to concatenate 2 or more strings together.
     #Date and integer adds or subtracts a specified time interval from a date.
     def +(other)
-	  return ArelExtensions::Nodes::Concat.new [self, other] if self.is_a?(Arel::Nodes::Quoted)	  
-	  if self.is_a?(Arel::Nodes::Grouping)
+	  case self
+	  when Arel::Nodes::Quoted
+		return self.concat(other)  
+	  when Arel::Nodes::Grouping
 		if self.expr.left.is_a?(String) || self.expr.right.is_a?(String) 
 		  return self.concat(other)
 		else		
 		  return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
 		end
-	  end	  
-	  if self.is_a?(ArelExtensions::Nodes::Function)		  
+	  when ArelExtensions::Nodes::Function
 		  return case self.return_type
 		  when :string, :text			
 			self.concat(other)
@@ -34,26 +35,26 @@ module ArelExtensions
 		  else
 			self.concat(other)
 		  end 
-	  end
-	  if self.is_a?(Arel::Nodes::Function)
+	  when Arel::Nodes::Function
 		return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
-	  end
-	  col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
-	  if (!col) #if the column doesn't exist in the database
-		Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new(self, other))
 	  else
-		arg = col.type
-		if arg == :integer || (!arg)
-		  other = other.to_i if other.is_a?(String)
-		  Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
-		elsif arg == :decimal || arg == :float
-		  other = Arel.sql(other) if other.is_a?(String) # Arel should accept Float & BigDecimal!
-		  Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
-		elsif arg == :datetime || arg == :date
-		  ArelExtensions::Nodes::DateAdd.new [self, other]
-		elsif arg == :string || arg == :text
-		  self.concat(other)
-		end        
+		  col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
+		  if (!col) #if the column doesn't exist in the database
+			Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new(self, other))
+		  else
+			arg = col.type
+			if arg == :integer || (!arg)
+			  other = other.to_i if other.is_a?(String)
+			  Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
+			elsif arg == :decimal || arg == :float
+			  other = Arel.sql(other) if other.is_a?(String) # Arel should accept Float & BigDecimal!
+			  Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
+			elsif arg == :datetime || arg == :date
+			  ArelExtensions::Nodes::DateAdd.new [self, other]
+			elsif arg == :string || arg == :text
+			  self.concat(other)
+			end  
+		  end
 	  end
     end
 

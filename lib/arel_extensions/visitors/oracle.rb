@@ -442,18 +442,17 @@ module ArelExtensions
 
 	def get_time_converted element
 		if element.is_a?(Time)
-			res = ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
+			ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
 		elsif element.is_a?(Arel::Attributes::Attribute)
 			col = Arel::Table.engine.connection.schema_cache.columns_hash(element.relation.table_name)[element.name.to_s]
 			if col && (col.type == :time)
-				res = ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
+				ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
 			else
-				res = element
+				element
 			end
 		else
-			res = element
+			element
 		end
-		return res
 	end
 	
 	

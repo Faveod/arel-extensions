@@ -13,8 +13,10 @@ module ArelExtensions::Nodes
         end
       }.flatten.reduce([]) { | res, b |
         # concatenate successive literal strings.
-        if res.last && res.last.is_a?(Arel::Nodes::Quoted) && b.is_a?(Arel::Nodes::Quoted)
-          res[-1] = quotedArel::Nodes.build_quoted(res.last.expr + b.expr)
+        if b.is_a?(Arel::Nodes::Quoted) && b.expr == ""
+			res
+        elsif res.last && res.last.is_a?(Arel::Nodes::Quoted) && b.is_a?(Arel::Nodes::Quoted)
+          res[-1] = Arel::Nodes.build_quoted(res.last.expr + b.expr)
         else
           res << b
         end
