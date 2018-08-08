@@ -72,6 +72,11 @@ With Arel Extensions:
 ```
 
 Other functions : ABS, RAND, ROUND, FLOOR, CEIL, FORMAT
+Exemples :
+```ruby 
+t[:price].format_number("%07.2f €","fr_FR")
+# equivalent to 'sprintf("%07.2f €",price)' plus locale management 
+```
 
 ## String operations
 
