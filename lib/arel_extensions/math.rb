@@ -24,7 +24,7 @@ module ArelExtensions
 		else		
 		  return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
 		end
-	  when  Arel::Nodes::Function, ArelExtensions::Nodes::Function
+	  when  ArelExtensions::Nodes::Function
 		  return case self.return_type
 		  when :string, :text			
 			self.concat(other)
@@ -35,6 +35,8 @@ module ArelExtensions
 		  else
 			self.concat(other)
 		  end 
+	  when  Arel::Nodes::Function
+		Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
 	  else
 		  col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
 		  if (!col) #if the column doesn't exist in the database
@@ -66,7 +68,7 @@ module ArelExtensions
 		else		
 		  Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
 		end
-	  when Arel::Nodes::Function, ArelExtensions::Nodes::Function
+	  when ArelExtensions::Nodes::Function
 		  case self.return_type
 		  when :string, :text # ???
 			Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other)) # ??
@@ -77,6 +79,8 @@ module ArelExtensions
 		  else
 			Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
 		  end 
+	  when Arel::Nodes::Function
+		Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
 	  else
 		col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
 		if (!col) #if the column doesn't exist in the database
