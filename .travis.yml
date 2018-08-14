@@ -64,6 +64,10 @@ jdk:
 - openjdk7
 - oraclejdk8
 - oraclejdk9
+- openjdk10
+- oraclejdk10
+- openjdk11
+- oraclejdk11
 matrix:
   fast_finish: true
   exclude:
@@ -99,6 +103,70 @@ matrix:
     jdk: oraclejdk8
   - rvm: ruby-head
     jdk: oraclejdk8
+  - rvm: rbx-2
+    jdk: oraclejdk10
+  - rvm: 2.0.0
+    jdk: oraclejdk10
+  - rvm: 2.1
+    jdk: oraclejdk10
+  - rvm: 2.2.5
+    jdk: oraclejdk10
+  - rvm: 2.3.1
+    jdk: oraclejdk10
+  - rvm: 2.4.0
+    jdk: oraclejdk10
+  - rvm: 2.5.0
+    jdk: oraclejdk10
+  - rvm: ruby-head
+    jdk: oraclejdk10
+  - rvm: rbx-2
+    jdk: openjdk10
+  - rvm: 2.0.0
+    jdk: openjdk10
+  - rvm: 2.1
+    jdk: openjdk10
+  - rvm: 2.2.5
+    jdk: openjdk10
+  - rvm: 2.3.1
+    jdk: openjdk10
+  - rvm: 2.4.0
+    jdk: openjdk10
+  - rvm: 2.5.0
+    jdk: openjdk10
+  - rvm: ruby-head
+    jdk: openjdk10
+  - rvm: rbx-2
+    jdk: oraclejdk11
+  - rvm: 2.0.0
+    jdk: oraclejdk11
+  - rvm: 2.1
+    jdk: oraclejdk11
+  - rvm: 2.2.5
+    jdk: oraclejdk11
+  - rvm: 2.3.1
+    jdk: oraclejdk11
+  - rvm: 2.4.0
+    jdk: oraclejdk11
+  - rvm: 2.5.0
+    jdk: oraclejdk11
+  - rvm: ruby-head
+    jdk: oraclejdk11    
+  - rvm: rbx-2
+    jdk: openjdk11
+  - rvm: 2.0.0
+    jdk: openjdk11
+  - rvm: 2.1
+    jdk: openjdk11
+  - rvm: 2.2.5
+    jdk: openjdk11
+  - rvm: 2.3.1
+    jdk: openjdk11
+  - rvm: 2.4.0
+    jdk: openjdk11
+  - rvm: 2.5.0
+    jdk: openjdk11
+  - rvm: ruby-head
+    jdk: openjdk11   
   - rvm: jruby-9.2.0.0
     jdk: openjdk7
   - rvm: jruby-head
@@ -148,6 +216,10 @@ matrix:
   - rvm: jruby-9.2.0.0
     jdk: oraclejdk9
     gemfile: gemfiles/rails5_2.gemfile
+  - jdk: openjdk10
+  - jdk: oraclejdk10
+  - jdk: openjdk11
+  - jdk: oraclejdk11
 bundler_args: "--jobs 3 --retry 2"
 notifications:
   email: 
