@@ -99,6 +99,8 @@ matrix:
     jdk: oraclejdk8
   - rvm: ruby-head
     jdk: oraclejdk8
+  - rvm: jruby-9.2.0.0
+    jdk: openjdk7
   - rvm: jruby-head
     jdk: openjdk7
   - rvm: 2.0.0
