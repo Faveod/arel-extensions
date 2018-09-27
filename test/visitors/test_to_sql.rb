@@ -57,6 +57,19 @@ module ArelExtensions
         compile((@price + 42).average).must_be_like %{AVG(("products"."price" + 42))}
         compile((Arel.rand * 9).round + 42).must_be_like %{(ROUND(RAND() * 9) + 42)}        
         compile((Arel.rand * @price).round(2) + @price).must_be_like %{(ROUND(RAND() * "products"."price", 2) + "products"."price")}        
+        
+        compile(@price.std + 42).must_be_like %{(STD("products"."price") + 42)}
+        compile(@price.variance + 42).must_be_like %{(VARIANCE("products"."price") + 42)}
+        
+        compile(@price.coalesce(0) - 42).must_be_like %{(COALESCE("products"."price", 0) - 42)}
+        compile(@price.sum - 42).must_be_like %{(SUM("products"."price") - 42)}
+        compile(@price.std - 42).must_be_like %{(STD("products"."price") - 42)}
+        compile(@price.variance - 42).must_be_like %{(VARIANCE("products"."price") - 42)}
+        
+        fake_table = Arel::Table.new('fake_tables')
+        
+        compile(fake_table[:fake_att] - 42).must_be_like %{("fake_tables"."fake_att" - 42)}        
+        compile(fake_table[:fake_att].coalesce(0) - 42).must_be_like %{(COALESCE("fake_tables"."fake_att", 0) - 42)}
       end
 
       # String Functions

@@ -369,6 +369,7 @@ module ArelExtensions
 			collector
 		end
 		
+			
     end
   end
 end

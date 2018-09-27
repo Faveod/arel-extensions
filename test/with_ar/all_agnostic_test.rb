@@ -89,7 +89,7 @@ module ArelExtensions
       end
 
       def t(scope, node)
-        scope.select(node.as('res')).first.res
+        scope.select(node.as('res')).to_a.first.res
       end
 
       # Math Functions
@@ -646,7 +646,21 @@ module ArelExtensions
 						User.select(at[:id]).from(at).to_sql.downcase
 		end
 	  end
-	 
+	  
+	  def test_stat_functions	
+	  	skip "SQLite doesn't work for most on this functions" if $sqlite 
+	  	#puts t(User.where(nil), @score.average)
+	  	#puts t(User.where(nil), @score.variance(true))
+	  	#puts t(User.where(nil), @score.variance(false))
+	  	#puts t(User.where(nil), @score.std(true))
+	  	#puts t(User.where(nil), @score.std(false))
+	  	
+		assert ( 15.98625 - t(User.where(nil), @score.average)).abs < 0.01 
+		assert (613.75488 - t(User.where(nil), @score.variance)).abs < 0.01
+		assert ( 537.0355 - t(User.where(nil), @score.variance(false))).abs < 0.01
+		assert ( 24.77408 - t(User.where(nil), @score.std)).abs < 0.01		
+		assert ( 23.17403 - t(User.where(nil), @score.std(false))).abs < 0.01	  
+	  end
     end
   end
 end

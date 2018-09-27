@@ -358,6 +358,19 @@ module ArelExtensions
 			collector << "#{quote_table_name join_name}.#{quote_column_name o.name}"
 		end
 
+		def visit_ArelExtensions_Nodes_Std o, collector		
+			collector << (o.unbiased_estimator ? "STDDEV_SAMP(" : "STDDEV_POP(")
+			visit o.left, collector
+			collector << ")"
+			collector
+		end
+		
+		def visit_ArelExtensions_Nodes_Variance o, collector	
+			collector << (o.unbiased_estimator ? "VAR_SAMP(" : "VAR_POP(")
+			visit o.left, collector
+			collector << ")"
+			collector
+		end
 
     end
   end

@@ -6,6 +6,7 @@ require 'arel_extensions/nodes/rand'
 require 'arel_extensions/nodes/formatted_number'
 require 'arel_extensions/nodes/log10'
 require 'arel_extensions/nodes/power'
+require 'arel_extensions/nodes/std'
 
 module ArelExtensions
   module MathFunctions
@@ -38,6 +39,15 @@ module ArelExtensions
     # function gives the power of a number
     def power exposant = 0
         ArelExtensions::Nodes::Power.new [self,exposant]
+    end
+    
+    # Aggregate Functions 
+    def std unbiased = true
+		ArelExtensions::Nodes::Std.new [self,unbiased]
+    end
+    
+    def variance unbiased = true
+		ArelExtensions::Nodes::Variance.new [self,unbiased]
     end
 
 
@@ -73,7 +83,7 @@ module ArelExtensions
 			}
 			# opts = {:locale => 'fr_FR', :type => "e"/"f"/"d", :prefix => "$ ", :suffix => " %", :flags => " +-#0", :width => 5, :precision => 6}
 			ArelExtensions::Nodes::FormattedNumber.new [self,opts]
-		rescue Exception => e
+		rescue Exception
 			Arel::Nodes.build_quoted('Wrong Format')
 		end
 	end	

@@ -510,6 +510,19 @@ module ArelExtensions
 			visit o.right, collector
 		end
 		
+		def visit_ArelExtensions_Nodes_Std o, collector		
+			collector << "STD("
+			visit o.left, collector
+			collector << ")"
+			collector
+		end
+		
+		def visit_ArelExtensions_Nodes_Variance o, collector		
+			collector << "VARIANCE("
+			visit o.left, collector
+			collector << ")"
+			collector
+		end
 
 		
   	end

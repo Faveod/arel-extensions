@@ -571,6 +571,19 @@ module ArelExtensions
 		collector		
 	end
 
+		def visit_ArelExtensions_Nodes_Std o, collector		
+			collector << (o.unbiased_estimator ? "STDDEV_SAMP(" : "STDDEV_POP(")
+			visit o.left, collector
+			collector << ")"
+			collector
+		end
+		
+		def visit_ArelExtensions_Nodes_Variance o, collector	
+			collector << (o.unbiased_estimator ? "VAR_SAMP(" : "VAR_POP(")
+			visit o.left, collector
+			collector << ")"
+			collector
+		end
 
 
 

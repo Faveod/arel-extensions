@@ -37,8 +37,12 @@ module ArelExtensions
 		  end 
 	  when  Arel::Nodes::Function
 		Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
-	  else
-		  col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
+	  else		  
+		  begin 
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
+		  rescue Exception
+			col = nil
+		  end
 		  if (!col) #if the column doesn't exist in the database
 			Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new(self, other))
 		  else
@@ -82,7 +86,12 @@ module ArelExtensions
 	  when Arel::Nodes::Function
 		Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
 	  else
-		col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
+		
+		begin 
+			col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
+		rescue Exception
+			col = nil
+		end
 		if (!col) #if the column doesn't exist in the database
 			Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
 		else
@@ -90,7 +99,11 @@ module ArelExtensions
 			if (arg == :date || arg == :datetime)
 				case other
 				when Arel::Attributes::Attribute
-				  col2 = Arel::Table.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s]
+				  begin 
+				    col2 = Arel::Table.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s]
+				  rescue Exception
+					col = nil
+				  end
 				  if (!col2) #if the column doesn't exist in the database
 					ArelExtensions::Nodes::DateSub.new [self, other]
 				  else
