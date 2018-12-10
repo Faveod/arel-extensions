@@ -107,14 +107,14 @@ module ArelExtensions
       ArelExtensions::Nodes::Replace.new [self, left, right]
     end
     
-    def concat other
-      res = ArelExtensions::Nodes::Concat.new [self, other]
-      if res.expressions.length == 1
-		res.expressions.first
-	  else
-		res
-      end
-    end
+	def concat other
+		res = ArelExtensions::Nodes::Concat.new [self, other]
+		if res.expressions.length == 1
+			res.expressions.first
+		else
+			res
+		end
+	end
 
     def group_concat sep = nil
       ArelExtensions::Nodes::GroupConcat.new [self, sep]

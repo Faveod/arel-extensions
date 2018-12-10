@@ -473,6 +473,20 @@ module ArelExtensions
 			collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
 			collector		
 		end
+		
+		def visit_ArelExtensions_Nodes_Std o, collector		
+			collector << "STDEV("
+			visit o.left, collector
+			collector << ")"
+			collector
+		end
+		
+		def visit_ArelExtensions_Nodes_Variance o, collector		
+			collector << "VAR("
+			visit o.left, collector
+			collector << ")"
+			collector
+		end
 
     end
   end
