@@ -475,18 +475,19 @@ module ArelExtensions
 		end
 		
 		def visit_ArelExtensions_Nodes_Std o, collector		
-			collector << "STDEV("
+			collector << (o.unbiased_estimator ? "STDEV(" : "STDEVP(")
 			visit o.left, collector
 			collector << ")"
 			collector
 		end
 		
-		def visit_ArelExtensions_Nodes_Variance o, collector		
-			collector << "VAR("
+		def visit_ArelExtensions_Nodes_Variance o, collector
+			collector << (o.unbiased_estimator ? "VAR(" : "VARP(")
 			visit o.left, collector
 			collector << ")"
 			collector
 		end
+
 
     end
   end
