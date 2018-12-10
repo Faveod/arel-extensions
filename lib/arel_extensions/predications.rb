@@ -6,8 +6,12 @@ module ArelExtensions
 			end
 		end
 		
-		def matches(other, escape=nil)
-			Arel::Nodes::Matches.new(self, Arel::Nodes.build_quoted(other), escape)
+		def matches(other, escape=nil,case_sensitive= nil)
+			if Arel::VERSION.to_i < 7
+				Arel::Nodes::Matches.new(self, Arel::Nodes.build_quoted(other), escape)
+			else
+				Arel::Nodes::Matches.new(self, Arel::Nodes.build_quoted(other), escape, case_sensitive)
+			end
 		end
 		
 		def imatches(other, escape=nil)
