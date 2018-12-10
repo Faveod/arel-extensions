@@ -2,8 +2,6 @@
 
 [![Travis Build Status](https://img.shields.io/travis/Faveod/arel-extensions.svg?label=Travis%20build)](http://travis-ci.org/Faveod/arel-extensions)
 [![AppVeyor Build Status](https://img.shields.io/appveyor/ci/yazfav/arel-extensions.svg?label=AppVeyor%20build)](https://ci.appveyor.com/project/yazfav/arel-extensions)
-[![Code Climate](https://img.shields.io/codeclimate/github/Faveod/arel-extensions.svg)](https://codeclimate.com/github/Faveod/arel-extensions)
-[![Gemnasium](https://img.shields.io/gemnasium/Faveod/arel-extensions.svg)](https://gemnasium.com/github.com/Faveod/arel-extensions)
 [![Security](https://hakiri.io/github/Faveod/arel-extensions/master.svg)](https://hakiri.io/github/Faveod/arel-extensions/master)
 ![](http://img.shields.io/badge/license-MIT-brightgreen.svg)
 
