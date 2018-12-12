@@ -6,6 +6,9 @@ module ArelExtensions
 				include Arel::OrderPredications
 				include ArelExtensions::Comparators
 				include ArelExtensions::Predications
+				include ArelExtensions::MathFunctions
+				include ArelExtensions::StringFunctions
+				include ArelExtensions::NullFunctions
 
 				attr_accessor :case, :conditions, :default
 
