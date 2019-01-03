@@ -523,7 +523,7 @@ module ArelExtensions
 		comma_in_format = o.precision == 0 ? '' : 'D'
 		options = Arel::Nodes.build_quoted("NLS_NUMERIC_CHARACTERS = '"+comma+"'")		
 		nines_after = (1..o.precision).map{'9'}.join('')
-		nines_before = (1..16).map{'9'}.join('')
+		nines_before = ("999G"*4+"990")
 		sign = ArelExtensions::Nodes::Case.new.when(col<0).
 							then('-').
 							else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))

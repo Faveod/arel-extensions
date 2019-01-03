@@ -525,6 +525,7 @@ module ArelExtensions
 		assert_includes ["$ 6,562E1 €","$ 6,562E+01 €"], t(@arthur, @score.format_number("$ %.3E €","fr_FR"))
 		assert_equal "123 456 765,6" , t(@arthur, (@score+123456700).format_number("%.1f","fr_FR"))
 		assert_equal "123,456,765.6" , t(@arthur, (@score+123456700).format_number("%.1f","en_US"))
+		assert_equal "   123,456,765.6" , t(@arthur, (@score+123456700).format_number("%16.1f","en_US"))
 	  end
 	  
 	  def test_accent_insensitive
