@@ -25,6 +25,15 @@ module ArelExtensions::Nodes
       super(tab)
     end
 
+	def self.new expr
+		o = super(expr)
+		if o.expressions.length == 1
+			o.expressions[0]
+		else
+			o
+		end
+	end
+
     #def +(other)
     #  Concat.new(self.expressions + [other])
     #end

@@ -307,7 +307,7 @@ module ArelExtensions
 		end	
 			
 		def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
-			col = o.left
+			col = o.left.coalesce(0)
 			params = o.locale ? [o.precision,Arel::Nodes.build_quoted(o.locale)] : [o.precision]
 			sign = ArelExtensions::Nodes::Case.new.when(col<0).
 								then('-').
@@ -339,15 +339,13 @@ module ArelExtensions
 			before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
 			middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
 			after  = o.flags.include?('-') ? repeated_char : ''
-			full_number =  col.when(0).then('0').else(
-				ArelExtensions::Nodes::Concat.new([
+			full_number = ArelExtensions::Nodes::Concat.new([
 					before,
 					sign,
 					middle,
 					number,
 					after
 				])
-			)				
 			collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
 			collector		
 		end

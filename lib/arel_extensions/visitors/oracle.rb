@@ -518,10 +518,10 @@ module ArelExtensions
 	
 
 	def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
-		col = o.left
+		col = o.left.coalesce(0)
 		comma = Arel::Visitors::Oracle::NUMBER_COMMA_MAPPING[o.locale] || '.,'
 		comma_in_format = o.precision == 0 ? '' : 'D'
-		nines_after = (1..o.precision).map{'9'}.join('')
+		nines_after = (1..o.precision-1).map{'9'}.join('')+'0'
 		if comma.length == 1
 			options = Arel::Nodes.build_quoted("NLS_NUMERIC_CHARACTERS = '"+comma+" '")
 			nines_before = ("999"*4+"990")
@@ -563,16 +563,14 @@ module ArelExtensions
 		before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
 		middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
 		after  = o.flags.include?('-') ? repeated_char : ''
-		full_number =  col.when(0).then('0').else(
-			ArelExtensions::Nodes::Concat.new([
+		full_number = ArelExtensions::Nodes::Concat.new([
 				before,
 				sign,
 				middle,
 				number,
 				after
 			])
-		)				
-		collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
+		collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector
 		collector		
 	end
 

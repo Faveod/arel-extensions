@@ -527,6 +527,8 @@ module ArelExtensions
 		assert_equal "123456765,6" , t(@arthur, (@score+123456700).format_number("%.1f","fr_FR"))
 		assert_equal "123,456,765.6" , t(@arthur, (@score+123456700).format_number("%.1f","en_US"))
 		assert_equal "   123,456,765.6" , t(@arthur, (@score+123456700).format_number("%16.1f","en_US"))
+		assert_equal "$ 0,00 €" , t(@arthur, @score.when(65.62).then(Arel.sql("null")).else(1).format_number("$ %.2f €","fr_FR"))
+		assert_equal "$ 0,00 €" , t(@arthur, (@score-65.62).format_number("$ %.2f €","fr_FR"))
 	  end
 	  
 	  def test_accent_insensitive
