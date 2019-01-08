@@ -523,7 +523,8 @@ module ArelExtensions
 		assert_includes ["$ 6,56e1 €","$ 6,56e+01 €"], t(@arthur, @score.format_number("$ %.2e €","fr_FR"))
 		assert_includes ["$ 6,56E1 €","$ 6,56E+01 €"], t(@arthur, @score.format_number("$ %.2E €","fr_FR"))
 		assert_includes ["$ 6,562E1 €","$ 6,562E+01 €"], t(@arthur, @score.format_number("$ %.3E €","fr_FR"))
-		assert_equal "123 456 765,6" , t(@arthur, (@score+123456700).format_number("%.1f","fr_FR"))
+		assert_equal "123 456 765,6" , t(@arthur, (@score+123456700).format_number("%.1f","sv_SE"))
+		assert_equal "123456765,6" , t(@arthur, (@score+123456700).format_number("%.1f","fr_FR"))
 		assert_equal "123,456,765.6" , t(@arthur, (@score+123456700).format_number("%.1f","en_US"))
 		assert_equal "   123,456,765.6" , t(@arthur, (@score+123456700).format_number("%16.1f","en_US"))
 	  end

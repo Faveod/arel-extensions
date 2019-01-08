@@ -9,7 +9,7 @@ module ArelExtensions
         '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM',                   # hours
         '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz'                                # seconds, subseconds
       }
-      Arel::Visitors::Oracle::NUMBER_COMMA_MAPPING = { 'en_US' => '.,', 'fr_FR' => ', ' }
+      Arel::Visitors::Oracle::NUMBER_COMMA_MAPPING = { 'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', ' }
       
 	  def visit_ArelExtensions_Nodes_Log10 o, collector
         collector << "LOG("
@@ -521,9 +521,14 @@ module ArelExtensions
 		col = o.left
 		comma = Arel::Visitors::Oracle::NUMBER_COMMA_MAPPING[o.locale] || '.,'
 		comma_in_format = o.precision == 0 ? '' : 'D'
-		options = Arel::Nodes.build_quoted("NLS_NUMERIC_CHARACTERS = '"+comma+"'")		
 		nines_after = (1..o.precision).map{'9'}.join('')
-		nines_before = ("999G"*4+"990")
+		if comma.length == 1
+			options = Arel::Nodes.build_quoted("NLS_NUMERIC_CHARACTERS = '"+comma+" '")
+			nines_before = ("999"*4+"990")
+		else
+			options = Arel::Nodes.build_quoted("NLS_NUMERIC_CHARACTERS = '"+comma+"'")
+			nines_before = ("999G"*4+"990")
+		end
 		sign = ArelExtensions::Nodes::Case.new.when(col<0).
 							then('-').
 							else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
@@ -538,7 +543,7 @@ module ArelExtensions
 						options								
 					])	
 			if o.type == 'e'
-			number = number.replace('E','e')
+				number = number.replace('E','e')
 			end
 		else			
 			number = Arel::Nodes::NamedFunction.new('TO_CHAR',[

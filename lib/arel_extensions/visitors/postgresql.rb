@@ -8,7 +8,7 @@ module ArelExtensions
         '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM', # hours
         '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz' # seconds, subseconds
       }
-      Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING = { 'en_US' => '.,', 'fr_FR' => ', ' }
+      Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING = { 'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', ' }
 
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "RANDOM("
@@ -282,7 +282,7 @@ module ArelExtensions
 	  def visit_ArelExtensions_Nodes_FormattedNumber o, collector	
 			col = o.left
 			comma = o.precision == 0 ? '' : (Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale][0] || '.')
-			thousand_separator = Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale][1] || 'G'
+			thousand_separator = Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale][1] || (Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale] ? '' : 'G')
 			nines_after = (1..o.precision).map{'9'}.join('')
 			nines_before = ("999#{thousand_separator}"*4+"990")
 
