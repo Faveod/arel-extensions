@@ -1,8 +1,8 @@
 module ArelExtensions
 	module Predications				
 		if Arel::VERSION.to_i < 7 
-			def when right
-				ArelExtensions::Nodes::Case.new(self).when(right)
+			def when right, expression=nil
+				ArelExtensions::Nodes::Case.new(self).when(right,expression)
 			end
 		end
 		

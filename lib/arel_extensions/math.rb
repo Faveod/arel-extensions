@@ -24,7 +24,7 @@ module ArelExtensions
 		else		
 		  return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
 		end
-	  when  ArelExtensions::Nodes::Function
+	  when  ArelExtensions::Nodes::Function,ArelExtensions::Nodes::Case
 		  return case self.return_type
 		  when :string, :text			
 			self.concat(other)
@@ -72,7 +72,7 @@ module ArelExtensions
 		else		
 		  Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
 		end
-	  when ArelExtensions::Nodes::Function
+	  when ArelExtensions::Nodes::Function, ArelExtensions::Nodes::Case
 		  case self.return_type
 		  when :string, :text # ???
 			Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other)) # ??

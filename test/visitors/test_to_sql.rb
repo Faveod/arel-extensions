@@ -69,7 +69,7 @@ module ArelExtensions
         fake_table = Arel::Table.new('fake_tables')
         
         compile(fake_table[:fake_att] - 42).must_be_like %{("fake_tables"."fake_att" - 42)}        
-        compile(fake_table[:fake_att].coalesce(0) - 42).must_be_like %{(COALESCE("fake_tables"."fake_att", 0) - 42)}
+        compile(fake_table[:fake_att].coalesce(0) - 42).must_be_like %{(COALESCE("fake_tables"."fake_att", 0) - 42)}        
       end
 
       # String Functions
@@ -349,6 +349,13 @@ module ArelExtensions
 			.must_be_like %{(LOCATE('test', "users"."name") + LOCATE('test', "users"."name"))}
 		compile(c.locate('test')+1+c.locate('test')-1 + 1)
 			.must_be_like %{((((LOCATE('test', "users"."name") + 1) + LOCATE('test', "users"."name")) - 1) + 1)}
+	  end
+	  
+	  it "should be possible to add and substract on some nodes" do
+		c = @table[:name]	
+        compile(c.when(0,0).else(42) + 42).must_be_like %{(CASE "users"."name" WHEN 0 THEN 0 ELSE 42 END + 42)}
+        compile(c.when(0,0).else(42) - 42).must_be_like %{(CASE "users"."name" WHEN 0 THEN 0 ELSE 42 END - 42)}
+        compile(c.when(0,"0").else("42") + "42").must_be_like %{CONCAT(CASE "users"."name" WHEN 0 THEN '0' ELSE '42' END, '42')}        
 	  end
 	  
 	  it "should be possible to desc and asc on functions" do

@@ -4,6 +4,7 @@ module ArelExtensions
 			class Case < Arel::Nodes::Node
 				include Arel::Expressions
 				include Arel::OrderPredications
+				include ArelExtensions::Math
 				include ArelExtensions::Comparators
 				include ArelExtensions::Predications
 				include ArelExtensions::MathFunctions
@@ -17,19 +18,47 @@ module ArelExtensions
 					@conditions = []
 					@default = default
 				end
+				
+				def return_type
+					obj = if @conditions.length > 0
+							@conditions.last.right
+						elsif @default
+							@default.expr
+						else
+							nil
+						end
+					if obj.respond_to?(:return_type)
+						obj.return_type
+					else
+						case obj
+						when Integer, Float
+							:number
+						when Date, DateTime,Time
+							:datetime
+						when Arel::Attributes::Attribute
+							begin 							
+								Arel::Table.engine.connection.schema_cache.columns_hash(obj.relation.table_name)[obj.name.to_s].cast_type.type
+							rescue Exception
+								:string
+							end
+						else
+							:string
+						end
+					end	
+				end
 
 				def when condition, expression = nil
-					@conditions << When.new(Arel::Nodes.build_quoted(condition), expression)
+					@conditions << When.new(condition, expression)
 					self
 				end
 
 				def then expression
-					@conditions.last.right = Arel::Nodes.build_quoted(expression)
+					@conditions.last.right = expression
 					self
 				end
 
 				def else expression
-					@default = Else.new Arel::Nodes.build_quoted(expression)
+					@default = Else.new expression
 					self
 				end
 
@@ -67,8 +96,13 @@ module ArelExtensions
 		
 			class Case < Arel::Nodes::Case	
 				include Arel::Expressions
+				include Arel::OrderPredications
+				include ArelExtensions::Math
 				include ArelExtensions::Comparators
 				include ArelExtensions::Predications
+				include ArelExtensions::MathFunctions
+				include ArelExtensions::StringFunctions
+				include ArelExtensions::NullFunctions
 				
 			end
 			

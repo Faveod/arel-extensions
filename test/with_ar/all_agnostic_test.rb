@@ -501,7 +501,11 @@ module ArelExtensions
 
 	  # Case clause
 	  def test_case
-	    assert_equal 4, User.find_by_sql(@ut.project(@score.when(20.16).then(1).else(0).as('score_bin')).to_sql).sum(&:score_bin)
+	    assert_equal 4, User.find_by_sql(@ut.project(@score.when(20.16).then(1).else(0).as('score_bin')).to_sql).sum(&:score_bin)	    
+	    assert_equal 2, t(@arthur, @score.when(65.62,1).else(0)+1)    
+	    assert_equal 0, t(@arthur, @score.when(65.62,1).else(0)-1)
+	    assert_equal "11", t(@arthur, @score.when(65.62).then("1").else("0")+"1") 
+	    assert_equal 66.62, t(@arthur, @score.when(65.62,@score).else(0)+1) 
 	  end
 	  
 	  def test_format_numbers 
