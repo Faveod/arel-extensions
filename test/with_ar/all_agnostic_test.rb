@@ -505,7 +505,8 @@ module ArelExtensions
 	    assert_equal 2, t(@arthur, @score.when(65.62,1).else(0)+1)    
 	    assert_equal 0, t(@arthur, @score.when(65.62,1).else(0)-1)
 	    assert_equal "11", t(@arthur, @score.when(65.62).then("1").else("0")+"1") 
-	    assert_equal 66.62, t(@arthur, @score.when(65.62,@score).else(0)+1) 
+	    assert_equal 66.62, t(@arthur, @score.when(65.62,@score).else(@score)+1) 
+	    assert_equal "65.621", t(@arthur, @score.when(65.62,@score.cast(:string)).else(@score.cast(:string))+1).tr('0','') #tr is here because of precision on cast for some DBMS
 	  end
 	  
 	  def test_format_numbers 
