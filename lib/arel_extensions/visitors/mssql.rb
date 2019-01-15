@@ -486,7 +486,16 @@ module ArelExtensions
 			collector << ")"
 			collector
 		end
-
+		
+		
+		def visit_ArelExtensions_Nodes_LevenshteinDistance o, collector
+			collector << "dbo.LEVENSHTEIN_DISTANCE("
+			collector = visit o.left, collector
+			collector << Arel::Visitors::ToSql::COMMA
+			collector = visit o.right, collector
+			collector << ')'
+			collector
+		end
 
     end
   end

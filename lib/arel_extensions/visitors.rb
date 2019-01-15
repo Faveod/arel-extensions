@@ -34,6 +34,13 @@ begin
 					end
 					old_visit_Arel_Nodes_SelectStatement(o,collector)
 				end	
+				
+				def primary_Key_From_Table t
+					return unless t
+					column_name = @connection.schema_cache.primary_keys(t.name) ||
+					  @connection.schema_cache.columns_hash(t.name).first.try(:second).try(:name)
+					column_name ? t[column_name] : nil
+				end
 			end 
 		end
 	end
