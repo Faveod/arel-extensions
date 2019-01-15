@@ -657,7 +657,7 @@ module ArelExtensions
 						User.select(at[:id]).from(at).to_sql.downcase
 		end
 	  end
-	  
+
 	  def test_stat_functions	
 	  	skip "SQLite doesn't work for most on this functions" if $sqlite 
 	  	#puts t(User.where(nil), @score.average)
@@ -674,9 +674,12 @@ module ArelExtensions
 
 	  end
 	  
-	  #def test_levenshtein_distance
-		#assert 2,  t(@arthur,@name.levenshtein_distance("Artour"))
-	  #end
+	  def test_levenshtein_distance	 
+		skip "Not Yet Implemented" if !(@env_db == 'mysql' || @env_db == 'postgresql')
+		assert_equal 0,  t(@arthur,@name.levenshtein_distance("Arthur"))
+		assert_equal 2,  t(@arthur,@name.levenshtein_distance("Artoor"))
+		assert_equal 1,  t(@arthur,@name.levenshtein_distance("Artehur"))
+	  end
 	  
     end
   end

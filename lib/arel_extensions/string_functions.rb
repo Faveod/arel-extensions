@@ -13,6 +13,7 @@ require 'arel_extensions/nodes/format'
 require 'arel_extensions/nodes/repeat'
 require 'arel_extensions/nodes/cast'
 require 'arel_extensions/nodes/collate'
+require 'arel_extensions/nodes/levenshtein_distance'
       
 
 module ArelExtensions

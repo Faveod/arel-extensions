@@ -419,7 +419,7 @@ module ArelExtensions
 	  end
 	  
 		def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
-			col = o.left
+			col = o.left.coalesce(0)
 			locale = Arel::Nodes.build_quoted(o.locale.tr('_','-'))			
 			param = Arel::Nodes.build_quoted("N#{o.precision}")
 			sign = ArelExtensions::Nodes::Case.new.when(col<0).
@@ -469,7 +469,7 @@ module ArelExtensions
 					number,
 					after
 				])		
-			collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector		
+			collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector	
 			collector		
 		end
 		

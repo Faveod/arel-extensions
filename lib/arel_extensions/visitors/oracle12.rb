@@ -1,7 +1,6 @@
 module ArelExtensions
   module Visitors  
-	class Arel::Visitors::Oracle12 < Arel::Visitors::Oracle	  
-		
+	class Arel::Visitors::Oracle12 < Arel::Visitors::Oracle
 		def visit_Arel_Nodes_SelectStatement(o, collector)
 		  # Oracle does not allow LIMIT clause with select for update
 		  if o.limit && o.lock
@@ -58,8 +57,7 @@ module ArelExtensions
 		  collector << "DECODE("
 		  collector = visit [o.left, o.right, 0, 1], collector
 		  collector << ")"
-		end	    
-			
-    end
+		end	 
+	end
   end
 end
