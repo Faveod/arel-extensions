@@ -147,6 +147,10 @@ module ArelExtensions
     def repeat other = 1 
 	  ArelExtensions::Nodes::Repeat.new [self, other]
     end
+    
+    def levenshtein_distance other
+	  ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
+    end
 
   end
 end

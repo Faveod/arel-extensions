@@ -529,7 +529,7 @@ module ArelExtensions
 		assert_includes ["$ 6,56E1 €","$ 6,56E+01 €"], t(@arthur, @score.format_number("$ %.2E €","fr_FR"))
 		assert_includes ["$ 6,562E1 €","$ 6,562E+01 €"], t(@arthur, @score.format_number("$ %.3E €","fr_FR"))
 		assert_equal "123 456 765,6" , t(@arthur, (@score+123456700).format_number("%.1f","sv_SE")).gsub("\u00A0"," ") #some DBMS put no-break space here (it makes sense thus)
-		assert_equal "123456765,6" , t(@arthur, (@score+123456700).format_number("%.1f","fr_FR"))
+		assert_equal "123456765,6" , t(@arthur, (@score+123456700).format_number("%.1f","fr_FR")).gsub("\u00A0","") #because SqlServer does it like no one else
 		assert_equal "123,456,765.6" , t(@arthur, (@score+123456700).format_number("%.1f","en_US"))
 		assert_equal "   123,456,765.6" , t(@arthur, (@score+123456700).format_number("%16.1f","en_US"))
 		assert_equal "$ 0,00 €" , t(@arthur, @score.when(65.62).then(Arel.sql("null")).else(1).format_number("$ %.2f €","fr_FR"))
@@ -671,7 +671,13 @@ module ArelExtensions
 		assert ( 537.0355 - t(User.where(nil), @score.variance(false))).abs < 0.01
 		assert ( 24.77408 - t(User.where(nil), @score.std)).abs < 0.01		
 		assert ( 23.17403 - t(User.where(nil), @score.std(false))).abs < 0.01	  
+
 	  end
+	  
+	  #def test_levenshtein_distance
+		#assert 2,  t(@arthur,@name.levenshtein_distance("Artour"))
+	  #end
+	  
     end
   end
 end

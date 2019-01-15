@@ -481,7 +481,7 @@ module ArelExtensions
 			if o.default
 			  visit o.default, collector
 			  collector << " "
-			end
+			end			
 			collector << "END"
 		end
 
@@ -524,6 +524,14 @@ module ArelExtensions
 			collector
 		end
 
+		def visit_ArelExtensions_Nodes_LevenshteinDistance o, collector
+			collector << "LEVENSHTEIN_DISTANCE("
+			collector = visit o.left, collector
+			collector << Arel::Visitors::ToSql::COMMA
+			collector = visit o.right, collector
+			collector << ')'
+			collector
+		end
 		
   	end
   end
