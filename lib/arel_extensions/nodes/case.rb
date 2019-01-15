@@ -104,6 +104,10 @@ module ArelExtensions
 				include ArelExtensions::StringFunctions
 				include ArelExtensions::NullFunctions
 				
+				def when condition, expression = nil
+					@conditions << When.new(condition, expression)
+					self
+				end
 			end
 			
 		end		
