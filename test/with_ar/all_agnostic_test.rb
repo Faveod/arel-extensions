@@ -675,7 +675,7 @@ module ArelExtensions
 	  end
 	  
 	  def test_levenshtein_distance	 
-		skip "Not Yet Implemented" if (@env_db == 'oracle' || $sqlite)
+		skip "Not Yet Implemented" if $sqlite
 		assert_equal 0,  t(@arthur,@name.levenshtein_distance("Arthur"))
 		assert_equal 2,  t(@arthur,@name.levenshtein_distance("Artoor"))
 		assert_equal 1,  t(@arthur,@name.levenshtein_distance("Artehur"))
