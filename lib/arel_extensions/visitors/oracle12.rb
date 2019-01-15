@@ -1,6 +1,6 @@
 module ArelExtensions
   module Visitors  
-	class Arel::Visitors::Oracle12 < Arel::Visitors::Oracle
+	Arel::Visitors.const_set('Oracle12',Class.new(Arel::Visitors::Oracle)).class_eval do
 		def visit_Arel_Nodes_SelectStatement(o, collector)
 		  # Oracle does not allow LIMIT clause with select for update
 		  if o.limit && o.lock
