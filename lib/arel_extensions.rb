@@ -34,7 +34,7 @@ Arel::Nodes::Function.class_eval do
   include Arel::Expressions
 end
 
-if Arel::VERSION.to_i >= 7 
+if Arel::VERSION >= "7.1.0"
 	Arel::Nodes::Case.class_eval do
 	  include Arel::Math
 	  include Arel::Expressions
@@ -133,7 +133,7 @@ Arel::Nodes::As.class_eval do
 end
 
 
-if Arel::VERSION.to_i >= 7 
+if Arel::VERSION >= "7.1.0"
 	Arel::Nodes::Case.class_eval do
 	  include ArelExtensions::Predications
 	end

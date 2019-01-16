@@ -485,14 +485,14 @@ module ArelExtensions
 			collector << "END"
 		end
 
-		def visit_ArelExtensions_Nodes_When o, collector
+		def visit_ArelExtensions_Nodes_Case_When o, collector
 			collector << "WHEN "
 			visit Arel::Nodes.build_quoted(o.left), collector
 			collector << " THEN "
 			visit Arel::Nodes.build_quoted(o.right), collector
 		end
 
-		def visit_ArelExtensions_Nodes_Else o, collector
+		def visit_ArelExtensions_Nodes_Case_Else o, collector
 			collector << "ELSE "
 			visit Arel::Nodes.build_quoted(o.expr), collector
 		end

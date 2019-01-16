@@ -155,7 +155,7 @@ module ArelExtensions
 
 	def edit_distance other
 	  ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
-    end
+	end
 
   end
 end
