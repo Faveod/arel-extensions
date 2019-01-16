@@ -54,7 +54,7 @@ module ArelExtensions
 						:datetime
 					when Arel::Attributes::Attribute
 						begin
-							Arel::Table.engine.connection.schema_cache.columns_hash(obj.relation.table_name)[obj.name.to_s].cast_type.type
+							Arel::Table.engine.connection.schema_cache.columns_hash(obj.relation.table_name)[obj.name.to_s].type
 						rescue Exception
 							:string
 						end
