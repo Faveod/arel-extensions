@@ -1,7 +1,6 @@
 module ArelExtensions
   module Visitors
-  	Arel::Visitors::ToSql.class_eval do  
-
+	Arel::Visitors::ToSql.class_eval do
 
       # Math Functions
       def visit_ArelExtensions_Nodes_Abs o, collector
@@ -459,7 +458,7 @@ module ArelExtensions
 			if o.left.is_a?(ArelExtensions::Nodes::Union) || o.left.is_a?(ArelExtensions::Nodes::UnionAll)
 				collector << "("
 				collector = visit o.left, collector
-				collector << ") "			
+				collector << ") "
 				visit o.right, collector
 			else
 				collector = visit o.left, collector
@@ -481,7 +480,7 @@ module ArelExtensions
 			if o.default
 			  visit o.default, collector
 			  collector << " "
-			end			
+			end
 			collector << "END"
 		end
 
@@ -496,9 +495,7 @@ module ArelExtensions
 			collector << "ELSE "
 			visit Arel::Nodes.build_quoted(o.expr), collector
 		end
-		
-		
-		
+
 		def visit_ArelExtensions_Nodes_FormattedNumber o, collector		
 			visit o.left, collector
 		end
@@ -533,6 +530,6 @@ module ArelExtensions
 			collector
 		end
 		
-  	end
+	end
   end
 end

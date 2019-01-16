@@ -35,10 +35,10 @@ Arel::Nodes::Function.class_eval do
 end
 
 if Arel::VERSION >= "7.1.0"
-	Arel::Nodes::Case.class_eval do
-	  include Arel::Math
-	  include Arel::Expressions
-	end
+  Arel::Nodes::Case.class_eval do
+    include Arel::Math
+    include Arel::Expressions
+  end
 end
 
 require 'arel_extensions/version'
@@ -130,13 +130,6 @@ end
 
 Arel::Nodes::As.class_eval do	
   include ArelExtensions::Nodes
-end
-
-
-if Arel::VERSION >= "7.1.0"
-	Arel::Nodes::Case.class_eval do
-	  include ArelExtensions::Predications
-	end
 end
 
 

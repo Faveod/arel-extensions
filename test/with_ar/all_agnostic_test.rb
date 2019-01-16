@@ -501,18 +501,18 @@ module ArelExtensions
 
 	  # Case clause
 	  def test_case
-	    assert_equal 4, User.find_by_sql(@ut.project(@score.when(20.16).then(1).else(0).as('score_bin')).to_sql).sum(&:score_bin)	    
-	    assert_equal 2, t(@arthur, @score.when(65.62,1).else(0)+1)    
+	    assert_equal 4, User.find_by_sql(@ut.project(@score.when(20.16).then(1).else(0).as('score_bin')).to_sql).sum(&:score_bin)
+	    assert_equal 2, t(@arthur, @score.when(65.62,1).else(0)+1)
 	    assert_equal 0, t(@arthur, @score.when(65.62,1).else(0)-1)
-	    assert_equal "11", t(@arthur, @score.when(65.62).then("1").else("0")+"1") 
-	    assert_equal 66.62, t(@arthur, @score.when(65.62).then(@score).else(@score)+1) 
+	    assert_equal "11", t(@arthur, @score.when(65.62).then("1").else("0")+"1")
+	    assert_equal 66.62, t(@arthur, @score.when(65.62).then(@score).else(@score)+1)
 	    assert_equal "65.621", t(@arthur, @score.when(65.62).then(@score.cast(:string)).else(@score.cast(:string))+1).tr('0','') #tr is here because of precision on cast for some DBMS
 	  end
 	  
 	  def test_format_numbers 
 		#score of Arthur = 65.62
 		skip " Works with SQLite if the version used knows printf" if @env_db = $sqlite
-			
+
 		assert_equal "Wrong Format" , t(@arthur, @score.format_number("$ %...234.6F €","fr_FR"))
 		assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))
 		assert_equal "65,62AZERTY" , t(@arthur, @score.format_number("%.2fAZERTY","fr_FR"))
@@ -523,7 +523,7 @@ module ArelExtensions
 		assert_equal "$ 65,62   €" , t(@arthur, @score.format_number("$ %-7.2f €","fr_FR"))
 		assert_equal "$   65,62 €" , t(@arthur, @score.format_number("$ % 7.2f €","fr_FR"))
 		assert_equal "$    65,6 €" , t(@arthur, @score.format_number("$ % 7.1f €","fr_FR"))
-		assert_equal "$  +65,62 €" , t(@arthur, @score.format_number("$ % +7.2f €","fr_FR"))		
+		assert_equal "$  +65,62 €" , t(@arthur, @score.format_number("$ % +7.2f €","fr_FR"))
 		assert_equal "$ +065,62 €" , t(@arthur, @score.format_number("$ %0+7.2f €","fr_FR"))
 		assert_includes ["$ 6,56e1 €","$ 6,56e+01 €"], t(@arthur, @score.format_number("$ %.2e €","fr_FR"))
 		assert_includes ["$ 6,56E1 €","$ 6,56E+01 €"], t(@arthur, @score.format_number("$ %.2E €","fr_FR"))
@@ -535,7 +535,7 @@ module ArelExtensions
 		assert_equal "$ 0,00 €" , t(@arthur, @score.when(65.62).then(Arel.sql("null")).else(1).format_number("$ %.2f €","fr_FR"))
 		assert_equal "$ 0,00 €" , t(@arthur, (@score-65.62).format_number("$ %.2f €","fr_FR"))
 	  end
-	  
+
 	  def test_accent_insensitive
 		skip "SQLite is natively Case Insensitive and Accent Sensitive" if $sqlite
 		skip "Not finished" if @env_db == 'mysql'
@@ -543,16 +543,16 @@ module ArelExtensions
 		#AI & CI	
 		if !['postgresql'].include?(@env_db) # Extension unaccent required on PG
 			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arrêté")).then("1").else("0"))
-			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arrete")).then("1").else("0"))		  		  
-			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("àrrétè")).then("1").else("0"))		  		  
-			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arretez")).then("1").else("0"))		  
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arrete")).then("1").else("0"))
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("àrrétè")).then("1").else("0"))
+			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arretez")).then("1").else("0"))
 			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("Arrete")).then("1").else("0"))
 			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("Arrêté")).then("1").else("0"))
 			#AI & CS
 			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arrêté")).then("1").else("0"))
-			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arrete")).then("1").else("0"))		  		  
-			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("àrrétè")).then("1").else("0"))		  		  
-			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arretez")).then("1").else("0"))		  
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arrete")).then("1").else("0"))
+			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("àrrétè")).then("1").else("0"))
+			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("arretez")).then("1").else("0"))
 			if !['oracle','postgresql','mysql'].include?(@env_db) # AI => CI
 				assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("Arrete")).then("1").else("0"))
 				assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("Arrêté")).then("1").else("0"))
@@ -561,10 +561,10 @@ module ArelExtensions
 		#AS & CI
 		assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("arrêté")).then("1").else("0"))
 		if !['mysql'].include?(@env_db) # CI => AI in utf8 (AI not possible in latin1)
-			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("arrete")).then("1").else("0"))		  		  
-			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("àrrétè")).then("1").else("0"))		  		  
+			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("arrete")).then("1").else("0"))
+			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("àrrétè")).then("1").else("0"))
 		end		  
-		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("arretez")).then("1").else("0"))		  
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("arretez")).then("1").else("0"))
 		if !['mysql'].include?(@env_db) # CI => AI in utf8 (AI not possible in latin1)
 			assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("Arrete")).then("1").else("0"))
 		end
