@@ -1,9 +1,13 @@
 module ArelExtensions
   module Nodes
     class Coalesce < Function
-	  RETURN_TYPE = :string
+      RETURN_TYPE = :string
       
       attr_accessor :left_node_type
+
+      def return_type
+        @left_node_type || self.class.const_get(:RETURN_TYPE)
+      end
 
       def initialize expr
         tab = expr.map { |arg|

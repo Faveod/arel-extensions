@@ -343,14 +343,15 @@ module ArelExtensions
           assert_equal('', t(@laure, @comments.coalesce("")))
         end
 
-        if @env_db == 'postgresql'
-          assert_equal 100, t(@test, @age.coalesce(100))
-          assert_equal "Camille", t(@camille, @name.coalesce(nil, "default"))
-          assert_equal 20, t(@test, @age.coalesce(nil, 20))
-        else
-          assert_equal "Camille", t(@camille, @name.coalesce(nil, '20'))
-          assert_equal 20, t(@test, @age.coalesce(nil, 20))
-        end
+
+        assert_equal 100, t(@test, @age.coalesce(100))
+        assert_equal "Camille", t(@camille, @name.coalesce(nil, "default"))
+        assert_equal 20, t(@test, @age.coalesce(nil, 20))
+
+        assert_equal 20, t(@test, @age.coalesce(10)+10)
+        assert_equal 'Laure10', t(@laure, @comments.coalesce("Laure") + 10)
+
+
       end
 
       # Comparators
