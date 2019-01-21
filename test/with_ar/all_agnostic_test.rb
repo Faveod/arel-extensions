@@ -160,7 +160,7 @@ module ArelExtensions
 			assert_equal "Lucas Sophie", t(User.reorder(nil).from(User.select(:name).where(:name => ['Lucas', 'Sophie']).reorder(:name).as('user_tests')), @name.group_concat)
 		else
 			assert_equal "Lucas Sophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat(' '))
-			assert_equal "Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat(','))          
+			assert_equal "Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat(','))
 			if @env_db == 'oracle'
 				assert_equal "LucasSophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat)
 			else
@@ -539,8 +539,8 @@ module ArelExtensions
 	  def test_accent_insensitive
 		skip "SQLite is natively Case Insensitive and Accent Sensitive" if $sqlite
 		skip "Not finished" if @env_db == 'mysql'
-		# actual comments value: "arrêté"		
-		#AI & CI	
+		# actual comments value: "arrêté"
+		#AI & CI
 		if !['postgresql'].include?(@env_db) # Extension unaccent required on PG
 			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arrêté")).then("1").else("0"))
 			assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_imatches("arrete")).then("1").else("0"))
@@ -556,7 +556,7 @@ module ArelExtensions
 			if !['oracle','postgresql','mysql'].include?(@env_db) # AI => CI
 				assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("Arrete")).then("1").else("0"))
 				assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.ai_matches("Arrêté")).then("1").else("0"))
-			end			
+			end
 		end
 		#AS & CI
 		assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("arrêté")).then("1").else("0"))
@@ -571,12 +571,11 @@ module ArelExtensions
 		assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.imatches("Arrêté")).then("1").else("0"))
 		#AS & CS
 		assert_equal "1", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arrêté")).then("1").else("0"))
-		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arrete")).then("1").else("0"))		  		  
-		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("àrrétè")).then("1").else("0"))		  		  
-		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arretez")).then("1").else("0"))		  
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arrete")).then("1").else("0"))
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("àrrétè")).then("1").else("0"))
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("arretez")).then("1").else("0"))
 		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrete")).then("1").else("0"))
-		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrêté")).then("1").else("0"))  
-		 	
+		assert_equal "0", t(@arthur,ArelExtensions::Nodes::Case.new.when(@comments.smatches("Arrêté")).then("1").else("0"))
 	  end
 	  
 	  def test_subquery_with_order	  
@@ -587,9 +586,9 @@ module ArelExtensions
 			#assert_equal 6, User.where(:name => User.select(:name).order(:name).offset(2)).count 
 		end
 	  end
-	  
+
 	  def test_in_with_nil
-		assert_equal true  , @myung.where(@age.in(1)).blank?		
+		assert_equal true  , @myung.where(@age.in(1)).blank?
 		assert_equal false , @myung.where(@age.in(23)).blank?
 		assert_equal true  , @myung.where(@age.in([1])).blank?
 		assert_equal true  , @myung.where(@age.in([1,2])).blank?
@@ -608,24 +607,24 @@ module ArelExtensions
 		assert_equal false , @test.where(@age.in([nil,1])).blank?
 		assert_equal false , @test.where(@age.in([nil,1,2])).blank?
 	  end
-	  
+
 	  def test_scope_with_in_plus_new
 		begin
-			@test.where(@age.in([1,2])).new		
+			@test.where(@age.in([1,2])).new
 			@test.where(@age.not_in([1,2])).new
 			assert true
 		rescue
 			assert false
 		end
 	  end
-	  
+
 	  def test_is_not_null
 		assert_equal false , @myung.where(@age.is_not_null).blank?
 		assert_equal true  , @test.where(@age.is_not_null).blank?
 	  end
-	  
+
 	  def test_not_in_with_nil
-		assert_equal false , @myung.where(@age.not_in(1)).blank?		
+		assert_equal false , @myung.where(@age.not_in(1)).blank?
 		assert_equal true  , @myung.where(@age.not_in(23)).blank?
 		assert_equal false , @myung.where(@age.not_in([1])).blank?
 		assert_equal false , @myung.where(@age.not_in([1,2])).blank?
@@ -636,7 +635,7 @@ module ArelExtensions
 		assert_equal true  , @myung.where(@age.not_in([nil,23])).blank?
 		assert_equal false , @myung.where(@age.not_in([nil,1,2])).blank?
 		assert_equal true  , @myung.where(@age.not_in([nil,1,23])).blank?
-		
+
 		#if the column is null, the entry will never be selected with not in (like every DBMS does)
 		#assert_equal false , @test.where(@age.not_in(1)).blank?
 		#assert_equal false , @test.where(@age.not_in([1])).blank?
@@ -646,7 +645,7 @@ module ArelExtensions
 		#assert_equal true  , @test.where(@age.not_in([nil,1])).blank?
 		#assert_equal true  , @test.where(@age.not_in([nil,1,2])).blank?
 	  end
-	 
+
 	  def test_alias_shortened
 		if ['postgresql','oracle'].include?(@env_db)
 			new_alias = Arel.shorten('azerty' * 15)
@@ -658,29 +657,27 @@ module ArelExtensions
 		end
 	  end
 
-	  def test_stat_functions	
+	  def test_stat_functions
 	  	skip "SQLite doesn't work for most on this functions" if $sqlite 
 	  	#puts t(User.where(nil), @score.average)
 	  	#puts t(User.where(nil), @score.variance(true))
 	  	#puts t(User.where(nil), @score.variance(false))
 	  	#puts t(User.where(nil), @score.std(true))
 	  	#puts t(User.where(nil), @score.std(false))
-	  	
+
 		assert ( 15.98625 - t(User.where(nil), @score.average)).abs < 0.01 
 		assert (613.75488 - t(User.where(nil), @score.variance)).abs < 0.01
 		assert ( 537.0355 - t(User.where(nil), @score.variance(false))).abs < 0.01
-		assert ( 24.77408 - t(User.where(nil), @score.std)).abs < 0.01		
-		assert ( 23.17403 - t(User.where(nil), @score.std(false))).abs < 0.01	  
-
+		assert ( 24.77408 - t(User.where(nil), @score.std)).abs < 0.01
+		assert ( 23.17403 - t(User.where(nil), @score.std(false))).abs < 0.01
 	  end
-	  
+
 	  def test_levenshtein_distance	 
 		skip "Not Yet Implemented" if $sqlite
 		assert_equal 0,  t(@arthur,@name.levenshtein_distance("Arthur"))
 		assert_equal 2,  t(@arthur,@name.levenshtein_distance("Artoor"))
 		assert_equal 1,  t(@arthur,@name.levenshtein_distance("Artehur"))
 	  end
-	  
     end
   end
 end
