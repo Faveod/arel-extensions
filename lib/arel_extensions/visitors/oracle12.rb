@@ -1,5 +1,7 @@
 module ArelExtensions
-  module Visitors  
+  module Visitors
+
+  Arel::Visitors.send(:remove_const,'Oracle12') if Arel::Visitors.const_defined?('Oracle12')
 	Arel::Visitors.const_set('Oracle12',Class.new(Arel::Visitors::Oracle)).class_eval do
 		def visit_Arel_Nodes_SelectStatement(o, collector)
 		  # Oracle does not allow LIMIT clause with select for update
