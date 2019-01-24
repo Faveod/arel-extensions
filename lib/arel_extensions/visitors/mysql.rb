@@ -95,7 +95,7 @@ module ArelExtensions
           collector
         end
       end
-      
+
 	  def visit_ArelExtensions_Nodes_Collate o, collector
 		case o.expressions.first
 		when Arel::Attributes::Attribute
@@ -108,7 +108,7 @@ module ArelExtensions
 		else
 			charset = (o.option == 'latin1') ? 'latin1' : 'utf8'
 		end	
-        collector = visit o.expressions.first, collector
+		collector = visit o.expressions.first, collector
 		if o.ai  
 			collector << " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
 			#doesn't work in latin1
@@ -116,11 +116,11 @@ module ArelExtensions
 			collector << " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
 		else
 			collector << " COLLATE #{charset}_bin"
-		end       
-        collector
+		end
+		collector
 	  end
 
-      def visit_ArelExtensions_Nodes_Concat o, collector
+	  def visit_ArelExtensions_Nodes_Concat o, collector
 		collector << "CONCAT("
 		o.expressions.each_with_index { |arg, i|
 		collector << Arel::Visitors::MySQL::COMMA unless i == 0
@@ -131,10 +131,10 @@ module ArelExtensions
 		  else
 			collector = visit arg, collector
 		  end
-        }
-        collector << ")"
-        collector
-      end
+		}
+		collector << ")"
+		collector
+	  end
 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "GROUP_CONCAT("

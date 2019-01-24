@@ -498,6 +498,8 @@ module ArelExtensions
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.gt(22)).union_all(@ut.project(@age).where(@age.lt(0)))).as('my_union')).length
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(23))).union_all(@ut.project(@age).where(@age.eq(21)))).as('my_union')).length
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(20))).union_all(@ut.project(@age).where(@age.eq(21)))).as('my_union')).length
+
+        assert (@ut.project(@age) + @ut.project(@age)).as('toto').table_name # as on union should answer to table_name (TableAlias)
       end
 
 	  # Case clause

@@ -9,12 +9,12 @@ module ArelExtensions
       def union_all(other)
         return ArelExtensions::Nodes::UnionAll.new(self,other) 
       end
-         
+
       def as other
-        ArelExtensions::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other.to_s)
+        Arel::Nodes::TableAlias.new Arel::Nodes::Grouping.new(self), Arel::Nodes::SqlLiteral.new(other.to_s)
       end
     end
-    
+
   end
 end
 

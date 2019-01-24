@@ -224,7 +224,7 @@ module ArelExtensions
 			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
 		
 		(c + c).as('union_table').to_sql
-			.must_be_like %{((SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")) union_table}  			     
+			.must_be_like %{((SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")) union_table}
 			
 			
 		c = @table.project(@table[:name])
@@ -239,10 +239,10 @@ module ArelExtensions
 		(c.union_all(c).union_all(c)).to_sql
 			.must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}      
 		(c.union_all(c)).as('union_table').to_sql
-			.must_be_like %{((SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")) union_table}  			     
-			
+			.must_be_like %{((SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")) union_table}
+
 	 end
-	 
+
 	 # Case
      it "should accept case clause" do		
 		@table[:name].when("smith").then("cool").when("doe").then("fine").else("uncool").to_sql

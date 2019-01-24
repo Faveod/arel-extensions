@@ -12,10 +12,10 @@ module ArelExtensions
 					@return_type= :int
 				when 'decimal', 'numeric', 'money', 'smallmoney', 'float', 'real'
 					@return_type= :decimal
-				when 'char', 'varchar', 'text', 'nchar', 'nvarchar', 'ntext'			
-					@return_type= :string		
+				when 'char', 'varchar', 'text', 'nchar', 'nvarchar', 'ntext'
+					@return_type= :string
 				when :int 
-					@return_type= :number			
+					@return_type= :number
 				when :float, :decimal
 					@return_type= :decimal
 				when :datetime, 'datetime','smalldatetime'
@@ -25,7 +25,7 @@ module ArelExtensions
 				when :date,'date'
 					@return_type= :date
 				when :binary, 'binary', 'varbinary', 'image'
-					@return_type= :binary	
+					@return_type= :binary
 				else
 					@return_type= :string
 					@as_attr = :string
@@ -44,10 +44,10 @@ module ArelExtensions
 					Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
 				end
 			end
-			
+
 			def return_type
 				@return_type
-			end			
+			end
 			
 		end
 	end
