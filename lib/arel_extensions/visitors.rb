@@ -24,17 +24,18 @@ begin
 	if Arel::VERSION.to_i == 6
 		if Arel::Visitors::VISITORS['sqlserver'] && Arel::Visitors::VISITORS['sqlserver'] != Arel::Visitors::MSSQL
 			Arel::Visitors::VISITORS['sqlserver'].class_eval do
-		  		include ArelExtensions::Visitors::MSSQL
-		  		
-		  		alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
+        include ArelExtensions::Visitors::MSSQL
+
+        alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
 				def visit_Arel_Nodes_SelectStatement o, collector	
 					if !collector.value.blank? && o.limit.blank? && o.offset.blank? 					
 						o = o.dup
 						o.orders = []
 					end
 					old_visit_Arel_Nodes_SelectStatement(o,collector)
-				end	
-				
+				end
+
+        alias_method :old_primary_Key_From_Table, :primary_Key_From_Table
 				def primary_Key_From_Table t
 					return unless t
 					column_name = @connection.schema_cache.primary_keys(t.name) ||
