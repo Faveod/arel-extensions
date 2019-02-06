@@ -171,6 +171,12 @@ module ArelExtensions
         assert_equal 42, t(@laure, @name.length + 37)
       end
 
+      def test_md5
+        skip "Sqlite can't do md5" if $sqlite
+        assert_equal "e2cf99ca82a7e829d2a4ac85c48154d0", t(@camille, @name.md5)
+        assert_equal "c3d41bf5efb468a1bcce53bd53726c85", t(@lucas, @name.md5)
+      end
+
       def test_locate
         skip "Sqlite version can't load extension for locate" if $sqlite && $load_extension_disabled
         assert_equal 1, t(@camille, @name.locate("C"))

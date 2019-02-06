@@ -170,6 +170,13 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_MD5 o, collector
+        collector << "LOWER (RAWTOHEX (DBMS_OBFUSCATION_TOOLKIT.md5(input => UTL_I18N.STRING_TO_RAW("
+        collector = visit o.left, collector
+        collector << ", 'AL32UTF8'))))"
+        collector
+      end
+
       # :date is not possible in Oracle since this type does not really exist
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         lc = o.left_node_type == :ruby_date || o.left_node_type == :ruby_time
