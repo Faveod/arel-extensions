@@ -101,6 +101,8 @@ module ArelExtensions
         compile(c + 'test' + ' chain').must_be_like %{CONCAT(\"users\".\"name\", 'test chain')}
         compile(Arel::Nodes.build_quoted('test') + ' chain').must_be_like %{'test chain'}        
         compile(c + '' + c).must_be_like %{CONCAT(\"users\".\"name\", \"users\".\"name\")}
+
+        compile(c.md5).must_be_like  %{MD5(\"users\".\"name\")}
       end
 
       # Comparators

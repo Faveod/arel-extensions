@@ -14,6 +14,7 @@ require 'arel_extensions/nodes/repeat'
 require 'arel_extensions/nodes/cast'
 require 'arel_extensions/nodes/collate'
 require 'arel_extensions/nodes/levenshtein_distance'
+require 'arel_extensions/nodes/md5'
 
 
 module ArelExtensions
@@ -167,5 +168,8 @@ module ArelExtensions
       ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
     end
 
+    def md5
+      ArelExtensions::Nodes::MD5.new [self]
+    end
   end
 end

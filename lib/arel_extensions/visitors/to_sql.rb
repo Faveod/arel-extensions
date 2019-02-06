@@ -92,6 +92,13 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_MD5 o, collector
+        collector << "MD5("
+        collector = visit o.left, collector
+        collector << ")"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_Length o, collector
         collector << "LENGTH("
         collector = visit o.left, collector
