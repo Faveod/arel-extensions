@@ -150,23 +150,19 @@ module ArelExtensions
 
       # String Functions
       def test_concat
-		assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
-		assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
-		assert_equal 'Test Laure', t(@laure, Arel::Nodes.build_quoted('Test ') + @name)
-		skip "TODO: find a way... to do group_concat/listagg in SQL Server" if @env_db == 'mssql'
-		if @env_db == 'postgresql'
-			assert_equal "Lucas Sophie", t(User.reorder(nil).from(User.select(:name).where(:name => ['Lucas', 'Sophie']).reorder(:name).as('user_tests')), @name.group_concat(' '))                    
-			assert_equal "Lucas,Sophie", t(User.reorder(nil).from(User.select(:name).where(:name => ['Lucas', 'Sophie']).reorder(:name).as('user_tests')), @name.group_concat(','))          
-			assert_equal "Lucas Sophie", t(User.reorder(nil).from(User.select(:name).where(:name => ['Lucas', 'Sophie']).reorder(:name).as('user_tests')), @name.group_concat)
-		else
-			assert_equal "Lucas Sophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat(' '))
-			assert_equal "Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat(','))
-			if @env_db == 'oracle'
-				assert_equal "LucasSophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat)
-			else
-				assert_equal "Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie']).reorder(:name), @name.group_concat)
-			end
-		end
+        assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
+        assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
+        assert_equal 'Test Laure', t(@laure, Arel::Nodes.build_quoted('Test ') + @name)
+
+        assert_equal "Lucas Sophie", t(User.where(:name => ['Lucas', 'Sophie']), @name.group_concat(' '))
+        assert_equal "Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie']), @name.group_concat(','))
+        assert_equal "Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie']), @name.group_concat)
+
+        skip "No order in group_concat in SqlLite" if $sqlite
+        assert_equal "Arthur,Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.asc))
+        assert_equal "Sophie,Lucas,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.desc))
+        assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',[@score.asc,@name.asc]))
+        #assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@score.asc,@name.asc))
       end
 
       def test_length

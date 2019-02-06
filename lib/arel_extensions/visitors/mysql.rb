@@ -120,25 +120,32 @@ module ArelExtensions
 		collector
 	  end
 
-	  def visit_ArelExtensions_Nodes_Concat o, collector
-		collector << "CONCAT("
-		o.expressions.each_with_index { |arg, i|
-		collector << Arel::Visitors::MySQL::COMMA unless i == 0
-		  if (arg.is_a?(Numeric)) || (arg.is_a?(Arel::Attributes::Attribute))
-			collector << "CAST("
-			collector = visit arg, collector
-			collector << " AS char)"
-		  else
-			collector = visit arg, collector
-		  end
-		}
-		collector << ")"
-		collector
-	  end
+      def visit_ArelExtensions_Nodes_Concat o, collector
+        collector << "CONCAT("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::MySQL::COMMA unless i == 0
+          if (arg.is_a?(Numeric)) || (arg.is_a?(Arel::Attributes::Attribute))
+            collector << "CAST("
+            collector = visit arg, collector
+            collector << " AS char)"
+          else
+            collector = visit arg, collector
+          end
+        }
+        collector << ")"
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "GROUP_CONCAT("
         collector = visit o.left, collector
+        if !o.orders.blank?
+          collector << ' ORDER BY '
+          o.orders.each_with_index do |order,i|
+            collector << Arel::Visitors::ToSql::COMMA unless i == 0
+            collector = visit order, collector
+          end
+        end
         if o.right && o.right != 'NULL'
           collector << ' SEPARATOR '
           collector = visit o.right, collector
@@ -197,7 +204,7 @@ module ArelExtensions
         when :integer, :float, :decimal
           collector << "FORMAT("
           collector = visit o.left, collector
-          collector << Arel::Visitors::ToSql::COMMA          
+          collector << Arel::Visitors::ToSql::COMMA
           collector << '2'
           collector << Arel::Visitors::ToSql::COMMA
           collector = visit o.right, collector

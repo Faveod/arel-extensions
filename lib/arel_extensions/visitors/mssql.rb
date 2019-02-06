@@ -311,7 +311,7 @@ module ArelExtensions
         end
       end
       
-	  def visit_ArelExtensions_Nodes_AiMatches o, collector 
+      def visit_ArelExtensions_Nodes_AiMatches o, collector 
         collector = visit o.left.ai_collate, collector
         collector << ' LIKE '
         collector = visit o.right.ai_collate, collector
@@ -321,9 +321,9 @@ module ArelExtensions
         else
           collector
         end
-	  end
+      end
       
-	  def visit_ArelExtensions_Nodes_AiIMatches o, collector 
+      def visit_ArelExtensions_Nodes_AiIMatches o, collector 
         collector = visit o.left.collate(true,true), collector
         collector << ' LIKE '
         collector = visit o.right.collate(true,true), collector
@@ -333,9 +333,9 @@ module ArelExtensions
         else
           collector
         end
-	  end
+      end
 
-	  def visit_ArelExtensions_Nodes_SMatches o, collector 
+      def visit_ArelExtensions_Nodes_SMatches o, collector 
         collector = visit o.left.collate, collector
         collector << ' LIKE '
         collector = visit o.right.collate, collector
@@ -345,27 +345,24 @@ module ArelExtensions
         else
           collector
         end
-	  end
-	  
-	  def visit_ArelExtensions_Nodes_Collate o, collector        
-		if o.ai && o.ci
-			collector = visit o.expressions.first, collector
-			collector << ' COLLATE Latin1_General_CI_AI'
-		elsif o.ai
-			collector = visit o.expressions.first, collector
-			collector << ' COLLATE Latin1_General_CS_AI'
-		elsif o.ci
-			collector = visit o.expressions.first, collector
-			collector << ' COLLATE Latin1_General_CI_AS'
-		else
-			collector = visit o.expressions.first, collector
-			collector << ' COLLATE Latin1_General_CS_AS'
-		end       
+      end
+ 
+      def visit_ArelExtensions_Nodes_Collate o, collector        
+        if o.ai && o.ci
+          collector = visit o.expressions.first, collector
+          collector << ' COLLATE Latin1_General_CI_AI'
+        elsif o.ai
+          collector = visit o.expressions.first, collector
+          collector << ' COLLATE Latin1_General_CS_AI'
+        elsif o.ci
+          collector = visit o.expressions.first, collector
+          collector << ' COLLATE Latin1_General_CI_AS'
+        else
+          collector = visit o.expressions.first, collector
+          collector << ' COLLATE Latin1_General_CS_AS'
+        end
         collector
-	  end 
-      
-      
-      
+      end
 
       # SQL Server does not know about REGEXP
       def visit_Arel_Nodes_Regexp o, collector
@@ -382,14 +379,23 @@ module ArelExtensions
 
       # TODO; 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
-        collector << "(LISTAGG("
+        collector << "(STRING_AGG("
         collector = visit o.left, collector
+        collector << Arel::Visitors::Oracle::COMMA
         if o.right  && o.right != 'NULL'
-          collector << Arel::Visitors::Oracle::COMMA
           collector = visit o.right, collector
+        else          
+          collector = visit Arel::Nodes.build_quoted(','), collector
         end
         collector << ") WITHIN GROUP (ORDER BY "
-        collector = visit o.left, collector
+        if !o.orders.blank?
+          o.orders.each_with_index do |order,i|
+            collector << Arel::Visitors::Oracle::COMMA unless i == 0
+            collector = visit order, collector
+          end
+        else
+          collector = visit o.left, collector
+        end
         collector << "))"
         collector
       end

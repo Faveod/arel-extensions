@@ -71,13 +71,19 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "array_to_string(array_agg("
         collector = visit o.left, collector
+        if !o.orders.blank?
+          collector << ' ORDER BY '
+          o.orders.each_with_index do |order,i|
+            collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
+            collector = visit order, collector
+          end
+        end
         collector << ")"
+        collector << Arel::Visitors::PostgreSQL::COMMA
         if o.right  && o.right != 'NULL'
-          collector << Arel::Visitors::PostgreSQL::COMMA
           collector = visit o.right, collector
         else
-          collector << Arel::Visitors::PostgreSQL::COMMA
-          collector = visit Arel::Nodes.build_quoted(' '), collector
+          collector = visit Arel::Nodes.build_quoted(','), collector
         end
         collector << ")"
         collector
@@ -168,19 +174,19 @@ module ArelExtensions
           collector
         end
       end
-      
-	  def visit_ArelExtensions_Nodes_Collate o, collector        
-		if o.ai
-			collector << "unaccent("
-			collector = visit o.expressions.first, collector
-			collector << ")"
-		elsif o.ci
-			collector = visit o.expressions.first, collector
-		else
-			collector = visit o.expressions.first, collector
-		end       
+
+      def visit_ArelExtensions_Nodes_Collate o, collector        
+        if o.ai
+          collector << "unaccent("
+          collector = visit o.expressions.first, collector
+          collector << ")"
+        elsif o.ci
+          collector = visit o.expressions.first, collector
+        else
+          collector = visit o.expressions.first, collector
+        end       
         collector
-	  end
+      end
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector = visit o.left, collector

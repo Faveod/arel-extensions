@@ -14,7 +14,7 @@ module ArelExtensions::Nodes
       }.flatten.reduce([]) { | res, b |
         # concatenate successive literal strings.
         if b.is_a?(Arel::Nodes::Quoted) && b.expr == ""
-			res
+          res
         elsif res.last && res.last.is_a?(Arel::Nodes::Quoted) && b.is_a?(Arel::Nodes::Quoted)
           res[-1] = Arel::Nodes.build_quoted(res.last.expr + b.expr)
         else
@@ -25,18 +25,14 @@ module ArelExtensions::Nodes
       super(tab)
     end
 
-	def self.new expr
-		o = super(expr)
-		if o.expressions.length == 1
-			o.expressions[0]
-		else
-			o
-		end
-	end
-
-    #def +(other)
-    #  Concat.new(self.expressions + [other])
-    #end
+    def self.new expr
+      o = super(expr)
+      if o.expressions.length == 1
+        o.expressions[0]
+      else
+        o
+      end
+    end
 
     def concat(other)
       Concat.new(self.expressions + [other])
@@ -47,16 +43,19 @@ module ArelExtensions::Nodes
   class GroupConcat < Function
     RETURN_TYPE = :string
 
+    attr_accessor :orders
+    
     def initialize expr
       tab = expr.map { |arg|
-        convert_to_node(arg)
-      }
+        if arg.is_a?(Array)
+          @orders = arg
+          nil
+        else
+          convert_to_node(arg)
+        end
+      }.compact
       super(tab)
     end
-
-    #def +(other)
-    #  return Concat.new([self, other])
-    #end
 
   end
 end

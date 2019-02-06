@@ -14,7 +14,7 @@ require 'arel_extensions/nodes/repeat'
 require 'arel_extensions/nodes/cast'
 require 'arel_extensions/nodes/collate'
 require 'arel_extensions/nodes/levenshtein_distance'
-      
+
 
 module ArelExtensions
   module StringFunctions
@@ -38,7 +38,7 @@ module ArelExtensions
     def substring start, len = nil
       ArelExtensions::Nodes::Substring.new [self, start, len]
     end
-    
+
     def [](start, ind = nil)
       start += 1 if start.is_a?(Integer)
       if start.is_a?(Range)
@@ -78,29 +78,29 @@ module ArelExtensions
     def idoes_not_match_all others, escape = nil
       grouping_all :idoes_not_match, others, escape
     end
-    
+
     def ai_matches other # accent insensitive & case sensitive
       ArelExtensions::Nodes::AiMatches.new(self,other)
     end
-    
+
     def ai_imatches other # accent insensitive & case insensitive
       ArelExtensions::Nodes::AiIMatches.new(self,other)
     end
-    
+
     def smatches other # accent sensitive & case sensitive
       ArelExtensions::Nodes::SMatches.new(self,other)
     end
-    
+
     def ai_collate 
-		ArelExtensions::Nodes::Collate.new(self,nil,true,false)
+      ArelExtensions::Nodes::Collate.new(self,nil,true,false)
     end
-    
+
     def ci_collate
-		ArelExtensions::Nodes::Collate.new(self,nil,false,true)
+      ArelExtensions::Nodes::Collate.new(self,nil,false,true)
     end
-    
+
     def collate ai=false,ci=false, option=nil
-		ArelExtensions::Nodes::Collate.new(self,option,ai,ci)
+      ArelExtensions::Nodes::Collate.new(self,option,ai,ci)
     end
 
     #REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.
@@ -108,12 +108,22 @@ module ArelExtensions
       ArelExtensions::Nodes::Replace.new [self, left, right]
     end
     
-	def concat other
-		ArelExtensions::Nodes::Concat.new [self, other]
-	end
+    def concat other
+      ArelExtensions::Nodes::Concat.new [self, other]
+    end
 
-    def group_concat sep = nil
-      ArelExtensions::Nodes::GroupConcat.new [self, sep]
+    #concat elements of a group, separated by sep and ordered by a list of Ascending or Descending
+    def group_concat sep = nil, orders = nil
+      order_tabs = [orders].flatten.map{ |o|
+        if o.is_a?(Arel::Nodes::Ascending) || o.is_a?(Arel::Nodes::Descending)
+          o
+        elsif o.respond_to?(:asc)
+          o.asc
+        else
+          nil
+        end
+      }.compact
+      ArelExtensions::Nodes::GroupConcat.new [self, sep, order_tabs]
     end
 
     #Function returns a string after removing left, right or the both prefixes or suffixes int argument
@@ -146,16 +156,16 @@ module ArelExtensions
     end
     
     def repeat other = 1 
-	  ArelExtensions::Nodes::Repeat.new [self, other]
+      ArelExtensions::Nodes::Repeat.new [self, other]
     end
     
     def levenshtein_distance other
-	  ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
+      ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
     end
 
-	def edit_distance other
-	  ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
-	end
+    def edit_distance other
+      ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
+    end
 
   end
 end
