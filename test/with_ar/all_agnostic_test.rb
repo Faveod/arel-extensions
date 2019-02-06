@@ -162,7 +162,7 @@ module ArelExtensions
         assert_equal "Arthur,Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.asc))
         assert_equal "Sophie,Lucas,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.desc))
         assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',[@score.asc,@name.asc]))
-        #assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@score.asc,@name.asc))
+        assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@score.asc,@name.asc))
       end
 
       def test_length

@@ -113,7 +113,7 @@ module ArelExtensions
     end
 
     #concat elements of a group, separated by sep and ordered by a list of Ascending or Descending
-    def group_concat sep = nil, orders = nil
+    def group_concat sep = nil, *orders 
       order_tabs = [orders].flatten.map{ |o|
         if o.is_a?(Arel::Nodes::Ascending) || o.is_a?(Arel::Nodes::Descending)
           o
