@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
-  gem "sqlite3", :platforms => [:mri, :mswin, :x64_mingw, :mingw]
+  gem "sqlite3", '<= 1.3.13', :platforms => [:mri, :mswin, :x64_mingw, :mingw]
   gem "mysql2", '0.4.10', :platforms => [:mri, :mswin, :x64_mingw, :mingw]
   gem "pg", '< 1', :platforms => [:mri, :mingw, :x64_mingw, :mswin]
 
