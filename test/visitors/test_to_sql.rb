@@ -25,22 +25,22 @@ module ArelExtensions
       # Math Functions
       it "should not break Arel functions" do
         compile(@price + 42).must_be_like %{("products"."price" + 42)}
-		compile(@table[:id] + @table[:pas_en_base])
-			.must_be_like %{("users"."id" + "users"."pas_en_base")} 
-		compile(@table[:pas_en_base] + @table[:id])
-			.must_be_like %{("users"."pas_en_base" + "users"."id")} 
-		compile(@table[:id] - @table[:pas_en_base])
-			.must_be_like %{("users"."id" - "users"."pas_en_base")} 
-		compile(@table[:pas_en_base] - @table[:id])
-			.must_be_like %{("users"."pas_en_base" - "users"."id")} 			
-		compile(@table[:id] * @table[:pas_en_base])
-			.must_be_like %{"users"."id" * "users"."pas_en_base"} 
-		compile(@table[:pas_en_base] * @table[:id])
-			.must_be_like %{"users"."pas_en_base" * "users"."id"} 
+    compile(@table[:id] + @table[:pas_en_base])
+      .must_be_like %{("users"."id" + "users"."pas_en_base")}
+    compile(@table[:pas_en_base] + @table[:id])
+      .must_be_like %{("users"."pas_en_base" + "users"."id")}
+    compile(@table[:id] - @table[:pas_en_base])
+      .must_be_like %{("users"."id" - "users"."pas_en_base")}
+    compile(@table[:pas_en_base] - @table[:id])
+      .must_be_like %{("users"."pas_en_base" - "users"."id")}
+    compile(@table[:id] * @table[:pas_en_base])
+      .must_be_like %{"users"."id" * "users"."pas_en_base"}
+    compile(@table[:pas_en_base] * @table[:id])
+      .must_be_like %{"users"."pas_en_base" * "users"."id"}
       end
 
       it "should return right calculations on numbers" do
-		#puts (@price.abs + 42).inspect
+    #puts (@price.abs + 42).inspect
         compile(@price.abs + 42).must_be_like %{(ABS("products"."price") + 42)}
         compile(@price.ceil + 42).must_be_like %{(CEIL("products"."price") + 42)}
         compile(@price.floor + 42).must_be_like %{(FLOOR("products"."price") + 42)}
@@ -55,21 +55,21 @@ module ArelExtensions
         compile(@price.sum + 42).must_be_like %{(SUM("products"."price") + 42)}
         compile((@price + 42).sum).must_be_like %{SUM(("products"."price" + 42))}
         compile((@price + 42).average).must_be_like %{AVG(("products"."price" + 42))}
-        compile((Arel.rand * 9).round + 42).must_be_like %{(ROUND(RAND() * 9) + 42)}        
-        compile((Arel.rand * @price).round(2) + @price).must_be_like %{(ROUND(RAND() * "products"."price", 2) + "products"."price")}        
-        
+        compile((Arel.rand * 9).round + 42).must_be_like %{(ROUND(RAND() * 9) + 42)}
+        compile((Arel.rand * @price).round(2) + @price).must_be_like %{(ROUND(RAND() * "products"."price", 2) + "products"."price")}
+
         compile(@price.std + 42).must_be_like %{(STD("products"."price") + 42)}
         compile(@price.variance + 42).must_be_like %{(VARIANCE("products"."price") + 42)}
-        
+
         compile(@price.coalesce(0) - 42).must_be_like %{(COALESCE("products"."price", 0) - 42)}
         compile(@price.sum - 42).must_be_like %{(SUM("products"."price") - 42)}
         compile(@price.std - 42).must_be_like %{(STD("products"."price") - 42)}
         compile(@price.variance - 42).must_be_like %{(VARIANCE("products"."price") - 42)}
-        
+
         fake_table = Arel::Table.new('fake_tables')
-        
-        compile(fake_table[:fake_att] - 42).must_be_like %{("fake_tables"."fake_att" - 42)}        
-        compile(fake_table[:fake_att].coalesce(0) - 42).must_be_like %{(COALESCE("fake_tables"."fake_att", 0) - 42)}        
+
+        compile(fake_table[:fake_att] - 42).must_be_like %{("fake_tables"."fake_att" - 42)}
+        compile(fake_table[:fake_att].coalesce(0) - 42).must_be_like %{(COALESCE("fake_tables"."fake_att", 0) - 42)}
       end
 
       # String Functions
@@ -89,17 +89,17 @@ module ArelExtensions
         compile(c.imatches('%test%')).must_be_like %{"users"."name" ILIKE '%test%'}
         compile(c.imatches_any(['%test%', 't2'])).must_be_like %{("users"."name" ILIKE '%test%' OR "users"."name" ILIKE 't2')}
         compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
-        
-        compile(c.substring(1)).must_be_like %{SUBSTRING("users"."name", 1)}        
+
+        compile(c.substring(1)).must_be_like %{SUBSTRING("users"."name", 1)}
         compile(c + '0').must_be_like %{CONCAT("users"."name", '0')}
         compile(c.substring(1) + '0').must_be_like %{CONCAT(SUBSTRING("users"."name", 1), '0')}
         compile(c.substring(1) + c.substring(2)).must_be_like %{CONCAT(SUBSTRING("users"."name", 1), SUBSTRING("users"."name", 2))}
         compile(c.concat(c).concat(c)).must_be_like %{CONCAT("users"."name", "users"."name", "users"."name")}
         compile(c + c + c).must_be_like %{CONCAT("users"."name", "users"."name", "users"."name")}
-        
+
         # some optimization on concat
         compile(c + 'test' + ' chain').must_be_like %{CONCAT(\"users\".\"name\", 'test chain')}
-        compile(Arel::Nodes.build_quoted('test') + ' chain').must_be_like %{'test chain'}        
+        compile(Arel::Nodes.build_quoted('test') + ' chain').must_be_like %{'test chain'}
         compile(c + '' + c).must_be_like %{CONCAT(\"users\".\"name\", \"users\".\"name\")}
 
         compile(c.md5).must_be_like  %{MD5(\"users\".\"name\")}
@@ -168,14 +168,14 @@ module ArelExtensions
         sql = compile(ArelExtensions::Nodes::DateDiff.new([d1, @table[:updated_at]]))
         sql.must_match %{DATEDIFF('2015-06-02', "users"."updated_at")}
       end
-      
+
       it "should diff between date col and duration" do
-		d1 = 10
-		d2 = -10
+    d1 = 10
+    d2 = -10
         compile(@table[:created_at] - d1).
-			must_match %{DATE_SUB("users"."created_at", 10)}
+      must_match %{DATE_SUB("users"."created_at", 10)}
         compile(@table[:created_at] - d2).
-			must_match %{DATE_SUB("users"."created_at", -10)}
+      must_match %{DATE_SUB("users"."created_at", -10)}
       end
 
       it "should accept operators on dates with numbers" do
@@ -195,7 +195,7 @@ module ArelExtensions
         compile(c <= @table[:comments]).must_be_like %{"users"."name" <= "users"."comments"}
         compile(c =~ /\Atest\Z/).must_be_like %{"users"."name" REGEXP '^test$'}
         compile(c !~ /\Ate\Dst\Z/).must_be_like %{"users"."name" NOT REGEXP '^te[^0-9]st$'}
-      end      
+      end
 
       it "should manage complex formulas" do
         c = @table[:name]
@@ -203,176 +203,173 @@ module ArelExtensions
           (c.length / 42).round(2).floor > (@table[:updated_at] - Date.new(2000, 3, 31)).abs.ceil
         ).must_be_like %{FLOOR(ROUND(LENGTH("users"."name") / 42, 2)) > CEIL(ABS(TIMEDIFF("users"."updated_at", '2000-03-31 00:00:00 UTC')))}
       end
-      
+
       it "should accept aggregator like GROUP CONCAT" do
-		@table.project(@table[:first_name].group_concat).group(@table[:last_name]).to_sql
-			.must_be_like %{SELECT GROUP_CONCAT("users"."first_name") FROM "users" GROUP BY "users"."last_name"}			
-		@table.project(@table[:first_name].group_concat('++')).group(@table[:last_name]).to_sql
-			.must_be_like %{SELECT GROUP_CONCAT("users"."first_name", '++') FROM "users" GROUP BY "users"."last_name"}
+    @table.project(@table[:first_name].group_concat).group(@table[:last_name]).to_sql
+      .must_be_like %{SELECT GROUP_CONCAT("users"."first_name") FROM "users" GROUP BY "users"."last_name"}
+    @table.project(@table[:first_name].group_concat('++')).group(@table[:last_name]).to_sql
+      .must_be_like %{SELECT GROUP_CONCAT("users"."first_name", '++') FROM "users" GROUP BY "users"."last_name"}
       end
-      
-      # Unions       
+
+      # Unions
       it "should accept union operators on queries and union nodes" do
-		c = @table.project(@table[:name])
-		compile(c + c)
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")} 
-		(c + c).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}  
-		(c + (c + c)).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
-		((c + c) + c).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
-		(c + c + c).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}      
-		
-		(c + c).as('union_table').to_sql
-			.must_be_like %{((SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")) union_table}
-			
-			
-		c = @table.project(@table[:name])
-		compile(c.union_all(c))
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")} 
-		(c.union_all(c)).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}  
-		(c.union_all(c.union_all(c))).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}      
-		((c.union_all(c)).union_all(c)).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}      
-		(c.union_all(c).union_all(c)).to_sql
-			.must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}      
-		(c.union_all(c)).as('union_table').to_sql
-			.must_be_like %{((SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")) union_table}
+        c = @table.project(@table[:name])
+        compile(c + c)
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}
+        (c + c).to_sql
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}
+        (c + (c + c)).to_sql
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}
+        ((c + c) + c).to_sql
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}
+        (c + c + c).to_sql
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")}
+        (c + c).as('union_table').to_sql
+          .must_be_like %{((SELECT "users"."name" FROM "users") UNION (SELECT "users"."name" FROM "users")) union_table}
+        c = @table.project(@table[:name])
+        compile(c.union_all(c))
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
+        (c.union_all(c)).to_sql
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
+        (c.union_all(c.union_all(c))).to_sql
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
+        ((c.union_all(c)).union_all(c)).to_sql
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
+        (c.union_all(c).union_all(c)).to_sql
+          .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
+        (c.union_all(c)).as('union_table').to_sql
+          .must_be_like %{((SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")) union_table}
+   end
 
-	 end
-
-	 # Case
-     it "should accept case clause" do		
-		@table[:name].when("smith").then("cool").when("doe").then("fine").else("uncool").to_sql
-			.must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' WHEN 'doe' THEN 'fine' ELSE 'uncool' END}  			     
-		@table[:name].when("smith").then(1).when("doe").then(2).else(0).to_sql
-			.must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}   
-		ArelExtensions::Nodes::Case.new.when(@table[:name] == "smith").then(1).when(@table[:name] == "doe").then(2).else(0).to_sql
-			.must_be_like %{CASE WHEN "users"."name" = 'smith' THEN 1 WHEN "users"."name" = 'doe' THEN 2 ELSE 0 END}  
-		ArelExtensions::Nodes::Case.new(@table[:name]).when("smith").then(1).when("doe").then(2).else(0).to_sql
-			.must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}  
-		@table[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
-			.must_be_like %{SUM(CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END)} 
-        @table[:name].when("smith").then("cool").else("uncool").matches('value',false).to_sql
-            .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END LIKE 'value'}  			     									
-        @table[:name].when("smith").then("cool").else("uncool").imatches('value',false).to_sql
-            .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END ILIKE 'value'}  			     									
+   # Case
+     it "should accept case clause" do
+    @table[:name].when("smith").then("cool").when("doe").then("fine").else("uncool").to_sql
+      .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' WHEN 'doe' THEN 'fine' ELSE 'uncool' END}
+    @table[:name].when("smith").then(1).when("doe").then(2).else(0).to_sql
+      .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}
+    ArelExtensions::Nodes::Case.new.when(@table[:name] == "smith").then(1).when(@table[:name] == "doe").then(2).else(0).to_sql
+      .must_be_like %{CASE WHEN "users"."name" = 'smith' THEN 1 WHEN "users"."name" = 'doe' THEN 2 ELSE 0 END}
+    ArelExtensions::Nodes::Case.new(@table[:name]).when("smith").then(1).when("doe").then(2).else(0).to_sql
+      .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}
+    @table[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
+      .must_be_like %{SUM(CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END)}
+    @table[:name].when("smith").then("cool").else("uncool").matches('value',false).to_sql
+        .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END LIKE 'value'}
+    @table[:name].when("smith").then("cool").else("uncool").imatches('value',false).to_sql
+        .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END ILIKE 'value'}
      end
-     
+
      it "should be possible to use as on anything" do
-		compile(@table[:name].as('alias')).must_be_like %{"users"."name" AS alias}
-		compile(@table[:name].concat(' test').as('alias')).must_be_like %{CONCAT("users"."name", ' test') AS alias}		
-		compile((@table[:name] + ' test').as('alias')).must_be_like %{CONCAT("users"."name", ' test') AS alias}
-		compile((@table[:age] + 42).as('alias')).must_be_like %{("users"."age" + 42) AS alias}		
-		compile(@table[:name].coalesce('').as('alias')).must_be_like %{COALESCE("users"."name", '') AS alias}
-		compile(Arel::Nodes.build_quoted('test').as('alias')).must_be_like %{'test' AS alias}
-		compile(@table.project(@table[:name]).as('alias')).must_be_like %{(SELECT "users"."name" FROM "users") alias}
-		compile(@table[:name].when("smith").then("cool").else("uncool").as('alias')).
-			must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END AS alias}  			     									
+    compile(@table[:name].as('alias')).must_be_like %{"users"."name" AS alias}
+    compile(@table[:name].concat(' test').as('alias')).must_be_like %{CONCAT("users"."name", ' test') AS alias}
+    compile((@table[:name] + ' test').as('alias')).must_be_like %{CONCAT("users"."name", ' test') AS alias}
+    compile((@table[:age] + 42).as('alias')).must_be_like %{("users"."age" + 42) AS alias}
+    compile(@table[:name].coalesce('').as('alias')).must_be_like %{COALESCE("users"."name", '') AS alias}
+    compile(Arel::Nodes.build_quoted('test').as('alias')).must_be_like %{'test' AS alias}
+    compile(@table.project(@table[:name]).as('alias')).must_be_like %{(SELECT "users"."name" FROM "users") alias}
+    compile(@table[:name].when("smith").then("cool").else("uncool").as('alias')).
+      must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END AS alias}
      end
-     
-	  it "should accept comparators on functions" do
-		  c = @table[:name]
-		  compile(c.soundex == 'test').must_be_like %{SOUNDEX("users"."name") = 'test'}
-		  compile(c.soundex != 'test').must_be_like %{SOUNDEX("users"."name") != 'test'}
-		  compile(c.length >= 0 ).must_be_like %{LENGTH("users"."name") >= 0}
-	  end
-	  
-	  
-	  it "should accept in on select statement" do
-		c = @table[:name]
-		compile(c.in(@table.project(@table[:name])))
-			.must_be_like %{"users"."name" IN (SELECT "users"."name" FROM "users")}
-	  end	  
-	  
-	  it "should accept coalesce function properly even on none actual tables and attributes" do
-		fake_at = Arel::Table.new('fake_table')
-	    compile(fake_at['fake_attribute'].coalesce('other_value'))
-			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value')}			
-	    compile(fake_at['fake_attribute'].coalesce('other_value1','other_value2'))
-			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value1', 'other_value2')}
+
+    it "should accept comparators on functions" do
+      c = @table[:name]
+      compile(c.soundex == 'test').must_be_like %{SOUNDEX("users"."name") = 'test'}
+      compile(c.soundex != 'test').must_be_like %{SOUNDEX("users"."name") != 'test'}
+      compile(c.length >= 0 ).must_be_like %{LENGTH("users"."name") >= 0}
+    end
+
+    it "should accept in on select statement" do
+    c = @table[:name]
+    compile(c.in(@table.project(@table[:name])))
+      .must_be_like %{"users"."name" IN (SELECT "users"."name" FROM "users")}
+    end
+
+    it "should accept coalesce function properly even on none actual tables and attributes" do
+    fake_at = Arel::Table.new('fake_table')
+      compile(fake_at['fake_attribute'].coalesce('other_value'))
+      .must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value')}
+      compile(fake_at['fake_attribute'].coalesce('other_value1','other_value2'))
+      .must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value1', 'other_value2')}
         compile(fake_at['fake_attribute'].coalesce('other_value1').coalesce('other_value2'))
-			.must_be_like %{COALESCE(COALESCE("fake_table"."fake_attribute", 'other_value1'), 'other_value2')}	
-	    compile(fake_at['fake_attribute'].coalesce('other_value').matches('truc'))
-			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value') LIKE 'truc'}				
-		compile(fake_at['fake_attribute'].coalesce('other_value').imatches('truc'))
-			.must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value') ILIKE 'truc'}				
-	  end
-	  
-	  it "should be possible to cast nodes types" do	    
-		compile(@table[:id].cast('char'))
-			.must_be_like %{CAST("users"."id" AS char)}
-		
-		compile(@table[:id].coalesce(' ').cast('char'))
-			.must_be_like %{CAST(COALESCE("users"."id", ' ') AS char)}
-	
-		compile(@table[:id].coalesce(' ').cast(:string))
-			.must_be_like %{CAST(COALESCE("users"."id", ' ') AS char)}
-			
-		compile(@table[:id].cast(:string).coalesce(' '))
-			.must_be_like %{COALESCE(CAST(\"users\".\"id\" AS char), ' ')}
-				
-		compile(@table[:id].cast('char') + ' ')
-			.must_be_like %{CONCAT(CAST("users"."id" AS char), ' ')}
-			
-		compile(@table[:id].cast('int') + 2)
-			.must_be_like %{(CAST("users"."id" AS int) + 2)}
-	  end
-	  	  
-	  it "should be possible to have nil element in the function NIL" do	 
-		compile(@table[:id].in(nil))
-			.must_be_like %{ISNULL("users"."id")}			
-		compile(@table[:id].in([nil]))
-			.must_be_like %{ISNULL("users"."id")}
-		compile(@table[:id].in([nil,1]))
-			.must_be_like %{(ISNULL("users"."id") OR "users"."id" = 1)}
-		compile(@table[:id].in([nil,1,2]))
-			.must_be_like %{(ISNULL("users"."id") OR "users"."id" IN (1, 2))}
-		compile(@table[:id].in(1))
-			.must_be_like %{"users"."id" IN (1)}
-		compile(@table[:id].in([1]))
-			.must_be_like %{"users"."id" IN (1)}
-		compile(@table[:id].in([1,2]))
-			.must_be_like %{"users"."id" IN (1, 2)}
-	  
-	  end
-	  
-	  it "should be possible to add and substract as much as we want" do
-		c = @table[:name]
-		compile(c.locate('test')+1)
-			.must_be_like %{(LOCATE('test', "users"."name") + 1)}
-		compile(c.locate('test')-1)
-			.must_be_like %{(LOCATE('test', "users"."name") - 1)}
-		compile(c.locate('test')+c.locate('test'))
-			.must_be_like %{(LOCATE('test', "users"."name") + LOCATE('test', "users"."name"))}
-		compile(c.locate('test')+1+c.locate('test')-1 + 1)
-			.must_be_like %{((((LOCATE('test', "users"."name") + 1) + LOCATE('test', "users"."name")) - 1) + 1)}
-	  end
-	  
-	  it "should be possible to add and substract on some nodes" do
-		c = @table[:name]	
+      .must_be_like %{COALESCE(COALESCE("fake_table"."fake_attribute", 'other_value1'), 'other_value2')}
+      compile(fake_at['fake_attribute'].coalesce('other_value').matches('truc'))
+      .must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value') LIKE 'truc'}
+    compile(fake_at['fake_attribute'].coalesce('other_value').imatches('truc'))
+      .must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value') ILIKE 'truc'}
+    end
+
+    it "should be possible to cast nodes types" do
+    compile(@table[:id].cast('char'))
+      .must_be_like %{CAST("users"."id" AS char)}
+    compile(@table[:id].coalesce(' ').cast('char'))
+      .must_be_like %{CAST(COALESCE("users"."id", ' ') AS char)}
+    compile(@table[:id].coalesce(' ').cast(:string))
+      .must_be_like %{CAST(COALESCE("users"."id", ' ') AS char)}
+    compile(@table[:id].cast(:string).coalesce(' '))
+      .must_be_like %{COALESCE(CAST(\"users\".\"id\" AS char), ' ')}
+    compile(@table[:id].cast('char') + ' ')
+      .must_be_like %{CONCAT(CAST("users"."id" AS char), ' ')}
+    compile(@table[:id].cast('int') + 2)
+      .must_be_like %{(CAST("users"."id" AS int) + 2)}
+    end
+
+    it "should be possible to have nil element in the function NIL" do
+    compile(@table[:id].in(nil))
+      .must_be_like %{ISNULL("users"."id")}
+    compile(@table[:id].in([nil]))
+      .must_be_like %{ISNULL("users"."id")}
+    compile(@table[:id].in([nil,1]))
+      .must_be_like %{(ISNULL("users"."id") OR "users"."id" = 1)}
+    compile(@table[:id].in([nil,1,2]))
+      .must_be_like %{(ISNULL("users"."id") OR "users"."id" IN (1, 2))}
+    compile(@table[:id].in(1))
+      .must_be_like %{"users"."id" IN (1)}
+    compile(@table[:id].in([1]))
+      .must_be_like %{"users"."id" IN (1)}
+    compile(@table[:id].in([1,2]))
+      .must_be_like %{"users"."id" IN (1, 2)}
+
+    end
+
+    it "should be possible tocorrectly use a Range on an IN" do
+      compile(@table[:id].in(1..4))
+        .must_be_like %{"users"."id" BETWEEN 1 AND 4}
+      compile(@table[:created_at].in(@date .. (@date + 1.year))) # @date = Date.new(2016, 3, 31)
+        .must_be_like %{"users"."created_at" BETWEEN '2016-03-31' AND '2017-03-31'}
+    end
+
+    it "should be possible to add and substract as much as we want" do
+    c = @table[:name]
+    compile(c.locate('test')+1)
+      .must_be_like %{(LOCATE('test', "users"."name") + 1)}
+    compile(c.locate('test')-1)
+      .must_be_like %{(LOCATE('test', "users"."name") - 1)}
+    compile(c.locate('test')+c.locate('test'))
+      .must_be_like %{(LOCATE('test', "users"."name") + LOCATE('test', "users"."name"))}
+    compile(c.locate('test')+1+c.locate('test')-1 + 1)
+      .must_be_like %{((((LOCATE('test', "users"."name") + 1) + LOCATE('test', "users"."name")) - 1) + 1)}
+    end
+
+    it "should be possible to add and substract on some nodes" do
+    c = @table[:name]
         compile(c.when(0,0).else(42) + 42).must_be_like %{(CASE "users"."name" WHEN 0 THEN 0 ELSE 42 END + 42)}
         compile(c.when(0,0).else(42) - 42).must_be_like %{(CASE "users"."name" WHEN 0 THEN 0 ELSE 42 END - 42)}
-        compile(c.when(0,"0").else("42") + "42").must_be_like %{CONCAT(CASE "users"."name" WHEN 0 THEN '0' ELSE '42' END, '42')}        
-	  end
-	  
-	  it "should be possible to desc and asc on functions" do
-		c = @table[:name]
-		compile(c.asc)
-			.must_be_like %{"users"."name" ASC}
-		compile(c.substring(2).asc)
-			.must_be_like %{SUBSTRING("users"."name", 2) ASC}			
-		compile(c.substring(2).desc)
-			.must_be_like %{SUBSTRING("users"."name", 2) DESC}
-		compile((c.locate('test')+1).asc)
-			.must_be_like %{(LOCATE('test', "users"."name") + 1) ASC}
-	  end
-	 	  
-	  puts "AREL VERSION : " + Arel::VERSION.to_s
+        compile(c.when(0,"0").else("42") + "42").must_be_like %{CONCAT(CASE "users"."name" WHEN 0 THEN '0' ELSE '42' END, '42')}
+    end
+
+    it "should be possible to desc and asc on functions" do
+    c = @table[:name]
+    compile(c.asc)
+      .must_be_like %{"users"."name" ASC}
+    compile(c.substring(2).asc)
+      .must_be_like %{SUBSTRING("users"."name", 2) ASC}
+    compile(c.substring(2).desc)
+      .must_be_like %{SUBSTRING("users"."name", 2) DESC}
+    compile((c.locate('test')+1).asc)
+      .must_be_like %{(LOCATE('test', "users"."name") + 1) ASC}
+    end
+
+    puts "AREL VERSION : " + Arel::VERSION.to_s
     end
   end
-end 
+end
