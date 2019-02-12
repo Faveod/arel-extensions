@@ -49,6 +49,8 @@ module ArelExtensions
 
     def not_in(other) #In should handle nil element in the Array
       case other
+      when Range
+        Arel::Nodes::Not.new(self.between(other))
       when Enumerable
         if other.include?(nil)
           other.delete(nil)
