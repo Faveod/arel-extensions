@@ -333,7 +333,7 @@ module ArelExtensions
       it "should be possible to correctly use a Range on an IN" do
         compile(@table[:id].in(1..4))
           .must_be_like %{"users"."id" BETWEEN 1 AND 4}
-        compile(@table[:created_at].in(@date .. (@date + 1.year))) # @date = Date.new(2016, 3, 31)
+        compile(@table[:created_at].in(@date .. Date.new(2017, 3, 31))) # @date = Date.new(2016, 3, 31)
           .must_be_like %{"users"."created_at" BETWEEN '2016-03-31' AND '2017-03-31'}
       end
 
