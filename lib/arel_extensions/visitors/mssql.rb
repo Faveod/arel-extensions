@@ -387,12 +387,14 @@ module ArelExtensions
         else
           collector = visit Arel::Nodes.build_quoted(','), collector
         end
+        collector << ") WITHIN GROUP (ORDER BY "
         if !o.orders.blank?
-          collector << ") WITHIN GROUP (ORDER BY "
           o.orders.each_with_index do |order,i|
             collector << Arel::Visitors::Oracle::COMMA unless i == 0
             collector = visit order, collector
           end
+        else
+          collector = visit o.left, collector
         end
         collector << "))"
         collector
