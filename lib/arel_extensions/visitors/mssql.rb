@@ -384,7 +384,7 @@ module ArelExtensions
         collector << Arel::Visitors::Oracle::COMMA
         if o.right  && o.right != 'NULL'
           collector = visit o.right, collector
-        else          
+        else
           collector = visit Arel::Nodes.build_quoted(','), collector
         end
         if !o.orders.blank?
@@ -393,8 +393,6 @@ module ArelExtensions
             collector << Arel::Visitors::Oracle::COMMA unless i == 0
             collector = visit order, collector
           end
-        else
-          collector = visit o.left, collector
         end
         collector << "))"
         collector
