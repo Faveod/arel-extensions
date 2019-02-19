@@ -159,6 +159,7 @@ module ArelExtensions
         assert_equal "Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie']), @name.group_concat)
 
         skip "No order in group_concat in SqlLite" if $sqlite
+        skip "No order in group_concat inSqlServer before 2016" if @env_db == 'mssql'
         assert_equal "Arthur,Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.asc))
         assert_equal "Sophie,Lucas,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.desc))
         assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',[@score.asc,@name.asc]))
