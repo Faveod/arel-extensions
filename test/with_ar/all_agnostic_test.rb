@@ -479,9 +479,9 @@ module ArelExtensions
 
       # Boolean functions
       def test_boolean_functions
-        assert_equal 1, @laure.where(
+        assert @laure.where(
           (@score.round > 19).⋀(@score.round < 21).⋁(@score.round(1) >= 20.1)
-        ).count
+        )
       end
 
       # Union operator
