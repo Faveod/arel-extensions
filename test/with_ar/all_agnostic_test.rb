@@ -479,6 +479,9 @@ module ArelExtensions
 
       # Boolean functions
       def test_boolean_functions
+        puts @laure.where(
+          (@score.round > 19).⋀(@score.round < 21).⋁(@score.round(1) >= 20.1)
+        ).to_sql
         assert @laure.where(
           (@score.round > 19).⋀(@score.round < 21).⋁(@score.round(1) >= 20.1)
         )
