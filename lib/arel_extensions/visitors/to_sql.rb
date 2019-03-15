@@ -567,6 +567,35 @@ module ArelExtensions
         collector << '))'
         collector
       end
+
+      def visit_ArelExtensions_Nodes_Json o,collector
+        case o.hash
+        when Array
+          res = Arel::Nodes.build_quoted('[')
+          o.hash.each.with_index do |v,i|
+            if i != 0
+              res += ','
+            end
+            res += v
+          end
+          res += ']'
+          collector = visit res, collector
+        when Hash
+          res = Arel::Nodes.build_quoted('{')
+          o.hash.each.with_index do |(k,v),i|
+            if i != 0
+              res += ','
+            end
+            res += k.cast(:string) + ':' + v
+          end
+          res += '}'
+          collector = visit res, collector
+        else
+          collector = visit o.hash, collector
+        end
+        collector
+      end
+
     end
   end
 end

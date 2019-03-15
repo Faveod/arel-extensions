@@ -474,14 +474,10 @@ module ArelExtensions
       def test_wday
         d = Date.new(2016, 6, 26)
         assert_equal(@env_db == 'oracle' || @env_db == 'mssql' ? 2 : 1, t(@myung, @created_at.wday).to_i) # monday
-        assert_equal 0, User.select(d.wday).as("res").first.to_i
       end
 
       # Boolean functions
       def test_boolean_functions
-        puts @laure.where(
-          (@score.round > 19).⋀(@score.round < 21).⋁(@score.round(1) >= 20.1)
-        ).to_sql
         assert @laure.where(
           (@score.round > 19).⋀(@score.round < 21).⋁(@score.round(1) >= 20.1)
         )
