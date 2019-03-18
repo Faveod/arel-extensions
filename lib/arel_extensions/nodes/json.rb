@@ -1,38 +1,79 @@
 module ArelExtensions
   module Nodes
-    class Json < Node
+    class JsonNode < Function
       RETURN_TYPE = :json
-      
+
       attr_accessor :hash
 
-      def return_type
-        self.class.const_get(:RETURN_TYPE)
+      def merge *expr
+        args = [self] + expr.map{|e| Json.new(e)}
+        JsonMerge.new(args)
       end
+
+      def get key
+        JsonGet.new(self,key)
+      end
+
+      def set key, value
+        JsonSet.new(self,key,value)
+      end
+    end
+    
+    class Json < JsonNode
 
       def initialize *expr
         if expr.one?
           case expr.first
+          when JsonNode
+            @hash = expr.first.hash
           when Array
-            @hash = expr.first.map{|e| Json.new(e)}
+            @hash = expr.first.map{|e|
+              (e.is_a?(Array) || e.is_a?(Hash)) ? Json.new(e) : convert_to_node(e)
+            }
           when Hash
             @hash = expr.first.inject({}){|acc,v|
-              acc[convert_to_node(v[0])] = Json.new(v[1])
+              acc[convert_to_node(v[0])] =  (v[1].is_a?(Array) || v[1].is_a?(Hash)) ? Json.new(v[1]) :  convert_to_node(v[1])
               acc
             }
-          when Arel::Nodes::Node, Arel::Attributes::Attribute
-            if [:json,:string].include?(expr.first.return_type)
-              @hash = expr.first
-            else
-              @hash = expr.first.cast(:string)
-            end
-          else
+          when String, Integer
             @hash = convert_to_node(expr.first)
+          else
+            if expr.first.is_a?(String) || (expr.first.is_a?(Arel::Attributes::Attribute) && type_of_attribute(expr.first) == :string) || (expr.first.return_type == :string)
+              @hash = convert_to_node(expr.first)
+            else
+              @hash = [convert_to_node(expr.first)]
+            end
           end
+        else
+          @hash = expr.map{|e| (e.is_a?(Array) || e.is_a?(Hash)) ? Json.new(e) : convert_to_node(e) }
         end
-      else
-        @hash = expr.map{|e| Json.new(e)}
       end
 
     end
+
+    class JsonMerge < JsonNode
+    end
+
+    class JsonGet < JsonNode
+      attr_accessor :key
+
+      def initialize json, key
+        @hash = json
+        @key = convert_to_node(key)
+      end
+
+    end
+
+    class JsonSet < JsonNode
+      attr_accessor :key, :value
+
+      def initialize json, key, value
+        @hash = json
+        @key = convert_to_node(key)
+        @value = Json.new(value)
+      end
+
+    end
+
   end
 end

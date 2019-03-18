@@ -65,6 +65,7 @@ require 'arel_extensions/nodes/as'
 require 'arel_extensions/nodes/case'
 require 'arel_extensions/nodes/soundex'
 require 'arel_extensions/nodes/cast'
+require 'arel_extensions/nodes/json'
 
 
 

@@ -2,27 +2,26 @@ require 'arel_extensions/predications'
 
 module ArelExtensions
   module Nodes
-    class Function < Arel::Nodes::Function    
+    class Function < Arel::Nodes::Function
       include Arel::Math
-      include Arel::Expressions      
+      include Arel::Expressions
       include Arel::OrderPredications
-	  include ArelExtensions::Predications	
-	  
-	  RETURN_TYPE = :string # by default...
+      include ArelExtensions::Predications
 
-    	# overrides as to make new Node like AliasPredication
-    
-	  def return_type 
-		self.class.const_get(:RETURN_TYPE)
-	  end
-    	
-    	
+      RETURN_TYPE = :string # by default...
+
+      # overrides as to make new Node like AliasPredication
+
+      def return_type
+        self.class.const_get(:RETURN_TYPE)
+      end
+
       def as other
         ArelExtensions::Nodes::As.new(self, Arel.sql(other))
       end
 
       def expr
-       	@expressions.first
+         @expressions.first
       end
 
       def left
@@ -33,14 +32,14 @@ module ArelExtensions
         @expressions[1]
       end
 
-      def type_of_attribute(att)				
+      def type_of_attribute(att)
         case att
         when Arel::Attributes::Attribute
-			begin  
-				Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
-			rescue
-				att
-			end
+          begin
+            Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
+          rescue
+            att
+          end
         when ArelExtensions::Nodes::Function
           att.return_type
 #        else
@@ -53,17 +52,17 @@ module ArelExtensions
         when Arel::Attributes::Attribute, Arel::Nodes::Node, Integer
           object
         when DateTime
-		  Arel::Nodes.build_quoted(object, self)
+          Arel::Nodes.build_quoted(object, self)
         when Time
           Arel::Nodes.build_quoted(object.strftime('%H:%M:%S'), self)
-        when String
-          Arel::Nodes.build_quoted(object)
+        when String, Symbol
+          Arel::Nodes.build_quoted(object.to_s)
         when Date
           Arel::Nodes.build_quoted(object.to_s, self)
         when NilClass
           Arel.sql('NULL')
         when ActiveSupport::Duration
-          object.to_i
+          Arel.sql(object.to_i)
         else
           raise(ArgumentError, "#{object.class} can not be converted to CONCAT arg")
         end
@@ -85,7 +84,7 @@ module ArelExtensions
             object
           end
         when DateTime
-		  Arel::Nodes.build_quoted(object, self)
+          Arel::Nodes.build_quoted(object, self)
         when Time
           Arel::Nodes.build_quoted(object.strftime('%H:%M:%S'), self)
         when String
@@ -145,7 +144,7 @@ module ArelExtensions
           raise(ArgumentError, "#{object.class} can not be converted to NUMBER arg")
         end
       end
-      
+
     end
   end
 end

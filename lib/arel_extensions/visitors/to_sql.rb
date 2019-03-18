@@ -574,9 +574,13 @@ module ArelExtensions
           res = Arel::Nodes.build_quoted('[')
           o.hash.each.with_index do |v,i|
             if i != 0
-              res += ','
+              res += ', '
             end
-            res += v
+            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.return_type == :string)
+              res = res + '"' + v + '"'
+            else
+              res += v
+            end
           end
           res += ']'
           collector = visit res, collector
@@ -584,9 +588,14 @@ module ArelExtensions
           res = Arel::Nodes.build_quoted('{')
           o.hash.each.with_index do |(k,v),i|
             if i != 0
-              res += ','
+              res += ', '
             end
-            res += k.cast(:string) + ':' + v
+            res += Arel::Nodes.build_quoted('"')+k + '": '
+            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.try(:return_type) == :string) # TODO : remove the try
+              res = res + '"' + v + '"'
+            else
+              res += v
+            end
           end
           res += '}'
           collector = visit res, collector

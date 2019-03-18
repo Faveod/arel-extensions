@@ -472,7 +472,7 @@ module ArelExtensions
       end
 
       def test_wday
-        d = Date.new(2016, 6, 26)
+        #d = Date.new(2016, 6, 26)
         assert_equal(@env_db == 'oracle' || @env_db == 'mssql' ? 2 : 1, t(@myung, @created_at.wday).to_i) # monday
       end
 
@@ -680,6 +680,29 @@ module ArelExtensions
         assert_equal 0,  t(@arthur,@name.levenshtein_distance("Arthur"))
         assert_equal 2,  t(@arthur,@name.levenshtein_distance("Artoor"))
         assert_equal 1,  t(@arthur,@name.levenshtein_distance("Artehur"))
+      end
+
+      def test_json
+        #creation
+        assert_equal 'Arthur', t(@arthur,ArelExtensions::Nodes::Json.new(@name)) # nothing should be done if the argument is a string-ish
+        assert_equal '["Arthur", "Arthur"]', t(@arthur,ArelExtensions::Nodes::Json.new(@name,@name))
+        assert_equal '{"Arthur": "Arthur", "Arthur2": "ArthurArthur"}', t(@arthur,ArelExtensions::Nodes::Json.new({@name => @name,@name+"2" => @name+@name}))
+        assert_equal '{"Arthur": "Arthur", "Arthur2": 1}', t(@arthur,ArelExtensions::Nodes::Json.new({@name => @name,@name+"2" => 1}))
+        assert_equal '[{"age": 21}, {"name": "Arthur", "score": 65.62}]', t(@arthur,ArelExtensions::Nodes::Json.new([{age: @age},{name: @name,score: @score}])).gsub('0','') # gsub is for mysql which is display number with 10 significant digits
+        #merge
+        skip "Not Yet Implemented" if $sqlite
+        h1 = ArelExtensions::Nodes::Json.new({@name => @name+@name,@name+"2" => 1})
+        assert_equal '{"Arthur": ["toto", "tata"], "Arthur2": 1, "Arthur3": 2}', t(@arthur,h1.merge({@name => ['toto','tata']},{@name+"3" => 2}))
+        assert_equal '{"Arthur": ["toto", "tata"], "Arthur2": 1, "Arthur3": 2}', t(@arthur,h1.merge({@name => ['toto','tata'], @name+"3" => 2}))
+        #get
+        assert_equal '"ArthurArthur"', t(@arthur,h1.get(@name))
+        h2 = ArelExtensions::Nodes::Json.new([{age: @age},{name: @name,score: @score}])
+        assert_equal '{"age": 21}', t(@arthur,h2.get(0))
+        assert_equal '21', t(@arthur,h2.get(0).get('age'))
+        assert_nil t(@arthur,h2.get('age'))
+        #set
+        assert_equal '{"Arthur": ["toto", "tata"], "Arthur2": 1}', t(@arthur,h1.set(@name, ['toto','tata']))
+        assert_equal '{"Arthur": "ArthurArthur", "Arthur2": 1, "Arthur3": 2}', t(@arthur,h1.set(@name+"3",2))
       end
     end
   end
