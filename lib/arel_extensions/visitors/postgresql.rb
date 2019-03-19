@@ -439,20 +439,11 @@ module ArelExtensions
         collector << 'jsonb_set('
         collector = visit o.hash, collector
         collector << Arel::Visitors::MySQL::COMMA
-#        if o.key.is_a?(Integer)
-#          collector << "{#{o.key}}"
-#        else
-#          collector = visit Arel::Nodes.build_quoted('array[')+o.key+']', collector
-#        end
         collector << 'array['
         collector = visit o.key, collector
         collector << ']'
         collector << Arel::Visitors::MySQL::COMMA
-        if o.value.is_a?(ArelExtensions::Nodes::JsonNode)
-          collector = visit o.value, collector
-        else
-          collector = visit o.value, collector
-        end
+        collector = visit o.value, collector
         collector << Arel::Visitors::MySQL::COMMA
         collector << 'true)'
         collector
