@@ -92,7 +92,7 @@ module ArelExtensions
         when Date
           Arel::Nodes.build_quoted(object, self)
         when NilClass
-          Arel.sql('NULL')
+          Arel.sql(nil)
         when ActiveSupport::Duration
           Arel::Nodes.build_quoted(object.to_i.to_s)
         else

@@ -22,7 +22,7 @@ module ArelExtensions
     class Json < JsonNode
 
       def initialize *expr
-        if expr.one?
+        if expr.length == 1
           case expr.first
           when JsonNode
             @hash = expr.first.hash
@@ -35,8 +35,10 @@ module ArelExtensions
               acc[convert_to_node(v[0])] =  (v[1].is_a?(Array) || v[1].is_a?(Hash)) ? Json.new(v[1]) :  convert_to_node(v[1])
               acc
             }
-          when String, Integer
+          when String, Numeric, TrueClass, FalseClass
             @hash = convert_to_node(expr.first)
+          when NilClass
+            @hash = Arel.sql('null')
           else
             if expr.first.is_a?(String) || (expr.first.is_a?(Arel::Attributes::Attribute) && type_of_attribute(expr.first) == :string) || (expr.first.return_type == :string)
               @hash = convert_to_node(expr.first)

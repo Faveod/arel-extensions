@@ -92,6 +92,15 @@ module ArelExtensions
         scope.select(node.as('res')).to_a.first.res
       end
 
+      #manage the difference between adapters that handle or not json type
+      def parse_json(h)
+        if @env_db == 'mysql'
+          JSON.parse("{\"res\":#{h}}")['res']
+        else
+          h
+        end
+      end
+
       # Math Functions
       def test_classical_arel
         assert_in_epsilon 42.16, t(@laure, @score + 22), 0.01
@@ -684,25 +693,30 @@ module ArelExtensions
 
       def test_json
         #creation
-        assert_equal 'Arthur', t(@arthur,ArelExtensions::Nodes::Json.new(@name)) # nothing should be done if the argument is a string-ish
-        assert_equal '["Arthur", "Arthur"]', t(@arthur,ArelExtensions::Nodes::Json.new(@name,@name))
-        assert_equal '{"Arthur": "Arthur", "Arthur2": "ArthurArthur"}', t(@arthur,ArelExtensions::Nodes::Json.new({@name => @name,@name+"2" => @name+@name}))
-        assert_equal '{"Arthur": "Arthur", "Arthur2": 1}', t(@arthur,ArelExtensions::Nodes::Json.new({@name => @name,@name+"2" => 1}))
-        assert_equal '[{"age": 21}, {"name": "Arthur", "score": 65.62}]', t(@arthur,ArelExtensions::Nodes::Json.new([{age: @age},{name: @name,score: @score}])).gsub('0','') # gsub is for mysql which is display number with 10 significant digits
-        #merge
+        assert_equal 'Arthur', t(@arthur,ArelExtensions::Nodes::Json.new(@name))
+        assert_equal ["Arthur","Arthur"], parse_json(t(@arthur,ArelExtensions::Nodes::Json.new(@name,@name)))
+        assert_equal ({"Arthur" => "Arthur", "Arthur2" => "ArthurArthur"}), parse_json(t(@arthur,ArelExtensions::Nodes::Json.new({@name => @name,@name+"2" => @name+@name})))
+        assert_equal ({"Arthur" => "Arthur","Arthur2" => 1}), parse_json(t(@arthur,ArelExtensions::Nodes::Json.new({@name => @name,@name+"2" => 1})))
+        assert_equal ([{"age" => 21},{"name" => "Arthur","score" => 65.62}]), parse_json(t(@arthur,ArelExtensions::Nodes::Json.new([{age: @age},{name: @name,score: @score}])))
+
         skip "Not Yet Implemented" if $sqlite
-        h1 = ArelExtensions::Nodes::Json.new({@name => @name+@name,@name+"2" => 1})
-        assert_equal '{"Arthur": ["toto", "tata"], "Arthur2": 1, "Arthur3": 2}', t(@arthur,h1.merge({@name => ['toto','tata']},{@name+"3" => 2}))
-        assert_equal '{"Arthur": ["toto", "tata"], "Arthur2": 1, "Arthur3": 2}', t(@arthur,h1.merge({@name => ['toto','tata'], @name+"3" => 2}))
+
         #get
-        assert_equal '"ArthurArthur"', t(@arthur,h1.get(@name))
+        h1 = ArelExtensions::Nodes::Json.new({@name => @name+@name,@name+"2" => 1})
+        assert_equal "ArthurArthur", parse_json(t(@arthur,h1.get(@name)))
         h2 = ArelExtensions::Nodes::Json.new([{age: @age},{name: @name,score: @score}])
-        assert_equal '{"age": 21}', t(@arthur,h2.get(0))
-        assert_equal '21', t(@arthur,h2.get(0).get('age'))
+        assert_equal ({"age" => 21}), parse_json(t(@arthur,h2.get(0)))
+        assert_equal 21, parse_json(t(@arthur,h2.get(0).get('age')))
         assert_nil t(@arthur,h2.get('age'))
         #set
-        assert_equal '{"Arthur": ["toto", "tata"], "Arthur2": 1}', t(@arthur,h1.set(@name, ['toto','tata']))
-        assert_equal '{"Arthur": "ArthurArthur", "Arthur2": 1, "Arthur3": 2}', t(@arthur,h1.set(@name+"3",2))
+        assert_equal ({"Arthur" => ["toto", "tata"], "Arthur2" => 1}), parse_json(t(@arthur,h1.set(@name, ['toto','tata'])))
+        assert_equal ({"Arthur" => "ArthurArthur", "Arthur2" => 1, "Arthur3" => 2}), parse_json(t(@arthur,h1.set(@name+"3",2)))
+        assert_equal ({"Arthur" => "ArthurArthur", "Arthur2" => 1, "Arthur3" => nil}), parse_json(t(@arthur,h1.set(@name+"3",nil)))
+        assert_equal ({"Arthur" => "ArthurArthur", "Arthur2" => 1, "Arthur3" => {"a" => 2}}), parse_json(t(@arthur,h1.set(@name+"3",{a: 2})))
+        #merge
+        assert_equal ({"Arthur" => ["toto", "tata"], "Arthur2" => 1, "Arthur3" => 2}), parse_json(t(@arthur,h1.merge({@name => ['toto','tata']},{@name+"3" => 2})))
+        assert_equal ({"Arthur" => ["toto", "tata"], "Arthur2" => 1, "Arthur3" => 2}), parse_json(t(@arthur,h1.merge({@name => ['toto','tata'], @name+"3" => 2})))
+        assert_equal ({"Arthur" => "ArthurArthur","Arthur2" => 1}), parse_json(t(@arthur,h1.merge({})))
       end
     end
   end
