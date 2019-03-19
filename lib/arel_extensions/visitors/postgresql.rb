@@ -412,7 +412,7 @@ module ArelExtensions
         when Arel::Attributes::Attribute
           collector = visit o.hash.cast(:jsonb), collector
         else
-          collector = visit o.hash.cast(:jsonb), collector
+          collector = visit o.hash, collector
           collector << '::jsonb'
         end
         collector

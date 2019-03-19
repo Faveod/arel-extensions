@@ -59,7 +59,45 @@ module ArelExtensions
 		  collector << "DECODE("
 		  collector = visit [o.left, o.right, 0, 1], collector
 		  collector << ")"
-		end	 
+		end
+      def visit_ArelExtensions_Nodes_Json o,collector
+        case o.hash
+        when Array
+          collector << 'json_array('
+          o.hash.each.with_index do |v,i|
+            if i != 0
+              collector << Arel::Visitors::MySQL::COMMA
+            end
+            collector  = visit v, collector
+          end
+          collector << ')'
+        when Hash
+          collector << 'json__object('
+          o.hash.each.with_index do |(k,v),i|
+            if i != 0
+              collector << Arel::Visitors::MySQL::COMMA
+            end
+            collector << 'KEY '
+            collector = visit k, collector
+            collector << ' IS '
+            collector = visit v, collector
+            collector << 'FORMAT JSON'
+          end
+          collector << ')'
+        when String,Numeric,TrueClass,FalseClass
+          collector = visit Arel::Nodes.build_quoted("#{o.hash}"), collector
+          collector << ' FORMAT JSON'
+        when NilClass
+          collector  << %Q['null' FORMAT JSON]
+        when Arel::Attributes::Attribute
+          collector = visit o.hash.cast('JSON'), collector
+        else
+          collector = visit o.hash, collector
+          collector << ' FORMAT JSON'
+        end
+        collector
+      end
+
 	end
   end
 end

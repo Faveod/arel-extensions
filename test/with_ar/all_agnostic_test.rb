@@ -94,7 +94,7 @@ module ArelExtensions
 
       #manage the difference between adapters that handle or not json type
       def parse_json(h)
-        if @env_db == 'mysql'
+        if @env_db != 'postgresql'
           JSON.parse("{\"res\":#{h}}")['res']
         else
           h
@@ -699,7 +699,7 @@ module ArelExtensions
         assert_equal ({"Arthur" => "Arthur","Arthur2" => 1}), parse_json(t(@arthur,ArelExtensions::Nodes::Json.new({@name => @name,@name+"2" => 1})))
         assert_equal ([{"age" => 21},{"name" => "Arthur","score" => 65.62}]), parse_json(t(@arthur,ArelExtensions::Nodes::Json.new([{age: @age},{name: @name,score: @score}])))
 
-        skip "Not Yet Implemented" if $sqlite
+        skip "Not Yet Implemented" if $sqlite || ['oracle','mssql'].include?(@env_db)
 
         #get
         h1 = ArelExtensions::Nodes::Json.new({@name => @name+@name,@name+"2" => 1})
