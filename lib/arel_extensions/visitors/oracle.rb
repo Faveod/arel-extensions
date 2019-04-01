@@ -520,6 +520,21 @@ module ArelExtensions
         old_visit_Arel_Nodes_TableAlias(o,collector)
       end
 
+      alias_method :old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As
+      def visit_Arel_Nodes_As o, collector
+        if o.left.is_a?(Arel::Nodes::Binary)
+          collector << '('
+          collector = visit o.left, collector
+          collector << ')'
+        else
+          collector = visit o.left, collector
+        end
+        quote = o.right.to_s =~ /[^a-zA-Z_]/ ? '"' : ''
+        collector << " AS #{quote}"
+        collector = visit o.right, collector
+        collector << "#{quote}"
+        collector
+      end
 
       alias_method :old_visit_Arel_Attributes_Attribute, :visit_Arel_Attributes_Attribute
       def visit_Arel_Attributes_Attribute o, collector

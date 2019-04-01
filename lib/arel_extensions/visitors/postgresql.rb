@@ -68,6 +68,21 @@ module ArelExtensions
         collector
       end
 
+      alias_method :old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As
+      def visit_Arel_Nodes_As o, collector
+        if o.left.is_a?(Arel::Nodes::Binary)
+          collector << '('
+          collector = visit o.left, collector
+          collector << ')'
+        else
+          collector = visit o.left, collector
+        end
+        collector << " AS \""
+        collector = visit o.right, collector
+        collector << "\""
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "array_to_string(array_agg("
         collector = visit o.left, collector

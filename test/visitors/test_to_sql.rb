@@ -66,6 +66,9 @@ module ArelExtensions
         compile(@price.std - 42).must_be_like %{(STD("products"."price") - 42)}
         compile(@price.variance - 42).must_be_like %{(VARIANCE("products"."price") - 42)}
 
+        compile(@price * 42.0).must_be_like %{"products"."price" * 42.0}
+        compile(@price / 42.0).must_be_like %{"products"."price" / 42.0}
+
         fake_table = Arel::Table.new('fake_tables')
 
         compile(fake_table[:fake_att] - 42).must_be_like %{("fake_tables"."fake_att" - 42)}

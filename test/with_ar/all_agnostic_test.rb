@@ -719,6 +719,13 @@ module ArelExtensions
         assert_equal ({"Arthur" => ["toto", "tata"], "Arthur2" => 1, "Arthur3" => 2}), parse_json(t(@arthur,h1.merge({@name => ['toto','tata'], @name+"3" => 2})))
         assert_equal ({"Arthur" => "ArthurArthur","Arthur2" => 1}), parse_json(t(@arthur,h1.merge({})))
       end
+
+      def test_as_on_everything
+        name = @arthur.select(@name.as('NaMe')).first.attributes
+        assert_equal 'Arthur', name["NaMe"] || name["name"] #because of Oracle
+        assert_equal 'Arthur', @arthur.select(@name.as('Na Me')).first.attributes["Na Me"]
+        assert_equal 'Arthur', @arthur.select(@name.as('Na-Me')).first.attributes["Na-Me"]
+      end
     end
   end
 end
