@@ -75,8 +75,16 @@ module Arel
   end
   
   def self.shorten s
-	Base64.urlsafe_encode64(Digest::MD5.new.digest(s)).tr('=', '').tr('-', '_')
-  end  
+    Base64.urlsafe_encode64(Digest::MD5.new.digest(s)).tr('=', '').tr('-', '_')
+  end
+
+  def self.json *expr
+    if expr.length == 1
+      ArelExtensions::Nodes::Json.new(expr.first)
+    else
+      ArelExtensions::Nodes::Json.new(expr)
+    end
+  end
 end
 
 Arel::Attributes::Attribute.class_eval do
@@ -129,7 +137,7 @@ Arel::SelectManager.class_eval do
   include ArelExtensions::Nodes
 end
 
-Arel::Nodes::As.class_eval do	
+Arel::Nodes::As.class_eval do
   include ArelExtensions::Nodes
 end
 

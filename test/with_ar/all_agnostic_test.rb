@@ -692,20 +692,19 @@ module ArelExtensions
       end
 
       def test_json
-        skip "Can't be tested on travis"
+        #skip "Can't be tested on travis"
         #creation
-        assert_equal 'Arthur', t(@arthur,ArelExtensions::Nodes::Json.new(@name))
-        assert_equal ["Arthur","Arthur"], parse_json(t(@arthur,ArelExtensions::Nodes::Json.new(@name,@name)))
-        assert_equal ({"Arthur" => "Arthur", "Arthur2" => "ArthurArthur"}), parse_json(t(@arthur,ArelExtensions::Nodes::Json.new({@name => @name,@name+"2" => @name+@name})))
-        assert_equal ({"Arthur" => "Arthur","Arthur2" => 1}), parse_json(t(@arthur,ArelExtensions::Nodes::Json.new({@name => @name,@name+"2" => 1})))
-        assert_equal ([{"age" => 21},{"name" => "Arthur","score" => 65.62}]), parse_json(t(@arthur,ArelExtensions::Nodes::Json.new([{age: @age},{name: @name,score: @score}])))
+        assert_equal 'Arthur', t(@arthur,Arel.json(@name))
+        assert_equal ["Arthur","Arthur"], parse_json(t(@arthur,Arel.json(@name,@name)))
+        assert_equal ({"Arthur" => "Arthur", "Arthur2" => "ArthurArthur"}), parse_json(t(@arthur,Arel.json({@name => @name,@name+"2" => @name+@name})))
+        assert_equal ({"Arthur" => "Arthur","Arthur2" => 1}), parse_json(t(@arthur,Arel.json({@name => @name,@name+"2" => 1})))
+        assert_equal ([{"age" => 21},{"name" => "Arthur","score" => 65.62}]), parse_json(t(@arthur,Arel.json([{age: @age},{name: @name,score: @score}])))
 
         skip "Not Yet Implemented" if $sqlite || ['oracle','mssql'].include?(@env_db)
-
         #get
-        h1 = ArelExtensions::Nodes::Json.new({@name => @name+@name,@name+"2" => 1})
+        h1 = Arel.json({@name => @name+@name,@name+"2" => 1})
         assert_equal "ArthurArthur", parse_json(t(@arthur,h1.get(@name)))
-        h2 = ArelExtensions::Nodes::Json.new([{age: @age},{name: @name,score: @score}])
+        h2 = Arel.json([{age: @age},{name: @name,score: @score}])
         assert_equal ({"age" => 21}), parse_json(t(@arthur,h2.get(0)))
         assert_equal 21, parse_json(t(@arthur,h2.get(0).get('age')))
         assert_nil t(@arthur,h2.get('age'))
@@ -718,6 +717,14 @@ module ArelExtensions
         assert_equal ({"Arthur" => ["toto", "tata"], "Arthur2" => 1, "Arthur3" => 2}), parse_json(t(@arthur,h1.merge({@name => ['toto','tata']},{@name+"3" => 2})))
         assert_equal ({"Arthur" => ["toto", "tata"], "Arthur2" => 1, "Arthur3" => 2}), parse_json(t(@arthur,h1.merge({@name => ['toto','tata'], @name+"3" => 2})))
         assert_equal ({"Arthur" => "ArthurArthur","Arthur2" => 1}), parse_json(t(@arthur,h1.merge({})))
+        # aggregate
+        assert_equal ({"5" => "Lucas", "15" => "Sophie", "23" => "Myung", "25" => "Laure"}),
+              parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16),Arel.json({@age => @name}).group(false)))
+        assert_equal ({"5" => "Lucas", "15" => "Sophie", "23" => "Myung", "25" => "Laure", "Laure"=>25, "Lucas"=>5, "Myung"=>23, "Sophie"=>15}),
+              parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16),Arel.json({@age => @name,@name => @age}).group(false)))
+        assert_equal ([{"5" => "Lucas"},{ "15" => "Sophie"},{ "23" => "Myung"},{ "25" => "Laure"}]),
+              parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16),Arel.json({@age => @name}).group(true)))
+
       end
 
       def test_as_on_everything

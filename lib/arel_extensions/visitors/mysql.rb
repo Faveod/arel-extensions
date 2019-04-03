@@ -386,7 +386,16 @@ module ArelExtensions
         collector
       end
 
+      # JSON if implemented only after 10.2.3 in MariaDb and 5.7 in MySql
+      def json_supported?
+        Arel::Table.engine.connection.send(:mariadb?) &&
+        Arel::Table.engine.connection.send(:version) >= '10.2.3' ||
+        !Arel::Table.engine.connection.send(:mariadb?) &&
+        Arel::Table.engine.connection.send(:version) >= '5.7.0'
+      end
+
       def visit_ArelExtensions_Nodes_Json o,collector
+        return super if !json_supported?
         case o.hash
         when Array
           collector << 'JSON_ARRAY('
@@ -451,6 +460,35 @@ module ArelExtensions
         collector << Arel::Visitors::MySQL::COMMA
         collector = visit o.value, collector
         collector << ')'
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_JsonGroup o, collector
+        if o.as_array
+          collector << 'JSON_ARRAYAGG('
+          collector = visit o.hash, collector
+          collector << ')'
+        else
+          case o.hash
+          when Hash
+            collector << 'JSON_MERGE_PATCH(' if o.hash.length > 1
+            o.hash.each.with_index do |(k,v),i|
+              if i != 0
+                collector << Arel::Visitors::MySQL::COMMA
+              end
+              collector << 'JSON_OBJECTAGG('
+              collector = visit k, collector
+              collector << Arel::Visitors::MySQL::COMMA
+              collector = visit v, collector
+              collector << ')'
+            end
+            collector << ')' if o.hash.length > 1
+          else
+            collector << 'JSON_OBJECTAGG('
+            collector = visit o.hash, collector
+            collector << ')'
+          end
+        end
         collector
       end
 

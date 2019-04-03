@@ -17,8 +17,13 @@ module ArelExtensions
       def set key, value
         JsonSet.new(self,key,value)
       end
+
+      def group as_array = true
+        JsonGroup.new(self,as_array)
+      end
+
     end
-    
+
     class Json < JsonNode
 
       def initialize *expr
@@ -54,6 +59,15 @@ module ArelExtensions
     end
 
     class JsonMerge < JsonNode
+    end
+
+    class JsonGroup < JsonNode
+      attr_accessor :as_array
+
+      def initialize json, as_array = true
+        @hash = as_array ? json : json.hash
+        @as_array = as_array
+      end
     end
 
     class JsonGet < JsonNode
