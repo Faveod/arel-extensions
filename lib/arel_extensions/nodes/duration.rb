@@ -20,11 +20,6 @@ module ArelExtensions
         @expressions[1]
       end
 
-
-      #def as other
-      #  Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other.to_s)
-      #end
-
     end
   end
 end

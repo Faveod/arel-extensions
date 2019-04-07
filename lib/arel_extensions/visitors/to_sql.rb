@@ -459,20 +459,7 @@ module ArelExtensions
         collector = visit o.right, collector
         collector
       end
-  
-      def visit_ArelExtensions_Nodes_As o, collector
-        if o.left.is_a?(ArelExtensions::Nodes::Union) || o.left.is_a?(ArelExtensions::Nodes::UnionAll)
-          collector << "("
-          collector = visit o.left, collector
-          collector << ") "
-          visit o.right, collector
-        else
-          collector = visit o.left, collector
-          collector << " AS "
-          visit o.right, collector
-        end
-      end
-  
+
       def visit_ArelExtensions_Nodes_Case o, collector
         collector << "CASE "
         if o.case

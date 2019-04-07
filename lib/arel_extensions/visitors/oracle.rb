@@ -536,6 +536,10 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_As o, collector
+        visit_Arel_Nodes_As o, collector
+      end
+
       alias_method :old_visit_Arel_Attributes_Attribute, :visit_Arel_Attributes_Attribute
       def visit_Arel_Attributes_Attribute o, collector
         join_name = o.relation.table_alias || o.relation.name

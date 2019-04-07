@@ -17,7 +17,7 @@ module ArelExtensions
       end
 
       def as other
-        ArelExtensions::Nodes::As.new(self, Arel.sql(other))
+        Arel::Nodes::As.new(self, Arel.sql(other))
       end
 
       def expr
