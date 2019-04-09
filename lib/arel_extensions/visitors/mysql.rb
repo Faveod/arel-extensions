@@ -464,6 +464,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_JsonGroup o, collector
+        return super if !json_supported?
         if o.as_array
           collector << 'JSON_ARRAYAGG('
           collector = visit o.hash, collector
