@@ -18,8 +18,8 @@ module ArelExtensions
         JsonSet.new(self,key,value)
       end
 
-      def group as_array = true
-        JsonGroup.new(self,as_array)
+      def group as_array = true, orders= nil
+        JsonGroup.new(self,as_array, orders)
       end
 
     end
@@ -62,11 +62,18 @@ module ArelExtensions
     end
 
     class JsonGroup < JsonNode
-      attr_accessor :as_array
+      attr_accessor :as_array, :orders
 
-      def initialize json, as_array = true
+      def initialize json, as_array = true, orders = nil
         @hash = as_array ? json : json.hash
         @as_array = as_array
+        if orders
+          if orders.is_a?(Array)
+            @orders = orders
+          else
+            @orders = [orders]
+          end
+        end
       end
     end
 

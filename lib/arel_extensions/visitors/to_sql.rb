@@ -578,7 +578,7 @@ module ArelExtensions
               res += ', '
             end
             res += Arel::Nodes.build_quoted('"')+k + '": '
-            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.try(:return_type) == :string) # TODO : remove the try
+            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.respond_to?(:return_type) && v.return_type == :string) # TODO : remove the try
               res = res + '"' + v + '"'
             else
               res += v
@@ -590,6 +590,32 @@ module ArelExtensions
           collector = visit o.hash, collector
         end
         collector
+      end
+
+      def visit_ArelExtensions_Nodes_JsonGroup o, collector
+        if o.as_array
+          res = Arel::Nodes.build_quoted('[') + (o.orders ? o.hash.group_concat(', ',o.orders) : o.hash.group_concat(', ')) + ']'
+          collector = visit res, collector
+        else
+          res = Arel::Nodes.build_quoted('{')
+          orders = o.orders || o.hash.keys
+          o.hash.each.with_index do |(k,v),i|
+            if i != 0
+              res = res + ', '
+            end
+            kv = Arel::Nodes.build_quoted('"')+k + '": '
+            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.respond_to?(:return_type) && v.return_type == :string) # TODO : remove the try
+              kv = kv + '"' + v + '"'
+            else
+              kv += v
+            end
+            res = res + kv.group_concat(', ',orders)
+          end
+          res = res + '}'
+          collector = visit res, collector
+        end
+        collector
+        
       end
 
     end

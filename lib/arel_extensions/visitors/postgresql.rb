@@ -464,6 +464,33 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_JsonGroup o, collector
+        if o.as_array
+          collector << 'jsonb_agg('
+          collector = visit o.hash, collector
+          collector << ')'
+        else
+          case o.hash
+          when Hash
+            o.hash.each.with_index do |(k,v),i|
+              if i != 0
+                collector << ' || '
+              end
+              collector << 'jsonb_object_agg('
+              collector = visit k, collector
+              collector << Arel::Visitors::MySQL::COMMA
+              collector = visit v, collector
+              collector << ')'
+            end
+          else
+            collector << 'jsonb_object_agg('
+            collector = visit o.hash, collector
+            collector << ')'
+          end
+        end
+        collector
+      end
+
     end
   end
 end
