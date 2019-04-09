@@ -222,13 +222,19 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Cast o, collector
         case o.as_attr
         when :string
-          as_attr = Arel::Nodes::SqlLiteral.new('varchar(255)')
+          collector << "TO_CHAR("
+          collector = visit o.left, collector
+          collector << ")"
+          return collector
         when :time
           left = Arel::Nodes::NamedFunction.new('TO_CHAR',[o.left,Arel::Nodes.build_quoted('HH24:MI:SS')])
           collector = visit left, collector
           return collector
         when :number
-          as_attr = Arel::Nodes::SqlLiteral.new('int')
+          collector << "TO_NUMBER("
+          collector = visit o.left, collector
+          collector << ")"
+          return collector
         when :datetime
           as_attr = Arel::Nodes::SqlLiteral.new('timestamp')
         when :binary

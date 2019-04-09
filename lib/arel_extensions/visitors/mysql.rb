@@ -290,10 +290,16 @@ module ArelExtensions
           as_attr = Arel::Nodes::SqlLiteral.new('char')
         when :time
           as_attr = Arel::Nodes::SqlLiteral.new('time')
-        when :number
-          as_attr = Arel::Nodes::SqlLiteral.new('int')
+        when :int
+          as_attr = Arel::Nodes::SqlLiteral.new('signed')
+        when :number, :decimal
+          as_attr = Arel::Nodes::SqlLiteral.new('decimal(20,6)')
         when :datetime
           as_attr = Arel::Nodes::SqlLiteral.new('datetime')
+        when :date
+          as_attr = Arel::Nodes::SqlLiteral.new('date')
+        when :time
+          as_attr = Arel::Nodes::SqlLiteral.new('time')
         when :binary
           as_attr = Arel::Nodes::SqlLiteral.new('binary')
         else

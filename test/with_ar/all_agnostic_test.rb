@@ -436,6 +436,10 @@ module ArelExtensions
         if @env_db == 'mysql' || @env_db == 'postgresql' || @env_db == 'oracle'
           assert_equal 1, t(@laure,ArelExtensions::Nodes::Case.new.when(@duration.cast(:time).cast(:string).eq("12:42:21")).then(1).else(0))
           assert_equal 1, t(@laure,ArelExtensions::Nodes::Case.new.when(@duration.cast(:time).eq("12:42:21")).then(1).else(0))
+          assert_equal "20.16", t(@laure,@score.cast(:string)).gsub(/[0]*\z/,'')
+          assert_equal "20.161", t(@laure,@score.cast(:string)+1).gsub(/[0]*1\z/,'1')
+          assert_equal 21.16, t(@laure,@score.cast(:string).cast(:decimal)+1)
+          assert_equal 21, t(@laure,@score.cast(:string).cast(:int)+1)
         end
       end
 

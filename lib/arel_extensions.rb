@@ -72,7 +72,7 @@ module Arel
   def self.rand
     ArelExtensions::Nodes::Rand.new
   end
-  
+
   def self.shorten s
     Base64.urlsafe_encode64(Digest::MD5.new.digest(s)).tr('=', '').tr('-', '_')
   end
@@ -84,6 +84,11 @@ module Arel
       ArelExtensions::Nodes::Json.new(expr)
     end
   end
+
+  def self.when condition
+    ArelExtensions::Nodes::Case.new.when(condition)
+  end
+
 end
 
 Arel::Attributes::Attribute.class_eval do

@@ -265,9 +265,9 @@ module ArelExtensions
         case o.as_attr
         when :string
           as_attr = Arel::Nodes::SqlLiteral.new('char')
-        when :number  
+        when :int
           as_attr = Arel::Nodes::SqlLiteral.new('int')
-        when :decimal, :float  
+        when :decimal, :float, :number
           as_attr = Arel::Nodes::SqlLiteral.new('float')
         when :datetime  
           as_attr = Arel::Nodes::SqlLiteral.new('datetime')
