@@ -578,7 +578,7 @@ module ArelExtensions
               res += ', '
             end
             res += Arel::Nodes.build_quoted('"')+k + '": '
-            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.respond_to?(:return_type) && v.return_type == :string) # TODO : remove the try
+            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.respond_to?(:return_type) && v.return_type == :string)
               res = res + '"' + v + '"'
             else
               res += v
@@ -604,7 +604,7 @@ module ArelExtensions
               res = res + ', '
             end
             kv = Arel::Nodes.build_quoted('"')+k + '": '
-            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.respond_to?(:return_type) && v.return_type == :string) # TODO : remove the try
+            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.respond_to?(:return_type) && v.return_type == :string)
               kv = kv + '"' + v + '"'
             else
               kv += v
@@ -615,7 +615,6 @@ module ArelExtensions
           collector = visit res, collector
         end
         collector
-        
       end
 
     end
