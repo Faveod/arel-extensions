@@ -227,16 +227,22 @@ module ArelExtensions
           collector << ")"
           return collector
         when :time
-          left = Arel::Nodes::NamedFunction.new('TO_CHAR',[o.left,Arel::Nodes.build_quoted('HH24:MI:SS')])
-          collector = visit left, collector
+          collector << "TO_DATE(TO_CHAR("
+          collector = visit o.left, collector
+          collector << ",'HH24:MI:SS'),'HH24:MI:SS')"
           return collector
-        when :number
+        when :number, :decimal
           collector << "TO_NUMBER("
           collector = visit o.left, collector
           collector << ")"
           return collector
         when :datetime
           as_attr = Arel::Nodes::SqlLiteral.new('timestamp')
+        when :date
+          collector << "TO_DATE(TO_CHAR("
+          collector = visit o.left, collector
+          collector << ",'YYYY-MM-DD'),'YYYY-MM-DD')"
+          return collector
         when :binary
           as_attr = Arel::Nodes::SqlLiteral.new('binary')
         else

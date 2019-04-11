@@ -291,7 +291,9 @@ module ArelExtensions
         when :number, :decimal, :float
           Arel::Nodes::SqlLiteral.new('numeric')
         when :datetime
-          Arel::Nodes::SqlLiteral.new('datetime')
+          Arel::Nodes::SqlLiteral.new('timestamp')
+        when :date
+          Arel::Nodes::SqlLiteral.new('date')
         when :binary
           Arel::Nodes::SqlLiteral.new('binary')
         else
