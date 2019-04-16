@@ -53,7 +53,7 @@ module ArelExtensions
         compile(c =~ '^test$').must_be_like %{REGEXP_LIKE("users"."name", '^test$')}
         compile(c !~ /\Ate\Dst\Z/).must_be_like %{NOT REGEXP_LIKE("users"."name", '^te[^0-9]st$')}
         compile(c.imatches('%test%')).must_be_like %{LOWER("users"."name") LIKE LOWER('%test%')}
-        compile(c.imatches_any(['%test%', 't2'])).must_be_like %{(LOWER("users"."name") LIKE LOWER('%test%') OR LOWER("users"."name") LIKE LOWER('t2'))}
+        compile(c.imatches_any(['%test%', 't2'])).must_be_like %{((LOWER("users"."name") LIKE LOWER('%test%')) OR (LOWER("users"."name") LIKE LOWER('t2')))}
         compile(c.idoes_not_match('%test%')).must_be_like %{LOWER("users"."name") NOT LIKE LOWER('%test%')}
       end
 

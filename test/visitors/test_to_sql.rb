@@ -90,7 +90,7 @@ module ArelExtensions
         compile(c =~ /\Atest\Z/).must_be_like %{"users"."name" REGEXP '^test$'}
         compile(c !~ /\Ate\Dst\Z/).must_be_like %{"users"."name" NOT REGEXP '^te[^0-9]st$'}
         compile(c.imatches('%test%')).must_be_like %{"users"."name" ILIKE '%test%'}
-        compile(c.imatches_any(['%test%', 't2'])).must_be_like %{("users"."name" ILIKE '%test%' OR "users"."name" ILIKE 't2')}
+        compile(c.imatches_any(['%test%', 't2'])).must_be_like %{(("users"."name" ILIKE '%test%') OR ("users"."name" ILIKE 't2'))}
         compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
 
         compile(c.substring(1)).must_be_like %{SUBSTRING("users"."name", 1)}
@@ -140,7 +140,7 @@ module ArelExtensions
         compile(c =~ /\Atest\Z/).must_be_like %{"users"."name" REGEXP '^test$'}
         compile(c !~ /\Ate\Dst\Z/).must_be_like %{"users"."name" NOT REGEXP '^te[^0-9]st$'}
         compile(c.imatches('%test%')).must_be_like %{"users"."name" ILIKE '%test%'}
-        compile(c.imatches_any(['%test%', 't2'])).must_be_like %{("users"."name" ILIKE '%test%' OR "users"."name" ILIKE 't2')}
+        compile(c.imatches_any(['%test%', 't2'])).must_be_like %{(("users"."name" ILIKE '%test%') OR ("users"."name" ILIKE 't2'))}
         compile(c.idoes_not_match('%test%')).must_be_like %{"users"."name" NOT ILIKE '%test%'}
       end
 
@@ -322,9 +322,9 @@ module ArelExtensions
         compile(@table[:id].in([nil]))
           .must_be_like %{ISNULL("users"."id")}
         compile(@table[:id].in([nil,1]))
-          .must_be_like %{ISNULL("users"."id") OR "users"."id" = 1}
+          .must_be_like %{(ISNULL("users"."id")) OR ("users"."id" = 1)}
         compile(@table[:id].in([nil,1,2]))
-          .must_be_like %{ISNULL("users"."id") OR "users"."id" IN (1, 2)}
+          .must_be_like %{(ISNULL("users"."id")) OR ("users"."id" IN (1, 2))}
         compile(@table[:id].in(1))
           .must_be_like %{"users"."id" IN (1)}
         compile(@table[:id].in([1]))
@@ -378,9 +378,9 @@ module ArelExtensions
         compile((c == 1).and([c == 2, c == 3])).
           must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
         compile((c == 1).or(c == 2, c == 3)).
-          must_be_like %{(("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3))}
+          must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
         compile((c == 1).or([c == 2, c == 3])).
-          must_be_like %{(("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3))}
+          must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
       end
 
       puts "AREL VERSION : " + Arel::VERSION.to_s
