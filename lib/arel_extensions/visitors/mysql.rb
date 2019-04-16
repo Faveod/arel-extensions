@@ -402,10 +402,10 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Json o,collector
         return super if !json_supported?
-        case o.hash
+        case o.dict
         when Array
           collector << 'JSON_ARRAY('
-          o.hash.each.with_index do |v,i|
+          o.dict.each.with_index do |v,i|
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
@@ -414,7 +414,7 @@ module ArelExtensions
           collector << ')'
         when Hash
           collector << 'JSON_OBJECT('
-          o.hash.each.with_index do |(k,v),i|
+          o.dict.each.with_index do |(k,v),i|
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
@@ -424,7 +424,7 @@ module ArelExtensions
           end
           collector << ')'
         else
-          collector = visit o.hash, collector
+          collector = visit o.dict, collector
         end
         collector
       end
@@ -443,7 +443,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_JsonGet o,collector
         collector << 'JSON_EXTRACT('
-        collector = visit o.hash, collector
+        collector = visit o.dict, collector
         collector << Arel::Visitors::MySQL::COMMA
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
@@ -456,7 +456,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_JsonSet o,collector
         collector << 'JSON_SET('
-        collector = visit o.hash, collector
+        collector = visit o.dict, collector
         collector << Arel::Visitors::MySQL::COMMA
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
@@ -473,13 +473,13 @@ module ArelExtensions
         return super if !json_supported?
         if o.as_array
           collector << 'JSON_ARRAYAGG('
-          collector = visit o.hash, collector
+          collector = visit o.dict, collector
           collector << ')'
         else
-          case o.hash
+          case o.dict
           when Hash
-            collector << 'JSON_MERGE_PATCH(' if o.hash.length > 1
-            o.hash.each.with_index do |(k,v),i|
+            collector << 'JSON_MERGE_PATCH(' if o.dict.length > 1
+            o.dict.each.with_index do |(k,v),i|
               if i != 0
                 collector << Arel::Visitors::MySQL::COMMA
               end
@@ -489,10 +489,10 @@ module ArelExtensions
               collector = visit v, collector
               collector << ')'
             end
-            collector << ')' if o.hash.length > 1
+            collector << ')' if o.dict.length > 1
           else
             collector << 'JSON_OBJECTAGG('
-            collector = visit o.hash, collector
+            collector = visit o.dict, collector
             collector << ')'
           end
         end

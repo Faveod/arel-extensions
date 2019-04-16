@@ -405,10 +405,10 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Json o,collector
-        case o.hash
+        case o.dict
         when Array
           collector << 'to_jsonb(array['
-          o.hash.each.with_index do |v,i|
+          o.dict.each.with_index do |v,i|
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
@@ -417,7 +417,7 @@ module ArelExtensions
           collector << '])'
         when Hash
           collector << 'jsonb_build_object('
-          o.hash.each.with_index do |(k,v),i|
+          o.dict.each.with_index do |(k,v),i|
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
@@ -427,14 +427,14 @@ module ArelExtensions
           end
           collector << ')'
         when String,Numeric,TrueClass,FalseClass
-          collector = visit Arel::Nodes.build_quoted("#{o.hash}"), collector
+          collector = visit Arel::Nodes.build_quoted("#{o.dict}"), collector
           collector << '::jsonb'
         when NilClass
           collector  << %Q['null'::jsonb]
         when Arel::Attributes::Attribute
-          collector = visit o.hash.cast(:jsonb), collector
+          collector = visit o.dict.cast(:jsonb), collector
         else
-          collector = visit o.hash, collector
+          collector = visit o.dict, collector
           collector << '::jsonb'
         end
         collector
@@ -451,7 +451,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_JsonGet o,collector
-        collector = visit o.hash, collector
+        collector = visit o.dict, collector
         collector << ' -> '
         collector = visit o.key, collector
         collector
@@ -459,7 +459,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_JsonSet o,collector
         collector << 'jsonb_set('
-        collector = visit o.hash, collector
+        collector = visit o.dict, collector
         collector << Arel::Visitors::MySQL::COMMA
         collector << 'array['
         collector = visit o.key, collector
@@ -474,12 +474,12 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_JsonGroup o, collector
         if o.as_array
           collector << 'jsonb_agg('
-          collector = visit o.hash, collector
+          collector = visit o.dict, collector
           collector << ')'
         else
-          case o.hash
+          case o.dict
           when Hash
-            o.hash.each.with_index do |(k,v),i|
+            o.dict.each.with_index do |(k,v),i|
               if i != 0
                 collector << ' || '
               end
@@ -491,7 +491,7 @@ module ArelExtensions
             end
           else
             collector << 'jsonb_object_agg('
-            collector = visit o.hash, collector
+            collector = visit o.dict, collector
             collector << ')'
           end
         end

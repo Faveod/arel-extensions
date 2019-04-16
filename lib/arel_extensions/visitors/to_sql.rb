@@ -573,10 +573,10 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Json o,collector
-        case o.hash
+        case o.dict
         when Array
           res = Arel::Nodes.build_quoted('[')
-          o.hash.each.with_index do |v,i|
+          o.dict.each.with_index do |v,i|
             if i != 0
               res += ', '
             end
@@ -590,7 +590,7 @@ module ArelExtensions
           collector = visit res, collector
         when Hash
           res = Arel::Nodes.build_quoted('{')
-          o.hash.each.with_index do |(k,v),i|
+          o.dict.each.with_index do |(k,v),i|
             if i != 0
               res += ', '
             end
@@ -604,19 +604,19 @@ module ArelExtensions
           res += '}'
           collector = visit res, collector
         else
-          collector = visit o.hash, collector
+          collector = visit o.dict, collector
         end
         collector
       end
 
       def visit_ArelExtensions_Nodes_JsonGroup o, collector
         if o.as_array
-          res = Arel::Nodes.build_quoted('[') + (o.orders ? o.hash.group_concat(', ',o.orders) : o.hash.group_concat(', ')) + ']'
+          res = Arel::Nodes.build_quoted('[') + (o.orders ? o.dict.group_concat(', ',o.orders) : o.dict.group_concat(', ')) + ']'
           collector = visit res, collector
         else
           res = Arel::Nodes.build_quoted('{')
-          orders = o.orders || o.hash.keys
-          o.hash.each.with_index do |(k,v),i|
+          orders = o.orders || o.dict.keys
+          o.dict.each.with_index do |(k,v),i|
             if i != 0
               res = res + ', '
             end

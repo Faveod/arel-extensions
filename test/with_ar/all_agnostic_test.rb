@@ -721,7 +721,10 @@ module ArelExtensions
         assert_equal ({"5" => "Lucas", "15" => "Sophie", "23" => "Myung", "25" => "Laure", "Laure"=>25, "Lucas"=>5, "Myung"=>23, "Sophie"=>15}),
               parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16),Arel.json({@age => @name,@name => @age}).group(false)))
         assert_equal ([{"5" => "Lucas"},{ "15" => "Sophie"},{ "23" => "Myung"},{ "25" => "Laure"}]),
-              parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16),Arel.json({@age => @name}).group(true,[@age])))
+              parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score),Arel.json({@age => @name}).group(true,[@age])))
+
+        #puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score,Arel.json({@age => @name}).group(true,[@age])).to_sql
+        #puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score,Arel.json({@age => @name}).group(true,[@age])).to_a
 
         skip "Not Yet Implemented" if $sqlite || ['oracle','mssql'].include?(@env_db)
         #get

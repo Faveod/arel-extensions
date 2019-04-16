@@ -517,7 +517,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_JsonGet o,collector
         collector << 'JSON_VALUE('
-        collector = visit o.hash, collector
+        collector = visit o.dict, collector
         collector << Arel::Visitors::MySQL::COMMA
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
