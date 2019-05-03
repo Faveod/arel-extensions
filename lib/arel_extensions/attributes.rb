@@ -8,17 +8,17 @@ require 'arel_extensions/predications'
 
 module ArelExtensions
   module Attributes
-  	include ArelExtensions::Math
-  	include ArelExtensions::Comparators
-  	include ArelExtensions::DateDuration
-  	include ArelExtensions::MathFunctions
-  	include ArelExtensions::NullFunctions
-  	include ArelExtensions::StringFunctions
-  	include ArelExtensions::Predications
+    include ArelExtensions::Math
+    include ArelExtensions::Comparators
+    include ArelExtensions::DateDuration
+    include ArelExtensions::MathFunctions
+    include ArelExtensions::NullFunctions
+    include ArelExtensions::StringFunctions
+    include ArelExtensions::Predications
 
-  	def ==(other)
+    def ==(other)
       Arel::Nodes::Equality.new self, Arel::Nodes.build_quoted(other, self)
-  	end
+    end
 
     def !=(other)
       Arel::Nodes::NotEqual.new self, Arel::Nodes.build_quoted(other, self)

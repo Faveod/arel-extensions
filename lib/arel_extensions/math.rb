@@ -101,7 +101,7 @@ module ArelExtensions
               begin
                 col2 = Arel::Table.engine.connection.schema_cache.columns_hash(other.relation.table_name)[other.name.to_s]
               rescue Exception
-                col = nil
+                col2 = nil
               end
               if (!col2) #if the column doesn't exist in the database
                 ArelExtensions::Nodes::DateSub.new [self, other]
@@ -115,8 +115,10 @@ module ArelExtensions
               end
             when Arel::Nodes::Node, DateTime, Time, String, Date
               ArelExtensions::Nodes::DateDiff.new [self, other]
-            when Integer
+            when  ArelExtensions::Nodes::Duration, Integer
               ArelExtensions::Nodes::DateSub.new [self, other]
+            else # ActiveSupport::Duration
+              ArelExtensions::Nodes::DateAdd.new [self, -other]
             end
           else
             case other

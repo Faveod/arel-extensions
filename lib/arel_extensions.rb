@@ -89,6 +89,10 @@ module Arel
     ArelExtensions::Nodes::Case.new.when(condition)
   end
 
+  def self.duration s, expr
+    ArelExtensions::Nodes::Duration.new(s.to_s+'i',expr)
+  end
+
 end
 
 Arel::Attributes::Attribute.class_eval do

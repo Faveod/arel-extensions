@@ -180,26 +180,38 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         lc = o.left_node_type == :ruby_date || o.left_node_type == :ruby_time
         rc = o.right_node_type == :ruby_date || o.right_node_type == :ruby_time
-        collector << '('
-        collector << 'TO_DATE(' if lc
-        collector = visit o.left, collector
-        collector << ')' if lc
-        collector << " - "
-        collector << 'TO_DATE(' if rc
-        collector = visit o.right, collector
-        collector << ')' if rc
-        collector << ')'
-        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-          collector << ' * (CASE WHEN (TRUNC('
+        if rc || o.right_node_type == :date || o.right_node_type == :datetime || o.right_node_type == :time
+          collector << '('
           collector << 'TO_DATE(' if lc
           collector = visit o.left, collector
           collector << ')' if lc
-          collector << Arel::Visitors::Oracle::COMMA
-          collector << "'DDD') = "
-          collector << 'TO_DATE(' if lc
+          collector << " - "
+          collector << 'TO_DATE(' if rc
+          collector = visit o.right, collector
+          collector << ')' if rc
+          collector << ')'
+          if (o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time)
+            collector << ' * (CASE WHEN (TRUNC('
+            collector << 'TO_DATE(' if lc
+            collector = visit o.left, collector
+            collector << ')' if lc
+            collector << Arel::Visitors::Oracle::COMMA
+            collector << "'DDD') = "
+            collector << 'TO_DATE(' if lc
+            collector = visit o.left, collector
+            collector << ')' if lc
+            collector << ') THEN 1 ELSE 86400 END)' # converts to seconds
+          end
+        else
+          collector << '('
           collector = visit o.left, collector
-          collector << ')' if lc
-          collector << ') THEN 1 ELSE 86400 END)' # converts to seconds
+          collector << ' - ('
+          if o.right.is_a?(ArelExtensions::Nodes::Duration)
+            o.right.with_interval = true
+          end
+          collector = visit o.right, collector
+          collector << '))'
+          collector
         end
         collector
       end
@@ -212,10 +224,28 @@ module ArelExtensions
           collector << Arel::Visitors::Oracle::COMMA
           collector = visit Arel::Nodes.build_quoted(Arel::Visitors::Oracle::DATE_MAPPING[o.left]), collector
         else
+          right = case o.left
+          when  'd','m','y'
+            interval = 'DAY'
+            o.right.cast(:date)
+          when 'h','mn','s'
+            interval = 'SECOND'
+            o.right.cast(:datetime)
+          when /i\z/
+            interval = Arel::Visitors::Oracle::DATE_MAPPING[o.left[0..-2]]
+            collector << '('
+            collector = visit o.right, collector
+            collector << ") * (INTERVAL '1' #{interval})"
+            return collector
+          else
+            interval = nil
+            o.right
+          end
           collector << "EXTRACT(#{Arel::Visitors::Oracle::DATE_MAPPING[o.left]} FROM "
-          collector = visit o.right, collector
+          collector = visit right, collector
         end
         collector << ")"
+        collector << " * (INTERVAL '1' #{interval})" if interval && o.with_interval
         collector
       end
 
@@ -387,7 +417,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << '('
         collector = visit o.left, collector
-        collector << (o.right.value >= 0 ? ' + ' : ' - ')
+        collector << ' + '# (o.right.value >= 0 ? ' + ' : ' - ')
         collector = visit o.oracle_value(o.right), collector
         collector << ')'
         collector

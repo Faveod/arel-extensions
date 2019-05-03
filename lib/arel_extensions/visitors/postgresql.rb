@@ -205,30 +205,56 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector = visit o.left, collector
-        collector << (o.right.value >= 0 ? ' + ' : ' - ')
+        collector << ' + ' #(o.right.value >= 0 ? ' + ' : ' - ')
         collector = visit o.postgresql_value(o.right), collector
         collector
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-                        "DATEDIFF('second', "
-                    else
-                        "DATEDIFF('day', "
-                    end
-        collector = visit o.right, collector
-        collector << (o.right_node_type == :date ? '::date' : '::timestamp')
-        collector << Arel::Visitors::PostgreSQL::COMMA
-        collector = visit o.left, collector
-        collector << (o.left_node_type == :date ? '::date' : '::timestamp')
-        collector << ")"
+        if o.right_node_type == :ruby_date || o.right_node_type == :ruby_time || o.right_node_type == :date || o.right_node_type == :datetime || o.right_node_type == :time
+          collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+                          "DATEDIFF('second', "
+                      else
+                          "DATEDIFF('day', "
+                      end
+          collector = visit o.right, collector
+          collector << (o.right_node_type == :date ? '::date' : '::timestamp')
+          collector << Arel::Visitors::PostgreSQL::COMMA
+          collector = visit o.left, collector
+          collector << (o.left_node_type == :date ? '::date' : '::timestamp')
+          collector << ")"
+        else
+          collector << '('
+          collector = visit o.left, collector
+          collector << ' - ('
+          if o.right.is_a?(ArelExtensions::Nodes::Duration)
+            o.right.with_interval = true
+          end
+          collector = visit o.right, collector
+          collector << '))'
+        end
         collector
       end
 
       def visit_ArelExtensions_Nodes_Duration o, collector
+        if o.with_interval
+          interval = case o.left
+            when  'd','m','y'
+              'DAY'
+            when 'h','mn','s'
+              'SECOND'
+            when /i\z/
+              collector << "("
+              collector = visit o.right, collector
+              collector << ")"
+              collector << " * (INTERVAL '1' #{Arel::Visitors::PostgreSQL::DATE_MAPPING[o.left[0..-2]]})"
+              return collector
+            end
+        end
         collector << "EXTRACT(#{Arel::Visitors::PostgreSQL::DATE_MAPPING[o.left]} FROM "
         collector = visit o.right, collector
         collector << ")"
+        collector << " * (INTERVAL '1' #{interval})" if interval && o.with_interval
         collector
       end
 

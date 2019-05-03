@@ -84,23 +84,38 @@ module ArelExtensions
       end
 
 
+
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-                        'DATEDIFF(second'
-                    else
-                      'DATEDIFF(day'
-                    end
-        collector << Arel::Visitors::MSSQL::COMMA
-        collector = visit o.right, collector
-        collector << Arel::Visitors::MSSQL::COMMA
-        collector = visit o.left, collector
-        collector << ')'
+        if o.right_node_type == :ruby_date || o.right_node_type == :ruby_time || o.right_node_type == :date || o.right_node_type == :datetime || o.right_node_type == :time
+          collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+                          'DATEDIFF(second'
+                      else
+                        'DATEDIFF(day'
+                      end
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector = visit o.right, collector
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector = visit o.left, collector
+          collector << ')'
+        else
+          da = ArelExtensions::Nodes::DateAdd.new([])
+          collector << "DATEADD("
+          collector = visit da.mssql_datepart(o.right), collector
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector << "-("
+          collector = visit da.mssql_value(o.right), collector
+          collector << ")"
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector = visit o.left, collector
+          collector << ")"
+          collector
+        end
         collector
       end
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << "DATEADD("
-        collector << o.mssql_datepart(o.right)
+        collector = visit o.mssql_datepart(o.right), collector
         collector << Arel::Visitors::MSSQL::COMMA
         collector = visit o.mssql_value(o.right), collector
         collector << Arel::Visitors::MSSQL::COMMA
@@ -110,14 +125,19 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Duration o, collector
-        conv = ['h', 'mn', 's'].include?(o.left)
-        collector << 'DATEPART('
-        collector << Arel::Visitors::MSSQL::DATE_MAPPING[o.left]
-        collector << Arel::Visitors::MSSQL::COMMA
-        collector << 'CONVERT(datetime,' if conv
-        collector = visit o.right, collector
-        collector << ')' if conv
-        collector << ")"
+        if o.with_interval && o.left.end_with?('i')
+          collector = visit o.right, collector
+        else
+          left = o.left.end_with?('i') ? o.left[0..-2] : o.left
+          conv = ['h', 'mn', 's'].include?(o.left)
+          collector << 'DATEPART('
+          collector << Arel::Visitors::MSSQL::DATE_MAPPING[left]
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector << 'CONVERT(datetime,' if conv
+          collector = visit o.right, collector
+          collector << ')' if conv
+          collector << ")"
+        end
         collector
       end
 

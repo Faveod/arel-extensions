@@ -132,6 +132,9 @@ module ArelExtensions
 
       def convert_to_number(object)
         case object
+        when ArelExtensions::Nodes::Duration
+          object.with_interval = true
+          object
         when Arel::Attributes::Attribute, Arel::Nodes::Node
           object
         when Integer

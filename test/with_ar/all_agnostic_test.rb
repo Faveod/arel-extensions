@@ -391,7 +391,7 @@ module ArelExtensions
         assert_equal 23, t(@laure, @created_at.day).to_i
         assert_equal 0, User.where(@created_at.day.eq("05")).count
 
-        skip "manage DATE" if @env_db == 'oracle'
+        #skip "manage DATE" if @env_db == 'oracle'
         #Hour
         assert_equal 0, t(@laure, @created_at.hour).to_i
         assert_equal 12, t(@lucas, @updated_at.hour).to_i
@@ -416,24 +416,51 @@ module ArelExtensions
           else
             assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1)
           end
-          if @env_db == 'mysql'
-            date1 = Date.new(2016, 5, 23)
-            durPos = 10.years
-            durNeg = -10.years
-            date2 = date1 + durPos
-            date3 = date1 - durPos
-            # Pull Request #5 tests
-            assert_includes [date2,"2026-05-23"], t(@test,(@created_at + durPos))
-            assert_includes [date3,"2006-05-23"], t(@test,(@created_at + durNeg))
-            # we test with the ruby object or the string because some adapters don't return an object Date
-          end
         end
+
+        skip "not yet implemented" if $sqlite
+
+        date1 = Date.new(2016, 5, 23)
+        durPos = 10.years
+        durNeg = -10.years
+        date2 = date1 + durPos
+        date3 = date1 - durPos
+        date4 = date1 + 23.days
+        date5 = date1 - 23.days
+
+        datetime1 = Time.utc(2014, 3, 3, 12, 42, 0)
+        # Pull Request #5 tests
+        #puts (@created_at + durPos).cast(:date).to_sql
+        assert_includes [date2,"2026-05-23"], t(@test,(@created_at + durPos).cast(:date))
+        assert_includes [date3,"2006-05-23"], t(@test,(@created_at + durNeg).cast(:date))
+
+        #puts (@created_at + @created_at.day).cast(:date).to_sql
+        assert_includes [date4,"2016-06-15"], t(@test,(@created_at + @created_at.day).cast(:date))
+        #puts (@created_at - @created_at.day).cast(:date).to_sql
+        assert_includes [date5,"2016-04-30"], t(@test,(@created_at - @created_at.day).cast(:date))
+
+        assert_includes [datetime1 + 42.seconds,"2014-03-03 12:42:42 UTC"], t(@lucas,(@updated_at + @updated_at.minute))
+        assert_includes [datetime1 - 42.seconds,"2014-03-03 12:41:18 UTC"], t(@lucas,(@updated_at - @updated_at.minute))
+
+        # (@updated_at + Arel.duration('s',(@updated_at.hour*60 + @updated_at.minute))).to_sql
+        assert_includes [datetime1 + (12*60+42).seconds,"2014-03-03 12:54:42 UTC"],
+          t(@lucas,(@updated_at + Arel.duration('s',(@updated_at.hour*60 + @updated_at.minute))))
+
+        assert_includes [datetime1 + (12*60+42).minutes,"2014-03-04 01:24:00 UTC"],
+          t(@lucas,(@updated_at + Arel.duration('mn',(@updated_at.hour*60 + @updated_at.minute))))
+
+        assert_includes ["2024-03-03"], t(@lucas,(@updated_at + durPos).format('%Y-%m-%d'))
+        #puts (@updated_at - durPos).to_sql
+        assert_includes ["2004-03-03"], t(@lucas,(@updated_at - durPos).format('%Y-%m-%d'))
+
+
+        # we test with the ruby object or the string because some adapters don't return an object Date
+#        end
       end
 
       # TODO; cast types
       def test_cast_types
         assert_equal "5", t(@lucas, @age.cast(:string))
-        updated_at = Time.utc(2014, 3, 3, 12, 42, 0)
         if @env_db == 'mysql' || @env_db == 'postgresql' || @env_db == 'oracle' || @env_db == 'mssql'
           assert_equal 1, t(@laure,ArelExtensions::Nodes::Case.new.when(@duration.cast(:time).cast(:string).eq("12:42:21")).then(1).else(0)) unless @env_db == 'oracle' || @env_db == 'mssql'
           assert_equal 1, t(@laure,ArelExtensions::Nodes::Case.new.when(@duration.cast(:time).eq("12:42:21")).then(1).else(0)) unless @env_db == 'oracle'
@@ -536,7 +563,7 @@ module ArelExtensions
 
       def test_format_numbers
         #score of Arthur = 65.62
-        skip " Works with SQLite if the version used knows printf" if @env_db = $sqlite
+        skip " Works with SQLite if the version used knows printf" if $sqlite
 
         assert_equal "Wrong Format" , t(@arthur, @score.format_number("$ %...234.6F €","fr_FR"))
         assert_equal "AZERTY65,62" , t(@arthur, @score.format_number("AZERTY%.2f","fr_FR"))

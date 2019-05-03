@@ -216,15 +216,31 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-                      'TIMESTAMPDIFF(SECOND, '
-                    else
-                      'DATEDIFF('
-                    end
-        collector = visit o.right, collector
-        collector << Arel::Visitors::MySQL::COMMA
-        collector = visit o.left, collector
-        collector << ")"
+        if o.right_node_type == :ruby_date || o.right_node_type == :ruby_time || o.right_node_type == :date || o.right_node_type == :datetime || o.right_node_type == :time
+          collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+                        'TIMESTAMPDIFF(SECOND, '
+                      else
+                        'DATEDIFF('
+                      end
+          collector = visit o.right, collector
+          collector << Arel::Visitors::MySQL::COMMA
+          collector = visit o.left, collector
+          collector << ")"
+        else
+          collector << '('
+          collector = visit o.left, collector
+          collector << ' - '
+          if o.right.is_a?(ArelExtensions::Nodes::Duration)
+            o.right.with_interval = true
+            collector = visit o.right, collector
+          else
+            collector << '('
+            collector = visit o.right, collector
+            collector << ')'
+          end
+          collector << ')'
+          collector
+        end
         collector
       end
 
@@ -244,9 +260,23 @@ module ArelExtensions
           collector = visit o.right, collector
           collector << ") + 1) % 7"
         else
+          if o.with_interval
+            case o.left
+            when  'd','m','y'
+              interval = 'DAY'
+            when 'h','mn','s'
+              interval = 'SECOND'
+            when /i\z/
+              interval = Arel::Visitors::MySQL::DATE_MAPPING[o.left[0..-2]]
+            else
+              interval = nil
+            end
+          end
+          collector << " INTERVAL " if o.with_interval && interval
           collector << "#{Arel::Visitors::MySQL::DATE_MAPPING[o.left]}("
           collector = visit o.right, collector
           collector << ")"
+          collector << " #{interval} " if o.with_interval && interval
         end
         collector
       end
@@ -298,8 +328,6 @@ module ArelExtensions
           as_attr = Arel::Nodes::SqlLiteral.new('datetime')
         when :date
           as_attr = Arel::Nodes::SqlLiteral.new('date')
-        when :time
-          as_attr = Arel::Nodes::SqlLiteral.new('time')
         when :binary
           as_attr = Arel::Nodes::SqlLiteral.new('binary')
         else

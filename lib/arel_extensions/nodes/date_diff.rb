@@ -66,7 +66,12 @@ module ArelExtensions
             Arel.sql('INTERVAL %s' % v.inspect.sub(/s\Z/, ''))
           end
         else
-          v
+          if ArelExtensions::Nodes::Duration === v
+            v.with_interval = true
+            v
+          else
+            v
+          end
         end
       end
 
@@ -79,20 +84,30 @@ module ArelExtensions
             Arel.sql("INTERVAL '%s'" % v.inspect.sub(/s\Z/, '').upcase)
           end
         else
-          return v
+          if ArelExtensions::Nodes::Duration === v
+            v.with_interval = true
+            v
+          else
+            v
+          end
         end
       end
 
       def oracle_value(v = nil)
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
-          if @date_type == :date
-            Arel.sql("INTERVAL '%s' DAY" % v.inspect.to_i)
-          elsif @date_type == :datetime
-            Arel.sql("INTERVAL '%s' SECOND" % v.to_i)
+          if @date_type == :ruby_date
+            Arel.sql("(INTERVAL '1' DAY) * %s" % v.inspect.to_i )
+          else
+            Arel.sql("(INTERVAL '1' SECOND) * %s" % v.to_i)
           end
         else
-          v
+          if ArelExtensions::Nodes::Duration === v
+            v.with_interval = true
+            v
+          else
+            v
+          end
         end
       end
 
@@ -100,7 +115,7 @@ module ArelExtensions
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
-            v.inspect.to_i
+            v.to_i / (24*3600)
           elsif @date_type == :datetime
             v.to_i
           end
@@ -118,7 +133,21 @@ module ArelExtensions
             Arel.sql('second')
           end
         else
-          v
+          if ArelExtensions::Nodes::Duration === v
+            v.with_interval = true
+            case v.left
+            when  'd','m','y'
+              Arel.sql('day')
+            when 'h','mn','s'
+              Arel.sql('second')
+            when /i\z/
+              Arel.sql(Arel::Visitors::MSSQL::DATE_MAPPING[v.left[0..-2]])
+            else
+              Arel.sql(Arel::Visitors::MSSQL::DATE_MAPPING[v.left])
+            end
+          else
+            nil
+          end
         end
       end
 
@@ -153,7 +182,11 @@ module ArelExtensions
         when String
           object.to_i
         else
-          raise(ArgumentError, "#{object.class} can not be converted to Number")
+          if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === object
+            object.to_i
+          else
+            raise(ArgumentError, "#{object.class} can not be converted to Number")
+          end
         end
       end
 
