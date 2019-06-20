@@ -7,7 +7,7 @@ module ArelExtensions
       end
 
       def union_all(other)
-        return ArelExtensions::Nodes::UnionAll.new(self,other) 
+        return ArelExtensions::Nodes::UnionAll.new(self,other)
       end
 
       def as other

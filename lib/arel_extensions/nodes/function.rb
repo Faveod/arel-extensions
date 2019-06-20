@@ -32,6 +32,14 @@ module ArelExtensions
         @expressions[1]
       end
 
+      def ==(other)
+        Arel::Nodes::Equality.new self, Arel::Nodes.build_quoted(other, self)
+      end
+
+      def !=(other)
+        Arel::Nodes::NotEqual.new self, Arel::Nodes.build_quoted(other, self)
+      end
+
       def type_of_attribute(att)
         case att
         when Arel::Attributes::Attribute
