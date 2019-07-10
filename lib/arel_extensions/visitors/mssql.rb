@@ -51,14 +51,14 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector << "("
-        collector = visit o.left, collector
+        collector = visit o.expr, collector
         collector << " IS NULL)"
         collector
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
           collector << "("
-          collector = visit o.left, collector
+          collector = visit o.expr, collector
           collector << " IS NOT NULL)"
           collector
       end
@@ -234,11 +234,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        visit o.left.coalesce('').trim.length.eq(0), collector
+        visit o.expr.coalesce('').trim.length.eq(0), collector
       end
 
       def visit_ArelExtensions_Nodes_NotBlank o, collector
-        visit o.left.coalesce('').trim.length.gt(0), collector
+        visit o.expr.coalesce('').trim.length.gt(0), collector
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector

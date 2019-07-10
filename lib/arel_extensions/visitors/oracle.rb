@@ -154,8 +154,8 @@ module ArelExtensions
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::Oracle::COMMA unless i == 0
           if i > 0 && o.left_node_type == :text
-            if arg == ''
-              collector << 'empty_clob()'
+            if arg == ''  || (arg.is_a?(Arel::Nodes::Quoted) && (arg.expr == ''))
+              collector << "NULL"
             else
               collector << 'TO_CLOB('
               collector = visit arg, collector
@@ -294,13 +294,13 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector = visit o.left, collector
+        collector = visit o.expr, collector
         collector << ' IS NULL'
         collector
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
-        collector = visit o.left, collector
+        collector = visit o.expr, collector
         collector << ' IS NOT NULL'
         collector
       end
@@ -407,11 +407,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-        visit o.left.trim.length.coalesce(0).eq(0), collector
+        visit o.expr.trim.length.coalesce(0).eq(0), collector
       end
 
       def visit_ArelExtensions_Nodes_NotBlank o, collector
-        visit o.left.trim.length.coalesce(0).gt(0), collector
+        visit o.expr.trim.length.coalesce(0).gt(0), collector
       end
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
@@ -571,7 +571,7 @@ module ArelExtensions
         else
           collector = visit o.left, collector
         end
-        quote = o.right.to_s =~ /[^a-zA-Z_]/ ? '"' : ''
+        quote = o.right.to_s =~ /(\A["].*["]\z)|\A[a-zA-Z_]*\z/ ? '' : '"'
         collector << " AS #{quote}"
         collector = visit o.right, collector
         collector << "#{quote}"

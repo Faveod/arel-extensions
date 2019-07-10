@@ -278,13 +278,13 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector = visit o.left, collector
+        collector = visit o.expr, collector
         collector << ' IS NULL'
         collector
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
-          collector = visit o.left, collector
+          collector = visit o.expr, collector
           collector << ' IS NOT NULL'
           collector
       end

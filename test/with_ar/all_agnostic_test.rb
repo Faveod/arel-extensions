@@ -32,6 +32,7 @@ module ArelExtensions
           t.column :created_at, :date
           t.column :updated_at, :datetime
           t.column :duration, :time
+          t.column :other, :string
           t.column :score, :decimal, :precision => 20, :scale => 10
         end
         @cnx.drop_table(:product_tests) rescue nil
@@ -63,7 +64,7 @@ module ArelExtensions
         @myung = User.where(:id => u.id)
         u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16, :duration => Time.utc(2001, 1, 1, 12, 42, 21),:updated_at => Time.utc(2014, 3, 3, 12, 42, 0)
         @laure = User.where(:id => u.id)
-        u = User.create :age => nil, :name => "Test", :created_at => d, :score => 1.62
+        u = User.create :age => nil, :name => "Test", :created_at => d, :score => 1.62, :other => 'toto'
         @test = User.where(:id => u.id)
         u = User.create :age => -42, :name => "Negatif", :comments => '1,22,3,42,2', :created_at => d, :updated_at => d.to_time, :score => 0.17
         @neg = User.where(:id => u.id)
@@ -77,6 +78,7 @@ module ArelExtensions
         @comments = User.arel_table[:comments]
         @duration = User.arel_table[:duration]
         @price = Product.arel_table[:price]
+        @other = User.arel_table[:other]
         @not_in_table = User.arel_table[:not_in_table]
 
         @ut = User.arel_table
@@ -347,12 +349,16 @@ module ArelExtensions
       def test_coalesce
         assert_equal 'Camille concat', t(@camille, @name.coalesce(nil, "default") + ' concat')
 
+        assert_equal 'toto', t(@test, @other.coalesce(""))
+
         assert_equal ' ', t(@myung, @comments.coalesce("Myung").coalesce('ignored'))
         assert_equal 'Laure', t(@laure, @comments.coalesce("Laure"))
         if @env_db == 'oracle'
           assert_nil t(@laure, @comments.coalesce(""))
+          assert_nil t(@camille, @other.coalesce(""))
         else
           assert_equal('', t(@laure, @comments.coalesce("")))
+          assert_equal '', t(@camille, @other.coalesce(""))
         end
         assert_equal 100, t(@test, @age.coalesce(100))
         assert_equal "Camille", t(@camille, @name.coalesce(nil, "default"))
@@ -483,7 +489,11 @@ module ArelExtensions
 
       def test_is_null
         #puts User.where(@age.is_null).select(@name).to_sql
-        assert_equal "Test", User.where(@age.is_null).select(@name).first.name
+        #puts @age.is_null
+        #puts @age.is_null.inspect
+        #puts @age.is_null.to_sql
+        #puts @age=='34'
+        assert_equal "Test", User.select(@name).where(@age.is_null.to_sql).first.name
       end
 
       def test_math_plus
@@ -778,6 +788,7 @@ module ArelExtensions
         assert_equal 'Arthur', @arthur.select(@name.as('Na Me')).first.attributes["Na Me"]
         assert_equal 'ArthurArthur', @arthur.select((@name+@name).as('Na-Me')).first.attributes["Na-Me"]
       end
+
     end
   end
 end

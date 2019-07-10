@@ -284,22 +284,14 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector << "ISNULL("
-        collector = visit o.left, collector
-        if o.right
-          collector << Arel::Visitors::MySQL::COMMA
-          collector = visit o.right, collector
-        end
+        collector = visit o.expr, collector
         collector << ")"
         collector
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
           collector << "NOT ISNULL("
-          collector = visit o.left, collector
-          if o.right
-            collector << Arel::Visitors::MySQL::COMMA
-            collector = visit o.right, collector
-          end
+          collector = visit o.expr, collector
           collector << ")"
           collector
       end

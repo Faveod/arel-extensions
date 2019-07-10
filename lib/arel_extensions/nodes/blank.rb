@@ -1,20 +1,23 @@
+require 'arel_extensions/boolean_functions'
+
 module ArelExtensions
   module Nodes
-    class Blank < Function
-    	RETURN_TYPE = :boolean
+    class Blank < Arel::Nodes::Unary
+      include ArelExtensions::BooleanFunctions
+      RETURN_TYPE = :boolean
 
-    	def initialize expr
-#        	super [expr.first.coalesce('').trim.trim("\t").trim("\n")]
-        	super expr
-    	end
+      def initialize expr
+        super expr.first
+      end
     end
 
-    class NotBlank < Function
-    	RETURN_TYPE = :boolean
+    class NotBlank < Arel::Nodes::Unary
+      include ArelExtensions::BooleanFunctions
+      RETURN_TYPE = :boolean
 
-    	def initialize expr
-        	super expr
-    	end
+      def initialize expr
+          super expr.first
+      end
     end
 
   end

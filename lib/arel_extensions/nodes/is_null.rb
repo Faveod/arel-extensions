@@ -1,13 +1,15 @@
+require 'arel_extensions/boolean_functions'
+
 module ArelExtensions
   module Nodes
-    class IsNull < Function
-    	RETURN_TYPE = :boolean
-    	
+    class IsNull < Arel::Nodes::Unary
+      include ArelExtensions::BooleanFunctions
+      RETURN_TYPE = :boolean
     end
-    
-    class IsNotNull < Function
-    	RETURN_TYPE = :boolean
-    	
-    end    
+
+    class IsNotNull < Arel::Nodes::Unary
+      include ArelExtensions::BooleanFunctions
+      RETURN_TYPE = :boolean
+    end
   end
 end

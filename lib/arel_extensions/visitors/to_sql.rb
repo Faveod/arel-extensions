@@ -218,7 +218,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Blank o, collector
     #visit o.left.coalesce('').trim.length.eq(0), collector
         collector << 'LENGTH(TRIM(COALESCE('
-        collector = visit o.left, collector
+        collector = visit o.expr, collector
         collector << Arel::Visitors::ToSql::COMMA
         collector = visit Arel::Nodes.build_quoted(''), collector
         collector << "))) = 0"
@@ -229,7 +229,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_NotBlank o, collector
     #visit o.left.coalesce('').trim.length.gt(0), collector
         collector << 'LENGTH(TRIM(COALESCE('
-        collector = visit o.left, collector
+        collector = visit o.expr, collector
         collector << Arel::Visitors::ToSql::COMMA
         collector = visit Arel::Nodes.build_quoted(''), collector
         collector << "))) > 0"
@@ -367,14 +367,14 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector << "ISNULL("
-        collector = visit o.left, collector
+        collector = visit o.expr, collector
         collector << ")"
         collector
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
           collector << "NOT ISNULL("
-          collector = visit o.left, collector
+          collector = visit o.expr, collector
           collector << ")"
           collector
       end
