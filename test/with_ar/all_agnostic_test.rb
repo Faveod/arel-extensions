@@ -476,14 +476,16 @@ module ArelExtensions
           assert_equal 21, t(@laure,@score.cast(:string).cast(:int)+1)
 
           assert_equal String, t(@lucas,@updated_at.cast(:string)).class
-          assert_equal Date, t(@lucas,@updated_at.cast(:date)).class unless @env_db == 'oracle'
+          assert_equal Date, t(@lucas,@updated_at.cast(:date)).class unless @env_db == 'oracle' # DateTime
           assert_equal Time, t(@lucas,@updated_at.cast(:string).cast(:datetime)).class
           assert_equal Time, t(@lucas,@updated_at.cast(:time)).class
 
           assert_equal "2014-03-03 12:42:00", t(@lucas,@updated_at.cast(:string)) unless @env_db == 'mssql' #locale dependent
+          assert_equal Date.parse("2014-03-03"), t(@lucas,Arel::Nodes.build_quoted('2014-03-03').cast(:date))
+          assert_equal Date.parse("5014-03-03"), t(@lucas,(@age.cast(:string) + '014-03-03').cast(:date))
           assert_equal Time.parse("2014-03-03 12:42:00 UTC"), t(@lucas,@updated_at.cast(:string).cast(:datetime))
           assert_equal Date.parse("2014-03-03"), t(@lucas,@updated_at.cast(:date))
-          assert_equal "12:42:00", t(@lucas,@updated_at.cast(:time).cast(:string)).split('.').first unless @env_db == 'oracle' 
+          assert_equal "12:42:00", t(@lucas,@updated_at.cast(:time).cast(:string)).split('.').first unless @env_db == 'oracle'  #DateTime
         end
       end
 

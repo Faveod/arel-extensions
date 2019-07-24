@@ -257,9 +257,15 @@ module ArelExtensions
           collector << ")"
           return collector
         when :time
-          collector << "TO_DATE(TO_CHAR("
-          collector = visit o.left, collector
-          collector << ",'HH24:MI:SS'),'HH24:MI:SS')"
+          if (o.left.respond_to?(:return_type) && o.left.return_type == :string) || o.left.is_a?(Arel::Nodes::Quoted)
+            collector << "TO_DATE("
+            collector = visit o.left, collector
+            collector << ",'HH24:MI:SS')"
+          else
+            collector << "TO_DATE(TO_CHAR("
+            collector = visit o.left, collector
+            collector << ",'HH24:MI:SS'),'HH24:MI:SS')"
+          end
           return collector
         when :number, :decimal
           collector << "TO_NUMBER("
@@ -269,9 +275,15 @@ module ArelExtensions
         when :datetime
           as_attr = Arel::Nodes::SqlLiteral.new('timestamp')
         when :date
-          collector << "TO_DATE(TO_CHAR("
-          collector = visit o.left, collector
-          collector << ",'YYYY-MM-DD'),'YYYY-MM-DD')"
+          if (o.left.respond_to?(:return_type) && o.left.return_type == :string) || o.left.is_a?(Arel::Nodes::Quoted)
+            collector << "TO_DATE("
+            collector = visit o.left, collector
+            collector << ",'YYYY-MM-DD')"
+          else
+            collector << "TO_DATE(TO_CHAR("
+            collector = visit o.left, collector
+            collector << ",'YYYY-MM-DD'),'YYYY-MM-DD')"
+          end
           return collector
         when :binary
           as_attr = Arel::Nodes::SqlLiteral.new('binary')
