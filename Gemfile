@@ -1,24 +1,29 @@
 source "https://rubygems.org"
 
-gemspec
+gem 'rails', '~> 6.0.0.rc2'
+
 
 group :development, :test do
-  gem "sqlite3", '<= 1.3.13', :platforms => [:mri, :mswin, :x64_mingw, :mingw]
-  gem "mysql2", '0.4.10', :platforms => [:mri, :mswin, :x64_mingw, :mingw]
-  gem "pg", '< 1', :platforms => [:mri, :mingw, :x64_mingw, :mswin]
+  gem 'activesupport', '~> 6.0.0.rc2'
+  gem 'activemodel', '~> 6.0.0.rc2'
+  gem 'activerecord', '~> 6.0.0.rc2'
 
+  gem "sqlite3", '~> 1.4', :platforms => [:mri, :mswin, :mingw]
+  gem "mysql2", '0.5.2', :platforms => [:mri, :mswin, :mingw]
+  gem "pg",'< 1.0.0', :platforms => [:mri, :mingw]
+
+  gem "tiny_tds", :platforms => [:mri, :mingw]  if RUBY_PLATFORM =~ /windows/
+  gem "activerecord-sqlserver-adapter", :platforms => [:mri, :mingw]
+
+  gem 'ruby-oci8', :platforms => [:mri, :mswin, :mingw] if ENV.has_key? 'ORACLE_HOME'
+  gem 'activerecord-oracle_enhanced-adapter', '~> 6.0.0.rc2' if ENV.has_key? 'ORACLE_HOME'
+
+  # for JRuby
+  gem 'activerecord-jdbc-adapter', :platforms => :jruby
   gem "jdbc-sqlite3", :platforms => :jruby
   gem "activerecord-jdbcsqlite3-adapter", :platforms => :jruby
   gem "activerecord-jdbcmysql-adapter", :platforms => :jruby
   gem "activerecord-jdbcpostgresql-adapter", :platforms => :jruby
-
-  gem "tiny_tds", '~> 1.3.0' ,:require => false, :platforms => [:mri,:mingw, :x64_mingw, :mswin]
-  gem "activerecord-sqlserver-adapter", '~> 4.2.0', :platforms => [:mri, :mingw, :x64_mingw, :mswin]
-  
-  gem 'ruby-oci8', :platforms => [:mri, :mswin, :x64_mingw, :mingw] 
-  gem 'activerecord-oracle_enhanced-adapter', '~> 1.6.0'
-
-  gem 'activesupport', '~> 4.0'
-  gem 'activemodel', '~> 4.0'
-  gem 'activerecord', '~> 4.0'
+  gem "activerecord-jdbcmssql-adapter", :platforms => :jruby
 end
+

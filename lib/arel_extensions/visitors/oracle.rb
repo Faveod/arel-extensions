@@ -489,9 +489,9 @@ module ArelExtensions
           o.left.each_with_index do |row, idx|
             collector << " UNION ALL " if idx != 0
             collector << "(SELECT "
-            v = Arel::Nodes::Values.new(row, o.cols)
-            len = v.expressions.length - 1
-            v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+            len = row.length - 1
+            row.each_with_index { |value, i|
+              attr = o.cols[i]
               case value
               when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
                 collector = visit value, collector

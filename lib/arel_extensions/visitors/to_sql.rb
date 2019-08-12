@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
   Arel::Visitors::ToSql.class_eval do
+      Arel::Visitors::ToSql::COMMA = ", "
 
       # Math Functions
       def visit_ArelExtensions_Nodes_Abs o, collector
@@ -429,9 +430,9 @@ module ArelExtensions
           row_nb = o.left.length
           o.left.each_with_index do |row, idx|
             collector << '('
-            v = Arel::Nodes::Values.new(row, o.cols)
-            len = v.expressions.length - 1
-            v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+            len = row.length - 1
+            row.each_with_index { |value, i|
+              attr = o.cols[i]
                 case value
                 when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
                   collector = visit value, collector
