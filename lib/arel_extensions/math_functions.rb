@@ -7,6 +7,7 @@ require 'arel_extensions/nodes/formatted_number'
 require 'arel_extensions/nodes/log10'
 require 'arel_extensions/nodes/power'
 require 'arel_extensions/nodes/std'
+require 'arel_extensions/nodes/sum'
 
 module ArelExtensions
   module MathFunctions
@@ -62,12 +63,16 @@ module ArelExtensions
     end
 
     # Aggregate Functions
-    def std unbiased = true
-      ArelExtensions::Nodes::Std.new self, unbiased
+    def std opts={unbiased: true}
+      ArelExtensions::Nodes::Std.new self, opts
     end
 
-    def variance unbiased = true
-      ArelExtensions::Nodes::Variance.new self, unbiased
+    def variance opts={unbiased: true}
+      ArelExtensions::Nodes::Variance.new self, opts
+    end
+
+    def sum opts={unbiased: true}
+      ArelExtensions::Nodes::Sum.new self, opts
     end
 
     #function that can be invoked to produce random numbers between 0 and 1

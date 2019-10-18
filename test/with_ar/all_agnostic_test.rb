@@ -733,9 +733,12 @@ module ArelExtensions
 
         assert ( 15.98625 - t(User.where(nil), @score.average)).abs < 0.01
         assert (613.75488 - t(User.where(nil), @score.variance)).abs < 0.01
-        assert ( 537.0355 - t(User.where(nil), @score.variance(false))).abs < 0.01
+        assert ( 537.0355 - t(User.where(nil), @score.variance(unbiased: false))).abs < 0.01
         assert ( 24.77408 - t(User.where(nil), @score.std)).abs < 0.01
-        assert ( 23.17403 - t(User.where(nil), @score.std(false))).abs < 0.01
+        assert ( 23.17403 - t(User.where(nil), @score.std(unbiased: false))).abs < 0.01
+        assert_equal 2, User.select(@score.std(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
+        assert_equal 2, User.select(@score.variance(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
+        assert_equal 2, User.select(@score.sum(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
       end
 
       def test_levenshtein_distance

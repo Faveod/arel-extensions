@@ -83,6 +83,24 @@ module ArelExtensions
         collector
       end
 
+      def visit_Aggregate_For_AggregateFunction o, collector
+        if o.order || o.group
+          collector << " OVER ("
+          if o.group
+            collector << " PARTITION BY ("
+            visit o.group, collector
+            collector << ")"
+          end
+          if o.order
+            collector << " ORDER BY ("
+            visit o.order, collector
+            collector << ")"
+          end
+          collector << ")"
+        end
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "array_to_string(array_agg("
         collector = visit o.left, collector
@@ -293,6 +311,7 @@ module ArelExtensions
         collector << "sum("
         collector = visit o.expr, collector
         collector << ")"
+        visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 
@@ -420,6 +439,7 @@ module ArelExtensions
         collector << (o.unbiased_estimator ? "STDDEV_SAMP(" : "STDDEV_POP(")
         visit o.left, collector
         collector << ")"
+        visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 
@@ -427,6 +447,7 @@ module ArelExtensions
         collector << (o.unbiased_estimator ? "VAR_SAMP(" : "VAR_POP(")
         visit o.left, collector
         collector << ")"
+        visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 
