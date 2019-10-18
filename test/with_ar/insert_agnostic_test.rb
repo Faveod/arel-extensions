@@ -77,6 +77,7 @@ END;])
         insert_manager.bulk_insert(@cols2, @data2)
         @cnx.execute(insert_manager.to_sql)
         assert_equal 4, User.count, "insertions failed"
+
       end
 
     end

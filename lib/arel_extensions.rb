@@ -149,4 +149,8 @@ Arel::Nodes::As.class_eval do
   include ArelExtensions::Nodes
 end
 
-
+Arel::Table.class_eval do
+  def alias(name = "#{self.name}_2")
+    name.blank? ? self :  Arel::Nodes::TableAlias.new(self,name)
+  end
+end
