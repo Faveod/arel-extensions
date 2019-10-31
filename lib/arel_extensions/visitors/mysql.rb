@@ -399,6 +399,12 @@ module ArelExtensions
       end
 
       def visit_Aggregate_For_AggregateFunction o, collector
+        if !(Arel::Table.engine.connection.send(:mariadb?) && Arel::Table.engine.connection.send(:version) >= '10.2.3' ||
+           !Arel::Table.engine.connection.send(:mariadb?) && Arel::Table.engine.connection.send(:version) >= '8.0')
+            warn("Warning : ArelExtensions: Window Functions are not available in the current version on the DBMS.")
+            return collector
+        end
+
         if o.order || o.group
           collector << " OVER ("
           if o.group
