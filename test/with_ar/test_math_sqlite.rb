@@ -11,8 +11,8 @@ module ArelExtensions
         ActiveRecord::Base.default_timezone = :utc
         Arel::Table.engine = ActiveRecord::Base
         @cnx = ActiveRecord::Base.connection
-        @cnx.drop_table(:users) rescue nil 
-        @cnx.drop_table(:products) rescue nil 
+        @cnx.drop_table(:users) rescue nil
+        @cnx.drop_table(:products) rescue nil
         @cnx.create_table :users do |t|
           t.column :age, :integer
           t.column :name, :string

@@ -131,14 +131,14 @@ module ArelExtensions
         collector << "(LISTAGG("
         collector = visit o.left, collector
         collector << Arel::Visitors::Oracle::COMMA
-        if o.right  && o.right != 'NULL'
-          collector = visit o.right, collector
+        if o.separator  && o.separator != 'NULL'
+          collector = visit o.separator, collector
         else
           collector = visit Arel::Nodes.build_quoted(','), collector
         end
         collector << ") WITHIN GROUP (ORDER BY "
-        if !o.orders.blank?
-          o.orders.each_with_index do |order,i|
+        if !o.order.blank?
+          o.order.each_with_index do |order,i|
             collector << Arel::Visitors::Oracle::COMMA unless i == 0
             collector = visit order, collector
           end

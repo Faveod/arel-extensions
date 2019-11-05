@@ -41,4 +41,4 @@ environment:
     - RUBY_VERSION: 22
     - RUBY_VERSION: 23
     - RUBY_VERSION: 23-x64
-    
+

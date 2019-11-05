@@ -139,16 +139,16 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "GROUP_CONCAT("
         collector = visit o.left, collector
-        if !o.orders.blank?
+        if !o.order.blank?
           collector << ' ORDER BY '
-          o.orders.each_with_index do |order,i|
+          o.order.each_with_index do |order,i|
             collector << Arel::Visitors::ToSql::COMMA unless i == 0
             collector = visit order, collector
           end
         end
-        if o.right && o.right != 'NULL'
+        if o.separator && o.separator != 'NULL'
           collector << ' SEPARATOR '
-          collector = visit o.right, collector
+          collector = visit o.separator, collector
         end
         collector << ")"
         collector
@@ -399,8 +399,7 @@ module ArelExtensions
       end
 
       def visit_Aggregate_For_AggregateFunction o, collector
-        if !(Arel::Table.engine.connection.send(:mariadb?) && Arel::Table.engine.connection.send(:version) >= '10.2.3' ||
-           !Arel::Table.engine.connection.send(:mariadb?) && Arel::Table.engine.connection.send(:version) >= '8.0')
+        if !(Arel::Table.engine.connection.send(:version) >= (Arel::Table.engine.connection.send(:mariadb?) ? '10.2.3' : '8.0'))
             warn("Warning : ArelExtensions: Window Functions are not available in the current version on the DBMS.")
             return collector
         end

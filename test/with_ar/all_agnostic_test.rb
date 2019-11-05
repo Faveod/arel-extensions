@@ -175,6 +175,7 @@ module ArelExtensions
         assert_equal "Sophie,Lucas,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.desc))
         assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',[@score.asc,@name.asc]))
         assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@score.asc,@name.asc))
+        assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',order: [@score.asc,@name.asc]))
       end
 
       def test_length
@@ -736,9 +737,11 @@ module ArelExtensions
         assert ( 537.0355 - t(User.where(nil), @score.variance(unbiased: false))).abs < 0.01
         assert ( 24.77408 - t(User.where(nil), @score.std)).abs < 0.01
         assert ( 23.17403 - t(User.where(nil), @score.std(unbiased: false))).abs < 0.01
+        skip "Not Yet Implemented" if !['postgresql'].include?(@env_db)
         assert_equal 2, User.select(@score.std(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
         assert_equal 2, User.select(@score.variance(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
         assert_equal 2, User.select(@score.sum(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
+        assert_equal 2, User.select(@comments.group_concat(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
       end
 
       def test_levenshtein_distance

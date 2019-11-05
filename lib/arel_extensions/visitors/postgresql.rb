@@ -84,17 +84,21 @@ module ArelExtensions
       end
 
       def visit_Aggregate_For_AggregateFunction o, collector
-        if o.order || o.group
+        if !o.order.blank? || !o.group.blank?
           collector << " OVER ("
-          if o.group
-            collector << " PARTITION BY ("
-            visit o.group, collector
-            collector << ")"
+          if !o.group.blank?
+            collector << " PARTITION BY "
+            o.group.each_with_index do |group, i|
+              collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
+              visit group, collector
+            end
           end
-          if o.order
-            collector << " ORDER BY ("
-            visit o.order, collector
-            collector << ")"
+          if !o.order.blank?
+            collector << " ORDER BY "
+            o.order.each_with_index do |order, i|
+              collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
+              visit order, collector
+            end
           end
           collector << ")"
         end
@@ -104,17 +108,20 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "array_to_string(array_agg("
         collector = visit o.left, collector
-        if !o.orders.blank?
-          collector << ' ORDER BY '
-          o.orders.each_with_index do |order,i|
+        if o.order && !o.order.blank?
+          collector << " ORDER BY"
+          o.order.each_with_index do |order, i|
             collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
-            collector = visit order, collector
+            collector << " "
+            visit order, collector
           end
         end
         collector << ")"
+        o.order = nil
+        visit_Aggregate_For_AggregateFunction o, collector
         collector << Arel::Visitors::PostgreSQL::COMMA
-        if o.right  && o.right != 'NULL'
-          collector = visit o.right, collector
+        if o.separator  && o.separator != 'NULL'
+          collector = visit o.separator, collector
         else
           collector = visit Arel::Nodes.build_quoted(','), collector
         end
