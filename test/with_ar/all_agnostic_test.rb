@@ -154,7 +154,7 @@ module ArelExtensions
         else
           assert_equal 68, User.select((@age.sum + 1).as("res")).take(50).first.res
           assert_equal 134, User.select((@age.sum + @age.sum).as("res")).take(50).first.res
-          assert_equal 201, User.select(((@age * 3).sum).as("res")).take(50).first.res
+          assert_equal 201, User.select((@age * 3).sum.as("res")).take(50).first.res
           assert_equal 4009, User.select(((@age * @age).sum).as("res")).take(50).first.res
         end
       end

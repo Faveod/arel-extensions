@@ -1,6 +1,14 @@
 module ArelExtensions
   module Comparators
 
+    def ==(other)
+      Arel::Nodes::Equality.new self, Arel::Nodes.build_quoted(other, self)
+    end
+
+    def !=(other)
+      Arel::Nodes::NotEqual.new self, Arel::Nodes.build_quoted(other, self)
+    end
+
     def >(other)
       Arel::Nodes::GreaterThan.new self, Arel::Nodes.build_quoted(other, self)
     end
