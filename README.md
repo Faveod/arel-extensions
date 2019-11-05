@@ -72,9 +72,9 @@ With Arel Extensions:
 Other functions : ABS, RAND, ROUND, FLOOR, CEIL, FORMAT
 
 For Example:
-```ruby 
+```ruby
 t[:price].format_number("%07.2f €","fr_FR")
-# equivalent to 'sprintf("%07.2f €",price)' plus locale management 
+# equivalent to 'sprintf("%07.2f €",price)' plus locale management
 ```
 
 ## String operations
@@ -130,7 +130,7 @@ t[:birthdate].format('%Y-%m-%d').to_sql
 # => DATE_FORMAT(my_table.birthdate, '%Y-%m-%d')
 ```
 
-## Unions 
+## Unions
 
 ```ruby
 (t.where(t[:name].eq('str')) + t.where(t[:name].eq('test'))).to_sql
@@ -143,7 +143,7 @@ Arel-extensions allows to use functions on case clause
 
 ```ruby
 t[:name].when("smith").then(1).when("doe").then(2).else(0).sum.to_sql
-# => SUM(CASE "my_table"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END) 
+# => SUM(CASE "my_table"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END)
 ```
 
 ## Cast Function
@@ -160,7 +160,7 @@ t[:id].cast('char').to_sql
 
 To optimize queries, some classical functions are defined in databases missing any alternative native functions.
 Examples :
-- FIND_IN_SET 
+- FIND_IN_SET
 
 ## BULK INSERT / UPSERT
 
@@ -385,7 +385,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="tg-j6lv">✔</td>
     <td class="tg-j6lv">?</td>
-  </tr>  
+  </tr>
   <tr>
     <td class="tg-yw4l">Matching Accent Insensitive<br>column.ai_matches('blah')</td>
     <td class="ok">not supported</td>
@@ -394,7 +394,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">not supported</td>
     <td class="tg-j6lv">✔</td>
     <td class="tg-j6lv">?</td>
-  </tr>  
+  </tr>
   <tr>
     <td class="tg-yw4l">Matching Case Insensitive<br>column.imatches('blah')</td>
     <td class="ok">not supported</td>
@@ -403,7 +403,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="tg-j6lv">✔</td>
     <td class="tg-j6lv">?</td>
-  </tr>  
+  </tr>
   <tr>
     <td class="tg-yw4l">Matching Accent/Case Sensitive<br>column.smatches('blah')</td>
     <td class="ok">✔</td>
@@ -412,8 +412,8 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="tg-j6lv">✔</td>
     <td class="tg-j6lv">?</td>
-  </tr>  
-    
+  </tr>
+
   <tr>
     <th class="tg-4rp9" rowspan="6"><div>Date functions</div></th>
     <td class="tg-yw4l">DATEADD<br>column + 2.year<br></td>

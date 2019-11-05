@@ -12,7 +12,7 @@ module ArelExtensions
         @cnx = ActiveRecord::Base.connection
         Arel::Table.engine = ActiveRecord::Base
         @cnx.drop_table(:users) rescue nil
-        @cnx.drop_table(:products) rescue nil 
+        @cnx.drop_table(:products) rescue nil
         @cnx.create_table :users do |t|
           t.column :age, :integer
           t.column :name, :string

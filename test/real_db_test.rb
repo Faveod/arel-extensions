@@ -29,7 +29,7 @@ def setup_db
       func.result = value1.index(value2)
     end
   end
-  @cnx.drop_table(:users) rescue nil 
+  @cnx.drop_table(:users) rescue nil
   @cnx.create_table :users do |t|
       t.column :age, :integer
       t.column :name, :string

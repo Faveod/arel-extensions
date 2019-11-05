@@ -1,11 +1,11 @@
 module ArelExtensions
 	module Nodes
-		class Soundex < Function	
+		class Soundex < Function
 			include Arel::Expressions
-			include ArelExtensions::Comparators			
-							
+			include ArelExtensions::Comparators
+
 			RETURN_TYPE = :string
-				
+
 			def ==(other)
 				Arel::Nodes::Equality.new self, Arel::Nodes.build_quoted(other, self)
 			end
