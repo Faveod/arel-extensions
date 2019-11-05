@@ -88,6 +88,7 @@ module ArelExtensions
         compile((c >= 'test').as('new_name')).must_be_like %{("users"."name" >= 'test') AS new_name}
         compile(c <= @table[:comments]).must_be_like %{"users"."name" <= "users"."comments"}
         compile(c =~ /\Atest\Z/).must_be_like %{"users"."name" REGEXP '^test$'}
+        compile(c =~ /\Atest\z/).must_be_like %{"users"."name" REGEXP '^test$'}
         compile(c !~ /\Ate\Dst\Z/).must_be_like %{"users"."name" NOT REGEXP '^te[^0-9]st$'}
         compile(c.imatches('%test%')).must_be_like %{"users"."name" ILIKE '%test%'}
         compile(c.imatches_any(['%test%', 't2'])).must_be_like %{(("users"."name" ILIKE '%test%') OR ("users"."name" ILIKE 't2'))}
