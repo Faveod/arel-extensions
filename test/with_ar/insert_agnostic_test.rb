@@ -23,7 +23,7 @@ module ArelExtensions
             @cnx.execute(sql) rescue $stderr << "can't create functions\n"
           end
         end
-        @cnx.drop_table(:user_tests) rescue nil 
+        @cnx.drop_table(:user_tests) rescue nil
         @cnx.create_table :user_tests do |t|
           t.column :age, :integer
           t.column :name, :string

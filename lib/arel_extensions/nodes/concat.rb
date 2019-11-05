@@ -44,7 +44,7 @@ module ArelExtensions::Nodes
     RETURN_TYPE = :string
 
     attr_accessor :orders
-    
+
     def initialize expr
       tab = expr.map { |arg|
         if arg.is_a?(Array)

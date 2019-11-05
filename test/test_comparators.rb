@@ -22,7 +22,7 @@ module ArelExtensions
       it "< is equal lt" do
         compile(@table[:id] < 10).must_be_like('"users"."id" < 10')
       end
-      
+
       it "<= is equal lteq" do
         compile(@table[:id] <= 10).must_be_like('"users"."id" <= 10')
       end

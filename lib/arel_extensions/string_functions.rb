@@ -92,7 +92,7 @@ module ArelExtensions
       ArelExtensions::Nodes::SMatches.new(self,other)
     end
 
-    def ai_collate 
+    def ai_collate
       ArelExtensions::Nodes::Collate.new(self,nil,true,false)
     end
 
@@ -108,13 +108,13 @@ module ArelExtensions
     def replace left, right
       ArelExtensions::Nodes::Replace.new [self, left, right]
     end
-    
+
     def concat other
       ArelExtensions::Nodes::Concat.new [self, other]
     end
 
     #concat elements of a group, separated by sep and ordered by a list of Ascending or Descending
-    def group_concat sep = nil, *orders 
+    def group_concat sep = nil, *orders
       order_tabs = [orders].flatten.map{ |o|
         if o.is_a?(Arel::Nodes::Ascending) || o.is_a?(Arel::Nodes::Descending)
           o
@@ -155,11 +155,11 @@ module ArelExtensions
     def not_blank
       ArelExtensions::Nodes::NotBlank.new [self]
     end
-    
-    def repeat other = 1 
+
+    def repeat other = 1
       ArelExtensions::Nodes::Repeat.new [self, other]
     end
-    
+
     def levenshtein_distance other
       ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
     end

@@ -15,7 +15,7 @@ module ArelExtensions
         	[25, 'nom2', "sdfdsfdsfsdf", '2016-01-01']
         ]
       end
-      
+
       def compile node
         if Arel::VERSION.to_i > 5
           @visitor.accept(node, Arel::Collectors::SQLString.new).value
