@@ -797,6 +797,11 @@ module ArelExtensions
         assert_equal 'ArthurArthur', @arthur.select((@name+@name).as('Na-Me')).first.attributes["Na-Me"]
       end
 
+      def test_exists_in_subquery
+        assert User.where(User.where(nil).exists).first
+      end
+
+
     end
   end
 end

@@ -93,6 +93,14 @@ module Arel
     ArelExtensions::Nodes::Duration.new(s.to_s+'i',expr)
   end
 
+  def self.true
+    Arel::Nodes::Equality.new(1,1)
+  end
+
+  def self.false
+    Arel::Nodes::Equality.new(1,0)
+  end
+
 end
 
 Arel::Attributes::Attribute.class_eval do
