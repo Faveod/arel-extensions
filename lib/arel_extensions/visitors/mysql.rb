@@ -415,10 +415,13 @@ module ArelExtensions
 
       # JSON if implemented only after 10.2.3 in MariaDb and 5.7 in MySql
       def json_supported?
-        Arel::Table.engine.connection.send(:mariadb?) &&
-        Arel::Table.engine.connection.send(:version) >= '10.2.3' ||
+        conn = Arel::Table.engine.connection
+        conn.send(:mariadb?) &&
+          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= '10.2.3' ||
+          conn.respond_to?(:version) && conn.send(:version) >= '10.2.3') ||
         !Arel::Table.engine.connection.send(:mariadb?) &&
-        Arel::Table.engine.connection.send(:version) >= '5.7.0'
+          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= '5.7.0' ||
+          conn.respond_to?(:version) && conn.send(:version) >= '5.7.0')
       end
 
       def visit_ArelExtensions_Nodes_Json o,collector
