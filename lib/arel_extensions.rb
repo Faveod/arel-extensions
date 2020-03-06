@@ -93,6 +93,14 @@ module Arel
     ArelExtensions::Nodes::Duration.new(s.to_s+'i',expr)
   end
 
+  def self.true
+    Arel::Nodes::Equality.new(1,1)
+  end
+
+  def self.false
+    Arel::Nodes::Equality.new(1,0)
+  end
+
 end
 
 Arel::Attributes::Attribute.class_eval do
@@ -109,6 +117,11 @@ Arel::Nodes::Function.class_eval do
   include ArelExtensions::BooleanFunctions
   include ArelExtensions::NullFunctions
   include ArelExtensions::Predications
+
+  def as other
+    Arel::Nodes::As.new(self, Arel.sql(other))
+  end
+
 end
 
 Arel::Nodes::Unary.class_eval do
@@ -149,4 +162,8 @@ Arel::Nodes::As.class_eval do
   include ArelExtensions::Nodes
 end
 
-
+Arel::Table.class_eval do
+  def alias(name = "#{self.name}_2")
+    name.blank? ? self :  Arel::Nodes::TableAlias.new(self,name)
+  end
+end

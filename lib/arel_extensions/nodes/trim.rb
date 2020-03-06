@@ -17,7 +17,7 @@ module ArelExtensions
     end
 
     class Ltrim < Trim
-	  RETURN_TYPE = :string
+      RETURN_TYPE = :string
     end
 
     class Rtrim < Trim

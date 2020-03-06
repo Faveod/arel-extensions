@@ -526,40 +526,40 @@ module ArelExtensions
 
       alias_method :old_visit_Arel_Nodes_And, :visit_Arel_Nodes_And
       def visit_Arel_Nodes_And o, collector
+        collector << '('
         case o.children.length
         when 0
           collector << '1=1' # but this should not happen
         when 1
           collector = visit o.children[0], collector
         else
-          collector << '('
           o.children.each_with_index { |arg, i|
             if i != 0
               collector << ') AND ('
             end
             collector = visit arg, collector
           }
-          collector << ')'
         end
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Or o, collector
+        collector << '('
         case o.children.length
         when 0
           collector << '0=1' # but this should not happen
         when 1
           collector = visit o.children[0], collector
         else
-            collector << '('
             o.children.each_with_index { |arg, i|
               if i != 0
                 collector << ') OR ('
               end
               collector = visit arg, collector
             }
-            collector << ')'
         end
+        collector << ')'
         collector
       end
 
