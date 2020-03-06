@@ -105,6 +105,18 @@ module ArelExtensions
     end
 
     #REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.
+    def replace pattern, substitute
+      if pattern.is_a? Regexp
+        ArelExtensions::Nodes::RegexpReplace.new self, pattern, substitute
+      else
+        ArelExtensions::Nodes::Replace.new self, pattern, substitute
+      end
+    end
+
+    def regexp_replace pattern, substitute
+      ArelExtensions::Nodes::RegexpReplace.new self, pattern, substitute
+    end
+
     def replace left, right
       ArelExtensions::Nodes::Replace.new [self, left, right]
     end
@@ -159,7 +171,7 @@ module ArelExtensions
       ArelExtensions::Nodes::NotBlank.new [self]
     end
 
-    def repeat other = 1 
+    def repeat other = 1
       ArelExtensions::Nodes::Repeat.new [self, other]
     end
 

@@ -83,7 +83,7 @@ BEGIN
     END
     SELECT @cv1 = @cv0, @i = @i + 1
   END
-  RETURN @c 
+  RETURN @c
 END
 GO
 
@@ -94,9 +94,9 @@ GO
 --RETURNS TABLE
 --AS
 --BEGIN
---    RETURN ( SELECT [Value] FROM 
---      ( 
---        SELECT 
+--    RETURN ( SELECT [Value] FROM
+--      (
+--        SELECT
 --          [Value] = LTRIM(RTRIM(SUBSTRING(@List, [Number],
 --          CHARINDEX(@Delim, @List + @Delim, [Number]) - [Number])))
 --        FROM (SELECT Number = ROW_NUMBER() OVER (ORDER BY name)

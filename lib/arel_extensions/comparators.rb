@@ -17,7 +17,6 @@ module ArelExtensions
       Arel::Nodes::LessThanOrEqual.new self, Arel::Nodes.build_quoted(other, self)
     end
 
-
     #REGEXP function
     #Pattern matching using regular expressions
     def =~(other)
@@ -37,7 +36,7 @@ module ArelExtensions
     end
 
     private
-    # Function used for not_regexp
+    # Function used for not_regexp.
     def convert_regexp(other)
       case other
       when String

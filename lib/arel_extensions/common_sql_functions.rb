@@ -52,10 +52,10 @@ module ArelExtensions
           sql.split(/^GO\s*$/).each {|str|
             @cnx.execute(str.strip) unless str.blank?
           }
-        elsif env_db == 'mysql' 
-			sql.split("$$")[1..-2].each { |str|
-				@cnx.execute(str.strip) unless str.strip.blank?
-			}
+        elsif env_db == 'mysql'
+          sql.split("$$")[1..-2].each { |str|
+            @cnx.execute(str.strip) unless str.strip.blank?
+          }
         else
           @cnx.execute(sql) unless sql.blank?
         end

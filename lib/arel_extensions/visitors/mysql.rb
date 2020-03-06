@@ -453,7 +453,7 @@ module ArelExtensions
         conn.send(:mariadb?) &&
           (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mysql_v ||
           conn.respond_to?(:version) && conn.send(:version) >= mysql_v) ||
-        !Arel::Table.engine.connection.send(:mariadb?) &&
+          !Arel::Table.engine.connection.send(:mariadb?) &&
           (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mariadb_v ||
           conn.respond_to?(:version) && conn.send(:version) >= mariadb_v)
       end

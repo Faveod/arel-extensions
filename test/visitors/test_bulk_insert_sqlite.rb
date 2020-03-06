@@ -15,7 +15,7 @@ module ArelExtensions
           [25, 'nom2', "sdfdsfdsfsdf", '2016-01-01']
         ]
       end
-      
+
       def compile node
         if Arel::VERSION.to_i > 5
           @visitor.accept(node, Arel::Collectors::SQLString.new).value
@@ -30,7 +30,7 @@ module ArelExtensions
         sql = compile(insert_manager.ast)
         sql.must_be_like %Q[INSERT INTO "users" ("id", "name", "comments", "created_at") SELECT 23 AS 'id', 'nom1' AS 'name', 'sdfdsfdsfsdf' AS 'comments', '2016-01-01' AS 'created_at' UNION ALL SELECT 25, 'nom2', 'sdfdsfdsfsdf', '2016-01-01']
       end
-
+      
     end
   end
 end

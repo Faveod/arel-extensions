@@ -283,6 +283,9 @@ module ArelExtensions
       def test_replace
         assert_equal "LucaX", t(@lucas, @name.replace("s", "X"))
         assert_equal "replace", t(@lucas, @name.replace(@name, "replace"))
+        assert_equal "LXcXs", t(@lucas, @name.replace(/[ua]/, "X"))
+        assert_equal "LXcXs", t(@lucas, @name.regexp_replace(/[ua]/, "X"))
+        assert_equal "LXcXs", t(@lucas, @name.regexp_replace('[ua]', "X"))
       end
 
       def test_replace_once

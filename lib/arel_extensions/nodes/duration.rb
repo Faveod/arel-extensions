@@ -13,11 +13,9 @@ module ArelExtensions
         super(tab, aliaz)
       end
 
-
       def left
         @expressions.first
       end
-
 
       def right
         @expressions[1]

@@ -1,6 +1,6 @@
 module ArelExtensions
   module Nodes
-    class Format < Function      
+    class Format < Function
       RETURN_TYPE = :string
 
       attr_accessor :col_type, :iso_format
