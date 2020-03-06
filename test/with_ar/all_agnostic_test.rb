@@ -801,7 +801,7 @@ module ArelExtensions
       end
 
       def test_exists_in_subquery
-        assert User.where(User.where(nil).exists).first
+        assert User.where(User.where(nil).arel.exists).first
       end
 
 

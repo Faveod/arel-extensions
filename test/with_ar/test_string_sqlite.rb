@@ -57,13 +57,10 @@ module ArelExtensions
         assert_equal 1, User.where((User.arel_table[:age] + "1").eq(6)).count
         assert_equal 1, User.where((User.arel_table[:age] + User.arel_table[:age]).eq(10)).count
 
-
-
         # Replace
         assert_equal "LucaX", User.where(:id => @lucas).select(@name.replace("s","X").as("res")).first.res
         assert_equal "replace", User.where(:id => @lucas).select(@name.replace(@name,"replace").as("res")).first.res
 
-        #
       end
 
     end

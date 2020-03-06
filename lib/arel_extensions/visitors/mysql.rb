@@ -399,19 +399,19 @@ module ArelExtensions
       end
 
       def visit_Aggregate_For_AggregateFunction o, collector
-        if !(Arel::Table.engine.connection.send(:version) >= (Arel::Table.engine.connection.send(:mariadb?) ? '10.2.3' : '8.0'))
+        if !window_supported?
             warn("Warning : ArelExtensions: Window Functions are not available in the current version on the DBMS.")
             return collector
         end
 
-        if o.order || o.group
+        if !o.order.empty? || !o.group.empty?
           collector << " OVER ("
-          if o.group
+          if !o.group.empty?
             collector << " PARTITION BY ("
             visit o.group, collector
             collector << ")"
           end
-          if o.order
+          if !o.order.empty?
             collector << " ORDER BY ("
             visit o.order, collector
             collector << ")"
@@ -433,12 +433,13 @@ module ArelExtensions
         collector << (o.unbiased_estimator ? "VAR_SAMP(" : "VAR_POP(")
         visit o.left, collector
         collector << ")"
+        visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 
       # JSON if implemented only after 10.2.3 in MariaDb and 5.7 in MySql
       def json_supported?
-         version_supported?('10.2.3', '5.7.0')
+        version_supported?('10.2.3', '5.7.0')
       end
 
       def window_supported?
