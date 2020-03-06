@@ -118,6 +118,7 @@ Arel::Nodes::Function.class_eval do
   include ArelExtensions::NullFunctions
   include ArelExtensions::Predications
 
+  alias_method :old_as, :as
   def as other
     Arel::Nodes::As.new(self, Arel.sql(other))
   end
@@ -163,6 +164,7 @@ Arel::Nodes::As.class_eval do
 end
 
 Arel::Table.class_eval do
+  alias_method :old_alias, :alias
   def alias(name = "#{self.name}_2")
     name.blank? ? self :  Arel::Nodes::TableAlias.new(self,name)
   end
