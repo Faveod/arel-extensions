@@ -1,34 +1,36 @@
-module Nodes
-  class Replace < Function
-    RETURN_TYPE = :string
-    attr_accessor :left, :pattern, :substitute
+module ArelExtensions
+  module Nodes
 
-    def initialize  left, pattern, substitute
+    class Replace < Function
+      RETURN_TYPE = :string
+      attr_accessor :left, :pattern, :substitute
+
+      def initialize  left, pattern, substitute
+          @left = convert_to_node(left)
+          @pattern = convert_to_node(pattern)
+          @substitute = convert_to_node(substitute)
+          super([@left,@pattern,@substitute])
+      end
+
+      def +(other)
+        return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
+      end
+     end
+
+    class RegexpReplace < Function
+      RETURN_TYPE = :string
+      attr_accessor :left, :pattern, :substitute
+
+      def initialize left, pattern, substitute
         @left = convert_to_node(left)
-        @pattern = convert_to_node(pattern)
+        @pattern = (pattern.is_a?(Regexp) ? pattern : %r[#{pattern}])
         @substitute = convert_to_node(substitute)
         super([@left,@pattern,@substitute])
-    end
+      end
 
-    def +(other)
-      return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
-    end
-
-   end
-
-  class RegexpReplace < Function
-    RETURN_TYPE = :string
-    attr_accessor :left, :pattern, :substitute
-
-    def initialize left, pattern, substitute
-      @left = convert_to_node(left)
-      @pattern = (pattern.is_a?(Regexp) ? pattern : %r[#{pattern}])
-      @substitute = convert_to_node(substitute)
-      super([@left,@pattern,@substitute])
-    end
-
-    def +(other)
-      return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
+      def +(other)
+        return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
+      end
     end
 
   end

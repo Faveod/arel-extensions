@@ -400,7 +400,7 @@ module ArelExtensions
         collector << "(STRING_AGG("
         collector = visit o.left, collector
         collector << Arel::Visitors::Oracle::COMMA
-        if o.separator && o.selector != 'NULL'
+        if o.separator && o.separator != 'NULL'
           collector = visit o.separator, collector
         else
           collector = visit Arel::Nodes.build_quoted(','), collector

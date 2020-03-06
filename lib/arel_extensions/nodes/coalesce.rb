@@ -2,7 +2,7 @@ module ArelExtensions
   module Nodes
     class Coalesce < Function
       RETURN_TYPE = :string
-      
+
       attr_accessor :left_node_type
 
       def return_type
