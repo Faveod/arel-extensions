@@ -83,20 +83,42 @@ module ArelExtensions
         collector
       end
 
+      def visit_Aggregate_For_AggregateFunction o, collector
+        if !o.order.blank? || !o.group.blank?
+          collector << " OVER ("
+          if !o.group.blank?
+            collector << " PARTITION BY "
+            o.group.each_with_index do |group, i|
+              collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
+              visit group, collector
+            end
+          end
+          if !o.order.blank?
+            collector << " ORDER BY "
+            o.order.each_with_index do |order, i|
+              collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
+              visit order, collector
+            end
+          end
+          collector << ")"
+        end
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "array_to_string(array_agg("
         collector = visit o.left, collector
-        if !o.orders.blank?
-          collector << ' ORDER BY '
-          o.orders.each_with_index do |order,i|
+        if o.order && !o.order.blank?
+          collector << " ORDER BY"
+          o.order.each_with_index do |order, i|
             collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
             collector = visit order, collector
           end
         end
         collector << ")"
         collector << Arel::Visitors::PostgreSQL::COMMA
-        if o.right  && o.right != 'NULL'
-          collector = visit o.right, collector
+        if o.separator  && o.separator != 'NULL'
+          collector = visit o.separator, collector
         else
           collector = visit Arel::Nodes.build_quoted(','), collector
         end
@@ -293,6 +315,7 @@ module ArelExtensions
         collector << "sum("
         collector = visit o.expr, collector
         collector << ")"
+        visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 
@@ -420,6 +443,7 @@ module ArelExtensions
         collector << (o.unbiased_estimator ? "STDDEV_SAMP(" : "STDDEV_POP(")
         visit o.left, collector
         collector << ")"
+        visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 
@@ -427,6 +451,7 @@ module ArelExtensions
         collector << (o.unbiased_estimator ? "VAR_SAMP(" : "VAR_POP(")
         visit o.left, collector
         collector << ")"
+        visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 

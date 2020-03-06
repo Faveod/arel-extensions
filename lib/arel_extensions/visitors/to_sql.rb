@@ -71,6 +71,13 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_Sum o, collector
+        collector << "SUM("
+        collector = visit o.expr, collector
+        collector << ")"
+        collector
+      end
+
       # String functions
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
@@ -85,9 +92,9 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << "GROUP_CONCAT("
         collector = visit o.left, collector
-        if o.right && o.right != 'NULL'
+        if o.separator && o.separator != 'NULL'
           collector << Arel::Visitors::ToSql::COMMA
-          collector = visit o.right, collector
+          collector = visit o.separator, collector
         end
         collector << ")"
         collector
@@ -270,12 +277,12 @@ module ArelExtensions
           as_attr = Arel::Nodes::SqlLiteral.new('int')
         when :decimal, :float, :number
           as_attr = Arel::Nodes::SqlLiteral.new('float')
-        when :datetime  
+        when :datetime
           as_attr = Arel::Nodes::SqlLiteral.new('datetime')
         when :time
           as_attr = Arel::Nodes::SqlLiteral.new('time')
         when :binary  
-          as_attr = Arel::Nodes::SqlLiteral.new('binary')  
+          as_attr = Arel::Nodes::SqlLiteral.new('binary')
         else
           as_attr = Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
         end
@@ -385,7 +392,7 @@ module ArelExtensions
         collector = visit o.left, collector
         collector << ") THEN "
         collector = visit o.right, collector
-        if o.expressions[2]  
+        if o.expressions[2]
           collector << " ELSE "
           collector = visit o.expressions[2], collector
         end
@@ -490,25 +497,25 @@ module ArelExtensions
         visit Arel::Nodes.build_quoted(o.expr), collector
       end
 
-      def visit_ArelExtensions_Nodes_FormattedNumber o, collector  
+      def visit_ArelExtensions_Nodes_FormattedNumber o, collector
         visit o.left, collector
       end
-  
-      remove_method(:visit_Arel_Nodes_LessThan) rescue nil  
+
+      remove_method(:visit_Arel_Nodes_LessThan) rescue nil
       def visit_Arel_Nodes_LessThan o, collector
         collector = visit o.left, collector
         collector << " < "
         visit o.right, collector
       end
-  
-      def visit_ArelExtensions_Nodes_Std o, collector  
+
+      def visit_ArelExtensions_Nodes_Std o, collector
         collector << "STD("
         visit o.left, collector
         collector << ")"
         collector
       end
-  
-      def visit_ArelExtensions_Nodes_Variance o, collector  
+
+      def visit_ArelExtensions_Nodes_Variance o, collector
         collector << "VARIANCE("
         visit o.left, collector
         collector << ")"

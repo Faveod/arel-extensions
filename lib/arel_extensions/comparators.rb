@@ -37,11 +37,11 @@ module ArelExtensions
     end
 
     private
-    # Function use for not_regexp
+    # Function used for not_regexp
     def convert_regexp(other)
       case other
       when String
-        # Do nothing
+        # Do nothing.
       when Regexp
         other = other.source.gsub('\A','^')
         other.gsub!('\z','$')

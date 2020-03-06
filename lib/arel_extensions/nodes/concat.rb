@@ -40,21 +40,14 @@ module ArelExtensions::Nodes
 
   end
 
-  class GroupConcat < Function
+  class GroupConcat < AggregateFunction
     RETURN_TYPE = :string
 
-    attr_accessor :orders
-    
-    def initialize expr
-      tab = expr.map { |arg|
-        if arg.is_a?(Array)
-          @orders = arg
-          nil
-        else
-          convert_to_node(arg)
-        end
-      }.compact
-      super(tab)
+    attr_accessor :separator
+
+    def initialize node, separator = ', ', **opts
+      @separator = convert_to_node(separator)
+      super node, opts
     end
 
   end
