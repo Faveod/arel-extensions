@@ -400,19 +400,19 @@ module ArelExtensions
       end
 
       def visit_Aggregate_For_AggregateFunction o, collector
-        if !(Arel::Table.engine.connection.send(:version) >= (Arel::Table.engine.connection.send(:mariadb?) ? '10.2.3' : '8.0'))
+        if !window_supported?
             warn("Warning : ArelExtensions: Window Functions are not available in the current version on the DBMS.")
             return collector
         end
 
-        if o.order || o.group
+        if !o.order.empty? || !o.group.empty?
           collector << " OVER ("
-          if o.group
+          if !o.group.empty?
             collector << " PARTITION BY ("
             visit o.group, collector
             collector << ")"
           end
-          if o.order
+          if !o.order.empty?
             collector << " ORDER BY ("
             visit o.order, collector
             collector << ")"
@@ -427,6 +427,7 @@ module ArelExtensions
         collector << (o.unbiased_estimator ? "STDDEV_SAMP(" : "STDDEV_POP(")
         visit o.left, collector
         collector << ")"
+        visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 
@@ -434,18 +435,27 @@ module ArelExtensions
         collector << (o.unbiased_estimator ? "VAR_SAMP(" : "VAR_POP(")
         visit o.left, collector
         collector << ")"
+        visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 
       # JSON if implemented only after 10.2.3 in MariaDb and 5.7 in MySql
       def json_supported?
+        version_supported?('10.2.3', '5.7.0')
+      end
+
+      def window_supported?
+        version_supported?('10.2.3', '8.0')
+      end
+
+      def version_supported?(mysql_v='10.2.3',mariadb_v='5.7.0')
         conn = Arel::Table.engine.connection
         conn.send(:mariadb?) &&
-          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= '10.2.3' ||
-          conn.respond_to?(:version) && conn.send(:version) >= '10.2.3') ||
+          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mysql_v ||
+          conn.respond_to?(:version) && conn.send(:version) >= mysql_v) ||
         !Arel::Table.engine.connection.send(:mariadb?) &&
-          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= '5.7.0' ||
-          conn.respond_to?(:version) && conn.send(:version) >= '5.7.0')
+          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mariadb_v ||
+          conn.respond_to?(:version) && conn.send(:version) >= mariadb_v)
       end
 
       def visit_ArelExtensions_Nodes_Json o,collector

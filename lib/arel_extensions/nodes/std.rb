@@ -1,7 +1,5 @@
 module ArelExtensions
   module Nodes
-    class Std < Function
-      RETURN_TYPE = :number
 
     class Std < AggregateFunction
       RETURN_TYPE = :number
@@ -14,7 +12,7 @@ module ArelExtensions
 
     end
 
-    class Variance < Function
+    class Variance < AggregateFunction
       RETURN_TYPE = :number
       attr_accessor :unbiased_estimator
 

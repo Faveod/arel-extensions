@@ -88,6 +88,7 @@ module ArelExtensions
         compile((c >= 'test').as('new_name')).must_be_like %{("users"."name" >= 'test') AS new_name}
         compile(c <= @table[:comments]).must_be_like %{"users"."name" <= "users"."comments"}
         compile(c =~ /\Atest\Z/).must_be_like %{"users"."name" REGEXP '^test$'}
+        compile(c =~ /\Atest\z/).must_be_like %{REGEXP_LIKE("users"."name", '^test$')}
         compile(c !~ /\Ate\Dst\Z/).must_be_like %{"users"."name" NOT REGEXP '^te[^0-9]st$'}
         compile(c.imatches('%test%')).must_be_like %{"users"."name" ILIKE '%test%'}
         compile(c.imatches_any(['%test%', 't2'])).must_be_like %{(("users"."name" ILIKE '%test%') OR ("users"."name" ILIKE 't2'))}
@@ -120,6 +121,11 @@ module ArelExtensions
         compile(@table[:id] < 42).must_match %{"users"."id" < 42}
         compile(@table[:id] <= 42).must_match %{"users"."id" <= 42}
         compile((@table[:id] <= 42).as('new_name')).must_match %{("users"."id" <= 42) AS new_name}
+        compile(@table[:id].count.eq 42).must_match %{COUNT("users"."id") = 42}
+        #compile(@table[:id].count == 42).must_match %{COUNT("users"."id") = 42} # TODO
+        #compile(@table[:id].count != 42).must_match %{COUNT("users"."id") != 42}
+        #compile(@table[:id].count >= 42).must_match %{COUNT("users"."id") >= 42}
+
       end
 
       it "should accept comparators on dates" do

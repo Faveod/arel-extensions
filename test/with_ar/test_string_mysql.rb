@@ -10,7 +10,7 @@ module ArelExtensions
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-mysql" : :mysql))
         ActiveRecord::Base.default_timezone = :utc
-        begin 
+        begin
           @cnx = ActiveRecord::Base.connection
         rescue => e
           puts "\n#{e.inspect}"
@@ -19,7 +19,7 @@ module ArelExtensions
         end
         Arel::Table.engine = ActiveRecord::Base
         @cnx.drop_table(:users) rescue nil
-        @cnx.drop_table(:products) rescue nil 
+        @cnx.drop_table(:products) rescue nil
         @cnx.create_table :users do |t|
           t.column :age, :integer
           t.column :name, :string
@@ -68,7 +68,6 @@ module ArelExtensions
         assert_equal "LucaX", User.where(:id => @lucas).select(@name.replace("s","X").as("res")).first.res
         assert_equal "replace", User.where(:id => @lucas).select(@name.replace(@name,"replace").as("res")).first.res
 
-        # 
       end
 
     end

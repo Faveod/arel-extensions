@@ -112,10 +112,13 @@ module ArelExtensions
           collector << " ORDER BY"
           o.order.each_with_index do |order, i|
             collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
-            collector = visit order, collector
+            collector << " "
+            visit order, collector
           end
         end
         collector << ")"
+        o.order = nil
+        visit_Aggregate_For_AggregateFunction o, collector
         collector << Arel::Visitors::PostgreSQL::COMMA
         if o.separator  && o.separator != 'NULL'
           collector = visit o.separator, collector
