@@ -117,10 +117,6 @@ module ArelExtensions
       ArelExtensions::Nodes::RegexpReplace.new self, pattern, substitute
     end
 
-    def replace left, right
-      ArelExtensions::Nodes::Replace.new [self, left, right]
-    end
-
     def concat other
       ArelExtensions::Nodes::Concat.new [self, other]
     end

@@ -15,7 +15,7 @@ module ArelExtensions
       def +(other)
         return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
       end
-     end
+    end
 
     class RegexpReplace < Function
       RETURN_TYPE = :string
