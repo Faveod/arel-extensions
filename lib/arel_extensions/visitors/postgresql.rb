@@ -302,6 +302,22 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_RegexpReplace o, collector
+        collector << "REGEXP_REPLACE("
+        visit o.left, collector
+        collector << Arel::Visitors::ToSql::COMMA
+        tab = o.pattern.inspect+ 'g'              # Make it always global
+        pattern = tab.split('/')[1..-2].join('/') 
+        flags = tab.split('/')[-1]
+        visit Arel::Nodes.build_quoted(pattern), collector
+        collector << Arel::Visitors::ToSql::COMMA
+        visit o.substitute, collector
+        collector << Arel::Visitors::ToSql::COMMA
+        visit Arel::Nodes.build_quoted(flags+"g"), collector
+        collector << ")"
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector = visit o.expr, collector
         collector << ' IS NULL'
