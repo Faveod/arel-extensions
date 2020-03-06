@@ -134,7 +134,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Replace o, collector
-         collector << "REPLACE("
+        collector << "REPLACE("
         visit o.left, collector
         collector << Arel::Visitors::ToSql::COMMA 
         visit o.pattern, collector
@@ -151,9 +151,9 @@ module ArelExtensions
         visit Arel::Nodes.build_quoted(o.pattern.to_s), collector
         collector << Arel::Visitors::ToSql::COMMA 
         visit o.substitute, collector
-         collector << ")"
-         collector
-       end
+        collector << ")"
+        collector
+      end
 
       def visit_ArelExtensions_Nodes_Repeat o, collector
         collector << "REPEAT("
@@ -293,7 +293,7 @@ module ArelExtensions
           as_attr = Arel::Nodes::SqlLiteral.new('datetime')
         when :time
           as_attr = Arel::Nodes::SqlLiteral.new('time')
-        when :binary  
+        when :binary
           as_attr = Arel::Nodes::SqlLiteral.new('binary')
         else
           as_attr = Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
@@ -472,7 +472,7 @@ module ArelExtensions
         collector = visit o.right, collector
         collector
       end
-  
+
       def visit_ArelExtensions_Nodes_UnionAll o, collector
         collector = visit o.left, collector
         collector << " UNION ALL "

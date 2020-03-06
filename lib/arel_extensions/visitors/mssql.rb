@@ -524,7 +524,6 @@ module ArelExtensions
         collector
       end
 
-
       def visit_ArelExtensions_Nodes_LevenshteinDistance o, collector
         collector << "dbo.LEVENSHTEIN_DISTANCE("
         collector = visit o.left, collector
@@ -547,7 +546,6 @@ module ArelExtensions
         collector << ')'
         collector
       end
-
 
     end
   end

@@ -318,7 +318,6 @@ module ArelExtensions
         collector
       end
 
-
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector = visit o.expr, collector
         collector << ' IS NULL'
