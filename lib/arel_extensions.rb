@@ -122,6 +122,7 @@ Arel::Nodes::Function.class_eval do
   def as other
     Arel::Nodes::As.new(self, Arel.sql(other))
   end
+
 end
 
 Arel::Nodes::Unary.class_eval do
