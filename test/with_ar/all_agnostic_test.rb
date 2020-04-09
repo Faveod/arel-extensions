@@ -68,7 +68,8 @@ module ArelExtensions
         @test = User.where(:id => u.id)
         u = User.create :age => -42, :name => "Negatif", :comments => '1,22,3,42,2', :created_at => d, :updated_at => d.to_time, :score => 0.17
         @neg = User.where(:id => u.id)
-
+        u = User.create :age => 15, :name => "Justin", :created_at => d, :score => 11.0
+        @justin = User.where(:id => u.id)
 
         @age = User.arel_table[:age]
         @name = User.arel_table[:name]
@@ -121,6 +122,7 @@ module ArelExtensions
         assert_equal(-20, t(@camille, @score.ceil)) # -20.16
         assert_equal(-20, t(@camille, (@score - 0.5).ceil)) # -20.16
         assert_equal 63, t(@arthur, @age.ceil + 42)
+        assert_equal 11, t(@justin, @score.ceil) # 11.0
       end
 
       def test_floor
@@ -129,12 +131,14 @@ module ArelExtensions
         assert_equal 1, t(@test, @score.floor) # 1.62
         assert_equal(-9, t(@test, (@score - 10).floor)) # 1.62
         assert_equal 42, t(@arthur, @score.floor - 23)
+        assert_equal 11, t(@justin, @score.floor) # 11.0
+        assert_equal(-21, t(@camille, @score.floor)) #  # -20.16
       end
 
       def test_rand
         assert 42 != User.select(Arel.rand.as('res')).first.res
         assert 0 <= User.select(Arel.rand.abs.as('res')).first.res
-        assert_equal 8, User.order(Arel.rand).limit(50).count
+        assert_equal 9, User.order(Arel.rand).limit(50).count
       end
 
       def test_round
@@ -147,15 +151,15 @@ module ArelExtensions
       def test_sum
         if @env_db == 'mssql'
           skip "SQL Server forces order?" # TODO
-          assert_equal 68, User.select((@age.sum + 1).as("res"), User.arel_table[:id].sum).take(50).reorder(@age).first.res
-          assert_equal 134, User.reorder(nil).select((@age.sum + @age.sum).as("res"), User.arel_table[:id].sum).take(50).first.res
-          assert_equal 201, User.reorder(nil).select(((@age * 3).sum).as("res"), User.arel_table[:id].sum).take(50).first.res
-          assert_equal 4009, User.reorder(nil).select(((@age * @age).sum).as("res"), User.arel_table[:id].sum).take(50).first.res
+          assert_equal 83, User.select((@age.sum + 1).as("res"), User.arel_table[:id].sum).take(50).reorder(@age).first.res
+          assert_equal 164, User.reorder(nil).select((@age.sum + @age.sum).as("res"), User.arel_table[:id].sum).take(50).first.res
+          assert_equal 246, User.reorder(nil).select(((@age * 3).sum).as("res"), User.arel_table[:id].sum).take(50).first.res
+          assert_equal 4234, User.reorder(nil).select(((@age * @age).sum).as("res"), User.arel_table[:id].sum).take(50).first.res
         else
-          assert_equal 68, User.select((@age.sum + 1).as("res")).take(50).first.res
-          assert_equal 134, User.select((@age.sum + @age.sum).as("res")).take(50).first.res
-          assert_equal 201, User.select((@age * 3).sum.as("res")).take(50).first.res
-          assert_equal 4009, User.select(((@age * @age).sum).as("res")).take(50).first.res
+          assert_equal 83, User.select((@age.sum + 1).as("res")).take(50).first.res
+          assert_equal 164, User.select((@age.sum + @age.sum).as("res")).take(50).first.res
+          assert_equal 246, User.select((@age * 3).sum.as("res")).take(50).first.res
+          assert_equal 4234, User.select(((@age * @age).sum).as("res")).take(50).first.res
         end
       end
 
@@ -277,7 +281,7 @@ module ArelExtensions
         #puts User.where(@name.imatches('m%')).to_sql
         assert_equal 1, User.where(@name.imatches('m%')).count
         assert_equal 4, User.where(@name.imatches_any(['L%', '%e'])).count
-        assert_equal 6, User.where(@name.idoes_not_match('L%')).count
+        assert_equal 7, User.where(@name.idoes_not_match('L%')).count
       end
 
       def test_replace
@@ -378,13 +382,13 @@ module ArelExtensions
         assert_equal 2, User.where(@age <= 10).count
         assert_equal 3, User.where(@age > 20).count
         assert_equal 4, User.where(@age >= 20).count
-        assert_equal 1, User.where(@age > 5).where(@age < 20).count
+        assert_equal 2, User.where(@age > 5).where(@age < 20).count
       end
 
       def test_date_comparator
         d = Date.new(2016, 5, 23)
         assert_equal 0, User.where(@created_at < d).count
-        assert_equal 8, User.where(@created_at >= d).count
+        assert_equal 9, User.where(@created_at >= d).count
       end
 
       def test_date_duration
@@ -393,10 +397,10 @@ module ArelExtensions
         assert_equal 0, User.where(@created_at.year.eq("2012")).count
         #Month
         assert_equal 5, t(@camille, @created_at.month).to_i
-        assert_equal 8, User.where(@created_at.month.eq("05")).count
+        assert_equal 9, User.where(@created_at.month.eq("05")).count
         #Week
         assert_equal(@env_db == 'mssql' ? 22 : 21, t(@arthur, @created_at.week).to_i)
-        assert_equal 8, User.where(@created_at.month.eq("05")).count
+        assert_equal 9, User.where(@created_at.month.eq("05")).count
         #Day
         assert_equal 23, t(@laure, @created_at.day).to_i
         assert_equal 0, User.where(@created_at.day.eq("05")).count
@@ -529,7 +533,7 @@ module ArelExtensions
       def test_math_minus
         d = Date.new(2016, 5, 20)
         #Datediff
-        assert_equal 8, User.where((@created_at - @created_at).eq(0)).count
+        assert_equal 9, User.where((@created_at - @created_at).eq(0)).count
         assert_equal 3, @laure.select((@created_at - d).as("res")).first.res.abs.to_i
         #Substraction
         assert_equal 0, User.where((@age - 10).eq(50)).count
@@ -647,8 +651,8 @@ module ArelExtensions
       end
 
       def test_subquery_with_order
-        assert_equal 8, User.where(:name => User.select(:name).order(:name)).count
-        assert_equal 8, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count
+        assert_equal 9, User.where(:name => User.select(:name).order(:name)).count
+        assert_equal 9, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count
         if !['mysql'].include?(@env_db)  # MySql can't have limit in IN subquery
           assert_equal 2, User.where(:name => User.select(:name).order(:name).limit(2)).count
           #assert_equal 6, User.where(:name => User.select(:name).order(:name).offset(2)).count
