@@ -193,13 +193,16 @@ module ArelExtensions
         collector
       end
 
-      # CASE
-      #   WHEN 3.42 >= 0 THEN CAST(3.42 AS INT)
-      #   WHEN CAST(3.42 AS INT) = 3.42 THEN CAST(3.42 AS INT)
-      #   ELSE CAST((3.42 - 1.0) AS INT)
-      # END
+      # CAST(
+      #   CASE
+      #     WHEN 3.42 >= 0 THEN CAST(3.42 AS INT)
+      #     WHEN CAST(3.42 AS INT) = 3.42 THEN CAST(3.42 AS INT)
+      #     ELSE CAST((3.42 - 1.0) AS INT)
+      #   END
+      #   AS FLOAT
+      # )
       def visit_ArelExtensions_Nodes_Floor o, collector
-        collector << "CASE WHEN "
+        collector << "CAST(CASE WHEN "
         collector = visit o.left, collector
         collector << " >= 0 THEN CAST("
         collector = visit o.left, collector
@@ -211,7 +214,7 @@ module ArelExtensions
         collector = visit o.left, collector
         collector << " AS INT) ELSE CAST(("
         collector = visit o.left, collector
-        collector << " - 1.0) AS INT) END"
+        collector << " - 1.0) AS INT) END AS FLOAT)"
         collector
       end
 
