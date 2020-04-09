@@ -209,7 +209,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">CEIL<br>column.ceil</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">CASE + ROUND</td>
+    <td class="tg-j6lv">CASE + CAST</td>
     <td class="ok">✔</td>
     <td class="tg-j6lv">CEILING()</td>
     <td class="tg-j6lv">CEILING()</td>
@@ -218,7 +218,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">FLOOR<br>column.floor</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">CASE + ROUND</td>
+    <td class="tg-j6lv">CASE + CAST</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
