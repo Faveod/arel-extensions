@@ -12,7 +12,10 @@ Layout/ExtraSpacing:
 Layout/SpaceAroundEqualsInParameterDefault:
   Enabled: true
 
-Layout/TrailingBlankLines:
+Layout/TrailingEmptyLines:
+  Enabled: true
+
+Naming/FileName:
   Enabled: true
 
 Style/CollectionMethods:
@@ -33,11 +36,11 @@ Style/EmptyElse:
 Style/Encoding:
   Enabled: true
 
-Style/FileName:
-  Enabled: true
-
 Style/MethodCallWithArgsParentheses:
   Enabled: false
+
+# Performance cops have been transferred to rubocop-performance gem.
+require: rubocop-performance
 
 Performance/DoubleStartEndWith:
   Enabled: true
