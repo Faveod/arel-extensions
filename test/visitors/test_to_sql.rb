@@ -345,6 +345,13 @@ module ArelExtensions
           .must_be_like %{"users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')}
       end
 
+      it "should be possible to use a list of values and ranges on an IN" do
+        compile(@table[:id].in [1..10, 20, 30, 40..50))
+          .must_be_like %{(("users"."id" IN (20, 30)) OR ("users"."id" BETWEEN (1) AND (10))) OR ("users"."id" BETWEEN (40) AND (50))}
+#        compile(@table[:created_at].in(@date .. Date.new(2017, 3, 31))) # @date = Date.new(2016, 3, 31)
+#          .must_be_like %{"users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')}
+      end
+
       it "should be possible to add and substract as much as we want" do
         c = @table[:name]
         compile(c.locate('test')+1)
