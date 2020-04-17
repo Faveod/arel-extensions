@@ -145,8 +145,6 @@ module ArelExtensions
             else
               Arel.sql(Arel::Visitors::MSSQL::DATE_MAPPING[v.left])
             end
-          else
-            nil
           end
         end
       end
