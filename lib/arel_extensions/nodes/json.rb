@@ -50,8 +50,7 @@ module ArelExtensions
             when NilClass
               Arel.sql('null')
             else
-              if exp.is_a?(String) \
-                 || (exp.is_a?(Arel::Attributes::Attribute) && type_of_attribute(exp) == :string) \
+              if (exp.is_a?(Arel::Attributes::Attribute) && type_of_attribute(exp) == :string) \
                  || (exp.return_type == :string)
                 convert_to_node(exp)
               else
