@@ -5,7 +5,7 @@ module ArelExtensions
 
     attr_accessor :ai, :ci, :option
 
-    def initialize left, option=nil, ai=false, ci=false
+    def initialize left, option = nil, ai = false, ci = false
       @ai = ai
       @ci = ci
       @option = option

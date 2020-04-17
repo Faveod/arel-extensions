@@ -120,7 +120,7 @@ module ArelExtensions
         o.order = nil
         visit_Aggregate_For_AggregateFunction o, collector
         collector << Arel::Visitors::PostgreSQL::COMMA
-        if o.separator  && o.separator != 'NULL'
+        if o.separator && o.separator != 'NULL'
           collector = visit o.separator, collector
         else
           collector = visit Arel::Nodes.build_quoted(','), collector
@@ -306,7 +306,7 @@ module ArelExtensions
         collector << "REGEXP_REPLACE("
         visit o.left, collector
         collector << Arel::Visitors::ToSql::COMMA
-        tab = o.pattern.inspect+ 'g'              # Make it always global
+        tab = o.pattern.inspect+ 'g' # Make it always global
         pattern = tab.split('/')[1..-2].join('/') 
         flags = tab.split('/')[-1]
         visit Arel::Nodes.build_quoted(pattern), collector
@@ -482,7 +482,7 @@ module ArelExtensions
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
-            collector  = visit v, collector
+            collector = visit v, collector
           end
           collector << '])'
         when Hash

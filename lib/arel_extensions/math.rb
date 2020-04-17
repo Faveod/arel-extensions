@@ -24,7 +24,7 @@ module ArelExtensions
           else
             return Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
           end
-        when  ArelExtensions::Nodes::Function,ArelExtensions::Nodes::Case
+        when ArelExtensions::Nodes::Function,ArelExtensions::Nodes::Case
           return case self.return_type
         when :string, :text
           self.concat(other)
@@ -35,7 +35,7 @@ module ArelExtensions
         else
           self.concat(other)
         end
-      when  Arel::Nodes::Function
+      when Arel::Nodes::Function
         Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
       else
         begin
@@ -115,7 +115,7 @@ module ArelExtensions
               end
             when Arel::Nodes::Node, DateTime, Time, String, Date
               ArelExtensions::Nodes::DateDiff.new [self, other]
-            when  ArelExtensions::Nodes::Duration, Integer
+            when ArelExtensions::Nodes::Duration, Integer
               ArelExtensions::Nodes::DateSub.new [self, other]
             else # ActiveSupport::Duration
               ArelExtensions::Nodes::DateAdd.new [self, -other]

@@ -262,7 +262,7 @@ module ArelExtensions
         else
           if o.with_interval
             case o.left
-            when  'd','m','y'
+            when 'd','m','y'
               interval = 'DAY'
             when 'h','mn','s'
               interval = 'SECOND'
@@ -446,7 +446,7 @@ module ArelExtensions
         version_supported?('10.2.3', '8.0')
       end
 
-      def version_supported?(mysql_v='10.2.3',mariadb_v='5.7.0')
+      def version_supported?(mysql_v = '10.2.3',mariadb_v = '5.7.0')
         conn = Arel::Table.engine.connection
         conn.send(:mariadb?) &&
           (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mysql_v ||

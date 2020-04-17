@@ -63,15 +63,15 @@ module ArelExtensions
     end
 
     # Aggregate Functions
-    def std opts={unbiased: true}
+    def std opts = {unbiased: true}
       ArelExtensions::Nodes::Std.new self, opts
     end
 
-    def variance opts={unbiased: true}
+    def variance opts = {unbiased: true}
       ArelExtensions::Nodes::Variance.new self, opts
     end
 
-    def sum opts={unbiased: true}
+    def sum opts = {unbiased: true}
       ArelExtensions::Nodes::Sum.new self, opts
     end
 
@@ -91,7 +91,7 @@ module ArelExtensions
     end
 
     # function returning a number at a specific format
-    def format_number format_string, locale=nil
+    def format_number format_string, locale = nil
       begin
         sprintf(format_string,0) # this line is to get the right error message if the format_string is not correct
         m = /^(.*)%([ #+\-0]*)([1-9][0-9]+|[1-9]?)[.]?([0-9]*)([a-zA-Z])(.*)$/.match(format_string)

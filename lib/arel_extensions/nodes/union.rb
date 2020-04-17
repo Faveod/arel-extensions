@@ -21,4 +21,3 @@ module ArelExtensions
 
   end
 end
-

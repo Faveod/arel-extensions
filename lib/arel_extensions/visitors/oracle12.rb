@@ -68,7 +68,7 @@ module ArelExtensions
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
-            collector  = visit v, collector
+            collector = visit v, collector
           end
           collector << ')'
         when Hash
