@@ -100,7 +100,7 @@ module ArelExtensions
       ArelExtensions::Nodes::Collate.new(self,nil,false,true)
     end
 
-    def collate ai=false,ci=false, option=nil
+    def collate ai = false,ci = false, option = nil
       ArelExtensions::Nodes::Collate.new(self,option,ai,ci)
     end
 
@@ -122,7 +122,7 @@ module ArelExtensions
     end
 
     #concat elements of a group, separated by sep and ordered by a list of Ascending or Descending
-    def group_concat(sep= nil, *orders, group: nil, order: nil)
+    def group_concat(sep = nil, *orders, group: nil, order: nil)
       if orders.present?
         warn("Warning : ArelExtensions: group_concat: you should now use the kwarg 'order' to specify an order in the group_concat.")
       end

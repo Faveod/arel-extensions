@@ -1,10 +1,10 @@
 module ArelExtensions
   module Predications
-    def when right, expression=nil
+    def when right, expression = nil
       ArelExtensions::Nodes::Case.new(self).when(right,expression)
     end
 
-    def matches(other, escape=nil,case_sensitive= nil)
+    def matches(other, escape = nil,case_sensitive = nil)
       if Arel::VERSION.to_i < 7
         Arel::Nodes::Matches.new(self, Arel::Nodes.build_quoted(other), escape)
       else
@@ -12,7 +12,7 @@ module ArelExtensions
       end
     end
 
-    def imatches(other, escape=nil)
+    def imatches(other, escape = nil)
       ArelExtensions::Nodes::IMatches.new(self, other, escape)
     end
 

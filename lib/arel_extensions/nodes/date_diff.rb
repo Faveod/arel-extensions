@@ -136,7 +136,7 @@ module ArelExtensions
           if ArelExtensions::Nodes::Duration === v
             v.with_interval = true
             case v.left
-            when  'd','m','y'
+            when 'd','m','y'
               Arel.sql('day')
             when 'h','mn','s'
               Arel.sql('second')

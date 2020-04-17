@@ -41,5 +41,3 @@ end
 ArelExtensions::Nodes.const_set('Or',Class.new(Arel::Nodes::And)).class_eval do
   include ArelExtensions::BooleanFunctions
 end
-
-

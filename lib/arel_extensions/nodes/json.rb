@@ -18,7 +18,7 @@ module ArelExtensions
         JsonSet.new(self,key,value)
       end
 
-      def group as_array = true, orders= nil
+      def group as_array = true, orders = nil
         JsonGroup.new(self,as_array, orders)
       end
 
@@ -41,7 +41,7 @@ module ArelExtensions
             }
           when Hash
             @dict = expr.first.inject({}){|acc,v|
-              acc[convert_to_node(v[0])] =  (v[1].is_a?(Array) || v[1].is_a?(Hash)) ? Json.new(v[1]) :  convert_to_node(v[1])
+              acc[convert_to_node(v[0])] = (v[1].is_a?(Array) || v[1].is_a?(Hash)) ? Json.new(v[1]) : convert_to_node(v[1])
               acc
             }
           when String, Numeric, TrueClass, FalseClass

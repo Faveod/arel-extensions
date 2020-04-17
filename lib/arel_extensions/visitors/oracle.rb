@@ -131,7 +131,7 @@ module ArelExtensions
         collector << "(LISTAGG("
         collector = visit o.left, collector
         collector << Arel::Visitors::Oracle::COMMA
-        if o.separator  && o.separator != 'NULL'
+        if o.separator && o.separator != 'NULL'
           collector = visit o.separator, collector
         else
           collector = visit Arel::Nodes.build_quoted(','), collector
@@ -154,7 +154,7 @@ module ArelExtensions
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::Oracle::COMMA unless i == 0
           if i > 0 && o.left_node_type == :text
-            if arg == ''  || (arg.is_a?(Arel::Nodes::Quoted) && (arg.expr == ''))
+            if arg == '' || (arg.is_a?(Arel::Nodes::Quoted) && (arg.expr == ''))
               collector << "NULL"
             else
               collector << 'TO_CLOB('
