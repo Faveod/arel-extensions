@@ -25,25 +25,20 @@ module ArelExtensions
       when Range
         self.between(other)
       when Enumerable
-        if other.include?(nil)
-          other.delete(nil)
-          case other.length
-          when 0
-            self.is_null
-          when 1
-            self.is_null.or(self==other[0])
-          else
-            self.is_null.or(Arel::Nodes::In.new(self,quoted_array(other)))
-          end
-        else
-          Arel::Nodes::In.new(self,quoted_array(other))
-        end
+        nils, values   = values.partition{ |v| v.nil? }
+        ranges, values = values.partition{ |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager)}
+        # In order of (imagined) decreasing efficiency: nil, values, and then more complex.
+        clauses =
+          nils.uniq.map { |r| self.in(r) } \
+          + [values.uniq.size == 1 ? self == values[0] : Arel::Nodes::In.new(self, quoted_node(values))] \
+          + ranges.uniq.map { |r| self.in(r) }
+        clauses.reduce(&:or)
       when nil
         self.is_null
       when Arel::SelectManager
         Arel::Nodes::In.new(self, other.ast)
       else
-        Arel::Nodes::In.new(self,quoted_node(other))
+        Arel::Nodes::In.new(self, quoted_node(other))
       end
     end
 
