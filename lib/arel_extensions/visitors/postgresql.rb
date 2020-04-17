@@ -120,11 +120,12 @@ module ArelExtensions
         o.order = nil
         visit_Aggregate_For_AggregateFunction o, collector
         collector << Arel::Visitors::PostgreSQL::COMMA
-        if o.separator && o.separator != 'NULL'
-          collector = visit o.separator, collector
-        else
-          collector = visit Arel::Nodes.build_quoted(','), collector
-        end
+        collector =
+          if o.separator && o.separator != 'NULL'
+            visit o.separator, collector
+          else
+            visit Arel::Nodes.build_quoted(','), collector
+          end
         collector << ")"
         collector
       end
@@ -387,27 +388,28 @@ module ArelExtensions
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = ArelExtensions::Nodes::Length.new([sign])
 
-        if o.scientific_notation
-          number = ArelExtensions::Nodes::Concat.new([
-                  Arel::Nodes::NamedFunction.new('TRIM',[
-                    Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                      col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor),
-                      Arel::Nodes.build_quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
-                    ])]),
-                  o.type,
-                  Arel::Nodes::NamedFunction.new('TRIM',[
-                    Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                      col.abs.log10.floor,
-                      Arel::Nodes.build_quoted('FM'+nines_before)
-                    ])])
-                ])
-        else
-          number = Arel::Nodes::NamedFunction.new('TRIM',[
-                Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                  Arel::Nodes.build_quoted(col.abs),
-                  Arel::Nodes.build_quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
-                ])])
-        end
+        number =
+          if o.scientific_notation
+            ArelExtensions::Nodes::Concat.new([
+                Arel::Nodes::NamedFunction.new('TRIM',[
+                  Arel::Nodes::NamedFunction.new('TO_CHAR',[
+                    col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor),
+                    Arel::Nodes.build_quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
+                  ])]),
+                o.type,
+                Arel::Nodes::NamedFunction.new('TRIM',[
+                  Arel::Nodes::NamedFunction.new('TO_CHAR',[
+                    col.abs.log10.floor,
+                    Arel::Nodes.build_quoted('FM'+nines_before)
+                  ])])
+              ])
+          else
+            Arel::Nodes::NamedFunction.new('TRIM',[
+              Arel::Nodes::NamedFunction.new('TO_CHAR',[
+                Arel::Nodes.build_quoted(col.abs),
+                Arel::Nodes.build_quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
+              ])])
+          end
 
         repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
           when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).

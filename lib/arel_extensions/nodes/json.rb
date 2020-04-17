@@ -40,7 +40,7 @@ module ArelExtensions
               (e.is_a?(Array) || e.is_a?(Hash)) ? Json.new(e) : convert_to_node(e)
             }
           when Hash
-            @dict = expr.first.inject({}){|acc,v|
+            @dict = expr.first.reduce({}){|acc,v|
               acc[convert_to_node(v[0])] = (v[1].is_a?(Array) || v[1].is_a?(Hash)) ? Json.new(v[1]) : convert_to_node(v[1])
               acc
             }
@@ -49,11 +49,12 @@ module ArelExtensions
           when NilClass
             @dict = Arel.sql('null')
           else
-            if expr.first.is_a?(String) || (expr.first.is_a?(Arel::Attributes::Attribute) && type_of_attribute(expr.first) == :string) || (expr.first.return_type == :string)
-              @dict = convert_to_node(expr.first)
-            else
-              @dict = [convert_to_node(expr.first)]
-            end
+            @dict = 
+              if expr.first.is_a?(String) || (expr.first.is_a?(Arel::Attributes::Attribute) && type_of_attribute(expr.first) == :string) || (expr.first.return_type == :string)
+                convert_to_node(expr.first)
+              else
+                [convert_to_node(expr.first)]
+              end
           end
         else
           @dict = expr.map{|e| (e.is_a?(Array) || e.is_a?(Hash)) ? Json.new(e) : convert_to_node(e) }
@@ -73,11 +74,7 @@ module ArelExtensions
         @dict = as_array ? json : json.dict
         @as_array = as_array
         if orders
-          if orders.is_a?(Array)
-            @orders = orders
-          else
-            @orders = [orders]
-          end
+          @orders = Array(orders)
         end
       end
     end

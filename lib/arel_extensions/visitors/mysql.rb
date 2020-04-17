@@ -97,26 +97,28 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Collate o, collector
-        case o.expressions.first
-        when Arel::Attributes::Attribute
-          charset = case o.option
-            when 'latin1','utf8'
-              o.option
-            else
-              Arel::Table.engine.connection.charset || 'utf8'
-            end
-        else
-          charset = (o.option == 'latin1') ? 'latin1' : 'utf8'
-        end
+        charset =
+          case o.expressions.first
+          when Arel::Attributes::Attribute
+            case o.option
+              when 'latin1','utf8'
+                o.option
+              else
+                Arel::Table.engine.connection.charset || 'utf8'
+              end
+          else
+            (o.option == 'latin1') ? 'latin1' : 'utf8'
+          end
         collector = visit o.expressions.first, collector
-        if o.ai
-          collector << " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
+        collector <<
+          if o.ai
+            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
           #doesn't work in latin1
-        elsif o.ci
-          collector << " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
-        else
-          collector << " COLLATE #{charset}_bin"
-        end
+          elsif o.ci
+            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
+          else
+            " COLLATE #{charset}_bin"
+          end
         collector
       end
 
@@ -362,20 +364,21 @@ module ArelExtensions
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = ArelExtensions::Nodes::Length.new([sign])
 
-        if o.scientific_notation
-          number = ArelExtensions::Nodes::Concat.new([
-                  Arel::Nodes::NamedFunction.new('FORMAT',[
-                    col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor)
-                  ]+params),
-                  o.type,
-                  Arel::Nodes::NamedFunction.new('FORMAT',[
-                    col.abs.log10.floor,
-                    0
+        number =
+          if o.scientific_notation
+            ArelExtensions::Nodes::Concat.new([
+                    Arel::Nodes::NamedFunction.new('FORMAT',[
+                      col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor)
+                    ]+params),
+                    o.type,
+                    Arel::Nodes::NamedFunction.new('FORMAT',[
+                      col.abs.log10.floor,
+                      0
+                    ])
                   ])
-                ])
-        else
-          number = Arel::Nodes::NamedFunction.new('FORMAT',[col.abs]+params)
-        end
+          else
+            Arel::Nodes::NamedFunction.new('FORMAT',[col.abs]+params)
+          end
 
         repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
           when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).

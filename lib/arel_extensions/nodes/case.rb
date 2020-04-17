@@ -41,8 +41,6 @@ module ArelExtensions
             @conditions.last.right
           elsif @default
             @default.expr
-          else
-            nil
           end
         if obj.respond_to?(:return_type)
           obj.return_type

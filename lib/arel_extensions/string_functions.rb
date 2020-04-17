@@ -131,8 +131,6 @@ module ArelExtensions
           o
         elsif o.respond_to?(:asc)
           o.asc
-        else
-          nil
         end
       }.compact
       ArelExtensions::Nodes::GroupConcat.new(self, sep, group: group, order: (order || order_tabs))

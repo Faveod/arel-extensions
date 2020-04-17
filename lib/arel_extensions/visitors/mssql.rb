@@ -400,13 +400,14 @@ module ArelExtensions
         collector << "(STRING_AGG("
         collector = visit o.left, collector
         collector << Arel::Visitors::Oracle::COMMA
-        if o.separator && o.separator != 'NULL'
-          collector = visit o.separator, collector
-        else
-          collector = visit Arel::Nodes.build_quoted(','), collector
-        end
+        collector = 
+          if o.separator && o.separator != 'NULL'
+            visit o.separator, collector
+          else
+            visit Arel::Nodes.build_quoted(','), collector
+          end
         collector << ") WITHIN GROUP (ORDER BY "
-        if !o.order.blank?
+        if o.order.present?
           o.order.each_with_index do |order,i|
             collector << Arel::Visitors::Oracle::COMMA unless i == 0
             collector = visit order, collector
@@ -466,8 +467,9 @@ module ArelExtensions
               Arel::Nodes.build_quoted(1) :
               ArelExtensions::Nodes::Case.new.when(col<0).then(1).else(0)
 
-        if o.scientific_notation
-          number = ArelExtensions::Nodes::Concat.new([
+        number =
+          if o.scientific_notation
+            ArelExtensions::Nodes::Concat.new([
                   Arel::Nodes::NamedFunction.new('FORMAT',[
                     col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor),
                     param,
@@ -480,13 +482,13 @@ module ArelExtensions
                     locale
                   ])
                 ])
-        else
-          number = Arel::Nodes::NamedFunction.new('FORMAT',[
+          else
+            Arel::Nodes::NamedFunction.new('FORMAT',[
                 Arel::Nodes.build_quoted(col.abs),
                 param,
                 locale
               ])
-        end
+          end
 
         repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
           when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
