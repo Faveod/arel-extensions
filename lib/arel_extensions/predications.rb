@@ -25,12 +25,16 @@ module ArelExtensions
       when Range
         self.between(other)
       when Enumerable
-        nils, values   = values.partition{ |v| v.nil? }
+        nils, values   = other.partition{ |v| v.nil? }
         ranges, values = values.partition{ |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager)}
+
         # In order of (imagined) decreasing efficiency: nil, values, and then more complex.
         clauses =
           nils.uniq.map { |r| self.in(r) } \
-          + [values.uniq.size == 1 ? self == values[0] : Arel::Nodes::In.new(self, quoted_node(values))] \
+          + (case values.uniq.size
+              when 0 then []
+              when 1 then [self == values[0]]
+              else [Arel::Nodes::In.new(self, quoted_array(values))] end) \
           + ranges.uniq.map { |r| self.in(r) }
         clauses.reduce(&:or)
       when nil
