@@ -272,9 +272,9 @@ module ArelExtensions
         skip "Sqlite version can't load extension for regexp" if $sqlite && $load_extension_disabled
         skip "SQL Server does not know about REGEXP without extensions" if @env_db == 'mssql'
         assert_equal 1, User.where(@name =~ '^M').count
-        assert_equal 6, User.where(@name !~ '^L').count
+        assert_equal 7, User.where(@name !~ '^L').count
         assert_equal 1, User.where(@name =~ /^M/).count
-        assert_equal 6, User.where(@name !~ /^L/).count
+        assert_equal 7, User.where(@name !~ /^L/).count
       end
 
       def test_imatches
@@ -287,6 +287,9 @@ module ArelExtensions
       def test_replace
         assert_equal "LucaX", t(@lucas, @name.replace("s", "X"))
         assert_equal "replace", t(@lucas, @name.replace(@name, "replace"))
+
+        skip "Sqlite does not seem to support regexp_replace" if $sqlite
+        skip "SQL Server does not know about REGEXP without extensions" if @env_db == 'mssql'
         assert_equal "LXcXs", t(@lucas, @name.replace(/[ua]/, "X"))
         assert_equal "LXcXs", t(@lucas, @name.regexp_replace(/[ua]/, "X"))
         assert_equal "LXcXs", t(@lucas, @name.regexp_replace('[ua]', "X"))
@@ -302,8 +305,8 @@ module ArelExtensions
         skip "Sqlite version can't load extension for soundex" if $sqlite && $load_extension_disabled
         skip "PostgreSql version can't load extension for soundex" if @env_db == 'postgresql'
         assert_equal "C540", t(@camille, @name.soundex)
-        assert_equal 8, User.where(@name.soundex.eq(@name.soundex)).count
-        assert_equal 8, User.where(@name.soundex == @name.soundex).count
+        assert_equal 9, User.where(@name.soundex.eq(@name.soundex)).count
+        assert_equal 9  , User.where(@name.soundex == @name.soundex).count
       end
 
       def test_change_case
@@ -431,6 +434,7 @@ module ArelExtensions
             assert_includes [nil, 0, 'f', false], t(@lucas, (@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1)
           end
         end
+
 
         skip "not yet implemented" if $sqlite
 
@@ -734,16 +738,16 @@ module ArelExtensions
       def test_stat_functions
         skip "SQLite doesn't work for most on this functions" if $sqlite
         #puts t(User.where(nil), @score.average)
-        #puts t(User.where(nil), @score.variance(true))
-        #puts t(User.where(nil), @score.variance(false))
-        #puts t(User.where(nil), @score.std(true))
-        #puts t(User.where(nil), @score.std(false))
+        #puts t(User.where(nil), @score.variance(unbiased: true))
+        #puts t(User.where(nil), @score.variance(unbiased: false))
+        #puts t(User.where(nil), @score.std(unbiased: true))
+        #puts t(User.where(nil), @score.std(unbiased: false))
 
-        assert ( 15.98625 - t(User.where(nil), @score.average)).abs < 0.01
-        assert (613.75488 - t(User.where(nil), @score.variance)).abs < 0.01
-        assert ( 537.0355 - t(User.where(nil), @score.variance(unbiased: false))).abs < 0.01
-        assert ( 24.77408 - t(User.where(nil), @score.std)).abs < 0.01
-        assert ( 23.17403 - t(User.where(nil), @score.std(unbiased: false))).abs < 0.01
+        assert ( 15.43222 - t(User.where(nil), @score.average)).abs < 0.01
+        assert (539.79804 - t(User.where(nil), @score.variance)).abs < 0.01
+        assert (479.82048 - t(User.where(nil), @score.variance(unbiased: false))).abs < 0.01
+        assert ( 23.23355 - t(User.where(nil), @score.std)).abs < 0.01
+        assert ( 21.90480 - t(User.where(nil), @score.std(unbiased: false))).abs < 0.01
         skip "Not Yet Implemented" if !['postgresql'].include?(@env_db)
         assert_equal 2, User.select(@score.std(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
         assert_equal 2, User.select(@score.variance(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
