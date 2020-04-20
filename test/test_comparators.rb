@@ -20,23 +20,24 @@ module ArelExtensions
       end
 
       it "< is equal lt" do
-        compile(@table[:id] < 10).must_be_like('"users"."id" < 10')
+        _(compile(@table[:id] < 10)).must_be_like('"users"."id" < 10')
       end
 
       it "<= is equal lteq" do
-        compile(@table[:id] <= 10).must_be_like('"users"."id" <= 10')
+        _(compile(@table[:id] <= 10)).must_be_like('"users"."id" <= 10')
       end
 
       it "> is equal gt" do
-        compile(@table[:id] > 10).must_be_like('"users"."id" > 10')
+        _(compile(@table[:id] > 10)).must_be_like('"users"."id" > 10')
       end
 
       it "< is equal gteq" do
-        compile(@table[:id] >= 10).must_be_like('"users"."id" >= 10')
+        _(compile(@table[:id] >= 10)).must_be_like('"users"."id" >= 10')
       end
 
       it "should compare with dates" do
-        compile(@table[:created_at] >= Date.new(2016, 3, 31)).must_be_like %{"users"."created_at" >= '2016-03-31'}
+        _(compile(@table[:created_at] >= Date.new(2016, 3, 31)))
+          .must_be_like %{"users"."created_at" >= '2016-03-31'}
       end
 
     end
