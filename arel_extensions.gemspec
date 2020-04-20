@@ -24,5 +24,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency('minitest', '~> 5.9')
   s.add_development_dependency('rdoc', '~> 4.0')
-  s.add_development_dependency('rake', '~> 11')
+  s.add_development_dependency('rake', '~> 12.3.3')
+  
 end
