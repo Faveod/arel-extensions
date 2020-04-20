@@ -101,11 +101,11 @@ module ArelExtensions
           case o.expressions.first
           when Arel::Attributes::Attribute
             case o.option
-              when 'latin1','utf8'
-                o.option
-              else
-                Arel::Table.engine.connection.charset || 'utf8'
-              end
+            when 'latin1','utf8'
+              o.option
+            else
+              Arel::Table.engine.connection.charset || 'utf8'
+            end
           else
             (o.option == 'latin1') ? 'latin1' : 'utf8'
           end

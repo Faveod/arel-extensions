@@ -9,10 +9,20 @@ require 'arel_extensions'
 require 'support/fake_record'
 Arel::Table.engine = FakeRecord::Base.new
 
-$arel_silence_type_casting_deprecation = true
+#$arel_silence_type_casting_deprecation = true
 
-class Object
-  def must_be_like other
-    gsub(/\s+/, ' ').strip.must_equal other.gsub(/\s+/, ' ').strip
+module Minitest::Assertions
+  #
+  #  Fails unless +expected and +actual are the same string, modulo extraneous spaces.
+  #
+  def assert_like(expected, actual, msg = nil)
+    msg ||= "Expected #{expected.inspect} and #{actual.inspect} to be alike"
+    assert_equal expected.gsub(/\s+/, ' ').strip, actual.gsub(/\s+/, ' ').strip
   end
+end
+
+module Minitest::Expectations
+
+  infect_an_assertion :assert_like, :must_be_like 
+
 end
