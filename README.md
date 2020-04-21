@@ -16,8 +16,7 @@ It allows to use more advanced SQL functions for any supported RDBMS.
 
 ## Requirements
 
-Arel 6 (Rails 4) or Arel 7+ (Rails 5).
-[Arel Repository](http://github.com/rails/arel)
+Rails 6+ [Rails Repository](http://github.com/rails/rails)
 
 ## Usage
 
