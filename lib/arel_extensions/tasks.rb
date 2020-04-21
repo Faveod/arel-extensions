@@ -6,7 +6,7 @@ namespace :arel_extensions do
               else
                 ENV['DB'] || ActiveRecord::Base.connection.adapter_name
               end
-    ActiveRecord::Base.establish_connection(Rails.env)
+    ActiveRecord::Base.establish_connection(Rails.env.to_sym)
     CommonSqlFunctions.new(ActiveRecord::Base.connection).add_sql_functions(@env_db)
 	end
 end
