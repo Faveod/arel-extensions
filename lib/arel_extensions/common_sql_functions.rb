@@ -39,6 +39,7 @@ module ArelExtensions
 
     def add_sql_functions(env_db = nil)
       env_db ||= @cnx.adapter_name
+      env_db = 'mysql' if env_db =~ /mysql/i
       if env_db =~ /sqlite/i
         begin
           add_sqlite_functions
@@ -52,10 +53,10 @@ module ArelExtensions
           sql.split(/^GO\s*$/).each {|str|
             @cnx.execute(str.strip) unless str.blank?
           }
-        elsif env_db == 'mysql'
-			sql.split("$$")[1..-2].each { |str|
-				@cnx.execute(str.strip) unless str.strip.blank?
-			}
+        elsif env_db =='mysql'
+          sql.split("$$")[1..-2].each { |str|
+            @cnx.execute(str.strip) unless str.strip.blank?
+          }
         else
           @cnx.execute(sql) unless sql.blank?
         end
