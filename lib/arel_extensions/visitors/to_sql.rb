@@ -135,9 +135,9 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Replace o, collector
         collector << "REPLACE("
         visit o.left, collector
-        collector << Arel::Visitors::ToSql::COMMA 
+        collector << Arel::Visitors::ToSql::COMMA
         visit o.pattern, collector
-        collector << Arel::Visitors::ToSql::COMMA 
+        collector << Arel::Visitors::ToSql::COMMA
         visit o.substitute, collector
         collector << ")"
         collector
@@ -146,9 +146,9 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_RegexpReplace o, collector
         collector << "REGEXP_REPLACE("
         visit o.left, collector
-        collector << Arel::Visitors::ToSql::COMMA 
+        collector << Arel::Visitors::ToSql::COMMA
         visit Arel::Nodes.build_quoted(o.pattern.to_s), collector
-        collector << Arel::Visitors::ToSql::COMMA 
+        collector << Arel::Visitors::ToSql::COMMA
         visit o.substitute, collector
         collector << ")"
         collector

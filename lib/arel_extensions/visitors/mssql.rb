@@ -400,7 +400,7 @@ module ArelExtensions
         collector << "(STRING_AGG("
         collector = visit o.left, collector
         collector << Arel::Visitors::Oracle::COMMA
-        collector = 
+        collector =
           if o.separator && o.separator != 'NULL'
             visit o.separator, collector
           else
