@@ -336,6 +336,8 @@ module ArelExtensions
           .must_be_like %{"users"."id" = 1}
         compile(@table[:id].in([1,2]))
           .must_be_like %{"users"."id" IN (1, 2)}
+        compile(@table[:id].in([]))
+          .must_be_like %{ISNULL("users"."id")}
       end
 
       it "should be possible to correctly use a Range on an IN" do
