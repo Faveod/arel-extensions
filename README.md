@@ -19,6 +19,11 @@ It allows to use more advanced SQL functions for any supported RDBMS.
 Arel 6 (Rails 4) or Arel 7+ (Rails 5).
 [Arel Repository](http://github.com/rails/arel)
 
+or
+
+Rails 6
+[Arel Repository](http://github.com/rails/rails)
+
 ## Usage
 
 Most of the features will work just by adding the gem to your Gemfiles. To make sure to get all the features for any dbms, you should execute the next line as soon as you get your connection to your DB:
