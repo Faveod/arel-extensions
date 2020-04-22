@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
-  Arel::Visitors::ToSql.class_eval do
+    Arel::Visitors::ToSql.class_eval do
+      Arel::Visitors::ToSql::COMMA = ', ' unless defined?(Arel::Visitors::ToSql::COMMA)
 
       # Math Functions
       def visit_ArelExtensions_Nodes_Abs o, collector
