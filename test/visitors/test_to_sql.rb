@@ -347,15 +347,17 @@ module ArelExtensions
       it "should be possible to correctly use a Range on an IN" do
         _(compile(@table[:id].in(1..4)))
           .must_be_like %{"users"."id" BETWEEN (1) AND (4)}
-        _(compile(@table[:created_at].in(@date .. Date.new(2017, 3, 31)))) # @date = Date.new(2016, 3, 31)
+        _(compile(@table[:created_at].in(Date.new(2016, 3, 31) .. Date.new(2017, 3, 31))))
           .must_be_like %{"users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')}
       end
 
       it "should be possible to use a list of values and ranges on an IN" do
         _(compile(@table[:id].in [1..10, 20, 30, 40..50]))
           .must_be_like %{("users"."id" IN (20, 30)) OR ("users"."id" BETWEEN (1) AND (10)) OR ("users"."id" BETWEEN (40) AND (50))}
-#        _(compile(@table[:created_at].in(@date .. Date.new(2017, 3, 31)))) # @date = Date.new(2016, 3, 31)
-#          .must_be_like %{"users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')}
+        _(compile(@table[:created_at].in(Date.new(2016, 1, 1), Date.new(2016, 2, 1)..Date.new(2016, 2, 28), Date.new(2016, 3, 31) .. Date.new(2017, 3, 31), Date.new(2018, 1, 1))))
+          .must_be_like %{   ("users"."created_at" IN ('2016-01-01', '2018-01-01'))
+                          OR ("users"."created_at" BETWEEN ('2016-02-01') AND ('2016-02-28'))
+                          OR ("users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31'))}
       end
 
       it "should be possible to add and substract as much as we want" do
