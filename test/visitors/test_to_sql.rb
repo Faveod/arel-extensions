@@ -22,6 +22,21 @@ module ArelExtensions
         end
       end
 
+
+      describe "primitive methods" do
+
+       it "should be able to recognize equal nodes" do
+         c = @table[:id]
+         _(c == 1).must_be :eql?, (c == 1)
+         _((c == 1).right.hash).must_equal (c == 1).right.hash
+         _((c == 1).hash).must_equal (c == 1).hash
+
+         _([c == 1, c == 1].uniq).must_equal [c == 1]
+       end
+
+      end
+
+
       # Math Functions
       it "should not break Arel functions" do
         _(compile(@price + 42)).must_be_like %{("products"."price" + 42)}
@@ -464,6 +479,15 @@ module ArelExtensions
             .must_be_like %{"users"."id" = 1}
           _(compile(Arel::Nodes::Or.new(c == 1, c == 2)))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2)}
+        end
+
+        it "should know trivial identities" do
+          c = @table[:id]
+          _(compile(Arel::Nodes::And.new(c == 1, c == 1)))
+            .must_be_like %{"users"."id" = 1}
+
+          _(compile(Arel::Nodes::Or.new(c == 1, c == 1)))
+            .must_be_like %{"users"."id" = 1}
         end
 
         it "should be possible to have multiple arguments on an OR or an AND node" do

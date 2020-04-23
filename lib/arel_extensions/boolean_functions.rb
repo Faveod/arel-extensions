@@ -34,7 +34,7 @@ class Arel::Nodes::And
     children =
       children.flatten.map { |c|
       c.is_a?(self) ? c.children : c
-    }.flatten
+    }.flatten.uniq
     case children.length
     when 0 then Arel::Nodes::True.new
     when 1 then children[0]
@@ -59,7 +59,7 @@ class Arel::Nodes::Or
     children =
       children.flatten.map { |c|
       c.is_a?(self) ? c.children : c
-    }.flatten
+    }.flatten.uniq
     case children.length
     when 0 then Arel::Nodes::False.new
     when 1 then children[0]
