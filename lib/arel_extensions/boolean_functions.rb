@@ -9,7 +9,7 @@ module ArelExtensions
     end
 
     def and *others
-      build Arel::Nodes::And, others
+      Arel::Nodes::And.new self, others
     end
 
     def ⋁(other)
@@ -17,28 +17,31 @@ module ArelExtensions
     end
 
     def or *others
-      build Arel::Nodes::Or, others
+      Arel::Nodes::Or.new self, others
     end
 
     def then(t, f = nil)
       ArelExtensions::Nodes::Then.new [self, t, f]
     end
 
-    def build klass, others
-      children =
-        ([self] + others.flatten).map { |c|
-        c.is_a?(klass) ? c.children : c
-      }.flatten
-      case children.length
-      when 1 then children[0]
-      else        klass.new children
-      end
-    end
   end
 end
 
 class Arel::Nodes::And
   include ArelExtensions::BooleanFunctions
+
+  def self.new *children
+    children =
+      children.flatten.map { |c|
+      c.is_a?(self) ? c.children : c
+    }.flatten
+    case children.length
+    when 0 then Arel::Nodes::True.new
+    when 1 then children[0]
+    else        super(children)
+    end
+  end
+
 end
 
 # For some reason, Arel's And is properly defined as variadic (it
@@ -52,8 +55,20 @@ class Arel::Nodes::Or
 
   attr_reader :children
 
-  def initialize *children
-    @children = children.flatten
+  def self.new *children
+    children =
+      children.flatten.map { |c|
+      c.is_a?(self) ? c.children : c
+    }.flatten
+    case children.length
+    when 0 then Arel::Nodes::False.new
+    when 1 then children[0]
+    else        super(children)
+    end
+  end
+
+  def initialize children
+    @children = children
   end
 
   def hash

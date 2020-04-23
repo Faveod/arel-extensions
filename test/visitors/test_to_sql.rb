@@ -391,6 +391,32 @@ module ArelExtensions
 
       describe "logical functions" do
 
+        it "should know about truth" do
+          _(compile(Arel::Nodes::False.new))
+            .must_be_like %{FALSE}
+
+          _(compile(Arel::Nodes::True.new))
+            .must_be_like %{TRUE}
+        end
+
+        it "boolean nodes should be variadic" do
+          c = @table[:id]
+
+          _(compile(Arel::Nodes::And.new))
+            .must_be_like %{TRUE}
+          _(compile(Arel::Nodes::And.new(c == 1)))
+            .must_be_like %{"users"."id" = 1}
+          _(compile(Arel::Nodes::And.new(c == 1, c == 2)))
+            .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2)}
+
+          _(compile(Arel::Nodes::Or.new))
+            .must_be_like %{FALSE}
+          _(compile(Arel::Nodes::Or.new(c == 1)))
+            .must_be_like %{"users"."id" = 1}
+          _(compile(Arel::Nodes::Or.new(c == 1, c == 2)))
+            .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2)}
+        end
+
         it "should be possible to have multiple arguments on an OR or an AND node" do
           c = @table[:id]
           _(compile((c == 1).and))
