@@ -26,7 +26,7 @@ module ArelExtensions
       end
     end
 
-    ArelExtensions::Nodes::Case.class_eval do
+    class ArelExtensions::Nodes::Case
       include Arel::Expressions
       include Arel::OrderPredications
       include ArelExtensions::Math

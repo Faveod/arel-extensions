@@ -1,6 +1,6 @@
 module ArelExtensions
   module Visitors
-    Arel::Visitors::IBM_DB.class_eval do
+    class Arel::Visitors::IBM_DB
 
       def visit_ArelExtensions_Nodes_Ceil o, collector
         collector << "CEILING("

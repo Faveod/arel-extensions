@@ -1,7 +1,7 @@
 #require 'oracle_visitor'
 module ArelExtensions
   module Visitors
-    Arel::Visitors::Oracle.class_eval do
+    class Arel::Visitors::Oracle
 
       SPECIAL_CHARS = {"\t" => 'CHR(9)', "\n" => 'CHR(10)', "\r" => 'CHR(13)'}
       Arel::Visitors::Oracle::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'IW', 'y' => 'YEAR', 'wd' => 'D', 'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'}

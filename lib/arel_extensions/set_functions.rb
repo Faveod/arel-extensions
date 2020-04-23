@@ -23,10 +23,10 @@ module ArelExtensions
   end
 end
 
-Arel::Nodes::Union.class_eval do
+class Arel::Nodes::Union
   include ArelExtensions::SetFunctions
 end
 
-Arel::Nodes::UnionAll.class_eval do
+class Arel::Nodes::UnionAll
   include ArelExtensions::SetFunctions
 end

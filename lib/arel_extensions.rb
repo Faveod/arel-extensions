@@ -7,35 +7,35 @@ require 'arel_extensions/railtie' if defined?(Rails::Railtie)
 # Count|NamedFunction < Function < Arel::Nodes::Node
 
 # pure Arel internals improvements
-Arel::Nodes::Binary.class_eval do
+class Arel::Nodes::Binary
   include Arel::AliasPredication
   include Arel::Expressions
 end
 
-Arel::Nodes::Casted.class_eval do
+class Arel::Nodes::Casted
   include Arel::AliasPredication
 end
 
-Arel::Nodes::Unary.class_eval do
+class Arel::Nodes::Unary
   include Arel::Math
   include Arel::AliasPredication
   include Arel::Expressions
 end
 
-Arel::Nodes::Grouping.class_eval do
+class Arel::Nodes::Grouping
   include Arel::Math
   include Arel::AliasPredication
   include Arel::OrderPredications
   include Arel::Expressions
 end
 
-Arel::Nodes::Function.class_eval do
+class Arel::Nodes::Function
   include Arel::Math
   include Arel::Expressions
 end
 
 if Arel::VERSION >= "7.1.0"
-  Arel::Nodes::Case.class_eval do
+  class Arel::Nodes::Case
     include Arel::Math
     include Arel::Expressions
   end
@@ -103,12 +103,12 @@ module Arel
 
 end
 
-Arel::Attributes::Attribute.class_eval do
+class Arel::Attributes::Attribute
   include Arel::Math
   include ArelExtensions::Attributes
 end
 
-Arel::Nodes::Function.class_eval do
+class Arel::Nodes::Function
   include ArelExtensions::Math
   include ArelExtensions::Comparators
   include ArelExtensions::DateDuration
@@ -125,7 +125,7 @@ Arel::Nodes::Function.class_eval do
 
 end
 
-Arel::Nodes::Unary.class_eval do
+class Arel::Nodes::Unary
   include ArelExtensions::Math
   include ArelExtensions::Attributes
   include ArelExtensions::MathFunctions
@@ -133,7 +133,7 @@ Arel::Nodes::Unary.class_eval do
   include ArelExtensions::Predications
 end
 
-Arel::Nodes::Binary.class_eval do
+class Arel::Nodes::Binary
   include ArelExtensions::Math
   include ArelExtensions::Attributes
   include ArelExtensions::MathFunctions
@@ -142,7 +142,7 @@ Arel::Nodes::Binary.class_eval do
   include ArelExtensions::Predications
 end
 
-Arel::Nodes::Equality.class_eval do
+class Arel::Nodes::Equality
   include ArelExtensions::Comparators
   include ArelExtensions::DateDuration
   include ArelExtensions::MathFunctions
@@ -150,20 +150,20 @@ Arel::Nodes::Equality.class_eval do
 end
 
 
-Arel::InsertManager.class_eval do
+class Arel::InsertManager
   include ArelExtensions::InsertManager
 end
 
-Arel::SelectManager.class_eval do
+class Arel::SelectManager
   include ArelExtensions::SetFunctions
   include ArelExtensions::Nodes
 end
 
-Arel::Nodes::As.class_eval do
+class Arel::Nodes::As
   include ArelExtensions::Nodes
 end
 
-Arel::Table.class_eval do
+class Arel::Table
   alias_method :old_alias, :alias
   def alias(name = "#{self.name}_2")
     name.blank? ? self : Arel::Nodes::TableAlias.new(self,name)
