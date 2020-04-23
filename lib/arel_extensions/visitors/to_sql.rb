@@ -563,7 +563,8 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Or o, collector
+      alias_method :old_visit_Arel_Nodes_Or, :visit_Arel_Nodes_Or
+      def visit_Arel_Nodes_Or o, collector
         collector << '('
         case o.children.length
         when 0
@@ -578,16 +579,6 @@ module ArelExtensions
               collector = visit arg, collector
             }
         end
-        collector << ')'
-        collector
-      end
-
-      alias_method :old_visit_Arel_Nodes_Or, :visit_Arel_Nodes_Or
-      def visit_Arel_Nodes_Or o, collector
-        collector << '('
-        collector = visit o.left, collector
-        collector << ') OR ('
-        collector = visit o.right, collector
         collector << ')'
         collector
       end
