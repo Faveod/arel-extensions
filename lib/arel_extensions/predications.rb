@@ -36,7 +36,7 @@ module ArelExtensions
               when 1 then [self == values[0]]
               else [Arel::Nodes::In.new(self, quoted_array(values))] end) \
           + ranges.uniq.map { |r| self.in(r) }
-        clauses.empty? ? Arel.false : clauses.reduce(&:or)
+        Arel::Nodes::Or.new clauses
       when nil
         self.is_null
       when Arel::SelectManager
