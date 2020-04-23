@@ -325,39 +325,43 @@ module ArelExtensions
           .must_be_like %{(CAST("users"."id" AS int) + 2)}
       end
 
-      it "should be possible to have nil element in the function NIL" do
-        _(compile(@table[:id].in(nil)))
-          .must_be_like %{ISNULL("users"."id")}
-        _(compile(@table[:id].in([nil])))
-          .must_be_like %{ISNULL("users"."id")}
-        _(compile(@table[:id].in([nil,1])))
-          .must_be_like %{(ISNULL("users"."id")) OR ("users"."id" = 1)}
-        _(compile(@table[:id].in([nil,1,2])))
-          .must_be_like %{(ISNULL("users"."id")) OR ("users"."id" IN (1, 2))}
-        _(compile(@table[:id].in(1)))
-          .must_be_like %{"users"."id" IN (1)}
-        _(compile(@table[:id].in([1])))
-          .must_be_like %{"users"."id" = 1}
-        _(compile(@table[:id].in([1,2])))
-          .must_be_like %{"users"."id" IN (1, 2)}
-        _(compile(@table[:id].in([])))
-          .must_be_like %{FALSE}
-      end
+      describe "the function in" do
 
-      it "should be possible to correctly use a Range on an IN" do
-        _(compile(@table[:id].in(1..4)))
-          .must_be_like %{"users"."id" BETWEEN (1) AND (4)}
-        _(compile(@table[:created_at].in(Date.new(2016, 3, 31) .. Date.new(2017, 3, 31))))
-          .must_be_like %{"users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')}
-      end
+        it "should be possible to have nil element in the function IN" do
+          _(compile(@table[:id].in(nil)))
+            .must_be_like %{ISNULL("users"."id")}
+          _(compile(@table[:id].in([nil])))
+            .must_be_like %{ISNULL("users"."id")}
+          _(compile(@table[:id].in([nil,1])))
+            .must_be_like %{(ISNULL("users"."id")) OR ("users"."id" = 1)}
+          _(compile(@table[:id].in([nil,1,2])))
+            .must_be_like %{(ISNULL("users"."id")) OR ("users"."id" IN (1, 2))}
+          _(compile(@table[:id].in(1)))
+            .must_be_like %{"users"."id" IN (1)}
+          _(compile(@table[:id].in([1])))
+            .must_be_like %{"users"."id" = 1}
+          _(compile(@table[:id].in([1,2])))
+            .must_be_like %{"users"."id" IN (1, 2)}
+          _(compile(@table[:id].in([])))
+            .must_be_like %{FALSE}
+        end
 
-      it "should be possible to use a list of values and ranges on an IN" do
-        _(compile(@table[:id].in [1..10, 20, 30, 40..50]))
-          .must_be_like %{("users"."id" IN (20, 30)) OR ("users"."id" BETWEEN (1) AND (10)) OR ("users"."id" BETWEEN (40) AND (50))}
-        _(compile(@table[:created_at].in(Date.new(2016, 1, 1), Date.new(2016, 2, 1)..Date.new(2016, 2, 28), Date.new(2016, 3, 31) .. Date.new(2017, 3, 31), Date.new(2018, 1, 1))))
-          .must_be_like %{   ("users"."created_at" IN ('2016-01-01', '2018-01-01'))
-                          OR ("users"."created_at" BETWEEN ('2016-02-01') AND ('2016-02-28'))
-                          OR ("users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31'))}
+        it "should be possible to correctly use a Range on an IN" do
+          _(compile(@table[:id].in(1..4)))
+            .must_be_like %{"users"."id" BETWEEN (1) AND (4)}
+          _(compile(@table[:created_at].in(Date.new(2016, 3, 31) .. Date.new(2017, 3, 31))))
+            .must_be_like %{"users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')}
+        end
+
+        it "should be possible to use a list of values and ranges on an IN" do
+          _(compile(@table[:id].in [1..10, 20, 30, 40..50]))
+            .must_be_like %{("users"."id" IN (20, 30)) OR ("users"."id" BETWEEN (1) AND (10)) OR ("users"."id" BETWEEN (40) AND (50))}
+          _(compile(@table[:created_at].in(Date.new(2016, 1, 1), Date.new(2016, 2, 1)..Date.new(2016, 2, 28), Date.new(2016, 3, 31) .. Date.new(2017, 3, 31), Date.new(2018, 1, 1))))
+            .must_be_like %{   ("users"."created_at" IN ('2016-01-01', '2018-01-01'))
+                            OR ("users"."created_at" BETWEEN ('2016-02-01') AND ('2016-02-28'))
+                            OR ("users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31'))}
+        end
+
       end
 
       it "should be possible to add and substract as much as we want" do
