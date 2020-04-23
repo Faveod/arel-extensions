@@ -483,9 +483,17 @@ module ArelExtensions
 
         it "should know trivial identities" do
           c = @table[:id]
+          _(compile(Arel::Nodes::And.new(Arel.true, c == 1)))
+            .must_be_like %{"users"."id" = 1}
+          _(compile(Arel::Nodes::And.new(Arel.false, c == 1)))
+            .must_be_like %{1 = 0}
           _(compile(Arel::Nodes::And.new(c == 1, c == 1)))
             .must_be_like %{"users"."id" = 1}
 
+          _(compile(Arel::Nodes::Or.new(Arel.true, c == 1)))
+            .must_be_like %{1 = 1}
+          _(compile(Arel::Nodes::Or.new(Arel.false, c == 1)))
+            .must_be_like %{"users"."id" = 1}
           _(compile(Arel::Nodes::Or.new(c == 1, c == 1)))
             .must_be_like %{"users"."id" = 1}
         end
