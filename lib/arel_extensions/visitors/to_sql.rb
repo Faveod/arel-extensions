@@ -543,6 +543,7 @@ module ArelExtensions
         collector
       end
 
+      # Boolean logic.
       alias_method :old_visit_Arel_Nodes_And, :visit_Arel_Nodes_And
       def visit_Arel_Nodes_And o, collector
         collector << '('
