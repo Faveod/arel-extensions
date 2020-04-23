@@ -358,7 +358,7 @@ module ArelExtensions
           _(compile(@table[:id].in([1,2])))
             .must_be_like %{"users"."id" IN (1, 2)}
           _(compile(@table[:id].in([])))
-            .must_be_like %{FALSE}
+            .must_be_like %{1 = 0}
         end
 
         it "should be possible to correctly use a Range on an IN" do
@@ -397,7 +397,7 @@ module ArelExtensions
           _(compile(@table[:id].not_in [1,2]))
             .must_be_like %{"users"."id" NOT IN (1, 2)}
           _(compile(@table[:id].not_in []))
-            .must_be_like %{TRUE}
+            .must_be_like %{1 = 1}
         end
 
         it "should be possible to correctly use a Range on an IN" do
@@ -456,25 +456,25 @@ module ArelExtensions
       describe "logical functions" do
 
         it "should know about truth" do
-          _(compile(Arel::Nodes::False.new))
-            .must_be_like %{FALSE}
+          _(compile(Arel.false))
+            .must_be_like %{1 = 0}
 
-          _(compile(Arel::Nodes::True.new))
-            .must_be_like %{TRUE}
+          _(compile(Arel::true))
+            .must_be_like %{1 = 1}
         end
 
         it "boolean nodes should be variadic" do
           c = @table[:id]
 
           _(compile(Arel::Nodes::And.new))
-            .must_be_like %{TRUE}
+            .must_be_like %{1 = 1}
           _(compile(Arel::Nodes::And.new(c == 1)))
             .must_be_like %{"users"."id" = 1}
           _(compile(Arel::Nodes::And.new(c == 1, c == 2)))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2)}
 
           _(compile(Arel::Nodes::Or.new))
-            .must_be_like %{FALSE}
+            .must_be_like %{1 = 0}
           _(compile(Arel::Nodes::Or.new(c == 1)))
             .must_be_like %{"users"."id" = 1}
           _(compile(Arel::Nodes::Or.new(c == 1, c == 2)))
