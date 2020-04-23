@@ -29,7 +29,10 @@ module ArelExtensions
         ([self] + others.flatten).map { |c|
         c.is_a?(klass) ? c.children : c
       }.flatten
-      klass.new children
+      case children.length
+      when 1 then children[0]
+      else        klass.new children
+      end
     end
   end
 end

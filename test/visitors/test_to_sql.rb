@@ -393,10 +393,16 @@ module ArelExtensions
 
         it "should be possible to have multiple arguments on an OR or an AND node" do
           c = @table[:id]
+          _(compile((c == 1).and))
+            .must_be_like %{"users"."id" = 1}
+
           _(compile((c == 1).and(c == 2, c == 3)))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
           _(compile((c == 1).and([c == 2, c == 3])))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
+
+          _(compile((c == 1).or))
+            .must_be_like %{"users"."id" = 1}
 
           _(compile((c == 1).or(c == 2, c == 3)))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
