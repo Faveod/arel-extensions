@@ -749,7 +749,7 @@ module ArelExtensions
         assert (479.82048 - t(User.where(nil), @score.variance(unbiased: false))).abs < 0.01
         assert ( 23.23355 - t(User.where(nil), @score.std)).abs < 0.01
         assert ( 21.90480 - t(User.where(nil), @score.std(unbiased: false))).abs < 0.01
-        skip "Not Yet Implemented" if !['postgresql'].include?(@env_db)
+        skip "Not Yet Implemented" #if !['postgresql'].include?(@env_db)
         assert_equal 2, User.select(@score.std(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map{|e| e['res']}.uniq.length
         assert_equal 2, User.select(@score.variance(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map{|e|e['res']}.uniq.length
         assert_equal 2, User.select(@score.sum(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map{|e|e['res']}.uniq.length
