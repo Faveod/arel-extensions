@@ -353,7 +353,7 @@ module ArelExtensions
 
       it "should be possible to use a list of values and ranges on an IN" do
         _(compile(@table[:id].in [1..10, 20, 30, 40..50]))
-          .must_be_like %{(("users"."id" IN (20, 30)) OR ("users"."id" BETWEEN (1) AND (10))) OR ("users"."id" BETWEEN (40) AND (50))}
+          .must_be_like %{("users"."id" IN (20, 30)) OR ("users"."id" BETWEEN (1) AND (10)) OR ("users"."id" BETWEEN (40) AND (50))}
 #        _(compile(@table[:created_at].in(@date .. Date.new(2017, 3, 31)))) # @date = Date.new(2016, 3, 31)
 #          .must_be_like %{"users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')}
       end
@@ -389,16 +389,34 @@ module ArelExtensions
           .must_be_like %{(LOCATE('test', "users"."name") + 1) ASC}
       end
 
-      it "should be possible to have multiple arguments on an OR or an AND node" do
-        c = @table[:id]
-        _(compile((c == 1).and(c == 2, c == 3)))
-          .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
-        _(compile((c == 1).and([c == 2, c == 3])))
-          .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
-        _(compile((c == 1).or(c == 2, c == 3)))
-          .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
-        _(compile((c == 1).or([c == 2, c == 3])))
-          .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
+      describe "logical functions" do
+
+        it "should be possible to have multiple arguments on an OR or an AND node" do
+          c = @table[:id]
+          _(compile((c == 1).and(c == 2, c == 3)))
+            .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
+          _(compile((c == 1).and([c == 2, c == 3])))
+            .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
+
+          _(compile((c == 1).or(c == 2, c == 3)))
+            .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
+          _(compile((c == 1).or([c == 2, c == 3])))
+            .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
+        end
+
+        it "should avoid useless nesting" do
+          c = @table[:id]
+          _(compile(((c == 1).and(c == 2)) .and ((c == 3).and(c == 4))))
+            .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3) AND ("users"."id" = 4)}
+          _(compile(((c == 1).or(c == 2)) .or ((c == 3).or(c == 4))))
+            .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3) OR ("users"."id" = 4)}
+
+          _(compile(((c == 1).or(c == 2)) .and ((c == 3).or(c == 4))))
+            .must_be_like %{(("users"."id" = 1) OR ("users"."id" = 2)) AND (("users"."id" = 3) OR ("users"."id" = 4))}
+          _(compile(((c == 1).and(c == 2)) .or ((c == 3).and(c == 4))))
+            .must_be_like %{(("users"."id" = 1) AND ("users"."id" = 2)) OR (("users"."id" = 3) AND ("users"."id" = 4))}
+        end
+
       end
 
       puts "AREL VERSION : " + Arel::VERSION.to_s
