@@ -36,7 +36,7 @@ class Arel::Nodes::And
       c.is_a?(self) ? c.children : c
     }.flatten.uniq
     case children.length
-    when 0 then Arel::Nodes::True.new
+    when 0 then Arel.true
     when 1 then children[0]
     else        super(children)
     end
@@ -61,7 +61,7 @@ class Arel::Nodes::Or
       c.is_a?(self) ? c.children : c
     }.flatten.uniq
     case children.length
-    when 0 then Arel::Nodes::False.new
+    when 0 then Arel.false
     when 1 then children[0]
     else        super(children)
     end
