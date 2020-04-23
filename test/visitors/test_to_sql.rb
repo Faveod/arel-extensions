@@ -340,7 +340,7 @@ module ArelExtensions
           .must_be_like %{"users"."id" = 1}
         _(compile(@table[:id].in([1,2])))
           .must_be_like %{"users"."id" IN (1, 2)}
-        compile(@table[:id].in([]))
+        _(compile(@table[:id].in([])))
           .must_be_like %{ISNULL("users"."id")}
       end
 
