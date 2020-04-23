@@ -193,6 +193,13 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_RegexpReplace o, collector
+        if !regexp_replace_supported?
+          warn("Warning : ArelExtensions: REGEXP_REPLACE does not seem to be available in the current version of the DBMS, it might crash")
+        end
+        super(o,collector)
+      end
+
       def visit_ArelExtensions_Nodes_Format o, collector
         case o.col_type
         when :date, :datetime
@@ -403,7 +410,7 @@ module ArelExtensions
 
       def visit_Aggregate_For_AggregateFunction o, collector
         if !window_supported?
-            warn("Warning : ArelExtensions: Window Functions are not available in the current version on the DBMS.")
+            warn("Warning : ArelExtensions: Window Functions are not available in the current version of the DBMS.")
             return collector
         end
 
@@ -449,14 +456,22 @@ module ArelExtensions
         version_supported?('10.2.3', '8.0')
       end
 
-      def version_supported?(mysql_v = '10.2.3',mariadb_v = '5.7.0')
+      def regexp_replace_supported?
+        version_supported?('10.0.5', '8.0')
+      end
+
+      def version_supported?(mariadb_v = '10.2.3', mysql_v = '5.7.0')
         conn = Arel::Table.engine.connection
-        conn.send(:mariadb?) &&
-          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mysql_v ||
-          conn.respond_to?(:version) && conn.send(:version) >= mysql_v) ||
-          !Arel::Table.engine.connection.send(:mariadb?) &&
-          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mariadb_v ||
-          conn.respond_to?(:version) && conn.send(:version) >= mariadb_v)
+        conn.send(:mariadb?) && \
+          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mariadb_v || \
+          conn.respond_to?(:version) && conn.send(:version) >= mariadb_v || \
+          conn.instance_variable_get(:"@version") && conn.instance_variable_get(:"@version") >= mariadb_v) || \
+          !conn.send(:mariadb?) && \
+          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mysql_v || \
+          conn.respond_to?(:version) && conn.send(:version) >= mysql_v || \
+          conn.instance_variable_get(:"@version") && conn.instance_variable_get(:"@version") >= mysql_v)
+        # ideally we should parse the instance_variable @full_version because @version contains only the supposedly
+        # corresponding mysql version of the current mariadb version (which is not very helpful most of the time)
       end
 
       def visit_ArelExtensions_Nodes_Json o,collector

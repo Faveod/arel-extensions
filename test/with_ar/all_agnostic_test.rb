@@ -290,6 +290,7 @@ module ArelExtensions
 
         skip "Sqlite does not seem to support regexp_replace" if $sqlite
         skip "SQL Server does not know about REGEXP without extensions" if @env_db == 'mssql'
+        skip "Travis mysql version does not support REGEXP_REPLACE" if @env_db == 'mysql'
         assert_equal "LXcXs", t(@lucas, @name.replace(/[ua]/, "X"))
         assert_equal "LXcXs", t(@lucas, @name.regexp_replace(/[ua]/, "X"))
         assert_equal "LXcXs", t(@lucas, @name.regexp_replace('[ua]', "X"))
@@ -749,10 +750,10 @@ module ArelExtensions
         assert ( 23.23355 - t(User.where(nil), @score.std)).abs < 0.01
         assert ( 21.90480 - t(User.where(nil), @score.std(unbiased: false))).abs < 0.01
         skip "Not Yet Implemented" if !['postgresql'].include?(@env_db)
-        assert_equal 2, User.select(@score.std(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
-        assert_equal 2, User.select(@score.variance(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
-        assert_equal 2, User.select(@score.sum(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
-        assert_equal 2, User.select(@comments.group_concat(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map(&:res).uniq.length
+        assert_equal 2, User.select(@score.std(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map{|e| e['res']}.uniq.length
+        assert_equal 2, User.select(@score.variance(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map{|e|e['res']}.uniq.length
+        assert_equal 2, User.select(@score.sum(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map{|e|e['res']}.uniq.length
+        assert_equal 2, User.select(@comments.group_concat(group: Arel.when(@name > "M").then(0).else(1)).as('res')).map{|e|e['res']}.uniq.length
       end
 
       def test_levenshtein_distance
