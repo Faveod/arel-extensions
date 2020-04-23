@@ -14,7 +14,18 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = true
 end
 
-%w(mysql postgresql sqlite ibm_db oracle mssql).each do |adapter|
+namespace :test do
+  Rake::TestTask.new('to_sql' => []) { |t|
+    t.libs << 'lib'
+    t.libs << 'test'
+    t.pattern = 'test/visitors/test_to_sql.rb'
+    t.warning = true
+    t.verbose = true
+    t.ruby_opts = ["--dev"] if defined?(JRUBY_VERSION)
+  }
+end
+
+%w[mysql postgresql sqlite ibm_db oracle mssql].each do |adapter|
   namespace :test do
     Rake::TestTask.new(adapter => "#{adapter}:env") { |t|
       t.libs << 'lib'
