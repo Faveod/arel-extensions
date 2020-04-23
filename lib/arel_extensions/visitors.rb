@@ -6,7 +6,7 @@ require 'arel_extensions/visitors/postgresql'
 require 'arel_extensions/visitors/sqlite'
 require 'arel_extensions/visitors/mssql'
 
-Arel::Visitors::MSSQL.class_eval do
+class Arel::Visitors::MSSQL
   include ArelExtensions::Visitors::MSSQL
 
   alias_method :old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As
