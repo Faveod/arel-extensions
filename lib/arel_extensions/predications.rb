@@ -20,7 +20,8 @@ module ArelExtensions
       ArelExtensions::Nodes::Cast.new([self,right])
     end
 
-    def in(other) #In should handle nil element in the Array
+    def in(*other) #In should handle nil element in the Array
+      other = other.first if other.size == 0 || other.size == 1
       case other
       when Range
         self.between(other)
