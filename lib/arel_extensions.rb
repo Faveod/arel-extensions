@@ -14,6 +14,11 @@ end
 
 class Arel::Nodes::Casted
   include Arel::AliasPredication
+
+  # They forget to define hash.
+  def hash
+    [self.class, self.val, self.attribute].hash
+  end
 end
 
 class Arel::Nodes::Unary
