@@ -1,4 +1,4 @@
-require 'helper'
+require 'arelx_test_helper'
 
 module ArelExtensions
   module BulkInsertOracle
