@@ -364,6 +364,49 @@ module ArelExtensions
 
       end
 
+      describe "the function not_in" do
+
+        it "should be possible to have nil element in the function IN" do
+          _(compile(@table[:id].not_in nil))
+            .must_be_like %{NOT ISNULL("users"."id")}
+          _(compile(@table[:id].not_in [nil]))
+            .must_be_like %{NOT ISNULL("users"."id")}
+          _(compile(@table[:id].not_in [nil,1]))
+            .must_be_like %{(NOT ISNULL("users"."id")) AND ("users"."id" != 1)}
+          _(compile(@table[:id].not_in [nil,1,2]))
+            .must_be_like %{(NOT ISNULL("users"."id")) AND ("users"."id" NOT IN (1, 2))}
+          _(compile(@table[:id].not_in 1))
+            .must_be_like %{"users"."id" NOT IN (1)}
+          _(compile(@table[:id].not_in [1]))
+            .must_be_like %{"users"."id" != 1}
+          _(compile(@table[:id].not_in [1,2]))
+            .must_be_like %{"users"."id" NOT IN (1, 2)}
+          _(compile(@table[:id].not_in []))
+            .must_be_like %{TRUE}
+        end
+
+        it "should be possible to correctly use a Range on an IN" do
+          # FIXME: Should use NOT BETWEEN
+          _(compile(@table[:id].not_in 1..4))
+            .must_be_like %{NOT ("users"."id" BETWEEN (1) AND (4))}
+          # FIXME: Should use NOT BETWEEN
+          _(compile(@table[:created_at].not_in Date.new(2016, 3, 31) .. Date.new(2017, 3, 31)))
+            .must_be_like %{NOT ("users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31'))}
+        end
+
+        it "should be possible to use a list of values and ranges on an IN" do
+          _(compile(@table[:id].not_in [1..10, 20, 30, 40..50]))
+            .must_be_like %{       ("users"."id" NOT IN (20, 30))
+                            AND (NOT ("users"."id" BETWEEN (1) AND (10)))
+                            AND (NOT ("users"."id" BETWEEN (40) AND (50)))}
+          _(compile(@table[:created_at].not_in Date.new(2016, 1, 1), Date.new(2016, 2, 1)..Date.new(2016, 2, 28), Date.new(2016, 3, 31) .. Date.new(2017, 3, 31), Date.new(2018, 1, 1)))
+            .must_be_like %{   ("users"."created_at" NOT IN ('2016-01-01', '2018-01-01'))
+                            AND (NOT ("users"."created_at" BETWEEN ('2016-02-01') AND ('2016-02-28')))
+                            AND (NOT ("users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')))}
+        end
+
+      end
+
       it "should be possible to add and substract as much as we want" do
         c = @table[:name]
         _(compile(c.locate('test')+1))
