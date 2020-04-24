@@ -4,21 +4,30 @@ module ArelExtensions
   module InsertManager
 
     def bulk_insert(cols, data)
+    res_columns = []
       case cols.first
       when String, Symbol
         cols.each { |c|
-          @ast.columns << @ast.relation[c]
+          res_columns << @ast.relation[c]
         }
       when Array
         if String === cols.first.first
-          @ast.columns = cols.map {|c| [@ast.relation[c.first]] }
+          res_columns = cols.map {|c| [@ast.relation[c.first]] }
         elsif Arel::Attributes::Attribute == cols.first.first
-          @ast.columns = cols
+          res_columns = cols
         end
       when NilClass
-        @ast.columns = @ast.relation.columns
+        res_columns = @ast.relation.columns
       end
-      self.values = BulkValues.new(@ast.columns, data)
+      if defined?(Arel::Nodes::ValuesList)
+        self.values = Arel::Nodes::ValuesList.new(data)
+        res_columns.each do |col|
+          self.columns << col
+        end
+      else
+        self.values = BulkValues.new(res_columns, data)
+        @ast.columns = res_columns
+      end
     end
 
     class BulkValues < Arel::Nodes::Node

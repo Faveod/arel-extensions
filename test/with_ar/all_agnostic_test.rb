@@ -480,7 +480,7 @@ module ArelExtensions
       # TODO; cast types
       def test_cast_types
         assert_equal "5", t(@lucas, @age.cast(:string))
-        skip "jdbc adapters does not work properly here" if RUBY_PLATFORM =~ /java/i
+        skip "jdbc adapters does not work properly here (v52 works fine)" if RUBY_PLATFORM =~ /java/i
         if @env_db == 'mysql' || @env_db == 'postgresql' || @env_db == 'oracle' || @env_db == 'mssql'
           assert_equal 1, t(@laure,Arel.when(@duration.cast(:time).cast(:string).eq("12:42:21")).then(1).else(0)) unless @env_db == 'oracle' || @env_db == 'mssql'
           assert_equal 1, t(@laure,Arel.when(@duration.cast(:time).eq("12:42:21")).then(1).else(0)) unless @env_db == 'oracle'
