@@ -480,9 +480,10 @@ module ArelExtensions
       # TODO; cast types
       def test_cast_types
         assert_equal "5", t(@lucas, @age.cast(:string))
+        skip "jdbc adapters does not work properly here" if RUBY_PLATFORM =~ /java/i
         if @env_db == 'mysql' || @env_db == 'postgresql' || @env_db == 'oracle' || @env_db == 'mssql'
-          assert_equal 1, t(@laure,ArelExtensions::Nodes::Case.new.when(@duration.cast(:time).cast(:string).eq("12:42:21")).then(1).else(0)) unless @env_db == 'oracle' || @env_db == 'mssql'
-          assert_equal 1, t(@laure,ArelExtensions::Nodes::Case.new.when(@duration.cast(:time).eq("12:42:21")).then(1).else(0)) unless @env_db == 'oracle'
+          assert_equal 1, t(@laure,Arel.when(@duration.cast(:time).cast(:string).eq("12:42:21")).then(1).else(0)) unless @env_db == 'oracle' || @env_db == 'mssql'
+          assert_equal 1, t(@laure,Arel.when(@duration.cast(:time).eq("12:42:21")).then(1).else(0)) unless @env_db == 'oracle'
           assert_equal "20.16", t(@laure,@score.cast(:string)).gsub(/[0]*\z/,'')
           assert_equal "20.161", t(@laure,@score.cast(:string)+1).gsub(/[0]*1\z/,'1')
           assert_equal 21.16, t(@laure,@score.cast(:string).cast(:decimal)+1)
@@ -490,10 +491,9 @@ module ArelExtensions
 
           assert_equal String, t(@lucas,@updated_at.cast(:string)).class
 
-          # commented because jdbc adapters does not work properly here
-          # assert_equal Date, t(@lucas,@updated_at.cast(:date)).class unless @env_db == 'oracle' # DateTime
-          # assert_equal Time, t(@lucas,@updated_at.cast(:string).cast(:datetime)).class
-          # assert_equal Time, t(@lucas,@updated_at.cast(:time)).class
+          assert_equal Date, t(@lucas,@updated_at.cast(:date)).class unless @env_db == 'oracle' # DateTime
+          assert_equal Time, t(@lucas,@updated_at.cast(:string).cast(:datetime)).class
+          assert_equal Time, t(@lucas,@updated_at.cast(:time)).class
 
           assert_equal "2014-03-03 12:42:00", t(@lucas,@updated_at.cast(:string)) unless @env_db == 'mssql' #locale dependent
           assert_equal Date.parse("2014-03-03"), t(@lucas,Arel::Nodes.build_quoted('2014-03-03').cast(:date))
