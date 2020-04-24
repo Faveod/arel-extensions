@@ -57,11 +57,10 @@ rvm:
 - 2.3.1
 - 2.4.0
 - 2.5.0
-- rbx-2
+- 2.7.1
 - jruby-9.0.5.0
 - jruby-9.2.0.0
 - jruby-head
-- ruby-head
 jdk:
 - openjdk7
 - oraclejdk8
@@ -73,8 +72,6 @@ jdk:
 matrix:
   fast_finish: true
   exclude:
-  - rvm: rbx-2
-    jdk: openjdk7
   - rvm: 2.0.0
     jdk: openjdk7
   - rvm: 2.1
@@ -87,10 +84,8 @@ matrix:
     jdk: openjdk7
   - rvm: 2.5.0
     jdk: openjdk7
-  - rvm: ruby-head
+  - rvm: 2.7.1
     jdk: openjdk7
-  - rvm: rbx-2
-    jdk: oraclejdk8
   - rvm: 2.0.0
     jdk: oraclejdk8
   - rvm: 2.1
@@ -103,10 +98,8 @@ matrix:
     jdk: oraclejdk8
   - rvm: 2.5.0
     jdk: oraclejdk8
-  - rvm: ruby-head
+  - rvm: 2.7.1
     jdk: oraclejdk8
-  - rvm: rbx-2
-    jdk: oraclejdk10
   - rvm: 2.0.0
     jdk: oraclejdk10
   - rvm: 2.1
@@ -119,10 +112,8 @@ matrix:
     jdk: oraclejdk10
   - rvm: 2.5.0
     jdk: oraclejdk10
-  - rvm: ruby-head
+  - rvm: 2.7.1
     jdk: oraclejdk10
-  - rvm: rbx-2
-    jdk: openjdk10
   - rvm: 2.0.0
     jdk: openjdk10
   - rvm: 2.1
@@ -135,10 +126,8 @@ matrix:
     jdk: openjdk10
   - rvm: 2.5.0
     jdk: openjdk10
-  - rvm: ruby-head
+  - rvm: 2.7.1
     jdk: openjdk10
-  - rvm: rbx-2
-    jdk: oraclejdk11
   - rvm: 2.0.0
     jdk: oraclejdk11
   - rvm: 2.1
@@ -151,10 +140,8 @@ matrix:
     jdk: oraclejdk11
   - rvm: 2.5.0
     jdk: oraclejdk11
-  - rvm: ruby-head
+  - rvm: 2.7.1
     jdk: oraclejdk11
-  - rvm: rbx-2
-    jdk: openjdk11
   - rvm: 2.0.0
     jdk: openjdk11
   - rvm: 2.1
@@ -167,7 +154,7 @@ matrix:
     jdk: openjdk11
   - rvm: 2.5.0
     jdk: openjdk11
-  - rvm: ruby-head
+  - rvm: 2.7.1
     jdk: openjdk11
   - rvm: jruby-9.2.0.0
     jdk: openjdk7
@@ -179,7 +166,7 @@ matrix:
     gemfile: gemfiles/rails5_1_4.gemfile
   - rvm: 2.2.5
     gemfile: gemfiles/rails5_1_4.gemfile
-  - rvm: ruby-head
+  - rvm: 2.7.1
     gemfile: gemfiles/rails4.gemfile
   - rvm: 2.0.0
     gemfile: gemfiles/rails5_0.gemfile
@@ -198,21 +185,12 @@ matrix:
   - rvm: 2.2.5
     gemfile: gemfiles/rails6.gemfile
   allow_failures:
+  - rvm: 2.7.1
   - gemfile: gemfiles/rails6.gemfile
   - rvm: 2.5.0
     gemfile: gemfiles/rails5_1_4.gemfile
   - rvm: 2.5.0
     gemfile: gemfiles/rails5_2.gemfile
-  - rvm: rbx-2
-    gemfile: gemfiles/rails4.gemfile
-  - rvm: rbx-2
-    gemfile: gemfiles/rails5_0.gemfile
-  - rvm: rbx-2
-    gemfile: gemfiles/rails5_1_4.gemfile
-  - rvm: rbx-2
-    gemfile: gemfiles/rails5_2.gemfile
-  - rvm: rbx-2
-    gemfile: gemfiles/rails5_1_4.gemfile
   - rvm: jruby-9.0.5.0
     gemfile: gemfiles/rails5_2.gemfile
   - rvm: jruby-9.2.0.0
