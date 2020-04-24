@@ -263,7 +263,11 @@ module ArelExtensions
                 when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
                   collector = visit value.as(attr.name), collector
                 when Integer
-                  collector = visit Arel::Nodes.build_quoted(value).as(attr.name), collector
+                  collector <<  value.to_s
+                  if idx == 0
+                    collector << " AS "
+                    collector << quote(attr.name)
+                  end
                 else
                   collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
                   if idx == 0

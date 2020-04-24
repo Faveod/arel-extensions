@@ -9,7 +9,7 @@ require 'arel_extensions'
 require 'support/fake_record'
 Arel::Table.engine = FakeRecord::Base.new
 
-#$arel_silence_type_casting_deprecation = true
+$arel_silence_type_casting_deprecation = true
 
 module Minitest::Assertions
   #
