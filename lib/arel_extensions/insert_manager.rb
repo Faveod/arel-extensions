@@ -19,15 +19,8 @@ module ArelExtensions
       when NilClass
         res_columns = @ast.relation.columns
       end
-      if defined?(Arel::Nodes::ValuesList)
-        self.values = Arel::Nodes::ValuesList.new(data)
-        res_columns.each do |col|
-          self.columns << col
-        end
-      else
-        self.values = BulkValues.new(res_columns, data)
-        @ast.columns = res_columns
-      end
+      self.values = BulkValues.new(res_columns, data)
+      @ast.columns = res_columns
     end
 
     class BulkValues < Arel::Nodes::Node

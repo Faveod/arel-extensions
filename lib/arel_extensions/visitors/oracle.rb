@@ -467,14 +467,12 @@ module ArelExtensions
           o.left.each_with_index do |row, idx| # values
           collector << " UNION ALL " if idx != 0
             collector << "(SELECT "
-            v = Arel::Nodes::Values.new(row, o.cols)
-            len = v.expressions.length - 1
-            v.expressions.each_with_index { |value, i|
+            len = row.length - 1
+            row.zip(o.cols).each_with_index { |(value, attr), i|
                 case value
                 when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
                   collector = visit value, collector
                 else
-                  attr = v.columns[i]
                   collector << quote(value, attr && column_for(attr)).to_s
                 end
                 collector << Arel::Visitors::Oracle::COMMA unless i == len
@@ -490,12 +488,13 @@ module ArelExtensions
           o.left.each_with_index do |row, idx|
             collector << " UNION ALL " if idx != 0
             collector << "(SELECT "
-            v = Arel::Nodes::Values.new(row, o.cols)
-            len = v.expressions.length - 1
-            v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
+            len = row.length - 1
+            row.zip(o.cols).each_with_index { |(value, attr), i|
               case value
               when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
                 collector = visit value, collector
+              when Integer
+                collector << value.to_s
               else
                 collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
               end

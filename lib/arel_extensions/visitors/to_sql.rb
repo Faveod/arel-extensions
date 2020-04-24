@@ -428,16 +428,15 @@ module ArelExtensions
           row_nb = o.left.length
           o.left.each_with_index do |row, idx|
             collector << '('
-            v = Arel::Nodes::Values.new(row, o.cols)
-            len = v.expressions.length - 1
-            v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
-                case value
-                when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
-                  collector = visit value, collector
-                else
-                  collector << quote(value, attr && column_for(attr)).to_s
-                end
-                collector << Arel::Visitors::ToSql::COMMA unless i == len
+            len = row.length - 1
+            row.zip(o.cols).each_with_index { |(value, attr), i|
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value, collector
+              else
+                collector << quote(value, attr && column_for(attr)).to_s
+              end
+              collector << Arel::Visitors::ToSql::COMMA unless i == len
             }
             collector << (idx == row_nb-1 ? ')' : '), ')
           end
@@ -449,16 +448,17 @@ module ArelExtensions
           row_nb = o.left.length
           o.left.each_with_index do |row, idx|
             collector << '('
-            v = Arel::Nodes::Values.new(row, o.cols)
-            len = v.expressions.length - 1
-            v.expressions.zip(v.columns).each_with_index { |(value, attr), i|
-                case value
-                when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
-                  collector = visit value, collector
-                else
-                  collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
-                end
-                collector << Arel::Visitors::ToSql::COMMA unless i == len
+            len = row.length - 1
+            row.zip(o.cols).each_with_index { |(value, attr), i|
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value, collector
+              when Integer
+                collector << value.to_s
+              else
+                collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
+              end
+              collector << Arel::Visitors::ToSql::COMMA unless i == len
             }
             collector << (idx == row_nb-1 ? ')' : '), ')
           end
