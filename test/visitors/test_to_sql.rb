@@ -383,8 +383,6 @@ module ArelExtensions
             .must_be_like %{("users"."id", "users"."age") IN ((1, 42))}
           _(compile(g[@table[:id], @table[:age]].in [g[1, 42], g[2, 51]]))
             .must_be_like %{("users"."id", "users"."age") IN ((1, 42), (2, 51))}
-          _(compile(g[@table[:id], @table[:age]].zzzzz))
-            .must_equal "42"
 
           Arel::Nodes::Grouping.class_eval do
             include ArelExtensions::Predications
