@@ -1,5 +1,6 @@
 module ArelExtensions
   module Predications
+
     def when right, expression = nil
       ArelExtensions::Nodes::Case.new(self).when(right,expression)
     end
@@ -20,13 +21,16 @@ module ArelExtensions
       ArelExtensions::Nodes::Cast.new([self,right])
     end
 
-    def in(*other) #In should handle nil element in the Array
+    def in *other
+      #In should handle nil element in the Array
       other = other.first if other.size == 0 || other.size == 1
       case other
       when Range
         self.between(other)
       when nil
         self.is_null
+      when Arel::Nodes::Grouping
+        Arel::Nodes::In.new(self, quoted_node(other))
       when Arel::SelectManager
         Arel::Nodes::In.new(self, other.ast)
       when Enumerable
@@ -47,11 +51,14 @@ module ArelExtensions
       end
     end
 
-    def not_in(*other) #In should handle nil element in the Array
+    def not_in *other
+      #In should handle nil element in the Array
       other = other.first if other.size == 0 || other.size == 1
       case other
       when nil
         self.is_not_null
+      when Arel::Nodes::Grouping
+        Arel::Nodes::NotIn.new(self, quoted_node(other))
       when Range
         Arel::Nodes::Not.new(self.between(other))
       when Arel::SelectManager

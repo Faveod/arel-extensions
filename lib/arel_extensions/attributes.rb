@@ -23,6 +23,5 @@ module ArelExtensions
     def !=(other)
       Arel::Nodes::NotEqual.new self, Arel::Nodes.build_quoted(other, self)
     end
-
   end
 end

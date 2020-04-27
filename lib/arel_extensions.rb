@@ -106,6 +106,9 @@ module Arel
     Arel::Nodes::Equality.new(1,0)
   end
 
+  def self.tuple *v
+    Arel::Nodes::Grouping.new(v)
+  end
 end
 
 class Arel::Attributes::Attribute
@@ -127,7 +130,6 @@ class Arel::Nodes::Function
   def as other
     Arel::Nodes::As.new(self, Arel.sql(other))
   end
-
 end
 
 class Arel::Nodes::Unary
@@ -153,7 +155,6 @@ class Arel::Nodes::Equality
   include ArelExtensions::MathFunctions
   include ArelExtensions::StringFunctions
 end
-
 
 class Arel::InsertManager
   include ArelExtensions::InsertManager

@@ -155,7 +155,7 @@ matrix:
     jdk: openjdk11
   - rvm: 2.7.1
     jdk: openjdk11
-  - rvm: jruby-9.2.0.0
+  - rvm: jruby-9.2.11.1
     jdk: openjdk7
   - rvm: jruby-head
     jdk: openjdk7
@@ -188,7 +188,7 @@ matrix:
   - gemfile: gemfiles/rails6.gemfile
   - rvm: jruby-9.0.5.0
     gemfile: gemfiles/rails5_2.gemfile
-  - rvm: jruby-9.2.0.0
+  - rvm: jruby-9.2.11.1
     jdk: oraclejdk9
     gemfile: gemfiles/rails5_2.gemfile
   - jdk: openjdk7
@@ -198,7 +198,7 @@ matrix:
   - jdk: openjdk11
   - jdk: oraclejdk11
   - rvm: jruby-head
-  - rvm: jruby-9.2.0.0
+  - rvm: jruby-9.2.11.1
     jdk: oraclejdk9
   - rvm: jruby-9.0.5.0
     jdk: oraclejdk9

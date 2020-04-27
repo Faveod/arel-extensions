@@ -377,6 +377,28 @@ module ArelExtensions
                             OR ("users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31'))}
         end
 
+        it "should respecting Grouping" do
+          g = ->(*v) { Arel::Nodes::Grouping.new(v) }
+          _(compile(g[@table[:id], @table[:age]].in [g[1, 42]]))
+            .must_be_like %{("users"."id", "users"."age") IN ((1, 42))}
+          _(compile(g[@table[:id], @table[:age]].in [g[1, 42], g[2, 51]]))
+            .must_be_like %{("users"."id", "users"."age") IN ((1, 42), (2, 51))}
+          _(compile(g[@table[:id], @table[:age]].zzzzz))
+            .must_equal "42"
+
+          Arel::Nodes::Grouping.class_eval do
+            include ArelExtensions::Predications
+          end
+          puts "-----------------------------------------------------------"
+          puts g[@table[:id]]
+          #puts g[@table[:id]].class
+         # puts g[@table[:id]].method(:in).source_location
+          puts "-----------------------------------------------------------"
+          _(compile(g[@table[:id], @table[:age]].in(g[1, 42], g[2, 51])))
+            .must_be_like %{("users"."id", "users"."age") IN ((1, 42), (2, 51))}
+        end
+
+
       end
 
       describe "the function not_in" do
@@ -472,6 +494,9 @@ module ArelExtensions
             .must_be_like %{"users"."id" = 1}
           _(compile(Arel::Nodes::And.new(c == 1, c == 2)))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2)}
+          _(compile(Arel::Nodes::And.new [c == 1, c == 2, c == 3]))
+            .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
+
 
           _(compile(Arel::Nodes::Or.new))
             .must_be_like %{1 = 0}
@@ -479,6 +504,10 @@ module ArelExtensions
             .must_be_like %{"users"."id" = 1}
           _(compile(Arel::Nodes::Or.new(c == 1, c == 2)))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2)}
+          _(compile(Arel::Nodes::Or.new(c == 1, c == 2, c == 3)))
+            .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
+          _(compile(Arel::Nodes::Or.new [c == 1, c == 2, c == 3]))
+            .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
         end
 
         it "should know trivial identities" do
