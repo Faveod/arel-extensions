@@ -21,28 +21,26 @@ module ArelExtensions
       ArelExtensions::Nodes::Cast.new([self,right])
     end
 
-    def in *other
-      #In should handle nil element in the Array
-      other = other.first if other.size == 0 || other.size == 1
+    def in *other #In should handle nil element in the Array
+      other = other.first if other.length <= 1
       case other
-      when Range
-        self.between(other)
       when nil
         self.is_null
       when Arel::Nodes::Grouping
         Arel::Nodes::In.new(self, quoted_node(other))
+      when Range
+        self.between(other)
       when Arel::SelectManager
         Arel::Nodes::In.new(self, other.ast)
       when Enumerable
         nils, values   = other.partition{ |v| v.nil? }
         ranges, values = values.partition{ |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager)}
-
         # In order of (imagined) decreasing efficiency: nil, values, and then more complex.
         clauses =
           nils.uniq.map { |r| self.in(r) } \
           + (case values.uniq.size
               when 0 then []
-              when 1 then [self == values[0]]
+              when 1 then [self.eq(values[0])]
               else [Arel::Nodes::In.new(self, quoted_array(values))] end) \
           + ranges.uniq.map { |r| self.in(r) }
         Arel::Nodes::Or.new clauses
@@ -51,8 +49,7 @@ module ArelExtensions
       end
     end
 
-    def not_in *other
-      #In should handle nil element in the Array
+    def not_in *other #In should handle nil element in the Array
       other = other.first if other.size == 0 || other.size == 1
       case other
       when nil
@@ -66,13 +63,12 @@ module ArelExtensions
       when Enumerable
         nils, values   = other.partition{ |v| v.nil? }
         ranges, values = values.partition{ |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager)}
-
         # In order of (imagined) decreasing efficiency: nil, values, and then more complex.
         clauses =
           nils.uniq.map { |r| self.not_in(r) } \
           + (case values.uniq.size
               when 0 then []
-              when 1 then [self != values[0]]
+              when 1 then [self.not_eq(values[0])]
               else [Arel::Nodes::NotIn.new(self, quoted_array(values))] end) \
           + ranges.uniq.map { |r| self.not_in(r) }
         Arel::Nodes::And.new clauses
@@ -101,6 +97,5 @@ module ArelExtensions
         raise(ArgumentError, "#{object.class} can not be converted to CONCAT arg")
       end
     end
-
   end
 end

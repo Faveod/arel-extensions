@@ -384,14 +384,6 @@ module ArelExtensions
           _(compile(g[@table[:id], @table[:age]].in [g[1, 42], g[2, 51]]))
             .must_be_like %{("users"."id", "users"."age") IN ((1, 42), (2, 51))}
 
-          Arel::Nodes::Grouping.class_eval do
-            include ArelExtensions::Predications
-          end
-          puts "-----------------------------------------------------------"
-          puts g[@table[:id]]
-          #puts g[@table[:id]].class
-         # puts g[@table[:id]].method(:in).source_location
-          puts "-----------------------------------------------------------"
           _(compile(g[@table[:id], @table[:age]].in(g[1, 42], g[2, 51])))
             .must_be_like %{("users"."id", "users"."age") IN ((1, 42), (2, 51))}
         end
