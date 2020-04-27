@@ -16,7 +16,6 @@ before_install:
 #  - sh -ex .travis/oracle/install.sh
 #  - .travis/setup_accounts.sh
 install:
-  - gem install bundler -v 1.17.3
   - bundle install
 gemfile:
 - gemfiles/rails4.gemfile
@@ -31,7 +30,7 @@ before_script:
 - mysql -e 'create database arext_test;'
 - psql -c 'create database arext_test;' -U postgres
 script:
-- gem build arel_extensions.gemspec
+- ./generate_gems.sh
 - bundle exec rake test
 - bundle exec rake test:sqlite
 - bundle exec rake test:mysql
@@ -59,7 +58,7 @@ rvm:
 - 2.5.0
 - 2.7.1
 - jruby-9.0.5.0
-- jruby-9.2.0.0
+- jruby-9.2.11.1
 - jruby-head
 jdk:
 - openjdk7
