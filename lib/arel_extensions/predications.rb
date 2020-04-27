@@ -20,7 +20,12 @@ module ArelExtensions
       ArelExtensions::Nodes::Cast.new([self,right])
     end
 
-    def in(*other) #In should handle nil element in the Array
+    def zzzzz
+      42
+    end
+
+    def in(other) #In should handle nil element in the Array
+      p other
       other = other.first if other.size == 0 || other.size == 1
       case other
       when Range
@@ -29,6 +34,8 @@ module ArelExtensions
         self.is_null
       when Arel::SelectManager
         Arel::Nodes::In.new(self, other.ast)
+      when Arel::Nodes::Grouping
+        Arel::Nodes::In.new(self, quoted_node(other))
       when Enumerable
         nils, values   = other.partition{ |v| v.nil? }
         ranges, values = values.partition{ |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager)}
@@ -56,6 +63,8 @@ module ArelExtensions
         Arel::Nodes::Not.new(self.between(other))
       when Arel::SelectManager
         Arel::Nodes::NotIn.new(self, other.ast)
+      when Arel::Nodes::Grouping
+        Arel::Nodes::NotIn.new(self, quoted_node(other))
       when Enumerable
         nils, values   = other.partition{ |v| v.nil? }
         ranges, values = values.partition{ |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager)}

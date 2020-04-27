@@ -1,4 +1,5 @@
 require 'arel'
+require 'arel/nodes/grouping'
 
 require 'arel_extensions/railtie' if defined?(Rails::Railtie)
 
@@ -130,6 +131,10 @@ class Arel::Nodes::Function
 
 end
 
+puts "======================================== Before Unary"
+p [Arel::Nodes::Grouping.ancestors, Arel::Nodes::Grouping.instance_method(:in).source_location, Arel::Nodes::Grouping.instance_method(:in).arity]
+p ArelExtensions::Predications.instance_methods.sort
+
 class Arel::Nodes::Unary
   include ArelExtensions::Math
   include ArelExtensions::Attributes
@@ -137,6 +142,12 @@ class Arel::Nodes::Unary
   include ArelExtensions::Comparators
   include ArelExtensions::Predications
 end
+
+puts "======================================== After Unary"
+p [Arel::Nodes::Grouping.instance_method(:in).source_location, Arel::Nodes::Grouping.instance_method(:in).arity]
+p Arel::Nodes::Grouping.instance_methods.sort
+p Arel::Nodes::Grouping.instance_methods.sort
+
 
 class Arel::Nodes::Binary
   include ArelExtensions::Math
@@ -154,6 +165,24 @@ class Arel::Nodes::Equality
   include ArelExtensions::StringFunctions
 end
 
+puts "Installing predications"
+puts "**************************************************"
+p [Arel::Nodes::Grouping.ancestors, Arel::Nodes::Grouping.instance_method(:in).source_location, Arel::Nodes::Grouping.instance_method(:in).arity]
+p ArelExtensions::Predications.instance_methods.sort
+class Arel::Nodes::Grouping
+  include ArelExtensions::Predications
+end
+puts "After predications"
+p [Arel::Nodes::Grouping.ancestors, Arel::Nodes::Grouping.instance_method(:in).source_location, Arel::Nodes::Grouping.instance_method(:in).arity]
+p ArelExtensions::Predications.instance_methods.sort
+puts "**************************************************"
+
+class Arel::Nodes::Node
+  include ArelExtensions::Predications
+end
+
+p Arel::Nodes::Grouping.instance_method(:in).source_location  
+puts "**************************************************"
 
 class Arel::InsertManager
   include ArelExtensions::InsertManager
