@@ -22,7 +22,7 @@ Arel 6 (Rails 4) or Arel 7+ (Rails 5).
 or
 
 Rails 6
-[Arel Repository](http://github.com/rails/rails)
+[Rails Repository](http://github.com/rails/rails)
 
 ## Usage
 
