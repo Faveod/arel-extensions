@@ -65,6 +65,10 @@ module FakeRecord
       self
     end
 
+    def in_clause_length
+      10000
+    end
+
     def quote thing, column = nil
       if column && !thing.nil?
         case column.type
