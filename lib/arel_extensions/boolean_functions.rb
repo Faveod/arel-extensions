@@ -76,8 +76,6 @@ class Arel::Nodes::Or
   end
 
   def initialize *children
-    @left = children.first
-    @right = children.second
     @children = children
   end
 
