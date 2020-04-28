@@ -727,6 +727,13 @@ module ArelExtensions
         #assert_equal true  , @test.where(@age.not_in([nil,1,2])).blank?
       end
 
+      def test_in_on_grouping
+        skip "We should modify the visitor of IN to make it work" if $sqlite || @env_db == 'mssql'
+        assert_equal 2 , User.where(Arel.tuple(@name,@age).in(Arel.tuple('Myung',23),Arel.tuple('Arthur',21))).count
+        assert_equal 1 , User.where(Arel.tuple(@name,@age).in(Arel.tuple('Myung',23))).count
+        assert_equal 0 , User.where(Arel.tuple(@name,@age).in([])).count
+      end
+
       def test_alias_shortened
         if ['postgresql','oracle'].include?(@env_db)
           new_alias = Arel.shorten('azerty' * 15)

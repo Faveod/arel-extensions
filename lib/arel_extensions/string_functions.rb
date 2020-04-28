@@ -64,6 +64,19 @@ module ArelExtensions
       grouping_any :imatches, others, escape
     end
 
+#    def grouping_any method, others, *extra
+#      puts "*******************"
+#      puts method
+#      puts others.inspect
+#      puts extra.inspect
+#      puts "-------------------"
+#      res = super(method,others,*extra)
+#      puts res.to_sql
+#      puts res.inspect
+#      puts "*******************"
+#      res
+#    end
+
     def imatches_all others, escape = nil
       grouping_all :imatches, others, escape, escape
     end

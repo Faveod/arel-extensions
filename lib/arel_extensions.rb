@@ -28,10 +28,7 @@ class Arel::Nodes::Unary
 end
 
 class Arel::Nodes::Grouping
-  include Arel::Math
-  include Arel::AliasPredication
   include Arel::OrderPredications
-  include Arel::Expressions
 end
 
 class Arel::Nodes::Function
@@ -107,7 +104,8 @@ module Arel
   end
 
   def self.tuple *v
-    Arel::Nodes::Grouping.new(v)
+    tmp = Arel::Nodes::Grouping.new(nil)
+    Arel::Nodes::Grouping.new(v.map{|e| tmp.convert_to_node(e)})
   end
 end
 
@@ -133,11 +131,13 @@ class Arel::Nodes::Function
 end
 
 class Arel::Nodes::Grouping
-  include ArelExtensions::Math
-  include ArelExtensions::Attributes
-  include ArelExtensions::MathFunctions
-  include ArelExtensions::Comparators
-  include ArelExtensions::Predications
+    include ArelExtensions::Math
+    include ArelExtensions::Comparators
+    include ArelExtensions::DateDuration
+    include ArelExtensions::MathFunctions
+    include ArelExtensions::NullFunctions
+    include ArelExtensions::StringFunctions
+    include ArelExtensions::Predications
 end
 
 class Arel::Nodes::Unary
