@@ -35,15 +35,7 @@ class Arel::Nodes::And
       children.flatten.map { |c|
       c.is_a?(self) ? c.children : c
     }.flatten.reject{|v| v.eql? Arel.true}.uniq
-   # if children.include? Arel.false
-   #   Arel.false
-   # else
-      case children.length
-      when 0 then Arel.true
-      when 1 then children[0]
-      else        super(children)
-      end
-   # end
+    super(children)
   end
 
 end
@@ -64,15 +56,7 @@ class Arel::Nodes::Or
       children.flatten.map { |c|
       c.is_a?(self) ? c.children : c
     }.flatten.reject{|v| v.eql? Arel.false}.uniq
-   # if children.include? Arel.true
-   #   Arel.true
-   # else
-      case children.length
-      when 0 then Arel.false
-      when 1 then children[0]
-      else        super(*children)
-      end
-   # end
+    super(*children)
   end
 
   def initialize *children
