@@ -10,7 +10,7 @@ before_install:
 #  - chmod +x .travis/oracle/download.sh
 #  - chmod +x .travis/oracle/install.sh
 #  - chmod +x .travis/setup_accounts.sh
-  - sudo apt-get install -y sqlite3-pcre curl
+  - apt-get install -y sqlite3-pcre curl
   - .travis/sqlite3/extension-functions.sh
 #  - .travis/oracle/download.sh
 #  - sh -ex .travis/oracle/install.sh
@@ -63,7 +63,6 @@ rvm:
 - jruby-9.2.11.1
 - jruby-head
 jdk:
-- openjdk7
 - oraclejdk8
 - oraclejdk9
 - openjdk10
@@ -74,33 +73,19 @@ matrix:
   fast_finish: true
   exclude:
   - rvm: 2.0.0
-    jdk: openjdk7
+    jdk: oraclejdk9
   - rvm: 2.1
-    jdk: openjdk7
+    jdk: oraclejdk9
   - rvm: 2.2.5
-    jdk: openjdk7
+    jdk: oraclejdk9
   - rvm: 2.3.1
-    jdk: openjdk7
+    jdk: oraclejdk9
   - rvm: 2.4.0
-    jdk: openjdk7
+    jdk: oraclejdk9
   - rvm: 2.5.0
-    jdk: openjdk7
+    jdk: oraclejdk9
   - rvm: 2.7.1
-    jdk: openjdk7
-  - rvm: 2.0.0
-    jdk: oraclejdk8
-  - rvm: 2.1
-    jdk: oraclejdk8
-  - rvm: 2.2.5
-    jdk: oraclejdk8
-  - rvm: 2.3.1
-    jdk: oraclejdk8
-  - rvm: 2.4.0
-    jdk: oraclejdk8
-  - rvm: 2.5.0
-    jdk: oraclejdk8
-  - rvm: 2.7.1
-    jdk: oraclejdk8
+    jdk: oraclejdk9
   - rvm: 2.0.0
     jdk: oraclejdk10
   - rvm: 2.1
@@ -157,10 +142,6 @@ matrix:
     jdk: openjdk11
   - rvm: 2.7.1
     jdk: openjdk11
-  - rvm: jruby-9.2.11.1
-    jdk: openjdk7
-  - rvm: jruby-head
-    jdk: openjdk7
   - rvm: 2.0.0
     gemfile: gemfiles/rails5_1_4.gemfile
   - rvm: 2.1
@@ -173,14 +154,20 @@ matrix:
     gemfile: gemfiles/rails5_0.gemfile
   - rvm: 2.1
     gemfile: gemfiles/rails5_0.gemfile
+  - rvm: 2.7.1
+    gemfile: gemfiles/rails5.0.gemfile
   - rvm: jruby-9.0.5.0
     gemfile: gemfiles/rails5_1_4.gemfile
+  - rvm: 2.7.1
+    gemfile: gemfiles/rails5.1.4.gemfile
   - rvm: 2.0.0
     gemfile: gemfiles/rails5_2.gemfile
   - rvm: 2.1
     gemfile: gemfiles/rails5_2.gemfile
   - rvm: 2.2.5
     gemfile: gemfiles/rails5_2.gemfile
+  - rvm: 2.7.1
+    gemfile: gemfiles/rails5.2.gemfile
   - rvm: 2.0.0
     gemfile: gemfiles/rails6.gemfile
   - rvm: 2.1
@@ -192,14 +179,11 @@ matrix:
   - rvm: 2.4.0
     gemfile: gemfiles/rails6.gemfile
   allow_failures:
-  - rvm: 2.7.1
-  - gemfile: gemfiles/rails6.gemfile
   - rvm: jruby-9.0.5.0
     gemfile: gemfiles/rails5_2.gemfile
   - rvm: jruby-9.2.11.1
     jdk: oraclejdk9
     gemfile: gemfiles/rails5_2.gemfile
-  - jdk: openjdk7
   - jdk: oraclejdk8
   - jdk: openjdk10
   - jdk: oraclejdk10
