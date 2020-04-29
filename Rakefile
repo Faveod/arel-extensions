@@ -31,7 +31,7 @@ end
       t.libs << 'lib'
       t.libs << 'test'
       t.pattern = 'test/with_ar/*_agnostic_test.rb'
-      t.warning = true
+      t.warning = false
       t.verbose = true
       t.ruby_opts = ["--dev"] if defined?(JRUBY_VERSION)
     }
