@@ -66,7 +66,6 @@ jdk:
 - oraclejdk8
 - oraclejdk9
 - openjdk10
-- oraclejdk10
 - openjdk11
 - oraclejdk11
 matrix:
@@ -87,20 +86,6 @@ matrix:
   - rvm: 2.7.1
     jdk: oraclejdk9
   - rvm: 2.0.0
-    jdk: oraclejdk10
-  - rvm: 2.1
-    jdk: oraclejdk10
-  - rvm: 2.2.5
-    jdk: oraclejdk10
-  - rvm: 2.3.1
-    jdk: oraclejdk10
-  - rvm: 2.4.0
-    jdk: oraclejdk10
-  - rvm: 2.5.0
-    jdk: oraclejdk10
-  - rvm: 2.7.1
-    jdk: oraclejdk10
-  - rvm: 2.0.0
     jdk: openjdk10
   - rvm: 2.1
     jdk: openjdk10
@@ -142,13 +127,9 @@ matrix:
     jdk: openjdk11
   - rvm: 2.7.1
     jdk: openjdk11
-  - rvm: 2.0.0
-    gemfile: gemfiles/rails5_1_4.gemfile
-  - rvm: 2.1
-    gemfile: gemfiles/rails5_1_4.gemfile
-  - rvm: 2.2.5
-    gemfile: gemfiles/rails5_1_4.gemfile
   - rvm: 2.7.1
+    gemfile: gemfiles/rails4.gemfile
+  - rvm : jruby-9.2.11.1
     gemfile: gemfiles/rails4.gemfile
   - rvm: 2.0.0
     gemfile: gemfiles/rails5_0.gemfile
@@ -156,8 +137,14 @@ matrix:
     gemfile: gemfiles/rails5_0.gemfile
   - rvm: 2.7.1
     gemfile: gemfiles/rails5.0.gemfile
-  - rvm: jruby-9.0.5.0
+  - rvm: 2.0.0
     gemfile: gemfiles/rails5_1_4.gemfile
+  - rvm: 2.1
+    gemfile: gemfiles/rails5_1_4.gemfile
+  - rvm: 2.2.5
+    gemfile: gemfiles/rails5_1_4.gemfile
+  - rvm: 2.7.1
+    gemfile: gemfiles/rails5.1.4.gemfile
   - rvm: 2.7.1
     gemfile: gemfiles/rails5.1.4.gemfile
   - rvm: 2.0.0
@@ -184,9 +171,8 @@ matrix:
   - rvm: jruby-9.2.11.1
     jdk: oraclejdk9
     gemfile: gemfiles/rails5_2.gemfile
-  - jdk: oraclejdk8
+  - jdk: oraclejdk9
   - jdk: openjdk10
-  - jdk: oraclejdk10
   - jdk: openjdk11
   - jdk: oraclejdk11
   - rvm: jruby-head
