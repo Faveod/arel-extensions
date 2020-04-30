@@ -34,7 +34,7 @@ class Arel::Nodes::And
     children =
       children.flatten.map { |c|
       c.is_a?(self) ? c.children : c
-    }.flatten.reject{|v| v.eql? Arel.true}.uniq
+    }.flatten
     super(children)
   end
 
@@ -55,7 +55,7 @@ class Arel::Nodes::Or
     children =
       children.flatten.map { |c|
       c.is_a?(self) ? c.children : c
-    }.flatten.reject{|v| v.eql? Arel.false}.uniq
+    }.flatten
     super(*children)
   end
 
@@ -67,9 +67,4 @@ class Arel::Nodes::Or
     children.hash
   end
 
-  def eql? other
-    self.class == other.class &&
-      self.children == other.children
-  end
-  alias :== :eql?
 end
