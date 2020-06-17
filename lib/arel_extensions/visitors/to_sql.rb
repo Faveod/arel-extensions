@@ -624,7 +624,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_JsonGroup o, collector
         if o.as_array
-          res = Arel::Nodes.build_quoted('[') + (o.orders ? o.dict.group_concat(', ',o.orders) : o.dict.group_concat(', ')) + ']'
+          res = Arel::Nodes.build_quoted('[') + (o.orders ? o.dict.group_concat(', ', order: Array(o.orders)) : o.dict.group_concat(', ')).coalesce('') + ']'
           collector = visit res, collector
         else
           res = Arel::Nodes.build_quoted('{')
@@ -639,7 +639,7 @@ module ArelExtensions
             else
               kv += v
             end
-            res = res + kv.group_concat(', ',orders)
+            res = res + kv.group_concat(', ', order: Array(orders)).coalesce('')
           end
           res = res + '}'
           collector = visit res, collector
