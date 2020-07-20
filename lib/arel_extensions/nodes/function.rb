@@ -10,6 +10,10 @@ module ArelExtensions
 
       RETURN_TYPE = :string # by default...
 
+      # Support multibyte string if they are available.
+      MBSTRING =
+        defined?(ActiveSupport::Multibyte::Chars) ? ActiveSupport::Multibyte::Chars : String
+
       # overrides as to make new Node like AliasPredication
 
       def return_type
@@ -63,7 +67,7 @@ module ArelExtensions
           Arel::Nodes.build_quoted(object, self)
         when Time
           Arel::Nodes.build_quoted(object.strftime('%H:%M:%S'), self)
-        when String, Symbol
+        when MBSTRING, String, Symbol
           Arel::Nodes.build_quoted(object.to_s)
         when Date
           Arel::Nodes.build_quoted(object.to_s, self)
@@ -97,8 +101,8 @@ module ArelExtensions
           Arel::Nodes.build_quoted(object, self)
         when Time
           Arel::Nodes.build_quoted(object.strftime('%H:%M:%S'), self)
-        when String
-          Arel::Nodes.build_quoted(object)
+        when MBSTRING, String
+          Arel::Nodes.build_quoted(object.to_s)
         when Date
           Arel::Nodes.build_quoted(object, self)
         when NilClass
@@ -116,8 +120,8 @@ module ArelExtensions
           object
         when DateTime, Time
           Arel::Nodes.build_quoted(Date.new(object.year, object.month, object.day), self)
-        when String
-          Arel::Nodes.build_quoted(Date.parse(object), self)
+        when MBSTRING, String
+          Arel::Nodes.build_quoted(Date.parse(object.to_s), self)
         when Date
           Arel::Nodes.build_quoted(object, self)
         else
@@ -131,8 +135,8 @@ module ArelExtensions
           object
         when DateTime, Time
           Arel::Nodes.build_quoted(object, self)
-        when String
-          Arel::Nodes.build_quoted(Time.parse(object), self)
+        when MBSTRING, String
+          Arel::Nodes.build_quoted(Time.parse(object.to_s), self)
         when Date
           Arel::Nodes.build_quoted(Time.utc(object.year, object.month, object.day, 0, 0, 0), self)
         else
