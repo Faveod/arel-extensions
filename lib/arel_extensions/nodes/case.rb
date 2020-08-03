@@ -1,6 +1,6 @@
 module ArelExtensions
   module Nodes
-    if Arel::VERSION < "7.1.0"
+    if Gem::Version.new(Arel::VERSION) < Gem::Version.new("7.1.0")
       class Case < Arel::Nodes::Node
         attr_accessor :case, :conditions, :default
 
