@@ -463,6 +463,13 @@ module ArelExtensions
           .must_be_like %{(LOCATE('test', "users"."name") + 1) ASC}
       end
 
+      it "should be possible to call Table function on TableAlias" do
+        t = @table
+        a = t.alias("aliased_users")
+        _(compile(a.join(t).join_sources))
+            .must_be_like %{INNER JOIN \"users\"}
+      end
+
       describe "logical functions" do
 
         it "should know about truth" do

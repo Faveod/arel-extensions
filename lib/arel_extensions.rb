@@ -183,3 +183,14 @@ class Arel::Table
     name.blank? ? self : Arel::Nodes::TableAlias.new(self,name)
   end
 end
+
+class Arel::Nodes::TableAlias
+  def method_missing(*args)
+    met = args.shift.to_sym
+    if self.relation.respond_to?(met)
+      self.relation.send(met,args)
+    else
+      super
+    end
+  end
+end
