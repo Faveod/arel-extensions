@@ -36,7 +36,7 @@ class Arel::Nodes::Function
   include Arel::Expressions
 end
 
-if Arel::VERSION >= "7.1.0"
+if Gem::Version.new(Arel::VERSION) >= Gem::Version.new("7.1.0")
   class Arel::Nodes::Case
     include Arel::Math
     include Arel::Expressions

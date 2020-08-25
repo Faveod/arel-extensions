@@ -1,7 +1,11 @@
 module ArelExtensions
   module Nodes
-    if Arel::VERSION < "7.1.0"
+    if Gem::Version.new(Arel::VERSION) < Gem::Version.new("7.1.0")
       class Case < Arel::Nodes::Node
+        include Arel::Expressions
+        include Arel::Math
+        include Arel::Predications
+        include Arel::OrderPredications
         attr_accessor :case, :conditions, :default
 
         def initialize expression = nil, default = nil
@@ -28,6 +32,8 @@ module ArelExtensions
 
     class ArelExtensions::Nodes::Case
       include Arel::Expressions
+      include Arel::Math
+      include Arel::Predications
       include Arel::OrderPredications
       include ArelExtensions::Math
       include ArelExtensions::Comparators
