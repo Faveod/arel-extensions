@@ -190,7 +190,7 @@ class Arel::Nodes::TableAlias
     if self.relation.respond_to?(met)
       self.relation.send(met,args)
     else
-      super
+      super(met,*args)
     end
   end
 end
