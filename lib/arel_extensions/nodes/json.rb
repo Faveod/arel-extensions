@@ -26,20 +26,6 @@ module ArelExtensions
         [@dict].hash
       end
 
-    end
-
-    class Json < JsonNode
-
-      def initialize *expr
-        @dict =
-          if expr.length == 1
-            convert_to_json_node(expr.first)
-          else
-            expr.map{|e| convert_to_json_node(e) }
-          end
-        super
-      end
-
       def convert_to_json_node(n)
         case n
         when JsonNode
@@ -76,6 +62,20 @@ module ArelExtensions
         else
           :string
         end
+      end
+
+    end
+
+    class Json < JsonNode
+
+      def initialize *expr
+        @dict =
+          if expr.length == 1
+            convert_to_json_node(expr.first)
+          else
+            expr.map{|e| convert_to_json_node(e) }
+          end
+        super
       end
 
     end
