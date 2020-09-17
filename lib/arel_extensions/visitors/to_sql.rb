@@ -623,7 +623,7 @@ module ArelExtensions
             if i != 0
               res += ', '
             end
-            res += Arel::Nodes.build_quoted('"') + ArelExtensions::Nodes::Cast.new([k, :string]).replace('\\','\\\\').replace('"','\"') + '": '
+            res += Arel::Nodes.build_quoted('"') + ArelExtensions::Nodes::Cast.new([k, :string]).coalesce("").replace('\\','\\\\').replace('"','\"') + '": '
             res += json_value(o,v)
           end
           res += '}'
@@ -645,7 +645,7 @@ module ArelExtensions
             if i != 0
               res = res + ', '
             end
-            kv = Arel::Nodes.build_quoted('"') + ArelExtensions::Nodes::Cast.new([k, :string]).replace('\\','\\\\').replace('"','\"') + '": '
+            kv = Arel::Nodes.build_quoted('"') + ArelExtensions::Nodes::Cast.new([k, :string]).coalesce("").replace('\\','\\\\').replace('"','\"') + '": '
             kv += json_value(o,v)
             res = res + kv.group_concat(', ', order: Array(orders)).coalesce('')
           end
