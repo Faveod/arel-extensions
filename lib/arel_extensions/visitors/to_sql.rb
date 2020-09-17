@@ -585,6 +585,26 @@ module ArelExtensions
         collector
       end
 
+      def json_value(o,v)
+        case o.type_of_node(v)
+        when :string
+          Arel.when(v.is_null).then(Arel::Nodes.build_quoted("null")).else(Arel::Nodes.build_quoted('"') + v.replace('\\','\\\\').replace('"','\"') + '"')
+        when :date
+          s = v.format('%Y-%m-%d')
+          Arel.when(s.is_null).then(Arel::Nodes.build_quoted("null")).else(Arel::Nodes.build_quoted('"') + s + '"')
+        when :datetime
+          s = v.format('%Y-%m-%dT%H:%M:%S')
+          Arel.when(s.is_null).then(Arel::Nodes.build_quoted("null")).else(Arel::Nodes.build_quoted('"') + s + '"')
+        when :time
+          s = v.format('%H:%M:%S')
+          Arel.when(s.is_null).then(Arel::Nodes.build_quoted("null")).else(Arel::Nodes.build_quoted('"') + s + '"')
+        when :nil
+          Arel::Nodes.build_quoted("null")
+        else
+          ArelExtensions::Nodes::Cast.new([v, :string]).coalesce("null")
+        end
+      end
+
       def visit_ArelExtensions_Nodes_Json o,collector
         case o.dict
         when Array
@@ -593,11 +613,7 @@ module ArelExtensions
             if i != 0
               res += ', '
             end
-            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.return_type == :string)
-              res = res + '"' + v + '"'
-            else
-              res += v
-            end
+            res += json_value(o,v)
           end
           res += ']'
           collector = visit res, collector
@@ -607,12 +623,8 @@ module ArelExtensions
             if i != 0
               res += ', '
             end
-            res += Arel::Nodes.build_quoted('"')+k + '": '
-            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.respond_to?(:return_type) && v.return_type == :string)
-              res = res + '"' + v + '"'
-            else
-              res += v
-            end
+            res += Arel::Nodes.build_quoted('"') + ArelExtensions::Nodes::Cast.new([k, :string]).replace('\\','\\\\').replace('"','\"') + '": '
+            res += json_value(o,v)
           end
           res += '}'
           collector = visit res, collector
@@ -633,12 +645,8 @@ module ArelExtensions
             if i != 0
               res = res + ', '
             end
-            kv = Arel::Nodes.build_quoted('"')+k + '": '
-            if (v.is_a?(Arel::Attributes::Attribute) && o.type_of_attribute(v) == :string) || (v.respond_to?(:return_type) && v.return_type == :string)
-              kv = kv + '"' + v + '"'
-            else
-              kv += v
-            end
+            kv = Arel::Nodes.build_quoted('"') + ArelExtensions::Nodes::Cast.new([k, :string]).replace('\\','\\\\').replace('"','\"') + '": '
+            kv += json_value(o,v)
             res = res + kv.group_concat(', ', order: Array(orders)).coalesce('')
           end
           res = res + '}'

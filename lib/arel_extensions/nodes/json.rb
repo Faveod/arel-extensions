@@ -33,34 +33,49 @@ module ArelExtensions
       def initialize *expr
         @dict =
           if expr.length == 1
-            case exp = expr.first
-            when JsonNode
-              exp.dict
-            when Array
-              exp.map{|e|
-                (e.is_a?(Array) || e.is_a?(Hash)) ? Json.new(e) : convert_to_node(e)
-              }
-            when Hash
-              exp.reduce({}){|acc,v|
-                acc[convert_to_node(v[0])] = (v[1].is_a?(Array) || v[1].is_a?(Hash)) ? Json.new(v[1]) : convert_to_node(v[1])
-                acc
-              }
-            when String, Numeric, TrueClass, FalseClass
-              convert_to_node(exp)
-            when NilClass
-              Arel.sql('null')
-            else
-              if (exp.is_a?(Arel::Attributes::Attribute) && type_of_attribute(exp) == :string) \
-                 || (exp.return_type == :string)
-                convert_to_node(exp)
-              else
-                [convert_to_node(exp)]
-              end
-            end
+            convert_to_json_node(expr.first)
           else
-            expr.map{|e| (e.is_a?(Array) || e.is_a?(Hash)) ? Json.new(e) : convert_to_node(e) }
+            expr.map{|e| convert_to_json_node(e) }
           end
         super
+      end
+
+      def convert_to_json_node(n)
+        case n
+        when JsonNode
+          n.dict
+        when Array
+          n.map{|e|
+             (e.is_a?(Array) || e.is_a?(Hash)) ? Json.new(e) : convert_to_json_node(e)
+          }
+        when Hash
+          n.reduce({}){|acc,v|
+            acc[convert_to_json_node(v[0])] = (v[1].is_a?(Array) || v[1].is_a?(Hash)) ? Json.new(v[1]) : convert_to_json_node(v[1])
+            acc
+          }
+        when String, Numeric, TrueClass, FalseClass
+          convert_to_node(n)
+        when Date
+          convert_to_node(n.strftime("%Y-%m-%d"))
+        when DateTime, Time
+          convert_to_node(n.strftime("%Y-%m-%dT%H:%M:%S.%L%:z"))
+        when NilClass
+          Arel.sql('null')
+        else
+          convert_to_node(n)
+        end
+      end
+
+      def type_of_node(v)
+        if v.is_a?(Arel::Attributes::Attribute)
+          self.type_of_attribute(v)
+        elsif v.respond_to?(:return_type)
+          v.return_type
+        elsif v.nil?
+          :nil
+        else
+          :string
+        end
       end
 
     end
