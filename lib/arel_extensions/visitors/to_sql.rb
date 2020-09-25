@@ -295,6 +295,8 @@ module ArelExtensions
           as_attr = Arel::Nodes::SqlLiteral.new('time')
         when :binary
           as_attr = Arel::Nodes::SqlLiteral.new('binary')
+        when :text, :ntext
+          as_attr = Arel::Nodes::SqlLiteral.new('text')
         else
           as_attr = Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
         end

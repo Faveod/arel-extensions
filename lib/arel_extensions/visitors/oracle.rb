@@ -257,6 +257,16 @@ module ArelExtensions
           collector = visit o.left, collector
           collector << ")"
           return collector
+        when :text
+          collector << "TO_CLOB("
+          collector = visit o.left, collector
+          collector << ")"
+          return collector
+        when :ntext
+          collector << "TO_NCLOB("
+          collector = visit o.left, collector
+          collector << ")"
+          return collector
         when :time
           if (o.left.respond_to?(:return_type) && o.left.return_type == :string) || o.left.is_a?(Arel::Nodes::Quoted)
             collector << "TO_DATE("

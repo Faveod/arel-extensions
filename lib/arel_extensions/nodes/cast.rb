@@ -14,7 +14,10 @@ module ArelExtensions
           @return_type = :decimal
         when :number
           @return_type = :number
-        when 'char', 'varchar', 'text', 'nchar', 'nvarchar', 'ntext'
+        when 'char', 'varchar', 'nchar', 'nvarchar'
+          @return_type = :string
+        when 'text', :text, 'ntext', :ntext
+          @as_attr = expr[1].to_sym
           @return_type = :string
         when :datetime, 'datetime','smalldatetime'
           @return_type = :datetime

@@ -350,6 +350,8 @@ module ArelExtensions
         as_attr = case o.as_attr
         when :string
           Arel::Nodes::SqlLiteral.new('varchar')
+        when :text, :ntext
+          Arel::Nodes::SqlLiteral.new('text')
         when :time
           Arel::Nodes::SqlLiteral.new('time')
         when :int
