@@ -26,7 +26,7 @@ module ArelExtensions
       case other
       when Range
         self.between(other)
-      when Arel::Nodes::Grouping
+      when Arel::Nodes::Grouping, ArelExtensions::Nodes::Union, ArelExtensions::Nodes::UnionAll
         Arel::Nodes::In.new(self, quoted_node(other))
       when Enumerable
         nils, values   = other.partition{ |v| v.nil? }
@@ -54,7 +54,7 @@ module ArelExtensions
       case other
       when Range
         Arel::Nodes::Not.new(self.between(other))
-      when Arel::Nodes::Grouping
+      when Arel::Nodes::Grouping, ArelExtensions::Nodes::Union, ArelExtensions::Nodes::UnionAll
         Arel::Nodes::NotIn.new(self, quoted_node(other))
       when Enumerable
         nils, values   = other.partition{ |v| v.nil? }
