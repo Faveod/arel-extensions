@@ -129,6 +129,8 @@ matrix:
     jdk: openjdk11
   - rvm: 2.7.1
     gemfile: gemfiles/rails4.gemfile
+  - rvm : jruby-9.0.5.0
+    gemfile: gemfiles/rails4.gemfile
   - rvm : jruby-9.2.11.1
     gemfile: gemfiles/rails4.gemfile
   - rvm: 2.0.0
