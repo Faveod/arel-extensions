@@ -447,9 +447,9 @@ module ArelExtensions
         collector
       end
 
-      # JSON if implemented only after 10.2.3 in MariaDb and 5.7 in MySql
+      # JSON if implemented only after 10.2.3 (aggregations after 10.5.0) in MariaDb and 5.7 (aggregations after 5.7.22) in MySql
       def json_supported?
-        version_supported?('10.2.3', '5.7.0')
+        version_supported?('10.5.0', '5.7.22')
       end
 
       def window_supported?
