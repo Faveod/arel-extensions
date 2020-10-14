@@ -63,8 +63,28 @@ class Arel::Nodes::Or
     @children = children
   end
 
+  def initialize_copy(other)
+    super
+    @children = other.children.copy if other.children
+  end
+
+
+  def left
+    children.first
+  end
+
+  def right
+    children[1]
+  end
+
   def hash
     children.hash
   end
+
+  def eql?(other)
+    self.class == other.class &&
+      children == other.children
+  end
+  alias :== :eql?
 
 end
