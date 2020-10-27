@@ -21,7 +21,7 @@ def setup_db
         db.enable_load_extension(0)
       rescue => e
         $load_extension_disabled = true
-        $stderr << "can not load extensions #{e.inspect}\n"
+        $stderr << "cannot load extensions #{e.inspect}\n"
       end
     end
     #function find_in_set
