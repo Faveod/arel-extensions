@@ -356,6 +356,7 @@ module ArelExtensions
         assert_equal '2016-05-23', t(@lucas, @created_at.format('%Y-%m-%d'))
         skip "SQL Server does not accept any format" if @env_db == 'mssql'
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S'))
+        assert_equal '12:42%%', t(@lucas, @updated_at.format('%R%%'))
       end
 
       def test_coalesce
