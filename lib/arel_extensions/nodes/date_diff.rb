@@ -157,11 +157,11 @@ module ArelExtensions
         when Integer
           object.days
         when DateTime, Time, Date
-          raise(ArgumentError, "#{object.class} can not be converted to Integer")
+          raise(ArgumentError, "#{object.class} cannot be converted to Integer")
         when String
           Arel::Nodes.build_quoted(object)
         else
-          raise(ArgumentError, "#{object.class} can not be converted to Integer")
+          raise(ArgumentError, "#{object.class} cannot be converted to Integer")
         end
       end
     end
@@ -183,7 +183,7 @@ module ArelExtensions
           if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === object
             object.to_i
           else
-            raise(ArgumentError, "#{object.class} can not be converted to Number")
+            raise(ArgumentError, "#{object.class} cannot be converted to Number")
           end
         end
       end

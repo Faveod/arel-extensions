@@ -94,7 +94,7 @@ module ArelExtensions
       when ActiveSupport::Duration
         object.to_i
       else
-        raise(ArgumentError, "#{object.class} can not be converted to CONCAT arg")
+        raise(ArgumentError, "#{object.class} cannot be converted to CONCAT arg")
       end
     end
   end

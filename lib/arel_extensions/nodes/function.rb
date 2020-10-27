@@ -74,7 +74,7 @@ module ArelExtensions
         when Array
           Arel::Nodes::Grouping.new(object.map{|r| convert_to_node(e)})
         else
-          raise(ArgumentError, "#{object.class} can not be converted to CONCAT arg")
+          raise(ArgumentError, "#{object.class} cannot be converted to CONCAT arg")
         end
       end
 
@@ -106,7 +106,7 @@ module ArelExtensions
         when ActiveSupport::Duration
           Arel::Nodes.build_quoted(object.to_i.to_s)
         else
-          raise(ArgumentError, "#{object.class} can not be converted to CONCAT arg")
+          raise(ArgumentError, "#{object.class} cannot be converted to CONCAT arg")
         end
       end
 
@@ -121,7 +121,7 @@ module ArelExtensions
         when Date
           Arel::Nodes.build_quoted(object, self)
         else
-          raise(ArgumentError, "#{object.class} can not be converted to Date")
+          raise(ArgumentError, "#{object.class} cannot be converted to Date")
         end
       end
 
@@ -136,7 +136,7 @@ module ArelExtensions
         when Date
           Arel::Nodes.build_quoted(Time.utc(object.year, object.month, object.day, 0, 0, 0), self)
         else
-          raise(ArgumentError, "#{object.class} can not be converted to Datetime")
+          raise(ArgumentError, "#{object.class} cannot be converted to Datetime")
         end
       end
 
@@ -154,7 +154,7 @@ module ArelExtensions
         when NilClass
           0
         else
-          raise(ArgumentError, "#{object.class} can not be converted to NUMBER arg")
+          raise(ArgumentError, "#{object.class} cannot be converted to NUMBER arg")
         end
       end
 
