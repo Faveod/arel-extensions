@@ -1,14 +1,24 @@
 module ArelExtensions
   module Visitors
     class Arel::Visitors::PostgreSQL
-      Arel::Visitors::PostgreSQL::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'DOW', 'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'}
+
+      Arel::Visitors::PostgreSQL::DATE_MAPPING = {
+        'd' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'DOW',
+        'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'
+      }.freeze
+
       Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES = {
-        '%Y' => 'IYYY', '%C' => 'CC', '%y' => 'YY', '%m' => 'MM', '%B' => 'Month', '%^B' => 'MONTH', '%b' => 'Mon', '%^b' => 'MON',
+        '%Y' => 'IYYY', '%C' => 'CC', '%y' => 'YY',
+        '%m' => 'MM', '%B' => 'Month', '%^B' => 'MONTH', '%b' => 'Mon', '%^b' => 'MON',
         '%d' => 'DD', '%e' => 'FMDD', '%j' => 'DDD', '%w' => '', '%A' => 'Day', # day, weekday
         '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM', # hours
-        '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz' # seconds, subseconds
-      }
-      Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING = { 'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', ' }
+        '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz', # seconds, subseconds
+        '%%' => '%',
+      }.freeze
+
+      Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING = {
+        'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', '
+      }.freeze
 
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "RANDOM("
@@ -162,8 +172,25 @@ module ArelExtensions
         collector = visit o.left, collector
         collector << Arel::Visitors::PostgreSQL::COMMA
 
-        f = o.iso_format.dup
-        Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
+        o.iso_format.dup
+
+        s = StringScanner.new o.iso_format
+        f = StringIO.new
+        while !s.eos?
+          f <<
+            case
+            when s.scan(/%./)
+              if v = Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES[s.matched]
+                v
+              else
+                s.matched
+              end
+            when s.scan(/[^%]+/)
+              s.matched
+            when s.scan(/./)
+              s.matched
+            end
+        end
         collector = visit Arel::Nodes.build_quoted(f), collector
 
         collector << ")"
@@ -308,7 +335,7 @@ module ArelExtensions
         visit o.left, collector
         collector << Arel::Visitors::ToSql::COMMA
         tab = o.pattern.inspect+ 'g' # Make it always global
-        pattern = tab.split('/')[1..-2].join('/') 
+        pattern = tab.split('/')[1..-2].join('/')
         flags = tab.split('/')[-1]
         visit Arel::Nodes.build_quoted(pattern), collector
         collector << Arel::Visitors::ToSql::COMMA
