@@ -16,6 +16,14 @@ module ArelExtensions
         '%%' => '%',
       }.freeze
 
+      DATE_FORMAT_REGEX =
+        Regexp.new(
+          Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES
+            .keys
+            .map{|k| Regexp.escape(k)}
+            .join('|')
+        )
+
       Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING = {
         'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', '
       }.freeze
@@ -179,10 +187,11 @@ module ArelExtensions
         while !s.eos?
           f <<
             case
-            when s.scan(/%./)
+            when s.scan(DATE_FORMAT_REGEX)
               if v = Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES[s.matched]
                 v
               else
+                # Should never happen.
                 s.matched
               end
             when s.scan(/[^%]+/)
@@ -191,7 +200,7 @@ module ArelExtensions
               s.matched
             end
         end
-        collector = visit Arel::Nodes.build_quoted(f), collector
+        collector = visit Arel::Nodes.build_quoted(f.string), collector
 
         collector << ")"
         collector
