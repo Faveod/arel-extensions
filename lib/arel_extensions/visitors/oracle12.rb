@@ -84,7 +84,7 @@ module ArelExtensions
             collector << 'FORMAT JSON'
           end
           collector << ')'
-        when String,Numeric,TrueClass,FalseClass
+        when String, Numeric, TrueClass, FalseClass
           collector = visit Arel::Nodes.build_quoted("#{o.dict}"), collector
           collector << ' FORMAT JSON'
         when NilClass
