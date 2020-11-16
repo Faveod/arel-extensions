@@ -447,14 +447,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
+        fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
         collector << "TO_CHAR("
         collector = visit o.left, collector
         collector << COMMA
-
-        f = o.iso_format.gsub(/\ (\w+)/, ' "\1"')
-        DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
-        collector = visit Arel::Nodes.build_quoted(f), collector
-
+        collector = visit Arel::Nodes.build_quoted(fmt), collector
         collector << ")"
         collector
       end
