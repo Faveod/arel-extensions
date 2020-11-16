@@ -7,7 +7,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Abs o, collector
         collector << "ABS("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -17,7 +17,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Ceil o, collector
         collector << "CEIL("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -27,7 +27,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Floor o, collector
         collector << "FLOOR("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -37,7 +37,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "RAND("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -47,7 +47,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Round o, collector
         collector << "ROUND("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -64,7 +64,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Power o, collector
         collector << "POW("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -82,7 +82,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
       o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -126,7 +126,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Substring o, collector
         collector << "SUBSTRING("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -158,7 +158,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Repeat o, collector
         collector << "REPEAT("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -168,7 +168,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_FindInSet o, collector
         collector << "FIND_IN_SET("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -178,7 +178,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Soundex o, collector
         collector << "SOUNDEX("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -188,7 +188,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Downcase o, collector
         collector << "LOWER("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -198,7 +198,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Upcase o, collector
         collector << "UPPER("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -208,7 +208,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Trim o, collector
         collector << "TRIM("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -218,7 +218,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Ltrim o, collector
         collector << "LTRIM("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -228,7 +228,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Rtrim o, collector
         collector << "RTRIM("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -308,7 +308,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Coalesce o, collector
         collector << "COALESCE("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"

@@ -42,7 +42,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Power o, collector
         collector << "POWER("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -52,7 +52,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Log10 o, collector
         collector << "LOG("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -107,14 +107,14 @@ module ArelExtensions
           if !o.group.blank?
             collector << " PARTITION BY "
             o.group.each_with_index do |group, i|
-              collector << COMMA unless i == 0
+              collector << COMMA if i != 0
               visit group, collector
             end
           end
           if !o.order.blank?
             collector << " ORDER BY "
             o.order.each_with_index do |order, i|
-              collector << COMMA unless i == 0
+              collector << COMMA if i != 0
               visit order, collector
             end
           end
@@ -129,7 +129,7 @@ module ArelExtensions
         if o.order && !o.order.blank?
           collector << " ORDER BY"
           o.order.each_with_index do |order, i|
-            collector << COMMA unless i == 0
+            collector << COMMA if i != 0
             collector << " "
             visit order, collector
           end
@@ -209,7 +209,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Repeat o, collector
         collector << "REPEAT("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -332,7 +332,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Substring o, collector
         collector << "SUBSTR("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"

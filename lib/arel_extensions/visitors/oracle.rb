@@ -16,7 +16,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Log10 o, collector
           collector << "LOG("
           o.expressions.each_with_index { |arg, i|
-            collector << Arel::Visitors::ToSql::COMMA unless i == 0
+            collector << Arel::Visitors::ToSql::COMMA if i != 0
             collector = visit arg, collector
           }
           collector << ",10)"
@@ -26,7 +26,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Power o, collector
             collector << "POWER("
             o.expressions.each_with_index { |arg, i|
-              collector << Arel::Visitors::ToSql::COMMA unless i == 0
+              collector << Arel::Visitors::ToSql::COMMA if i != 0
               collector = visit arg, collector
             }
             collector << ")"
@@ -140,7 +140,7 @@ module ArelExtensions
         collector << ") WITHIN GROUP (ORDER BY "
         if !o.order.blank?
           o.order.each_with_index do |order,i|
-            collector << COMMA unless i == 0
+            collector << COMMA if i != 0
             collector = visit order, collector
           end
         else
@@ -153,7 +153,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Coalesce o, collector
         collector << "COALESCE("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           if i > 0 && o.left_node_type == :text
             if arg == '' || (arg.is_a?(Arel::Nodes::Quoted) && (arg.expr == ''))
               collector << "NULL"
@@ -360,7 +360,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "INSTR("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -370,7 +370,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Substring o, collector
         collector << "SUBSTR("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"

@@ -32,7 +32,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Log10 o, collector
           collector << "LOG10("
           o.expressions.each_with_index { |arg, i|
-            collector << Arel::Visitors::ToSql::COMMA unless i == 0
+            collector << Arel::Visitors::ToSql::COMMA if i != 0
             collector = visit arg, collector
           }
           collector << ")"
@@ -42,7 +42,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Power o, collector
         collector << "POWER("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -66,7 +66,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MSSQL::COMMA unless i == 0
+          collector << Arel::Visitors::MSSQL::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -76,7 +76,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Repeat o, collector
         collector << "REPLICATE("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -151,7 +151,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Round o, collector
         collector << "ROUND("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MSSQL::COMMA unless i == 0
+          collector << Arel::Visitors::MSSQL::COMMA if i != 0
           collector = visit arg, collector
         }
         if o.expressions.length == 1
@@ -286,7 +286,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Replace o, collector
         collector << "REPLACE("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MSSQL::COMMA unless i == 0
+          collector << Arel::Visitors::MSSQL::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -296,7 +296,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_FindInSet o, collector
         collector << "dbo.FIND_IN_SET("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MSSQL::COMMA unless i == 0
+          collector << Arel::Visitors::MSSQL::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -409,7 +409,7 @@ module ArelExtensions
         collector << ") WITHIN GROUP (ORDER BY "
         if o.order.present?
           o.order.each_with_index do |order,i|
-            collector << Arel::Visitors::Oracle::COMMA unless i == 0
+            collector << Arel::Visitors::Oracle::COMMA if i != 0
             collector = visit order, collector
           end
         else

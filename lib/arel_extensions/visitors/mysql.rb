@@ -19,7 +19,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Log10 o, collector
           collector << "LOG10("
           o.expressions.each_with_index { |arg, i|
-            collector << Arel::Visitors::ToSql::COMMA unless i == 0
+            collector << Arel::Visitors::ToSql::COMMA if i != 0
             collector = visit arg, collector
           }
           collector << ")"
@@ -29,7 +29,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Power o, collector
         collector << "POW("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -130,7 +130,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           if (arg.is_a?(Numeric)) || (arg.is_a?(Arel::Attributes::Attribute))
             collector << "CAST("
             collector = visit arg, collector
@@ -149,7 +149,7 @@ module ArelExtensions
         if !o.order.blank?
           collector << ' ORDER BY '
           o.order.each_with_index do |order,i|
-            collector << Arel::Visitors::ToSql::COMMA unless i == 0
+            collector << Arel::Visitors::ToSql::COMMA if i != 0
             collector = visit order, collector
           end
         end
@@ -191,7 +191,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Repeat o, collector
         collector << "REPEAT("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA unless i == 0
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"

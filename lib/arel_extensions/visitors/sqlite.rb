@@ -142,7 +142,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Substring o, collector
         collector << "SUBSTR("
         o.expressions.each_with_index { |arg, i|
-          collector << COMMA unless i == 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ")"
