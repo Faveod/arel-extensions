@@ -230,12 +230,13 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        if o.right_node_type == :ruby_date || o.right_node_type == :ruby_time || o.right_node_type == :date || o.right_node_type == :datetime || o.right_node_type == :time
-          collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-                        'TIMESTAMPDIFF(SECOND, '
-                      else
-                        'DATEDIFF('
-                      end
+        case o.right_node_type
+        when :ruby_date, :ruby_time, :date, :datetime, :time
+          collector <<
+            case o.left_node_type
+            when :ruby_time, :datetime, :time then 'TIMESTAMPDIFF(SECOND, '
+            else                                   'DATEDIFF('
+            end
           collector = visit o.right, collector
           collector << COMMA
           collector = visit o.left, collector
@@ -321,24 +322,19 @@ module ArelExtensions
         collector << "CAST("
         collector = visit o.left, collector
         collector << " AS "
-        case o.as_attr
-        when :string
-          as_attr = Arel::Nodes::SqlLiteral.new('char')
-        when :time
-          as_attr = Arel::Nodes::SqlLiteral.new('time')
-        when :int
-          as_attr = Arel::Nodes::SqlLiteral.new('signed')
-        when :number, :decimal
-          as_attr = Arel::Nodes::SqlLiteral.new('decimal(20,6)')
-        when :datetime
-          as_attr = Arel::Nodes::SqlLiteral.new('datetime')
-        when :date
-          as_attr = Arel::Nodes::SqlLiteral.new('date')
-        when :binary
-          as_attr = Arel::Nodes::SqlLiteral.new('binary')
-        else
-          as_attr = Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
-        end
+        as_attr =
+          Arel::Nodes::SqlLiteral.new(
+            case o.as_attr
+            when :string           then 'char'
+            when :time             then 'time'
+            when :int              then 'signed'
+            when :number, :decimal then 'decimal(20,6)'
+            when :datetime         then 'datetime'
+            when :date             then 'date'
+            when :binary           then 'binary'
+            else                        o.as_attr.to_s
+            end
+          )
         collector = visit as_attr, collector
         collector << ")"
         collector
