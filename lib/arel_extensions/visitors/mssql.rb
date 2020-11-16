@@ -90,12 +90,12 @@ module ArelExtensions
 
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        if o.right_node_type == :ruby_date || o.right_node_type == :ruby_time || o.right_node_type == :date || o.right_node_type == :datetime || o.right_node_type == :time
-          collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-                          'DATEDIFF(second'
-                      else
-                        'DATEDIFF(day'
-                      end
+        case o.right_node_type
+        when :ruby_date, :ruby_time, :date, :datetime, :time
+          collector << case o.left_node_type
+                       when :ruby_time, :datetime, :time then 'DATEDIFF(second'
+                       else                                   'DATEDIFF(day'
+                       end
           collector << Arel::Visitors::MSSQL::COMMA
           collector = visit o.right, collector
           collector << Arel::Visitors::MSSQL::COMMA
