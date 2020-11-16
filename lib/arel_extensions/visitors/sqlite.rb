@@ -1,14 +1,21 @@
 module ArelExtensions
   module Visitors
     class Arel::Visitors::SQLite
-      DATE_MAPPING = {'d' => '%d', 'm' => '%m', 'w' => '%W', 'y' => '%Y', 'wd' => '%w', 'M' => '%M', 'h' => '%H', 'mn' => '%M', 's' => '%S'}
+      DATE_MAPPING = {
+        'd' => '%d', 'm' => '%m', 'w' => '%W', 'y' => '%Y', 'wd' => '%w', 'M' => '%M',
+        'h' => '%H', 'mn' => '%M', 's' => '%S'
+      }.freeze
+
       DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
         '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b', # year, month
         '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W', # day, weekday
         '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p', # hours
         '%M' => '%M', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => '' # seconds, subseconds
-      }
-      NUMBER_COMMA_MAPPING = { 'fr_FR' => {',' => ' ','.' =>','} }
+      }.freeze
+
+      NUMBER_COMMA_MAPPING = {
+        'fr_FR' => {',' => ' ', '.' =>','}
+      }.freeze
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
@@ -97,7 +104,8 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+        case o.left_node_type
+        when :ruby_time, :datetime, :time
           collector << "strftime('%s', "
           collector = visit o.left, collector
           collector << ") - strftime('%s', "
