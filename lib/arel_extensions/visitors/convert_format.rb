@@ -1,6 +1,5 @@
 module ArelExtensions
   module Visitors
-
     # Convert date format in strftime syntax to whatever the RDBMs
     # wants, based on the table of conversion +mapping+.
     def self.strftime_to_format format, mapping

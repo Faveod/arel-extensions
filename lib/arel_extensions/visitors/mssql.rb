@@ -12,6 +12,14 @@ module ArelExtensions
         '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
       }.freeze
 
+      Arel::Visitors::MSSQL::DATE_FORMAT_REGEX =
+        Regexp.new(
+          Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES
+            .keys
+            .map{|k| Regexp.escape(k)}
+            .join('|')
+        ).freeze
+
       # TODO; all others... http://www.sql-server-helper.com/tips/date-formats.aspx
       Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS = {
         'YYYY-MM-DD' => 120,
@@ -246,42 +254,34 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
-        f = o.iso_format.dup
-        Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
-        if Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[f]
+        f = ArelExtensions::Visitors::strftime_to_format(o.iso_format, Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES)
+        if fmt = Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[f]
           collector << "CONVERT(VARCHAR(#{f.length})"
           collector << Arel::Visitors::MSSQL::COMMA
           collector = visit o.left, collector
           collector << Arel::Visitors::MSSQL::COMMA
-          collector << Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS[f].to_s
+          collector << fmt.to_s
           collector << ')'
           collector
         else
+          s = StringScanner.new o.iso_format
           collector << "("
-          t = o.iso_format.split('%')
-          t.each_with_index {|str, i|
-            if i == 0 && t[0] != '%'
-              collector = visit Arel::Nodes.build_quoted(str), collector
-              if str.length > 1
-                collector << Arel::Visitors::MSSQL::COMMA
-                collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
-              end
-            elsif str.length > 0
-              if !Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]].blank?
-                collector << 'LTRIM(STR(DATEPART('
-                collector << Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES['%' + str[0]]
-                collector << Arel::Visitors::MSSQL::COMMA
-                collector = visit o.left, collector
-                collector << ')))'
-                if str.length > 1
-                  collector << ' + '
-                  collector = visit Arel::Nodes.build_quoted(str.sub(/\A./, '')), collector
-                end
-              end
+          sep = ''
+          while !s.eos?
+            collector << sep
+            sep = ' + '
+            case
+            when s.scan(Arel::Visitors::MSSQL::DATE_FORMAT_REGEX)
+              dir = Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES[s.matched]
+              collector << 'LTRIM(STR(DATEPART('
+              collector << dir
+              collector << Arel::Visitors::MSSQL::COMMA
+              collector = visit o.left, collector
+              collector << ')))'
+            when s.scan(/[^%]+|./)
+              collector = visit Arel::Nodes.build_quoted(s.matched), collector
             end
-            collector << ' + ' if t[i + 1]
-          }
-
+          end
           collector << ')'
           collector
         end
