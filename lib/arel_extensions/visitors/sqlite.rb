@@ -1,14 +1,14 @@
 module ArelExtensions
   module Visitors
     class Arel::Visitors::SQLite
-      Arel::Visitors::SQLite::DATE_MAPPING = {'d' => '%d', 'm' => '%m', 'w' => '%W', 'y' => '%Y', 'wd' => '%w', 'M' => '%M', 'h' => '%H', 'mn' => '%M', 's' => '%S'}
-      Arel::Visitors::SQLite::DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
+      DATE_MAPPING = {'d' => '%d', 'm' => '%m', 'w' => '%W', 'y' => '%Y', 'wd' => '%w', 'M' => '%M', 'h' => '%H', 'mn' => '%M', 's' => '%S'}
+      DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
         '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b', # year, month
         '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W', # day, weekday
         '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p', # hours
         '%M' => '%M', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => '' # seconds, subseconds
       }
-      Arel::Visitors::SQLite::NUMBER_COMMA_MAPPING = { 'fr_FR' => {',' => ' ','.' =>','} }
+      NUMBER_COMMA_MAPPING = { 'fr_FR' => {',' => ' ','.' =>','} }
 
       #String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
@@ -90,7 +90,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << "date("
         collector = visit o.expressions.first, collector
-        collector << Arel::Visitors::SQLite::COMMA
+        collector << COMMA
         collector = visit o.sqlite_value, collector
         collector << ")"
         collector
@@ -113,7 +113,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Duration o, collector
-        collector << "strftime('#{Arel::Visitors::SQLite::DATE_MAPPING[o.left]}'#{Arel::Visitors::SQLite::COMMA}"
+        collector << "strftime('#{DATE_MAPPING[o.left]}'#{COMMA}"
         collector = visit o.right, collector
         collector << ")"
         collector
@@ -123,7 +123,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "instr("
         collector = visit o.expr, collector
-        collector << Arel::Visitors::SQLite::COMMA
+        collector << COMMA
         collector = visit o.right, collector
         collector << ")"
         collector
@@ -142,7 +142,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Substring o, collector
         collector << "SUBSTR("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::SQLite::COMMA unless i == 0
+          collector << COMMA unless i == 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -165,7 +165,7 @@ module ArelExtensions
         collector << "RANDOM("
         if o.left != nil && o.right != nil
           collector = visit o.left, collector
-          collector << Arel::Visitors::SQLite::COMMA
+          collector << COMMA
           collector = visit o.right, collector
         end
         collector << ")"
@@ -247,7 +247,7 @@ module ArelExtensions
                     collector << quote(attr.name)
                   end
                 end
-                collector << Arel::Visitors::SQLite::COMMA unless i == len
+                collector << COMMA unless i == len
             }
             collector << ' UNION ALL ' unless idx == o.left.length - 1
           end
@@ -275,7 +275,7 @@ module ArelExtensions
                     collector << quote(attr.name)
                   end
                 end
-                collector << Arel::Visitors::SQLite::COMMA unless i == len
+                collector << COMMA unless i == len
             }
             collector << ' UNION ALL ' unless idx == o.left.length - 1
           end
@@ -381,7 +381,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
         format = Arel::Nodes::NamedFunction.new('printf',[Arel::Nodes.build_quoted(o.original_string),o.left])
-        locale_map = Arel::Visitors::SQLite::NUMBER_COMMA_MAPPING[o.locale]
+        locale_map = NUMBER_COMMA_MAPPING[o.locale]
         if locale_map
           format = format.replace(',',locale_map[',']).replace('.',locale_map['.'])
         end

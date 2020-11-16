@@ -1,8 +1,13 @@
 module ArelExtensions
   module Visitors
     class Arel::Visitors::MySQL
-      Arel::Visitors::MySQL::DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'WEEKDAY', 'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'}
-      Arel::Visitors::MySQL::DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
+
+      DATE_MAPPING = {
+        'd' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'WEEKDAY',
+        'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'
+      }
+
+      DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
         '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b',  # year, month
         '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W',                               # day, weekday
         '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p',                 # hours
@@ -125,7 +130,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::MySQL::COMMA unless i == 0
+          collector << COMMA unless i == 0
           if (arg.is_a?(Numeric)) || (arg.is_a?(Arel::Attributes::Attribute))
             collector << "CAST("
             collector = visit arg, collector
@@ -205,9 +210,9 @@ module ArelExtensions
         when :date, :datetime
           collector << "DATE_FORMAT("
           collector = visit o.left, collector
-          collector << Arel::Visitors::MySQL::COMMA
+          collector << COMMA
           f = o.iso_format.dup
-          Arel::Visitors::MySQL::DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
+          DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
           collector = visit Arel::Nodes.build_quoted(f), collector
           collector << ")"
         when :integer, :float, :decimal
@@ -232,7 +237,7 @@ module ArelExtensions
                         'DATEDIFF('
                       end
           collector = visit o.right, collector
-          collector << Arel::Visitors::MySQL::COMMA
+          collector << COMMA
           collector = visit o.left, collector
           collector << ")"
         else
@@ -256,7 +261,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << "DATE_ADD("
         collector = visit o.left, collector
-        collector << Arel::Visitors::MySQL::COMMA
+        collector << COMMA
         collector = visit o.mysql_value(o.right), collector
         collector << ")"
         collector
@@ -276,13 +281,13 @@ module ArelExtensions
             when 'h','mn','s'
               interval = 'SECOND'
             when /i\z/
-              interval = Arel::Visitors::MySQL::DATE_MAPPING[o.left[0..-2]]
+              interval = DATE_MAPPING[o.left[0..-2]]
             else
               interval = nil
             end
           end
           collector << " INTERVAL " if o.with_interval && interval
-          collector << "#{Arel::Visitors::MySQL::DATE_MAPPING[o.left]}("
+          collector << "#{DATE_MAPPING[o.left]}("
           collector = visit o.right, collector
           collector << ")"
           collector << " #{interval} " if o.with_interval && interval
@@ -481,7 +486,7 @@ module ArelExtensions
           collector << 'JSON_ARRAY('
           o.dict.each.with_index do |v,i|
             if i != 0
-              collector << Arel::Visitors::MySQL::COMMA
+              collector << COMMA
             end
             collector = visit v, collector
           end
@@ -490,10 +495,10 @@ module ArelExtensions
           collector << 'JSON_OBJECT('
           o.dict.each.with_index do |(k,v),i|
             if i != 0
-              collector << Arel::Visitors::MySQL::COMMA
+              collector << COMMA
             end
             collector = visit k, collector
-            collector << Arel::Visitors::MySQL::COMMA
+            collector << COMMA
             collector = visit v, collector
           end
           collector << ')'
@@ -507,7 +512,7 @@ module ArelExtensions
         collector << 'JSON_MERGE_PATCH('
         o.expressions.each.with_index do |v,i|
           if i != 0
-            collector << Arel::Visitors::MySQL::COMMA
+            collector << COMMA
           end
           collector = visit v, collector
         end
@@ -518,7 +523,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_JsonGet o,collector
         collector << 'JSON_EXTRACT('
         collector = visit o.dict, collector
-        collector << Arel::Visitors::MySQL::COMMA
+        collector << COMMA
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
         else
@@ -531,13 +536,13 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_JsonSet o,collector
         collector << 'JSON_SET('
         collector = visit o.dict, collector
-        collector << Arel::Visitors::MySQL::COMMA
+        collector << COMMA
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
         else
           collector = visit Arel::Nodes.build_quoted('$.')+o.key, collector
         end
-        collector << Arel::Visitors::MySQL::COMMA
+        collector << COMMA
         collector = visit o.value, collector
         collector << ')'
         collector
@@ -555,11 +560,11 @@ module ArelExtensions
             collector << 'JSON_MERGE_PATCH(' if o.dict.length > 1
             o.dict.each.with_index do |(k,v),i|
               if i != 0
-                collector << Arel::Visitors::MySQL::COMMA
+                collector << COMMA
               end
               collector << 'JSON_OBJECTAGG('
               collector = visit k, collector
-              collector << Arel::Visitors::MySQL::COMMA
+              collector << COMMA
               collector = visit v, collector
               collector << ')'
             end

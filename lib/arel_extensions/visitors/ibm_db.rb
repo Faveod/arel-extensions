@@ -12,7 +12,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Trim o, collector
         collector << "LTRIM(RTRIM("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::IBM_DB::COMMA unless i == 0
+          collector << COMMA unless i == 0
           collector = visit arg, collector
         }
         collector << "))"

@@ -2,12 +2,12 @@ module ArelExtensions
   module Visitors
     class Arel::Visitors::PostgreSQL
 
-      Arel::Visitors::PostgreSQL::DATE_MAPPING = {
+      DATE_MAPPING = {
         'd' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'DOW',
         'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'
       }.freeze
 
-      Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES = {
+      DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'IYYY', '%C' => 'CC', '%y' => 'YY',
         '%m' => 'MM', '%B' => 'Month', '%^B' => 'MONTH', '%b' => 'Mon', '%^b' => 'MON',
         '%d' => 'DD', '%e' => 'FMDD', '%j' => 'DDD', '%w' => '', '%A' => 'Day', # day, weekday
@@ -18,13 +18,13 @@ module ArelExtensions
 
       DATE_FORMAT_REGEX =
         Regexp.new(
-          Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES
+          DATE_FORMAT_DIRECTIVES
             .keys
             .map{|k| Regexp.escape(k)}
             .join('|')
         )
 
-      Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING = {
+      NUMBER_COMMA_MAPPING = {
         'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', '
       }.freeze
 
@@ -32,7 +32,7 @@ module ArelExtensions
         collector << "RANDOM("
         if(o.left != nil && o.right != nil)
           collector = visit o.left, collector
-          collector << Arel::Visitors::PostgreSQL::COMMA
+          collector << COMMA
           collector = isit o.right, collector
         end
         collector << ")"
@@ -107,14 +107,14 @@ module ArelExtensions
           if !o.group.blank?
             collector << " PARTITION BY "
             o.group.each_with_index do |group, i|
-              collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
+              collector << COMMA unless i == 0
               visit group, collector
             end
           end
           if !o.order.blank?
             collector << " ORDER BY "
             o.order.each_with_index do |order, i|
-              collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
+              collector << COMMA unless i == 0
               visit order, collector
             end
           end
@@ -129,7 +129,7 @@ module ArelExtensions
         if o.order && !o.order.blank?
           collector << " ORDER BY"
           o.order.each_with_index do |order, i|
-            collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
+            collector << COMMA unless i == 0
             collector << " "
             visit order, collector
           end
@@ -137,7 +137,7 @@ module ArelExtensions
         collector << ")"
         o.order = nil
         visit_Aggregate_For_AggregateFunction o, collector
-        collector << Arel::Visitors::PostgreSQL::COMMA
+        collector << COMMA
         collector =
           if o.separator && o.separator != 'NULL'
             visit o.separator, collector
@@ -178,7 +178,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Format o, collector
         collector << "TO_CHAR("
         collector = visit o.left, collector
-        collector << Arel::Visitors::PostgreSQL::COMMA
+        collector << COMMA
 
         o.iso_format.dup
 
@@ -188,7 +188,7 @@ module ArelExtensions
           f <<
             case
             when s.scan(DATE_FORMAT_REGEX)
-              if v = Arel::Visitors::PostgreSQL::DATE_FORMAT_DIRECTIVES[s.matched]
+              if v = DATE_FORMAT_DIRECTIVES[s.matched]
                 v
               else
                 # Should never happen.
@@ -281,7 +281,7 @@ module ArelExtensions
                       end
           collector = visit o.right, collector
           collector << (o.right_node_type == :date ? '::date' : '::timestamp')
-          collector << Arel::Visitors::PostgreSQL::COMMA
+          collector << COMMA
           collector = visit o.left, collector
           collector << (o.left_node_type == :date ? '::date' : '::timestamp')
           collector << ")"
@@ -309,11 +309,11 @@ module ArelExtensions
               collector << "("
               collector = visit o.right, collector
               collector << ")"
-              collector << " * (INTERVAL '1' #{Arel::Visitors::PostgreSQL::DATE_MAPPING[o.left[0..-2]]})"
+              collector << " * (INTERVAL '1' #{DATE_MAPPING[o.left[0..-2]]})"
               return collector
             end
         end
-        collector << "EXTRACT(#{Arel::Visitors::PostgreSQL::DATE_MAPPING[o.left]} FROM "
+        collector << "EXTRACT(#{DATE_MAPPING[o.left]} FROM "
         collector = visit o.right, collector
         collector << ")"
         collector << " * (INTERVAL '1' #{interval})" if interval && o.with_interval
@@ -332,7 +332,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Substring o, collector
         collector << "SUBSTR("
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::PostgreSQL::COMMA unless i == 0
+          collector << COMMA unless i == 0
           collector = visit arg, collector
         }
         collector << ")"
@@ -416,8 +416,8 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
         col = o.left.coalesce(0)
-        comma = o.precision == 0 ? '' : (Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale][0] || '.')
-        thousand_separator = Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale][1] || (Arel::Visitors::PostgreSQL::NUMBER_COMMA_MAPPING[o.locale] ? '' : 'G')
+        comma = o.precision == 0 ? '' : (NUMBER_COMMA_MAPPING[o.locale][0] || '.')
+        thousand_separator = NUMBER_COMMA_MAPPING[o.locale][1] || (NUMBER_COMMA_MAPPING[o.locale] ? '' : 'G')
         nines_after = (1..o.precision).map{'9'}.join('')
         nines_before = ("999#{thousand_separator}"*4+"990")
 
