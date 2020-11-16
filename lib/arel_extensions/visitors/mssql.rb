@@ -1,13 +1,17 @@
 module ArelExtensions
   module Visitors
     module MSSQL
-      Arel::Visitors::MSSQL::DATE_MAPPING = {'d' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'weekday', 'w' => 'week', 'h' => 'hour', 'mn' => 'minute', 's' => 'second'}
+      Arel::Visitors::MSSQL::DATE_MAPPING = {
+        'd' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'weekday', 'w' => 'week', 'h' => 'hour', 'mn' => 'minute', 's' => 'second'
+      }.freeze
+
       Arel::Visitors::MSSQL::DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' =>   '', '%b' => '', '%^b' => '', # year, month
         '%d' => 'DD', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '', # day, weekday
         '%H' => 'hh', '%k' => '', '%I' =>   '', '%l' =>   '', '%P' => '', '%p' => '', # hours
         '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
-      }
+      }.freeze
+
       # TODO; all others... http://www.sql-server-helper.com/tips/date-formats.aspx
       Arel::Visitors::MSSQL::DATE_CONVERT_FORMATS = {
         'YYYY-MM-DD' => 120,
@@ -19,7 +23,7 @@ module ArelExtensions
         'DD-MM-YY'   => 5,
         'DD.MM.YYYY' => 104,
         'YYYY-MM-DDTHH:MM:SS:MMM' => 126
-      }
+      }.freeze
 
       # Math Functions
       def visit_ArelExtensions_Nodes_Ceil o, collector
