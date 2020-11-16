@@ -11,7 +11,6 @@ require 'arel_extensions/nodes/sum'
 
 module ArelExtensions
   module MathFunctions
-
     # Arel does not handle Decimal literal properly
     def * other
       case other
@@ -47,7 +46,7 @@ module ArelExtensions
         ArelExtensions::Nodes::Floor.new [self]
     end
 
-     # function gives the base 10 log
+    # function gives the base 10 log
     def log10
         ArelExtensions::Nodes::Log10.new [self]
     end
@@ -75,13 +74,13 @@ module ArelExtensions
       ArelExtensions::Nodes::Sum.new self, opts
     end
 
-    #function that can be invoked to produce random numbers between 0 and 1
-#    def rand seed = nil
-#        ArelExtensions::Nodes::Rand.new [seed]
-#    end
+    # function that can be invoked to produce random numbers between 0 and 1
+    #    def rand seed = nil
+    #        ArelExtensions::Nodes::Rand.new [seed]
+    #    end
     alias_method :random, :rand
 
-    #function is used to round a numeric field to the number of decimals specified
+    # function is used to round a numeric field to the number of decimals specified
     def round precision = nil
         if precision
             ArelExtensions::Nodes::Round.new [self, precision]
@@ -111,6 +110,5 @@ module ArelExtensions
         Arel::Nodes.build_quoted('Wrong Format')
       end
     end
-
   end
 end

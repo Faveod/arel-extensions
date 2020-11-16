@@ -1,7 +1,6 @@
 module ArelExtensions
   module Nodes
     class UnionAll < Arel::Nodes::UnionAll
-
       def initialize left,right
         return super(left,right)
       end
@@ -14,6 +13,5 @@ module ArelExtensions
         Arel::Nodes::TableAlias.new Arel::Nodes::Grouping.new(self), Arel::Nodes::SqlLiteral.new(other.to_s)
       end
     end
-
   end
 end

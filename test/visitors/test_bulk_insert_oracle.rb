@@ -29,7 +29,6 @@ module ArelExtensions
           .must_be_like %Q[INSERT INTO "users" ("name", "comments", "created_at")
                         ((SELECT 'nom1', 'sdfdsfdsfsdf', '2016-01-01' FROM DUAL) UNION ALL (SELECT 'nom2', 'sdfdsfdsfsdf', '2016-01-01' FROM DUAL))]
       end
-
     end
   end
 end

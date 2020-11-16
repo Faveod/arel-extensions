@@ -1,4 +1,4 @@
-require 'arel_extensions/nodes/concat' #if Arel::VERSION.to_i < 7
+require 'arel_extensions/nodes/concat' # if Arel::VERSION.to_i < 7
 require 'arel_extensions/nodes/length'
 require 'arel_extensions/nodes/locate'
 require 'arel_extensions/nodes/substring'
@@ -19,19 +19,18 @@ require 'arel_extensions/nodes/md5'
 
 module ArelExtensions
   module StringFunctions
-
-    #*FindInSet function .......
+    # *FindInSet function .......
     def &(other)
       ArelExtensions::Nodes::FindInSet.new [other, self]
     end
 
-    #LENGTH function returns the length of the value in a text field.
+    # LENGTH function returns the length of the value in a text field.
     def length
       ArelExtensions::Nodes::Length.new [self]
     end
 
-    #LOCATE function returns the first starting position of a string in another string.
-    #If string1 or string2 is NULL then it returns NULL. If string1 not found in string2 then it returns 0.
+    # LOCATE function returns the first starting position of a string in another string.
+    # If string1 or string2 is NULL then it returns NULL. If string1 not found in string2 then it returns 0.
     def locate val
       ArelExtensions::Nodes::Locate.new [self, val]
     end
@@ -51,7 +50,7 @@ module ArelExtensions
       end
     end
 
-    #SOUNDEX function returns a character string containing the phonetic representation of char.
+    # SOUNDEX function returns a character string containing the phonetic representation of char.
     def soundex
       ArelExtensions::Nodes::Soundex.new [self]
     end
@@ -64,18 +63,18 @@ module ArelExtensions
       grouping_any :imatches, others, escape
     end
 
-#    def grouping_any method, others, *extra
-#      puts "*******************"
-#      puts method
-#      puts others.inspect
-#      puts extra.inspect
-#      puts "-------------------"
-#      res = super(method,others,*extra)
-#      puts res.to_sql
-#      puts res.inspect
-#      puts "*******************"
-#      res
-#    end
+    #    def grouping_any method, others, *extra
+    #      puts "*******************"
+    #      puts method
+    #      puts others.inspect
+    #      puts extra.inspect
+    #      puts "-------------------"
+    #      res = super(method,others,*extra)
+    #      puts res.to_sql
+    #      puts res.inspect
+    #      puts "*******************"
+    #      res
+    #    end
 
     def imatches_all others, escape = nil
       grouping_all :imatches, others, escape, escape
@@ -117,7 +116,7 @@ module ArelExtensions
       ArelExtensions::Nodes::Collate.new(self,option,ai,ci)
     end
 
-    #REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.
+    # REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.
     def replace pattern, substitute
       if pattern.is_a? Regexp
         ArelExtensions::Nodes::RegexpReplace.new self, pattern, substitute
@@ -134,7 +133,7 @@ module ArelExtensions
       ArelExtensions::Nodes::Concat.new [self, other]
     end
 
-    #concat elements of a group, separated by sep and ordered by a list of Ascending or Descending
+    # concat elements of a group, separated by sep and ordered by a list of Ascending or Descending
     def group_concat(sep = nil, *orders, group: nil, order: nil)
       if orders.present?
         warn("Warning : ArelExtensions: group_concat: you should now use the kwarg 'order' to specify an order in the group_concat.")
@@ -149,7 +148,7 @@ module ArelExtensions
       ArelExtensions::Nodes::GroupConcat.new(self, sep, group: group, order: (order || order_tabs))
     end
 
-    #Function returns a string after removing left, right or the both prefixes or suffixes int argument
+    # Function returns a string after removing left, right or the both prefixes or suffixes int argument
     def trim other = ' '
       ArelExtensions::Nodes::Trim.new [self, other]
     end

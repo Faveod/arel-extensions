@@ -2,9 +2,7 @@ require 'arelx_test_helper'
 
 module ArelExtensions
   module Nodes
-
     describe ArelExtensions::Comparators do
-
       before do
         @conn = FakeRecord::Base.new
         Arel::Table.engine = @conn
@@ -39,8 +37,6 @@ module ArelExtensions
         _(compile(@table[:created_at] >= Date.new(2016, 3, 31)))
           .must_be_like %{"users"."created_at" >= '2016-03-31'}
       end
-
     end
-
   end
 end

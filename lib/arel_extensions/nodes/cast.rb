@@ -49,7 +49,6 @@ module ArelExtensions
       def return_type
         @return_type
       end
-
     end
   end
 end

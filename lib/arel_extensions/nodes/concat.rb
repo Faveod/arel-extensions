@@ -11,7 +11,7 @@ module ArelExtensions::Nodes
         else
           node
         end
-      }.flatten.reduce([]) { | res, b |
+      }.flatten.reduce([]) { |res, b|
         # concatenate successive literal strings.
         if b.is_a?(Arel::Nodes::Quoted) && b.expr == ""
           res
@@ -37,7 +37,6 @@ module ArelExtensions::Nodes
     def concat(other)
       Concat.new(self.expressions + [other])
     end
-
   end
 
   class GroupConcat < AggregateFunction
@@ -49,6 +48,5 @@ module ArelExtensions::Nodes
       @separator = convert_to_node(separator)
       super node, opts
     end
-
   end
 end

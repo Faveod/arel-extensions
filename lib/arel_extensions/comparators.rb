@@ -1,7 +1,5 @@
 module ArelExtensions
   module Comparators
-
-
     def >(other)
       Arel::Nodes::GreaterThan.new self, Arel::Nodes.build_quoted(other, self)
     end
@@ -18,26 +16,26 @@ module ArelExtensions
       Arel::Nodes::LessThanOrEqual.new self, Arel::Nodes.build_quoted(other, self)
     end
 
-
-    #REGEXP function
-    #Pattern matching using regular expressions
+    # REGEXP function
+    # Pattern matching using regular expressions
     def =~(other)
-#      arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
-#      if arg == :string || arg == :text
+        #      arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
+        #      if arg == :string || arg == :text
         Arel::Nodes::Regexp.new self, convert_regexp(other)
-#      end
+      #      end
     end
 
-    #NOT_REGEXP function
-    #Negation of Regexp
+    # NOT_REGEXP function
+    # Negation of Regexp
     def !~(other)
-#      arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
-#      if arg == :string || arg == :text
+        #      arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
+        #      if arg == :string || arg == :text
         Arel::Nodes::NotRegexp.new self, convert_regexp(other)
-#      end
+      #      end
     end
 
     private
+
     # Function used for not_regexp.
     def convert_regexp(other)
       case other
@@ -56,6 +54,5 @@ module ArelExtensions
       end
       Arel::Nodes.build_quoted(other, self)
     end
-
   end
 end

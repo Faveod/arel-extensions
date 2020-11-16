@@ -2,7 +2,7 @@ require 'date'
 
 module ArelExtensions
   module Nodes
-    class DateDiff < Function #difference entre colonne date et date string/date
+    class DateDiff < Function # difference entre colonne date et date string/date
       attr_accessor :left_node_type
       attr_accessor :right_node_type
 
@@ -97,7 +97,7 @@ module ArelExtensions
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :ruby_date
-            Arel.sql("(INTERVAL '1' DAY) * %s" % v.inspect.to_i )
+            Arel.sql("(INTERVAL '1' DAY) * %s" % v.inspect.to_i)
           else
             Arel.sql("(INTERVAL '1' SECOND) * %s" % v.to_i)
           end
@@ -150,6 +150,7 @@ module ArelExtensions
       end
 
       private
+
       def convert(object)
         case object
         when Arel::Attributes::Attribute, Arel::Nodes::Node, ActiveSupport::Duration
@@ -166,7 +167,7 @@ module ArelExtensions
       end
     end
 
-    class DateSub < Function #difference entre colonne date et date string/date
+    class DateSub < Function # difference entre colonne date et date string/date
       RETURN_TYPE = :integer
 
       def initialize(expr)
@@ -187,8 +188,6 @@ module ArelExtensions
           end
         end
       end
-
     end
-
   end
 end

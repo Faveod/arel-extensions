@@ -19,6 +19,5 @@ module ArelExtensions
           super expr.first
       end
     end
-
   end
 end

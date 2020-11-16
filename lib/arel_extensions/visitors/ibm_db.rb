@@ -1,7 +1,6 @@
 module ArelExtensions
   module Visitors
     class Arel::Visitors::IBM_DB
-
       def visit_ArelExtensions_Nodes_Ceil o, collector
         collector << "CEILING("
         collector = visit o.expr, collector
@@ -19,7 +18,6 @@ module ArelExtensions
         collector
       end
 
-
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         collector << "DAY("
         collector = visit o.left, collector
@@ -33,9 +31,8 @@ module ArelExtensions
         collector
       end
 
-
       def visit_ArelExtensions_Nodes_Duration o, collector
-        #visit left for period
+        # visit left for period
         if o.left == "d"
           collector << "DAY("
         elsif o.left == "m"
@@ -45,7 +42,7 @@ module ArelExtensions
         elsif o.left == "y"
           collector << "YEAR("
         end
-        #visit right
+        # visit right
         if o.right.is_a?(Arel::Attributes::Attribute)
           collector = visit o.right, collector
         else
@@ -55,12 +52,11 @@ module ArelExtensions
         collector
       end
 
-
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector << "COALESCE("
         collector = visit o.left, collector
         collector << ","
-        if(o.right.is_a?(Arel::Attributes::Attribute))
+        if (o.right.is_a?(Arel::Attributes::Attribute))
           collector = visit o.right, collector
         else
           collector << "'#{o.right}'"
@@ -68,9 +64,6 @@ module ArelExtensions
         collector << ")"
         collector
       end
-
-
-
     end
   end
 end

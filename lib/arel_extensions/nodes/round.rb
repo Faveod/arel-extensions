@@ -10,7 +10,6 @@ module ArelExtensions
           super [convert_to_node(expr.first), convert_to_number(expr[1])]
         end
       end
-
     end
   end
 end

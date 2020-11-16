@@ -4,7 +4,7 @@ Bundler::GemHelper.install_tasks :name => "arel_extensions"
 require 'rake/testtask'
 
 desc "Default Task"
-task default: [ :test ]
+task default: [:test]
 
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'

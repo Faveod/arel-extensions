@@ -23,7 +23,6 @@ module ArelExtensions
       end
 
       describe "primitive methods" do
-
        it "should be able to recognize equal nodes" do
          c = @table[:id]
          _(c == 1).must_be :eql?, (c == 1)
@@ -32,7 +31,6 @@ module ArelExtensions
 
          _([c == 1, c == 1].uniq).must_equal [c == 1]
        end
-
       end
 
       # Math Functions
@@ -53,7 +51,7 @@ module ArelExtensions
       end
 
       it "should return right calculations on numbers" do
-        #puts (@price.abs + 42).inspect
+        # puts (@price.abs + 42).inspect
         _(compile(@price.abs + 42)).must_be_like %{(ABS("products"."price") + 42)}
         _(compile(@price.ceil + 42)).must_be_like %{(CEIL("products"."price") + 42)}
         _(compile(@price.floor + 42)).must_be_like %{(FLOOR("products"."price") + 42)}
@@ -93,7 +91,7 @@ module ArelExtensions
         c = @table[:name]
         _(compile(c + 'test')).must_be_like %{CONCAT(\"users\".\"name\", 'test')}
         _(compile(c.length)).must_be_like %{LENGTH("users"."name")}
-        #puts (c.length.round + 42).inspect
+        # puts (c.length.round + 42).inspect
         _(compile(c.length.round + 42)).must_be_like %{(ROUND(LENGTH("users"."name")) + 42)}
         _(compile(c.locate('test'))).must_be_like %{LOCATE('test', "users"."name")}
         _(compile(c & 42)).must_be_like %{FIND_IN_SET(42, "users"."name")}
@@ -119,7 +117,7 @@ module ArelExtensions
         _(compile(Arel::Nodes.build_quoted('test') + ' chain')).must_be_like %{'test chain'}
         _(compile(c + '' + c)).must_be_like %{CONCAT(\"users\".\"name\", \"users\".\"name\")}
 
-        _(compile(c.md5)).must_be_like  %{MD5(\"users\".\"name\")}
+        _(compile(c.md5)).must_be_like %{MD5(\"users\".\"name\")}
       end
 
       # Comparators
@@ -135,9 +133,9 @@ module ArelExtensions
         _(compile(@table[:id] <= 42)).must_match %{"users"."id" <= 42}
         _(compile((@table[:id] <= 42).as('new_name'))).must_match %{("users"."id" <= 42) AS new_name}
         _(compile(@table[:id].count.eq 42)).must_match %{COUNT("users"."id") = 42}
-        #_(compile(@table[:id].count == 42)).must_match %{COUNT("users"."id") = 42} # TODO
-        #_(compile(@table[:id].count != 42)).must_match %{COUNT("users"."id") != 42}
-        #_(compile(@table[:id].count >= 42)).must_match %{COUNT("users"."id") >= 42}
+        # _(compile(@table[:id].count == 42)).must_match %{COUNT("users"."id") = 42} # TODO
+        # _(compile(@table[:id].count != 42)).must_match %{COUNT("users"."id") != 42}
+        # _(compile(@table[:id].count >= 42)).must_match %{COUNT("users"."id") >= 42}
       end
 
       it "should accept comparators on dates" do
@@ -201,7 +199,7 @@ module ArelExtensions
 
       it "should accept operators on dates with numbers" do
         c = @table[:created_at]
-        #u = @table[:updated_at]
+        # u = @table[:updated_at]
         _(compile(c - 42)).must_be_like %{DATE_SUB("users"."created_at", 42)}
         _(compile(c - @table[:id])).must_be_like %{DATE_SUB("users"."created_at", "users"."id")}
       end
@@ -300,7 +298,7 @@ module ArelExtensions
         c = @table[:name]
         _(compile(c.soundex == 'test')).must_be_like %{SOUNDEX("users"."name") = 'test'}
         _(compile(c.soundex != 'test')).must_be_like %{SOUNDEX("users"."name") != 'test'}
-        _(compile(c.length >= 0 )).must_be_like %{LENGTH("users"."name") >= 0}
+        _(compile(c.length >= 0)).must_be_like %{LENGTH("users"."name") >= 0}
       end
 
       it "should accept in on select statement" do
@@ -339,7 +337,6 @@ module ArelExtensions
       end
 
       describe "the function in" do
-
         it "should be possible to have nil element in the function IN" do
           _(compile(@table[:id].in(nil)))
             .must_be_like %{ISNULL("users"."id")}
@@ -362,14 +359,14 @@ module ArelExtensions
         it "should be possible to correctly use a Range on an IN" do
           _(compile(@table[:id].in(1..4)))
             .must_be_like %{"users"."id" BETWEEN (1) AND (4)}
-          _(compile(@table[:created_at].in(Date.new(2016, 3, 31) .. Date.new(2017, 3, 31))))
+          _(compile(@table[:created_at].in(Date.new(2016, 3, 31)..Date.new(2017, 3, 31))))
             .must_be_like %{"users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')}
         end
 
         it "should be possible to use a list of values and ranges on an IN" do
           _(compile(@table[:id].in [1..10, 20, 30, 40..50]))
             .must_be_like %{("users"."id" IN (20, 30)) OR ("users"."id" BETWEEN (1) AND (10)) OR ("users"."id" BETWEEN (40) AND (50))}
-          _(compile(@table[:created_at].in(Date.new(2016, 1, 1), Date.new(2016, 2, 1)..Date.new(2016, 2, 28), Date.new(2016, 3, 31) .. Date.new(2017, 3, 31), Date.new(2018, 1, 1))))
+          _(compile(@table[:created_at].in(Date.new(2016, 1, 1), Date.new(2016, 2, 1)..Date.new(2016, 2, 28), Date.new(2016, 3, 31)..Date.new(2017, 3, 31), Date.new(2018, 1, 1))))
             .must_be_like %{   ("users"."created_at" IN ('2016-01-01', '2018-01-01'))
                             OR ("users"."created_at" BETWEEN ('2016-02-01') AND ('2016-02-28'))
                             OR ("users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31'))}
@@ -385,12 +382,9 @@ module ArelExtensions
           _(compile(g[@table[:id], @table[:age]].in(g[1, 42], g[2, 51])))
             .must_be_like %{("users"."id", "users"."age") IN ((1, 42), (2, 51))}
         end
-
-
       end
 
       describe "the function not_in" do
-
         it "should be possible to have nil element in the function IN" do
           _(compile(@table[:id].not_in nil))
             .must_be_like %{NOT ISNULL("users"."id")}
@@ -415,7 +409,7 @@ module ArelExtensions
           _(compile(@table[:id].not_in 1..4))
             .must_be_like %{NOT ("users"."id" BETWEEN (1) AND (4))}
           # FIXME: Should use NOT BETWEEN
-          _(compile(@table[:created_at].not_in Date.new(2016, 3, 31) .. Date.new(2017, 3, 31)))
+          _(compile(@table[:created_at].not_in Date.new(2016, 3, 31)..Date.new(2017, 3, 31)))
             .must_be_like %{NOT ("users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31'))}
         end
 
@@ -424,12 +418,11 @@ module ArelExtensions
             .must_be_like %{       ("users"."id" NOT IN (20, 30))
                             AND (NOT ("users"."id" BETWEEN (1) AND (10)))
                             AND (NOT ("users"."id" BETWEEN (40) AND (50)))}
-          _(compile(@table[:created_at].not_in Date.new(2016, 1, 1), Date.new(2016, 2, 1)..Date.new(2016, 2, 28), Date.new(2016, 3, 31) .. Date.new(2017, 3, 31), Date.new(2018, 1, 1)))
+          _(compile(@table[:created_at].not_in Date.new(2016, 1, 1), Date.new(2016, 2, 1)..Date.new(2016, 2, 28), Date.new(2016, 3, 31)..Date.new(2017, 3, 31), Date.new(2018, 1, 1)))
             .must_be_like %{   ("users"."created_at" NOT IN ('2016-01-01', '2018-01-01'))
                             AND (NOT ("users"."created_at" BETWEEN ('2016-02-01') AND ('2016-02-28')))
                             AND (NOT ("users"."created_at" BETWEEN ('2016-03-31') AND ('2017-03-31')))}
         end
-
       end
 
       it "should be possible to add and substract as much as we want" do
@@ -471,7 +464,6 @@ module ArelExtensions
       end
 
       describe "logical functions" do
-
         it "should know about truth" do
           _(compile(Arel.false))
             .must_be_like %{1 = 0}
@@ -544,17 +536,16 @@ module ArelExtensions
 
         it "should avoid useless nesting" do
           c = @table[:id]
-          _(compile(((c == 1).and(c == 2)) .and ((c == 3).and(c == 4))))
+          _(compile(((c == 1).and(c == 2)).and ((c == 3).and(c == 4))))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3) AND ("users"."id" = 4)}
-          _(compile(((c == 1).or(c == 2)) .or ((c == 3).or(c == 4))))
+          _(compile(((c == 1).or(c == 2)).or ((c == 3).or(c == 4))))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3) OR ("users"."id" = 4)}
 
-          _(compile(((c == 1).or(c == 2)) .and ((c == 3).or(c == 4))))
+          _(compile(((c == 1).or(c == 2)).and ((c == 3).or(c == 4))))
             .must_be_like %{(("users"."id" = 1) OR ("users"."id" = 2)) AND (("users"."id" = 3) OR ("users"."id" = 4))}
-          _(compile(((c == 1).and(c == 2)) .or ((c == 3).and(c == 4))))
+          _(compile(((c == 1).and(c == 2)).or ((c == 3).and(c == 4))))
             .must_be_like %{(("users"."id" = 1) AND ("users"."id" = 2)) OR (("users"."id" = 3) AND ("users"."id" = 4))}
         end
-
       end
 
       puts "AREL VERSION : " + Arel::VERSION.to_s

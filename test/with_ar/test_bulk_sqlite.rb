@@ -2,9 +2,7 @@ require 'arelx_test_helper'
 
 module ArelExtensions
   module WthAr
-
     describe 'the sqlite visitor' do
-
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
@@ -42,8 +40,6 @@ module ArelExtensions
           .must_be_like %Q[INSERT INTO "users" ("id", "name", "comments", "created_at")
                          SELECT 23 AS 'id', 'nom1' AS 'name', 'sdfdsfdsfsdf' AS 'comments', '2016-01-01' AS 'created_at' UNION ALL SELECT 25, 'nom2', 'sdfdsfdsfsdf', '2016-01-01']
       end
-
     end
-
   end
 end

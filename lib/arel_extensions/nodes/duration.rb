@@ -20,7 +20,6 @@ module ArelExtensions
       def right
         @expressions[1]
       end
-
     end
   end
 end

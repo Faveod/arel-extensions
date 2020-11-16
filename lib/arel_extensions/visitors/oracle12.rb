@@ -1,6 +1,5 @@
 module ArelExtensions
   module Visitors
-
     Arel::Visitors.send(:remove_const,'Oracle12') if Arel::Visitors.const_defined?('Oracle12')
     Arel::Visitors.const_set('Oracle12',Class.new(Arel::Visitors::Oracle)).class_eval do
       def visit_Arel_Nodes_SelectStatement(o, collector)
@@ -12,6 +11,7 @@ module ArelExtensions
           `SELECT FOR UPDATE and FETCH FIRST n ROWS` generates ORA-02014.`
           MSG
         end
+
         super
       end
 
@@ -97,7 +97,6 @@ module ArelExtensions
         end
         collector
       end
-
     end
   end
 end

@@ -19,7 +19,6 @@ module ArelExtensions
 
         class Else < Arel::Nodes::Unary # :nodoc:
         end
-
       end
     else
       class Case < Arel::Nodes::Case
@@ -96,9 +95,9 @@ module ArelExtensions
 
       def eql? other
         self.class == other.class &&
-        self.case == other.case &&
-        self.conditions == other.conditions &&
-        self.default == other.default
+          self.case == other.case &&
+          self.conditions == other.conditions &&
+          self.default == other.default
       end
       alias :== :eql?
 

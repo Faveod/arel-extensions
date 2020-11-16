@@ -22,7 +22,5 @@ module Minitest::Assertions
 end
 
 module Minitest::Expectations
-
   infect_an_assertion :assert_like, :must_be_like
-
 end

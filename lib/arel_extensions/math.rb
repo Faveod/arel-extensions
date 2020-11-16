@@ -11,9 +11,9 @@ require 'arel_extensions/nodes/union_all'
 
 module ArelExtensions
   module Math
-    #function + between
-    #String and others (convert in string)  allows you to concatenate 2 or more strings together.
-    #Date and integer adds or subtracts a specified time interval from a date.
+    # function + between
+    # String and others (convert in string)  allows you to concatenate 2 or more strings together.
+    # Date and integer adds or subtracts a specified time interval from a date.
     def +(other)
       case self
         when Arel::Nodes::Quoted
@@ -43,7 +43,7 @@ module ArelExtensions
         rescue Exception
           col = nil
         end
-        if (!col) #if the column doesn't exist in the database
+        if (!col) # if the column doesn't exist in the database
           Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new(self, other))
         else
           arg = col.type
@@ -62,8 +62,8 @@ module ArelExtensions
       end
     end
 
-    #function returns the time between two dates
-    #function returns the substraction between two ints
+    # function returns the time between two dates
+    # function returns the substraction between two ints
     def -(other)
       case self
       when Arel::Nodes::Grouping
@@ -91,7 +91,7 @@ module ArelExtensions
         rescue Exception
           col = nil
         end
-        if (!col) #if the column doesn't exist in the database
+        if (!col) # if the column doesn't exist in the database
           Arel::Nodes::Grouping.new(Arel::Nodes::Subtraction.new(self, other))
         else
           arg = col.type
@@ -103,7 +103,7 @@ module ArelExtensions
               rescue Exception
                 col2 = nil
               end
-              if (!col2) #if the column doesn't exist in the database
+              if (!col2) # if the column doesn't exist in the database
                 ArelExtensions::Nodes::DateSub.new [self, other]
               else
                 arg2 = col2.type
@@ -133,6 +133,5 @@ module ArelExtensions
         end
       end
     end
-
   end
 end

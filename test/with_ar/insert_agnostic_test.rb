@@ -3,7 +3,6 @@ require 'date'
 
 module ArelExtensions
   module WthAr
-
     class InsertManagerTest < Minitest::Test
       def setup_db
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
@@ -79,7 +78,6 @@ END;])
         assert_equal 4, User.count, "insertions failed"
 
       end
-
     end
   end
 end

@@ -19,7 +19,6 @@ module ArelExtensions
         @original_string = expr[1][:original_string]
         super [col]
       end
-
     end
   end
 end

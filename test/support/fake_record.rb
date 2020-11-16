@@ -7,7 +7,7 @@ module FakeRecord
     attr_accessor :visitor
 
     def initialize(visitor = nil)
-      @tables = %w{ users photos developers products}
+      @tables = %w{users photos developers products}
       @columns = {
         'users' => [
           Column.new('id', :integer),

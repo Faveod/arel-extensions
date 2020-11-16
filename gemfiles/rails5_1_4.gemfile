@@ -13,7 +13,7 @@ group :development, :test do
   gem "pg",'< 1.0.0', :platforms => [:mri, :mingw]
 
   gem "tiny_tds", :platforms => [:mri, :mingw]  if RUBY_PLATFORM =~ /windows/
-  #gem "activerecord-sqlserver-adapter", :platforms => [:mri, :mingw]
+  # gem "activerecord-sqlserver-adapter", :platforms => [:mri, :mingw]
 
   gem 'ruby-oci8', :platforms => [:mri, :mswin, :mingw] if ENV.has_key? 'ORACLE_HOME'
   gem 'activerecord-oracle_enhanced-adapter', '~> 1.8' if ENV.has_key? 'ORACLE_HOME'
