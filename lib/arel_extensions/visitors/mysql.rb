@@ -5,14 +5,14 @@ module ArelExtensions
       DATE_MAPPING = {
         'd' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'WEEKDAY',
         'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'
-      }
+      }.freeze
 
       DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
         '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b',  # year, month
         '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W',                               # day, weekday
         '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p',                 # hours
         '%M' => '%i', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => ''
-      }
+      }.freeze
 
 
       #Math functions
@@ -207,13 +207,12 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Format o, collector
         case o.col_type
-        when :date, :datetime
+        when :date, :datetime, :time
+          fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
           collector << "DATE_FORMAT("
           collector = visit o.left, collector
           collector << COMMA
-          f = o.iso_format.dup
-          DATE_FORMAT_DIRECTIVES.each { |d, r| f.gsub!(d, r) }
-          collector = visit Arel::Nodes.build_quoted(f), collector
+          collector = visit Arel::Nodes.build_quoted(fmt), collector
           collector << ")"
         when :integer, :float, :decimal
           collector << "FORMAT("
