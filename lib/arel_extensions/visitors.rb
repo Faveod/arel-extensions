@@ -1,3 +1,4 @@
+require 'arel_extensions/visitors/convert_format'
 require 'arel_extensions/visitors/to_sql'
 require 'arel_extensions/visitors/mysql'
 require 'arel_extensions/visitors/oracle'

@@ -16,14 +16,6 @@ module ArelExtensions
         '%%' => '%',
       }.freeze
 
-      DATE_FORMAT_REGEX =
-        Regexp.new(
-          DATE_FORMAT_DIRECTIVES
-            .keys
-            .map{|k| Regexp.escape(k)}
-            .join('|')
-        )
-
       NUMBER_COMMA_MAPPING = {
         'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', '
       }.freeze
@@ -176,32 +168,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
+        fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
         collector << "TO_CHAR("
         collector = visit o.left, collector
         collector << COMMA
-
-        o.iso_format.dup
-
-        s = StringScanner.new o.iso_format
-        f = StringIO.new
-        while !s.eos?
-          f <<
-            case
-            when s.scan(DATE_FORMAT_REGEX)
-              if v = DATE_FORMAT_DIRECTIVES[s.matched]
-                v
-              else
-                # Should never happen.
-                s.matched
-              end
-            when s.scan(/[^%]+/)
-              s.matched
-            when s.scan(/./)
-              s.matched
-            end
-        end
-        collector = visit Arel::Nodes.build_quoted(f.string), collector
-
+        collector = visit Arel::Nodes.build_quoted(fmt), collector
         collector << ")"
         collector
       end
