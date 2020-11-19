@@ -19,6 +19,5 @@ module ArelExtensions
         super node, opts
       end
     end
-
   end
 end

@@ -14,7 +14,6 @@ module ArelExtensions
       def +(other)
         return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
       end
-
     end
 
     class RegexpReplace < Function
@@ -32,6 +31,5 @@ module ArelExtensions
         return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
       end
     end
-
   end
 end

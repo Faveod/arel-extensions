@@ -1,7 +1,6 @@
 module ArelExtensions
   module Nodes
     class IMatches < Arel::Nodes::Matches
-
       attr_accessor :case_sensitive if Arel::VERSION.to_i < 7
 
       def initialize(left, right, escape = nil)
@@ -26,6 +25,5 @@ module ArelExtensions
 
     class SMatches < IMatches
     end
-
   end
 end

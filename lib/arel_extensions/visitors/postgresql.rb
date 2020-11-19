@@ -1,7 +1,6 @@
 module ArelExtensions
   module Visitors
     class Arel::Visitors::PostgreSQL
-
       DATE_MAPPING = {
         'd' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'DOW',
         'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'
@@ -22,7 +21,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << "RANDOM("
-        if(o.left != nil && o.right != nil)
+        if (o.left != nil && o.right != nil)
           collector = visit o.left, collector
           collector << COMMA
           collector = isit o.right, collector
@@ -238,7 +237,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector = visit o.left, collector
-        collector << ' + ' #(o.right.value >= 0 ? ' + ' : ' - ')
+        collector << ' + ' # (o.right.value >= 0 ? ' + ' : ' - ')
         collector = visit o.postgresql_value(o.right), collector
         collector
       end
@@ -578,7 +577,6 @@ module ArelExtensions
         end
         collector
       end
-
     end
   end
 end

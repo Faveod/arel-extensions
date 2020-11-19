@@ -1,6 +1,5 @@
 module ArelExtensions
   class CommonSqlFunctions
-
     def initialize(cnx)
       @cnx = cnx
       if cnx && cnx.adapter_name =~ /sqlite/i && !$load_extension_disabled
@@ -62,6 +61,5 @@ module ArelExtensions
         end
       end
     end
-
   end
 end

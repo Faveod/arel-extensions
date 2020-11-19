@@ -17,7 +17,7 @@ module ArelExtensions
         'fr_FR' => {',' => ' ', '.' =>','}
       }.freeze
 
-      #String functions
+      # String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
         collector = visit o.left.ci_collate, collector
         collector << ' LIKE '
@@ -80,7 +80,6 @@ module ArelExtensions
         collector
       end
 
-
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
         collector = visit o.left.lower, collector
         collector << ' NOT LIKE '
@@ -126,7 +125,6 @@ module ArelExtensions
         collector << ")"
         collector
       end
-
 
       def visit_ArelExtensions_Nodes_Locate o, collector
         collector << "instr("
@@ -396,7 +394,6 @@ module ArelExtensions
         visit format, collector
         collector
       end
-
     end
   end
 end

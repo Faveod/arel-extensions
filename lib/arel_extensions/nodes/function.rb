@@ -54,8 +54,8 @@ module ArelExtensions
           end
         when ArelExtensions::Nodes::Function
           att.return_type
-#        else
-#          nil
+          #        else
+          #          nil
         end
       end
 
@@ -161,7 +161,6 @@ module ArelExtensions
           raise(ArgumentError, "#{object.class} cannot be converted to NUMBER arg")
         end
       end
-
     end
   end
 end

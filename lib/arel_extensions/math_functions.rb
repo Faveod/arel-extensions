@@ -11,7 +11,6 @@ require 'arel_extensions/nodes/sum'
 
 module ArelExtensions
   module MathFunctions
-
     # Arel does not handle Decimal literal properly
     def * other
       case other
@@ -47,7 +46,7 @@ module ArelExtensions
         ArelExtensions::Nodes::Floor.new [self]
     end
 
-     # function gives the base 10 log
+    # function gives the base 10 log
     def log10
         ArelExtensions::Nodes::Log10.new [self]
     end
@@ -75,13 +74,13 @@ module ArelExtensions
       ArelExtensions::Nodes::Sum.new self, opts
     end
 
-    #function that can be invoked to produce random numbers between 0 and 1
-#    def rand seed = nil
-#        ArelExtensions::Nodes::Rand.new [seed]
-#    end
+    # function that can be invoked to produce random numbers between 0 and 1
+    #    def rand seed = nil
+    #        ArelExtensions::Nodes::Rand.new [seed]
+    #    end
     alias_method :random, :rand
 
-    #function is used to round a numeric field to the number of decimals specified
+    # function is used to round a numeric field to the number of decimals specified
     def round precision = nil
         if precision
             ArelExtensions::Nodes::Round.new [self, precision]
@@ -96,14 +95,14 @@ module ArelExtensions
         sprintf(format_string,0) # this line is to get the right error message if the format_string is not correct
         m = /^(.*)%([ #+\-0]*)([1-9][0-9]+|[1-9]?)[.]?([0-9]*)([a-zA-Z])(.*)$/.match(format_string)
         opts = {
-          :prefix     => m[1],
-          :flags      => m[2].split(//).uniq.join,
-          :width      => m[3].to_i,
-          :precision  => m[4] != '' ? m[4].to_i : 6,
-          :type       => m[5],
-          :suffix     => m[6],
-          :locale    => locale,
-          :original_string => format_string
+          prefix: m[1],
+          flags: m[2].split(//).uniq.join,
+          width: m[3].to_i,
+          precision: m[4] != '' ? m[4].to_i : 6,
+          type: m[5],
+          suffix: m[6],
+          locale: locale,
+          original_string: format_string
         }
         # opts = {:locale => 'fr_FR', :type => "e"/"f"/"d", :prefix => "$ ", :suffix => " %", :flags => " +-#0", :width => 5, :precision => 6}
         ArelExtensions::Nodes::FormattedNumber.new [self,opts]
@@ -111,6 +110,5 @@ module ArelExtensions
         Arel::Nodes.build_quoted('Wrong Format')
       end
     end
-
   end
 end

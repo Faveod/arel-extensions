@@ -1,9 +1,9 @@
 # coding: utf-8
+
 require 'arel_extensions/nodes/then'
 
 module ArelExtensions
   module BooleanFunctions
-
     def ⋀(other)
       self.and(other)
     end
@@ -23,7 +23,6 @@ module ArelExtensions
     def then(t, f = nil)
       ArelExtensions::Nodes::Then.new [self, t, f]
     end
-
   end
 end
 
@@ -34,10 +33,9 @@ class Arel::Nodes::And
     children =
       children.flatten.map { |c|
       c.is_a?(self) ? c.children : c
-    }.flatten
+      }.flatten
     super(children)
   end
-
 end
 
 # For some reason, Arel's And is properly defined as variadic (it
@@ -55,7 +53,7 @@ class Arel::Nodes::Or
     children =
       children.flatten.map { |c|
       c.is_a?(self) ? c.children : c
-    }.flatten
+      }.flatten
     super(*children)
   end
 
@@ -67,7 +65,6 @@ class Arel::Nodes::Or
     super
     @children = other.children.copy if other.children
   end
-
 
   def left
     children.first
@@ -86,5 +83,4 @@ class Arel::Nodes::Or
       children == other.children
   end
   alias :== :eql?
-
 end

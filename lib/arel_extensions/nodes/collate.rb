@@ -12,7 +12,6 @@ module ArelExtensions
       tab = [convert_to_node(left)]
       return super(tab)
     end
-
     end
   end
 end

@@ -81,9 +81,9 @@ module ArelExtensions
       # String functions
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << "CONCAT("
-      o.expressions.each_with_index { |arg, i|
-          collector << COMMA if i != 0
-          collector = visit arg, collector
+        o.expressions.each_with_index { |arg, i|
+            collector << COMMA if i != 0
+            collector = visit arg, collector
         }
         collector << ")"
         collector
@@ -236,7 +236,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Blank o, collector
-    #visit o.left.coalesce('').trim.length.eq(0), collector
+        # visit o.left.coalesce('').trim.length.eq(0), collector
         collector << 'LENGTH(TRIM(COALESCE('
         collector = visit o.expr, collector
         collector << COMMA
@@ -245,9 +245,8 @@ module ArelExtensions
         collector
       end
 
-
       def visit_ArelExtensions_Nodes_NotBlank o, collector
-    #visit o.left.coalesce('').trim.length.gt(0), collector
+        # visit o.left.coalesce('').trim.length.gt(0), collector
         collector << 'LENGTH(TRIM(COALESCE('
         collector = visit o.expr, collector
         collector << COMMA
@@ -276,7 +275,7 @@ module ArelExtensions
         collector
       end
 
-      #comparators
+      # comparators
 
       def visit_ArelExtensions_Nodes_Cast o, collector
         collector << "CAST("
@@ -337,7 +336,7 @@ module ArelExtensions
         collector
       end
 
-        # override
+      # override
       remove_method(:visit_Arel_Nodes_As) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_As)
       def visit_Arel_Nodes_As o, collector
         if o.left.is_a?(Arel::Nodes::Binary)
@@ -656,7 +655,6 @@ module ArelExtensions
         end
         collector
       end
-
     end
   end
 end

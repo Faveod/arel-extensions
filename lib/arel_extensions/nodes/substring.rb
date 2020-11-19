@@ -10,7 +10,6 @@ module ArelExtensions
         end
         return super(tab)
       end
-
     end
   end
 end

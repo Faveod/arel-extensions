@@ -24,7 +24,7 @@ def setup_db
         $stderr << "cannot load extensions #{e.inspect}\n"
       end
     end
-    #function find_in_set
+    # function find_in_set
     db.create_function("find_in_set", 1) do |func, value1, value2|
       func.result = value1.index(value2)
     end
@@ -44,15 +44,13 @@ def teardown_db
 end
 
 class User < ActiveRecord::Base
-
 end
 
 class ListTest < Minitest::Test
-
   def setup
     d = Date.new(2016,05,23)
     setup_db
-    User.create :age => 5, :name => "Lucas", :created_at => d , :score => 20.16
+    User.create :age => 5, :name => "Lucas", :created_at => d, :score => 20.16
     User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
     User.create :age => 20, :name => "Camille", :created_at => d, :score => 20.16
     User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
@@ -90,29 +88,27 @@ class ListTest < Minitest::Test
   end
 
   def test_Comparator
-    assert_equal 2,User.where(User.arel_table[:age] < 6 ).count
-    assert_equal 2,User.where(User.arel_table[:age] <=10 ).count
-    assert_equal 3,User.where(User.arel_table[:age] > 20 ).count
-    assert_equal 4,User.where(User.arel_table[:age] >=20 ).count
-    assert_equal 1,User.where(User.arel_table[:age] > 5 ).where(User.arel_table[:age] < 20 ).count
+    assert_equal 2,User.where(User.arel_table[:age] < 6).count
+    assert_equal 2,User.where(User.arel_table[:age] <=10).count
+    assert_equal 3,User.where(User.arel_table[:age] > 20).count
+    assert_equal 4,User.where(User.arel_table[:age] >=20).count
+    assert_equal 1,User.where(User.arel_table[:age] > 5).where(User.arel_table[:age] < 20).count
   end
 
   def test_date_duration
-    #Year
+    # Year
     assert_equal 2016,User.where(User.arel_table[:name].eq("Lucas")).select((User.arel_table[:created_at].year).as("res")).first.res.to_i
     assert_equal 0,User.where(User.arel_table[:created_at].year.eq("2012")).count
-    #Month
+    # Month
     assert_equal 5,User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:created_at].month).as("res")).first.res.to_i
     assert_equal 8,User.where(User.arel_table[:created_at].month.eq("05")).count
-    #Week
+    # Week
     assert_equal 21,User.where(User.arel_table[:name].eq("Arthur")).select((User.arel_table[:created_at].week).as("res")).first.res.to_i
     assert_equal 8,User.where(User.arel_table[:created_at].month.eq("05")).count
-    #Day
+    # Day
     assert_equal 23,User.where(User.arel_table[:name].eq("Laure")).select((User.arel_table[:created_at].day).as("res")).first.res.to_i
     assert_equal 0,User.where(User.arel_table[:created_at].day.eq("05")).count
   end
-
-
 
   def test_length
     assert_equal 7,User.where(User.arel_table[:name].eq("Camille")).select((User.arel_table[:name].length).as("res")).first.res
@@ -136,7 +132,6 @@ class ListTest < Minitest::Test
     end
   end
 
-
   def test_floor
     if !$sqlite || !$load_extension_disabled
       assert_equal 0,User.where(User.arel_table[:name].eq("Negatif")).select((User.arel_table[:score].floor).as("res")).first.res
@@ -144,56 +139,50 @@ class ListTest < Minitest::Test
     end
   end
 
-
   def test_findinset
     db = ActiveRecord::Base.connection.raw_connection
-    assert_equal 3,db.get_first_value( "select find_in_set(name,'i') from users where name = 'Camille'" )
-    assert_equal "",db.get_first_value( "select find_in_set(name,'p') from users where name = 'Camille'" ).to_s
-    #number
-    #assert_equal 1,User.select(User.arel_table[:name] & ("l")).count
-    #assert_equal 3,(User.select(User.arel_table[:age] & [5,15,20]))
-    #string
+    assert_equal 3,db.get_first_value("select find_in_set(name,'i') from users where name = 'Camille'")
+    assert_equal "",db.get_first_value("select find_in_set(name,'p') from users where name = 'Camille'").to_s
+    # number
+    # assert_equal 1,User.select(User.arel_table[:name] & ("l")).count
+    # assert_equal 3,(User.select(User.arel_table[:age] & [5,15,20]))
+    # string
   end
-
 
   def test_math_plus
     d = Date.new(1997,06,15)
-    #Concat String
+    # Concat String
     assert_equal "SophiePhan",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + "Phan").as("res")).first.res
-    assert_equal "Sophie2",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + 2 ).as("res")).first.res
+    assert_equal "Sophie2",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + 2).as("res")).first.res
     assert_equal "Sophie1997-06-15",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + d).as("res")).first.res
     assert_equal "Sophie15",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + User.arel_table[:age]).as("res")).first.res
     assert_equal "SophieSophie",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + User.arel_table[:name]).as("res")).first.res
     assert_equal "Sophie2016-05-23",User.where(User.arel_table[:name].eq("Sophie")).select((User.arel_table[:name] + User.arel_table[:created_at]).as("res")).first.res
-    #concat Integer
+    # concat Integer
     assert_equal 1, User.where((User.arel_table[:age] + 10).eq(33)).count
     assert_equal 1, User.where((User.arel_table[:age] + "1").eq(6)).count
     assert_equal 1, User.where((User.arel_table[:age] + User.arel_table[:age]).eq(10)).count
-    #concat Date
-#    puts((User.arel_table[:created_at] + 1).as("res").to_sql.inspect)
+    # concat Date
+    #    puts((User.arel_table[:created_at] + 1).as("res").to_sql.inspect)
     assert_equal "2016-05-24", @myung.select((User.arel_table[:created_at] + 1).as("res")).first.res.to_date.to_s
     assert_equal "2016-05-25", @myung.select((User.arel_table[:created_at] + 2.day).as("res")).first.res.to_date.to_s
   end
 
-
   def test_math_moins
     d = Date.new(2016,05,20)
-    #Datediff
+    # Datediff
     assert_equal 8,User.where((User.arel_table[:created_at] - User.arel_table[:created_at]).eq(0)).count
     assert_equal 3,User.where(User.arel_table[:name].eq("Laure")).select((User.arel_table[:created_at] - d).as("res")).first.res.abs.to_i
-    #Substraction
+    # Substraction
     assert_equal 0, User.where((User.arel_table[:age] - 10).eq(50)).count
     assert_equal 0, User.where((User.arel_table[:age] - "10").eq(50)).count
   end
 
-
-
   def test_rand
     assert_equal 5,User.where(User.arel_table[:score].eq(20.16)).select(User.arel_table[:id]).order(Arel.rand).take(50).count
-    #test_alias  :random  :rand
+    # test_alias  :random  :rand
     assert_equal 8,User.select(User.arel_table[:name]).order(Arel.rand).take(50).count
   end
-
 
   def test_regexp_not_regex
     if !$sqlite || !$load_extension_disabled
@@ -207,12 +196,10 @@ class ListTest < Minitest::Test
     assert_equal "replace",User.where(User.arel_table[:name].eq("Lucas")).select(((User.arel_table[:name]).replace(User.arel_table[:name],"replace")).as("res")).first.res
   end
 
-
   def test_round
     assert_equal 1, User.where(((User.arel_table[:age]).round(0)).eq(5.0)).count
     assert_equal 0, User.where(((User.arel_table[:age]).round(-1)).eq(6.0)).count
   end
-
 
   def test_Soundex
     if !$sqlite || !$load_extension_disabled
@@ -222,13 +209,12 @@ class ListTest < Minitest::Test
   end
 
   def test_Sum
-    #.take(50) because of limit by ORDER BY
+    # .take(50) because of limit by ORDER BY
     assert_equal 110,User.select((User.arel_table[:age].sum + 1).as("res")).take(50).first.res
     assert_equal 218,User.select((User.arel_table[:age].sum + User.arel_table[:age].sum).as("res")).take(50).first.res
     assert_equal 327,User.select(((User.arel_table[:age] * 3).sum).as("res")).take(50).first.res
     assert_equal 2245,User.select(((User.arel_table[:age] * User.arel_table[:age]).sum).as("res")).take(50).first.res
   end
-
 
   def test_trim
     assert_equal "Myun",User.where(User.arel_table[:name].eq("Myung")).select(User.arel_table[:name].rtrim("g").as("res")).first.res
@@ -243,5 +229,4 @@ class ListTest < Minitest::Test
       assert_equal 1,User.where(User.arel_table[:name].eq("Myung")).select((User.arel_table[:created_at].wday).as("res")).first.res.to_i
       assert_equal 0,User.select(d.wday).as("res").first.to_i
   end
-
 end

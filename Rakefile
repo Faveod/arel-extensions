@@ -1,10 +1,10 @@
 require 'bundler'
-Bundler::GemHelper.install_tasks :name => "arel_extensions"
+Bundler::GemHelper.install_tasks name: "arel_extensions"
 
 require 'rake/testtask'
 
 desc "Default Task"
-task default: [ :test ]
+task default: [:test]
 
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
@@ -38,8 +38,8 @@ end
   end
 
   namespace adapter do
-    task :test => "test_#{adapter}"
-    task :isolated_test => "isolated_test_#{adapter}"
+    task test: "test_#{adapter}"
+    task isolated_test: "isolated_test_#{adapter}"
 
     # Set the connection environment for the adapter
     task(:env) { ENV['DB'] = adapter }

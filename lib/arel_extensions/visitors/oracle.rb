@@ -1,8 +1,7 @@
-#require 'oracle_visitor'
+# require 'oracle_visitor'
 module ArelExtensions
   module Visitors
     class Arel::Visitors::Oracle
-
       SPECIAL_CHARS = {"\t" => 'CHR(9)', "\n" => 'CHR(10)', "\r" => 'CHR(13)'}
       DATE_MAPPING = {'d' => 'DAY', 'm' => 'MONTH', 'w' => 'IW', 'y' => 'YEAR', 'wd' => 'D', 'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'}
       DATE_FORMAT_DIRECTIVES = {
@@ -93,7 +92,6 @@ module ArelExtensions
         end
       end
 
-
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
         collector << 'LOWER('
         collector = visit o.left, collector
@@ -124,7 +122,7 @@ module ArelExtensions
       else
         collector = visit o.expressions.first, collector
       end
-        collector
+      collector
       end
 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
@@ -440,7 +438,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateAdd o, collector
         collector << '('
         collector = visit o.left, collector
-        collector << ' + '# (o.right.value >= 0 ? ' + ' : ' - ')
+        collector << ' + ' # (o.right.value >= 0 ? ' + ' : ' - ')
         collector = visit o.oracle_value(o.right), collector
         collector << ')'
         collector
@@ -458,7 +456,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Repeat o, collector
         collector << "LPAD("
-        collector = visit o.expressions[0], collector #can't put empty string, otherwise it wouldn't work
+        collector = visit o.expressions[0], collector # can't put empty string, otherwise it wouldn't work
         collector << Arel::Visitors::ToSql::COMMA
         collector = visit o.expressions[1], collector
         collector << Arel::Visitors::ToSql::COMMA
@@ -467,24 +465,24 @@ module ArelExtensions
         collector
       end
 
-        # add primary_key if not present, avoid zip
+      # add primary_key if not present, avoid zip
       if Arel::VERSION.to_i < 7
         def visit_ArelExtensions_InsertManager_BulkValues o, collector
           collector << "("
           o.left.each_with_index do |row, idx| # values
           collector << " UNION ALL " if idx != 0
-            collector << "(SELECT "
-            len = row.length - 1
-            row.zip(o.cols).each_with_index { |(value, attr), i|
-                case value
-                when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
-                  collector = visit value, collector
-                else
-                  collector << quote(value, attr && column_for(attr)).to_s
-                end
-                collector << COMMA unless i == len
-            }
-            collector << ' FROM DUAL)'
+          collector << "(SELECT "
+          len = row.length - 1
+          row.zip(o.cols).each_with_index { |(value, attr), i|
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value, collector
+              else
+                collector << quote(value, attr && column_for(attr)).to_s
+              end
+              collector << COMMA unless i == len
+          }
+          collector << ' FROM DUAL)'
           end
           collector << ")"
           collector
@@ -610,7 +608,6 @@ module ArelExtensions
         collector << "#{quote_table_name join_name}.#{quote_column_name o.name}"
       end
 
-
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
         col = o.left.coalesce(0)
         comma = NUMBER_COMMA_MAPPING[o.locale] || '.,'
@@ -690,7 +687,6 @@ module ArelExtensions
         collector << ')'
         collector
       end
-
     end
   end
 end

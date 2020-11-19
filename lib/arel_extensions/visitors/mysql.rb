@@ -1,7 +1,6 @@
 module ArelExtensions
   module Visitors
     class Arel::Visitors::MySQL
-
       DATE_MAPPING = {
         'd' => 'DAY', 'm' => 'MONTH', 'w' => 'WEEK', 'y' => 'YEAR', 'wd' => 'WEEKDAY',
         'h' => 'HOUR', 'mn' => 'MINUTE', 's' => 'SECOND'
@@ -15,7 +14,7 @@ module ArelExtensions
       }.freeze
 
 
-      #Math functions
+      # Math functions
       def visit_ArelExtensions_Nodes_Log10 o, collector
           collector << "LOG10("
           o.expressions.each_with_index { |arg, i|
@@ -36,7 +35,7 @@ module ArelExtensions
         collector
       end
 
-      #String functions
+      # String functions
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
         collector << 'LOWER('
         collector = visit o.left, collector
@@ -117,10 +116,10 @@ module ArelExtensions
         collector = visit o.expressions.first, collector
         collector <<
           if o.ai
-            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
-          #doesn't work in latin1
+            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci'}"
+          # doesn't work in latin1
           elsif o.ci
-            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci' }"
+            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci'}"
           else
             " COLLATE #{charset}_bin"
           end
@@ -170,7 +169,7 @@ module ArelExtensions
           collector
       end
 
-      def visit_ArelExtensions_Nodes_Ltrim o , collector
+      def visit_ArelExtensions_Nodes_Ltrim o, collector
           collector << 'TRIM(LEADING '
           collector = visit o.right, collector
           collector << " FROM "
@@ -179,7 +178,7 @@ module ArelExtensions
           collector
       end
 
-      def visit_ArelExtensions_Nodes_Rtrim o , collector
+      def visit_ArelExtensions_Nodes_Rtrim o, collector
         collector << 'TRIM(TRAILING '
         collector = visit o.right, collector
         collector << " FROM "
@@ -267,7 +266,6 @@ module ArelExtensions
         collector
       end
 
-
       def visit_ArelExtensions_Nodes_Duration o, collector
         if o.left == 'wd'
           collector << "(WEEKDAY("
@@ -294,7 +292,6 @@ module ArelExtensions
         end
         collector
       end
-
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
         collector << "ISNULL("
@@ -467,15 +464,16 @@ module ArelExtensions
           conn.respond_to?(:version) && conn.send(:version) >= mariadb_v || \
           conn.instance_variable_get(:"@version") && conn.instance_variable_get(:"@version") >= mariadb_v) || \
           !conn.send(:mariadb?) && \
-          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mysql_v || \
-          conn.respond_to?(:version) && conn.send(:version) >= mysql_v || \
-          conn.instance_variable_get(:"@version") && conn.instance_variable_get(:"@version") >= mysql_v)
+            (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mysql_v || \
+            conn.respond_to?(:version) && conn.send(:version) >= mysql_v || \
+            conn.instance_variable_get(:"@version") && conn.instance_variable_get(:"@version") >= mysql_v)
         # ideally we should parse the instance_variable @full_version because @version contains only the supposedly
         # corresponding mysql version of the current mariadb version (which is not very helpful most of the time)
       end
 
       def visit_ArelExtensions_Nodes_Json o,collector
         return super if !json_supported?
+
         case o.dict
         when Array
           collector << 'JSON_ARRAY('
@@ -545,6 +543,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_JsonGroup o, collector
         return super if !json_supported?
+
         if o.as_array
           collector << 'JSON_ARRAYAGG('
           collector = visit o.dict, collector
@@ -572,7 +571,6 @@ module ArelExtensions
         end
         collector
       end
-
     end
   end
 end

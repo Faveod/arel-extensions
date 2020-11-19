@@ -63,11 +63,9 @@ module ArelExtensions
           :string
         end
       end
-
     end
 
     class Json < JsonNode
-
       def initialize *expr
         @dict =
           if expr.length == 1
@@ -77,7 +75,6 @@ module ArelExtensions
           end
         super
       end
-
     end
 
     class JsonMerge < JsonNode
@@ -102,7 +99,6 @@ module ArelExtensions
         @dict = json
         @key = convert_to_node(key)
       end
-
     end
 
     class JsonSet < JsonNode
@@ -113,8 +109,6 @@ module ArelExtensions
         @key = convert_to_node(key)
         @value = Json.new(value)
       end
-
     end
-
   end
 end

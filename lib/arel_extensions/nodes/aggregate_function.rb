@@ -9,6 +9,5 @@ module ArelExtensions
         super [node]
       end
     end
-
   end
 end

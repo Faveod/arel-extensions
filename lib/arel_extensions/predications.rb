@@ -1,6 +1,5 @@
 module ArelExtensions
   module Predications
-
     def when right, expression = nil
       ArelExtensions::Nodes::Case.new(self).when(right,expression)
     end
@@ -21,7 +20,7 @@ module ArelExtensions
       ArelExtensions::Nodes::Cast.new([self,right])
     end
 
-    def in(*other) #In should handle nil element in the Array
+    def in(*other) # In should handle nil element in the Array
       other = other.first if other.length <= 1
       case other
       when Range
@@ -49,7 +48,7 @@ module ArelExtensions
       end
     end
 
-    def not_in(*other) #In should handle nil element in the Array
+    def not_in(*other) # In should handle nil element in the Array
       other = other.first if other.length <= 1
       case other
       when Range

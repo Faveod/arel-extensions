@@ -2,9 +2,7 @@ require 'arelx_test_helper'
 
 module ArelExtensions
   module WthAr
-
     describe 'the sqlite visitor can do maths' do
-
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
@@ -44,21 +42,19 @@ module ArelExtensions
       end
 
       it "should do maths" do
-        #ABS
+        # ABS
         assert_equal 20, User.where(:id => @neg.id).select(@age.abs.as("res")).first.res
         assert_equal 14, User.where(:id => @laure.id).select((@age - 39).abs.as("res")).first.res
 
-        #CEIL # require extensions
+        # CEIL # require extensions
 
         # RAND
-#        puts User.where(@table[:score].eq(20.16)).order(Arel.rand).limit(50).to_sql if User.where(@table[:score].eq(20.16)).order(Arel.rand).limit(50).count == 0
-#        assert_equal 5, User.where(@table[:score].eq(20.16)).order(Arel.rand).limit(50).count
+        #        puts User.where(@table[:score].eq(20.16)).order(Arel.rand).limit(50).to_sql if User.where(@table[:score].eq(20.16)).order(Arel.rand).limit(50).count == 0
+        #        assert_equal 5, User.where(@table[:score].eq(20.16)).order(Arel.rand).limit(50).count
         assert 42 != User.select(Arel.rand.as('res')).first.res
         assert 0 <= User.select(Arel.rand.abs.as('res')).first.res
         assert_equal 8, User.order(Arel.rand).limit(50).count
       end
-
     end
-
   end
 end

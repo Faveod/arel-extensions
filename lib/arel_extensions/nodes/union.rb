@@ -1,7 +1,6 @@
 module ArelExtensions
   module Nodes
     class Union < Arel::Nodes::Union
-
       def initialize left,right
         return super(left,right)
       end
@@ -18,6 +17,5 @@ module ArelExtensions
         Arel::Nodes::TableAlias.new Arel::Nodes::Grouping.new(self), Arel::Nodes::SqlLiteral.new(other.to_s)
       end
     end
-
   end
 end

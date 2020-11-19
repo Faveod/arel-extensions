@@ -3,9 +3,7 @@ require 'date'
 
 module ArelExtensions
   module WthAr
-
     describe 'the mysql visitor can do string operations' do
-
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-mysql" : :mysql))
@@ -59,7 +57,7 @@ module ArelExtensions
         assert_equal "Sophie15", @sophie.select((User.arel_table[:name] + User.arel_table[:age]).as("res")).first.res
         assert_equal "SophieSophie", @sophie.select((User.arel_table[:name] + User.arel_table[:name]).as("res")).first.res
         assert_equal "Sophie2016-05-23", @sophie.select((User.arel_table[:name] + User.arel_table[:created_at]).as("res")).first.res
-        #concat Integer
+        # concat Integer
         assert_equal 1, User.where((User.arel_table[:age] + 10).eq(33)).count
         assert_equal 1, User.where((User.arel_table[:age] + "1").eq(6)).count
         assert_equal 1, User.where((User.arel_table[:age] + User.arel_table[:age]).eq(10)).count
@@ -68,8 +66,6 @@ module ArelExtensions
         assert_equal "LucaX", User.where(:id => @lucas).select(@name.replace("s","X").as("res")).first.res
         assert_equal "replace", User.where(:id => @lucas).select(@name.replace(@name,"replace").as("res")).first.res
       end
-
     end
-
   end
 end

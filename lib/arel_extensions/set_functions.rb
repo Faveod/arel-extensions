@@ -3,7 +3,6 @@ require 'arel_extensions/nodes/union_all'
 
 module ArelExtensions
   module SetFunctions
-
     def +(other)
       ArelExtensions::Nodes::Union.new(self,other)
     end
@@ -19,7 +18,6 @@ module ArelExtensions
     def uniq
       self
     end
-
   end
 end
 
