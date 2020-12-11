@@ -78,7 +78,7 @@ module ArelExtensions
     #    def rand seed = nil
     #        ArelExtensions::Nodes::Rand.new [seed]
     #    end
-    alias_method :random, :rand
+    alias_method(:random, :rand) rescue nil
 
     # function is used to round a numeric field to the number of decimals specified
     def round precision = nil

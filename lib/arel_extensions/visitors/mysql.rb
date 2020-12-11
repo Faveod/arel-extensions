@@ -336,7 +336,7 @@ module ArelExtensions
         collector
       end
 
-      alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
+      alias_method(:old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement) rescue nil
       def visit_Arel_Nodes_SelectStatement o, collector
         if !(collector.value.blank? || (collector.value.is_a?(Array) && collector.value[0].blank?)) && o.limit.blank? && o.offset.blank?
           o = o.dup
@@ -345,7 +345,7 @@ module ArelExtensions
         old_visit_Arel_Nodes_SelectStatement(o,collector)
       end
 
-      alias_method :old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As
+      alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil
       def visit_Arel_Nodes_As o, collector
         if o.left.is_a?(Arel::Nodes::Binary)
           collector << '('

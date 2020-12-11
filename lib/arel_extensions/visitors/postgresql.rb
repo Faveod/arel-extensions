@@ -77,7 +77,7 @@ module ArelExtensions
         collector
       end
 
-      alias_method :old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As
+      alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil
       def visit_Arel_Nodes_As o, collector
         if o.left.is_a?(Arel::Nodes::Binary)
           collector << '('
@@ -441,7 +441,7 @@ module ArelExtensions
       end
 
 
-      alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
+      alias_method(:old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement) rescue nil
       def visit_Arel_Nodes_SelectStatement o, collector
 
         if !(collector.value.blank? || (collector.value.is_a?(Array) && collector.value[0].blank?)) && o.limit.blank? && o.offset.blank?
@@ -451,7 +451,7 @@ module ArelExtensions
         old_visit_Arel_Nodes_SelectStatement(o,collector)
       end
 
-      alias_method :old_visit_Arel_Nodes_TableAlias, :visit_Arel_Nodes_TableAlias
+      alias_method(:old_visit_Arel_Nodes_TableAlias, :visit_Arel_Nodes_TableAlias) rescue nil
       def visit_Arel_Nodes_TableAlias o, collector
         if o.name.length > 63
           o = Arel::Table.new(o.table_name).alias(Arel.shorten(o.name))
@@ -459,7 +459,7 @@ module ArelExtensions
         old_visit_Arel_Nodes_TableAlias(o,collector)
       end
 
-      alias_method :old_visit_Arel_Attributes_Attribute, :visit_Arel_Attributes_Attribute
+      alias_method(:old_visit_Arel_Attributes_Attribute, :visit_Arel_Attributes_Attribute) rescue nil
       def visit_Arel_Attributes_Attribute o, collector
         join_name = o.relation.table_alias || o.relation.name
         if join_name.length > 63

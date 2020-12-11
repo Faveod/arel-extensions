@@ -546,7 +546,7 @@ module ArelExtensions
 
       # Boolean logic.
 
-      alias_method :old_visit_Arel_Nodes_And, :visit_Arel_Nodes_And
+      alias_method(:old_visit_Arel_Nodes_And, :visit_Arel_Nodes_And) rescue nil
       def visit_Arel_Nodes_And o, collector
         case o.children.length
         when 0
@@ -566,7 +566,7 @@ module ArelExtensions
         collector
       end
 
-      alias_method :old_visit_Arel_Nodes_Or, :visit_Arel_Nodes_Or
+      alias_method(:old_visit_Arel_Nodes_Or, :visit_Arel_Nodes_Or) rescue nil
       def visit_Arel_Nodes_Or o, collector
         case o.children.length
         when 0

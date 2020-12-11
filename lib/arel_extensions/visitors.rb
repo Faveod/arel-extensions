@@ -10,7 +10,7 @@ require 'arel_extensions/visitors/mssql'
 class Arel::Visitors::MSSQL
   include ArelExtensions::Visitors::MSSQL
 
-  alias_method :old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As
+  alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil
   def visit_Arel_Nodes_As o, collector
     if o.left.is_a?(Arel::Nodes::Binary)
       collector << '('
@@ -25,7 +25,7 @@ class Arel::Visitors::MSSQL
     collector
   end
 
-  alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
+  alias_method(:old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement) rescue nil
   def visit_Arel_Nodes_SelectStatement o, collector
     if !collector.value.blank? && o.limit.blank? && o.offset.blank?
       o = o.dup
@@ -42,7 +42,7 @@ begin
       Arel::Visitors::VISITORS['sqlserver'].class_eval do
         include ArelExtensions::Visitors::MSSQL
 
-        alias_method :old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement
+        alias_method(:old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement) rescue nil
         def visit_Arel_Nodes_SelectStatement o, collector
           if !collector.value.blank? && o.limit.blank? && o.offset.blank?
             o = o.dup
@@ -51,7 +51,7 @@ begin
           old_visit_Arel_Nodes_SelectStatement(o,collector)
         end
 
-        alias_method :old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As
+        alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil
         def visit_Arel_Nodes_As o, collector
           if o.left.is_a?(Arel::Nodes::Binary)
             collector << '('
@@ -66,7 +66,7 @@ begin
           collector
         end
 
-        alias_method :old_primary_Key_From_Table, :primary_Key_From_Table
+        alias_method(:old_primary_Key_From_Table, :primary_Key_From_Table) rescue nil
         def primary_Key_From_Table t
           return unless t
 

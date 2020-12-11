@@ -370,7 +370,7 @@ module ArelExtensions
         collector
       end
 
-      alias_method :old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As
+      alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil
       def visit_Arel_Nodes_As o, collector
         if o.left.is_a?(Arel::Nodes::Binary)
           collector << '('
