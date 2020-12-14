@@ -1,6 +1,7 @@
 module ArelExtensions
   module Visitors
     module MSSQL
+
       Arel::Visitors::MSSQL::DATE_MAPPING = {
         'd' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'weekday', 'w' => 'week', 'h' => 'hour', 'mn' => 'minute', 's' => 'second'
       }.freeze
