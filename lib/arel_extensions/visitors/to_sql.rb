@@ -3,6 +3,15 @@ module ArelExtensions
     class Arel::Visitors::ToSql
       COMMA = ', ' unless defined?(COMMA)
 
+      # Escape properly the string expression expr.
+      # Take care of escaping.
+      def make_json_string expr
+        Arel::Nodes.build_quoted('"') \
+        + expr
+            .replace('\\','\\\\').replace('"','\"').replace("\n", '\n') \
+        + '"'
+      end
+
       # Math Functions
       def visit_ArelExtensions_Nodes_Abs o, collector
         collector << "ABS("
@@ -589,7 +598,7 @@ module ArelExtensions
       def json_value(o,v)
         case o.type_of_node(v)
         when :string
-          Arel.when(v.is_null).then(Arel::Nodes.build_quoted("null")).else(Arel::Nodes.build_quoted('"') + v.replace('\\','\\\\').replace('"','\"') + '"')
+          Arel.when(v.is_null).then(Arel::Nodes.build_quoted("null")).else(make_json_string(v))
         when :date
           s = v.format('%Y-%m-%d')
           Arel.when(s.is_null).then(Arel::Nodes.build_quoted("null")).else(Arel::Nodes.build_quoted('"') + s + '"')
@@ -624,7 +633,7 @@ module ArelExtensions
             if i != 0
               res += ', '
             end
-            res += Arel::Nodes.build_quoted('"') + ArelExtensions::Nodes::Cast.new([k, :string]).coalesce("").replace('\\','\\\\').replace('"','\"') + '": '
+            res += make_json_string(ArelExtensions::Nodes::Cast.new([k, :string]).coalesce("")) + ': '
             res += json_value(o,v)
           end
           res += '}'
@@ -646,7 +655,7 @@ module ArelExtensions
             if i != 0
               res = res + ', '
             end
-            kv = Arel::Nodes.build_quoted('"') + ArelExtensions::Nodes::Cast.new([k, :string]).coalesce("").replace('\\','\\\\').replace('"','\"') + '": '
+            kv = make_json_string(ArelExtensions::Nodes::Cast.new([k, :string]).coalesce("")) + ': '
             kv += json_value(o,v)
             res = res + kv.group_concat(', ', order: Array(orders)).coalesce('')
           end
