@@ -22,12 +22,13 @@ jobs:
       matrix:
         ruby-version: [2.7, 2.5, 2.3]
         rails-version: [6_1, 6, 5_2]
+      exclude:
+        - ruby-version: 2.3
+          rails-version: 6_1
+        - ruby-version: 2.3
+          rails-version: 6
     continue-on-error: ${{ true }}
-    exclude:
-      - ruby-version: 2.3
-        rails-version: 6_1
-      - ruby-version: 2.3
-        rails-version: 6
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
