@@ -31,6 +31,14 @@ jobs:
           --health-interval 10s 
           --health-timeout 5s 
           --health-retries 5
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_USERNAME: travis
+          MYSQL_DATABASE: arext_test
+        ports:
+          - 33306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     strategy:
       matrix:
@@ -69,11 +77,17 @@ jobs:
         export BUNDLE_GEMFILE=gemfiles/rails${{ matrix.rails-version }}.gemfile
         bundle install
     - name: Run test to_sql
-      run: |
-        rake test:to_sql
+      run: rake test:to_sql
     - name: Run test Postgres
       env:
         PGHOST: localhost
         PGUSER: postgres
-      run: |
-        rake test:postgresql
+      run: rake test:postgresql
+    - name: Run test MySql
+      env:
+        DB_CONNECTION: mysql
+        DB_HOST: mysql
+        DB_PORT: 3306
+        DB_DATABASE: arext_test
+        DB_USERNAME: travis
+      run: rake test:mysqll
