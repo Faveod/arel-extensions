@@ -34,6 +34,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
+          MYSQL_ROOT_PASSWORD: password
           MYSQL_USERNAME: travis
           MYSQL_DATABASE: arext_test
           DB_CONNECTION: mysql
