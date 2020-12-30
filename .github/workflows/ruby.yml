@@ -68,11 +68,12 @@ jobs:
       run: |
         export BUNDLE_GEMFILE=gemfiles/rails${{ matrix.rails-version }}.gemfile
         bundle install
-    - name: Run tests
+    - name: Run test to_sql
+      run: |
+        rake test:to_sql
+    - name: Run test Postgres
       env:
         PGHOST: localhost
         PGUSER: postgres
       run: |
-        rake test:to_sql
-        psql -c 'create database arext_test;' -U postgres
         rake test:postgresql
