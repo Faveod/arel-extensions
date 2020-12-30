@@ -32,6 +32,9 @@ jobs:
       uses: ruby/setup-ruby@21351ecc0a7c196081abca5dc55b08f085efe09a
       with:
         ruby-version: ${{ matrix.ruby-version }}
+    - name: Setup gemspec
+      if: ${{ matrix.rails-version == "6_1" || matrix.rails-version == "6_0" }}
+      run: cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
     - name: Install dependencies
       run: |
         export BUNDLE_GEMFILE=gemfiles/rails${{ matrix.rails-version }}.gemfile
