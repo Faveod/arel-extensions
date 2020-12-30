@@ -95,4 +95,8 @@ jobs:
         DB_PORT: 3306
         DB_DATABASE: arext_test
         DB_USERNAME: travis
-      run: rake test:mysql
+      run: |
+        mysql -e 'create user travis;'
+        mysql -e 'GRANT ALL PRIVILEGES ON arel_text TO travis;'
+        mysql -e 'create database arext_test;'
+        rake test:mysql
