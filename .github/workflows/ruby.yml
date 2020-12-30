@@ -31,7 +31,7 @@ jobs:
     strategy:
       matrix:
         ruby-version: 
-          - 3
+          - 3.0.0-preview1
           - 2.7
           - 2.5
           - 2.3
@@ -44,7 +44,7 @@ jobs:
             rails-version: 6_1
           - ruby-version: 2.3
             rails-version: 6
-          - ruby-version: 3
+          - ruby-version: 3.0.0-preview1
             rails-version: 5.2
     continue-on-error: ${{ true }}
 
@@ -67,4 +67,5 @@ jobs:
     - name: Run tests
       run: |
         rake test:to_sql
+        psql -c 'create database arext_test;' -U postgres
         rake test:postgresql
