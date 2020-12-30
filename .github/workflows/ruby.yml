@@ -22,15 +22,8 @@ jobs:
       matrix:
         ruby-version: [2.7, 2.5, 2.3]
         rails-version: [6_1, 6, 5_2]
-        
+    continue-on-error: ${{ true }}
     steps:
-    - name: Cleanup pre-installed tools
-      run: |
-        # This is a fix for https://github.com/actions/virtual-environments/issues/1918
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /opt/ghc
-        sudo rm -rf "/usr/local/share/boost"
-        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
     - uses: actions/checkout@v2
     - name: Set up Ruby
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
