@@ -33,7 +33,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
     - name: Setup gemspec
-      if: ${{ matrix.rails-version == "6_1" || matrix.rails-version == "6_0" }}
+      if: ${{ matrix.rails-version == '6_1' || matrix.rails-version == '6_0' }}
       run: cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
     - name: Install dependencies
       run: |
