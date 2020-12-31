@@ -34,7 +34,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_USERNAME: travis
           MYSQL_DATABASE: arext_test
         ports:
@@ -91,7 +91,7 @@ jobs:
     - name: Run test MySql
       env: 
         DB_CONNECTION: mysql
-        DB_HOST: mysql
+        DB_HOST: localhost
         DB_PORT: 3306
         DB_DATABASE: arext_test
         DB_USERNAME: travis
