@@ -16,8 +16,10 @@ class Arel::Nodes::Casted
   include Arel::AliasPredication
 
   # They forget to define hash.
-  def hash
-    [self.class, self.val, self.attribute].hash
+  if Gem::Version.new(Arel::VERSION) < Gem::Version.new("10.0.0")
+    def hash
+      [self.class, self.val, self.attribute].hash
+    end
   end
 end
 
