@@ -96,7 +96,7 @@ jobs:
         DB_DATABASE: arext_test
         DB_USERNAME: travis
       run: |
-        mysql -e 'create user travis;'
-        mysql -e 'GRANT ALL PRIVILEGES ON arel_text TO travis;'
-        mysql -e 'create database arext_test;'
+        mysql -uroot -proot -e 'create user travis;'
+        mysql -uroot -proot -e 'create database arext_test;'
+        mysql -uroot -proot -e 'GRANT ALL PRIVILEGES ON arext_test TO travis;'
         rake test:mysql
