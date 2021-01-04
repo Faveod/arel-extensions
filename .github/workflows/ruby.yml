@@ -32,7 +32,7 @@ jobs:
           --health-timeout 5s 
           --health-retries 5
       mysql:
-        image: mysql5.7
+        image: mysql:5.7
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_USERNAME: travis
