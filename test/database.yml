@@ -11,9 +11,16 @@ mysql:
   database: arext_test
   username: travis
   encoding: utf8
+mariadb:
+  adapter: mysql2
+  database: arext_test
+  username: travis
+  encoding: utf8
 jdbc-mysql:
   adapter: jdbcmysql
   database: arext_test
+  host: loacalhost
+  port: 3306
   username: travis
   encoding: utf8
 postgresql:

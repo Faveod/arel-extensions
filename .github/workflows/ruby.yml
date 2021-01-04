@@ -36,7 +36,6 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_USERNAME: travis
-          MYSQL_PASSWORD: passwd
           MYSQL_DATABASE: arext_test
         ports:
           - 3306:3306
@@ -101,7 +100,7 @@ jobs:
       env: 
         DB_CONNECTION: mysql
         DB_HOST: 127.0.0.1
-        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DB_PORT: 3306
         DB_DATABASE: arext_test
         DB_USERNAME: travis
       run: |
