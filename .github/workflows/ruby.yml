@@ -36,7 +36,7 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_USERNAME: travis
-          MYSQL_PASSWORD: 
+          MYSQL_PASSWORD: passwd
           MYSQL_DATABASE: arext_test
         ports:
           - 3306:3306
@@ -72,7 +72,7 @@ jobs:
         DB_PORT: 3306
       run: |
         sudo apt-get install -y mysql-client
-        mysql --host 127.0.0.1 --port 3306 -utravis -e "SHOW DATABASES"
+        mysql --host 127.0.0.1 --port 3306 -utravis -ppasswd -e "SHOW DATABASES"
     - uses: actions/checkout@v2
     - name: Set up Ruby
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
@@ -103,7 +103,4 @@ jobs:
         DB_DATABASE: arext_test
         DB_USERNAME: travis
       run: |
-        mysql -uroot -e 'create user travis;'
-        mysql -uroot -e 'create database arext_test;'
-        mysql -uroot -e 'GRANT ALL PRIVILEGES ON arext_test TO travis;'
         rake test:mysql

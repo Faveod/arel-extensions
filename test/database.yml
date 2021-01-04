@@ -10,6 +10,7 @@ mysql:
   adapter: mysql2
   database: arext_test
   username: travis
+  password: passwd
   encoding: utf8
 jdbc-mysql:
   adapter: jdbcmysql
