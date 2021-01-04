@@ -4,9 +4,9 @@ module ArelExtensions
       RETURN_TYPE = :number
       attr_accessor :unbiased_estimator
 
-      def initialize node, opts = {}
+      def initialize node, **opts
         @unbiased_estimator = opts[:unbiased] ? true : false
-        super node, opts
+        super node, **opts
       end
     end
 
@@ -14,9 +14,9 @@ module ArelExtensions
       RETURN_TYPE = :number
       attr_accessor :unbiased_estimator
 
-      def initialize node, opts = {}
+      def initialize node, **opts
         @unbiased_estimator = opts[:unbiased] ? true : false
-        super node, opts
+        super node, ***opts
       end
     end
   end

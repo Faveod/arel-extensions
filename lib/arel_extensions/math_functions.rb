@@ -63,15 +63,15 @@ module ArelExtensions
 
     # Aggregate Functions
     def std opts = {unbiased: true}
-      ArelExtensions::Nodes::Std.new self, opts
+      ArelExtensions::Nodes::Std.new self, **opts
     end
 
     def variance opts = {unbiased: true}
-      ArelExtensions::Nodes::Variance.new self, opts
+      ArelExtensions::Nodes::Variance.new self, **opts
     end
 
     def sum opts = {unbiased: true}
-      ArelExtensions::Nodes::Sum.new self, opts
+      ArelExtensions::Nodes::Sum.new self, **opts
     end
 
     # function that can be invoked to produce random numbers between 0 and 1
