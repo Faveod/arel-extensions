@@ -46,7 +46,7 @@ module ArelExtensions::Nodes
 
     def initialize node, separator = ', ', **opts
       @separator = convert_to_node(separator)
-      super node, opts
+      super node, **opts
     end
   end
 end

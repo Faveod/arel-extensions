@@ -13,13 +13,6 @@ mysql:
   host: 127.0.0.1
   port: 3306
   encoding: utf8
-mariadb:
-  adapter: mysql2
-  database: arext_test
-  username: travis
-  host: 127.0.0.1
-  port: 3306
-  encoding: utf8
 jdbc-mysql:
   adapter: jdbcmysql
   database: arext_test
