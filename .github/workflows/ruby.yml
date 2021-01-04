@@ -36,6 +36,7 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_USERNAME: travis
+          MYSQL_PASSWORD: 
           MYSQL_DATABASE: arext_test
         ports:
           - 3306:3306
