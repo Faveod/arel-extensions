@@ -162,6 +162,12 @@ module ArelExtensions
         end
       end
 
+      def test_aggregation_with_ar_calculation
+        # Since Arel10 (Rails6.1), some unwanted behaviors on aggregated calculation were present.
+        # This should works no matter which version of rails is used
+        assert User.group(:score).average(:id).values.all?{|e| !e.nil?}
+      end
+
       # String Functions
       def test_concat
         assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)

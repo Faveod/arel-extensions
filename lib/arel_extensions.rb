@@ -128,6 +128,9 @@ class Arel::Nodes::Function
 
   alias_method(:old_as, :as) rescue nil
   def as other
+    if Gem::Version.new(Arel::VERSION) >= Gem::Version.new("10.0.0")
+      self.alias = Arel.sql(other)
+    end
     Arel::Nodes::As.new(self, Arel.sql(other))
   end
 end

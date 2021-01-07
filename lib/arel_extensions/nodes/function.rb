@@ -21,6 +21,9 @@ module ArelExtensions
       end
 
       def as other
+        if Gem::Version.new(Arel::VERSION) >= Gem::Version.new("10.0.0")
+          self.alias = Arel.sql(other)
+        end
         Arel::Nodes::As.new(self, Arel.sql(other))
       end
 
