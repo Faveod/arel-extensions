@@ -16,7 +16,7 @@ module ArelExtensions
 
       def initialize node, **opts
         @unbiased_estimator = opts[:unbiased] ? true : false
-        super node, ***opts
+        super node, **opts
       end
     end
   end
