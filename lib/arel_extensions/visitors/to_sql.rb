@@ -348,6 +348,9 @@ module ArelExtensions
       # override
       remove_method(:visit_Arel_Nodes_As) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_As)
       def visit_Arel_Nodes_As o, collector
+        if o.left.respond_to?(:alias)
+          o.left.alias = nil
+        end
         if o.left.is_a?(Arel::Nodes::Binary)
           collector << '('
           collector = visit o.left, collector
