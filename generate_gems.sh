@@ -1,8 +1,9 @@
 
-gem uninstall arel_extensions
+#gem uninstall arel_extensions
 
 # VERSION ~> 1
 cp ./version_v1.rb lib/arel_extensions/version.rb
+cp ./gemspecs/arel_extensions-v1.gemspec ./arel_extensions.gemspec
 gem build ./arel_extensions.gemspec
 
 # VERSION ~> 2
