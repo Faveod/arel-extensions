@@ -71,7 +71,11 @@ module ArelExtensions
     end
 
     def sum opts = {unbiased: true}
-      ArelExtensions::Nodes::Sum.new self, **opts
+      if Gem::Version.new(Arel::VERSION) >= Gem::Version.new("9.0.0")
+        Arel::Nodes::Sum.new self
+      else
+        ArelExtensions::Nodes::Sum.new self, **opts
+      end
     end
 
     # function that can be invoked to produce random numbers between 0 and 1
