@@ -80,7 +80,7 @@ module ArelExtensions
         when ActiveSupport::Duration
           Arel.sql(object.to_i)
         when Array
-          Arel::Nodes::Grouping.new(object.map{|r| convert_to_node(e)})
+          Arel::Nodes::Grouping.new(object.map{|e| convert_to_node(e)})
         else
           raise(ArgumentError, "#{object.class} cannot be converted to CONCAT arg")
         end
