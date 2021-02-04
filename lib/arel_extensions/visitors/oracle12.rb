@@ -2,18 +2,6 @@ module ArelExtensions
   module Visitors
     Arel::Visitors.send(:remove_const,'Oracle12') if Arel::Visitors.const_defined?('Oracle12')
     Arel::Visitors.const_set('Oracle12',Class.new(Arel::Visitors::Oracle)).class_eval do
-      def visit_Arel_Nodes_SelectStatement(o, collector)
-        # Oracle does not allow LIMIT clause with select for update
-        if o.limit && o.lock
-          raise ArgumentError, <<-MSG
-          'Combination of limit and lock is not supported.
-          because generated SQL statements
-          `SELECT FOR UPDATE and FETCH FIRST n ROWS` generates ORA-02014.`
-          MSG
-        end
-
-        super
-      end
 
       def visit_Arel_Nodes_SelectOptions(o, collector)
         collector = maybe_visit o.offset, collector
