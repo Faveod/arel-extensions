@@ -7,7 +7,7 @@ module ArelExtensions
       }.freeze
 
       DATE_FORMAT_DIRECTIVES = {
-        '%Y' => 'IYYY', '%C' => 'CC', '%y' => 'YY',
+        '%Y' => 'YYYY', '%C' => 'CC', '%y' => 'YY',
         '%m' => 'MM', '%B' => 'Month', '%^B' => 'MONTH', '%b' => 'Mon', '%^b' => 'MON',
         '%d' => 'DD', '%e' => 'FMDD', '%j' => 'DDD', '%w' => '', '%A' => 'Day', # day, weekday
         '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM', # hours
