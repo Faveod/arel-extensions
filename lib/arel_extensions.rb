@@ -33,6 +33,12 @@ class Arel::Nodes::Grouping
   include Arel::OrderPredications
 end
 
+class Arel::Nodes::Ordering
+	def eql? other
+		self.hash.eql? other.hash
+	end
+end
+
 class Arel::Nodes::Function
   include Arel::Math
   include Arel::Expressions
