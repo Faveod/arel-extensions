@@ -24,9 +24,17 @@ module ArelExtensions
       ArelExtensions::Nodes::FindInSet.new [other, self]
     end
 
-    # LENGTH function returns the length of the value in a text field.
+    # LENGTH function returns the length (bytewise) of the value in a text field.
     def length
-      ArelExtensions::Nodes::Length.new [self]
+      ArelExtensions::Nodes::Length.new self, true
+    end
+
+    def byte_length
+      ArelExtensions::Nodes::Length.new self, true
+    end
+
+    def char_length
+      ArelExtensions::Nodes::Length.new self, false
     end
 
     # LOCATE function returns the first starting position of a string in another string.

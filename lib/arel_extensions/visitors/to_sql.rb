@@ -117,7 +117,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Length o, collector
-        collector << "LENGTH("
+        collector << "#{o.bytewise ? '' : 'CHAR_'}LENGTH("
         collector = visit o.left, collector
         collector << ")"
         collector
