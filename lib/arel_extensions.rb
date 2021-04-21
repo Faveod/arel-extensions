@@ -158,6 +158,9 @@ class Arel::Nodes::Unary
   include ArelExtensions::MathFunctions
   include ArelExtensions::Comparators
   include ArelExtensions::Predications
+  def eql? other
+    hash == other.hash
+  end
 end
 
 class Arel::Nodes::Binary
@@ -167,6 +170,9 @@ class Arel::Nodes::Binary
   include ArelExtensions::Comparators
   include ArelExtensions::BooleanFunctions
   include ArelExtensions::Predications
+  def eql? other
+    hash == other.hash
+  end
 end
 
 class Arel::Nodes::Equality
