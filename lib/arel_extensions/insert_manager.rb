@@ -3,24 +3,25 @@ require 'arel'
 module ArelExtensions
   module InsertManager
     def bulk_insert(cols, data)
-      res_columns = []
-      case cols.first
-      when Array
-        case cols.first.first
-        when Arel::Attributes::Attribute
-          res_columns = cols
-        when String
-          res_columns = cols.map {|c| [@ast.relation[c.first]] }
+      raise ArgumentError, "cols must be present" if cols.blank?
+      columns =
+        case cols.first
+        when Array
+          case cols.first.first
+          when Arel::Attributes::Attribute
+            cols
+          when String, Symbol
+            cols.map {|c| [@ast.relation[c.first]] }
+          else
+            raise ArgumentError, "cols has an invalid type: #{cols.first.first.class}"
+          end
+        when String, Symbol
+          cols.map { |c| @ast.relation[c] }
+        else
+          raise ArgumentError, "cols has an invalid type: #{cols.first.class}"
         end
-      when NilClass
-        res_columns = @ast.relation.columns
-      when String, Symbol
-        cols.each { |c|
-          res_columns << @ast.relation[c]
-        }
-      end
-      self.values = BulkValues.new(res_columns, data)
-      @ast.columns = res_columns
+      self.values = BulkValues.new(columns, data)
+      @ast.columns = columns
     end
 
     class BulkValues < Arel::Nodes::Node
