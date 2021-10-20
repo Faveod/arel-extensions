@@ -401,13 +401,13 @@ module ArelExtensions
             ArelExtensions::Nodes::Concat.new([
                 Arel::Nodes::NamedFunction.new('TRIM',[
                   Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                    col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor),
+                    Arel.when(col.not_eq 0).then(col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor)).else(1),
                     Arel::Nodes.build_quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
                   ])]),
                 o.type,
                 Arel::Nodes::NamedFunction.new('TRIM',[
                   Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                    col.abs.log10.floor,
+                    Arel.when(col.not_eq 0).then(col.abs.log10.floor).else(0),
                     Arel::Nodes.build_quoted('FM'+nines_before)
                   ])])
               ])
