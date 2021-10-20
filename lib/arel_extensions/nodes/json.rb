@@ -47,6 +47,8 @@ module ArelExtensions
           convert_to_node(n.strftime("%Y-%m-%dT%H:%M:%S.%L%:z"))
         when NilClass
           Arel.sql('null')
+        when Arel::SelectManager
+          Arel::Nodes::Grouping.new(n)
         else
           convert_to_node(n)
         end

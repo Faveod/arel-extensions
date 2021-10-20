@@ -373,6 +373,8 @@ module ArelExtensions
           Arel::Nodes::SqlLiteral.new('date')
         when :binary
           Arel::Nodes::SqlLiteral.new('binary')
+        when :jsonb
+          Arel::Nodes::SqlLiteral.new('jsonb')
         else
           Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
         end
@@ -511,8 +513,6 @@ module ArelExtensions
           collector << '::jsonb'
         when NilClass
           collector  << %Q['null'::jsonb]
-        when Arel::Attributes::Attribute
-          collector = visit o.dict.cast(:jsonb), collector
         else
           collector = visit o.dict, collector
           collector << '::jsonb'
@@ -532,7 +532,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_JsonGet o,collector
         collector = visit o.dict, collector
-        collector << ' -> '
+        collector << ' ->> '
         collector = visit o.key, collector
         collector
       end
