@@ -601,20 +601,20 @@ module ArelExtensions
       def json_value(o,v)
         case o.type_of_node(v)
         when :string
-          Arel.when(v.is_null).then(Arel::Nodes.build_quoted("null")).else(make_json_string(v))
+          Arel.when(v.is_null).then(Arel.null).else(make_json_string(v))
         when :date
           s = v.format('%Y-%m-%d')
-          Arel.when(s.is_null).then(Arel::Nodes.build_quoted("null")).else(Arel::Nodes.build_quoted('"') + s + '"')
+          Arel.when(s.is_null).then(Arel.null).else(Arel::Nodes.build_quoted('"') + s + '"')
         when :datetime
           s = v.format('%Y-%m-%dT%H:%M:%S')
-          Arel.when(s.is_null).then(Arel::Nodes.build_quoted("null")).else(Arel::Nodes.build_quoted('"') + s + '"')
+          Arel.when(s.is_null).then(Arel.null).else(Arel::Nodes.build_quoted('"') + s + '"')
         when :time
           s = v.format('%H:%M:%S')
-          Arel.when(s.is_null).then(Arel::Nodes.build_quoted("null")).else(Arel::Nodes.build_quoted('"') + s + '"')
+          Arel.when(s.is_null).then(Arel.null).else(Arel::Nodes.build_quoted('"') + s + '"')
         when :nil
-          Arel::Nodes.build_quoted("null")
+          Arel.null
         else
-          ArelExtensions::Nodes::Cast.new([v, :string]).coalesce("null")
+          ArelExtensions::Nodes::Cast.new([v, :string]).coalesce(Arel.null)
         end
       end
 

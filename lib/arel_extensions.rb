@@ -111,6 +111,11 @@ module Arel
     Arel::Nodes::Equality.new(1,0)
   end
 
+  # The NULL literal.
+  def self.null
+    Arel::Nodes.build_quoted(nil)
+  end
+
   def self.tuple *v
     tmp = Arel::Nodes::Grouping.new(nil)
     Arel::Nodes::Grouping.new(v.map{|e| tmp.convert_to_node(e)})
