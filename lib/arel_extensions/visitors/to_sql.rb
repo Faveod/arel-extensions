@@ -604,13 +604,13 @@ module ArelExtensions
           Arel.when(v.is_null).then(Arel.null).else(make_json_string(v))
         when :date
           s = v.format('%Y-%m-%d')
-          Arel.when(s.is_null).then(Arel.null).else(Arel::Nodes.build_quoted('"') + s + '"')
+          Arel.when(s.is_null).then(Arel.null).else(make_json_string(s))
         when :datetime
           s = v.format('%Y-%m-%dT%H:%M:%S')
-          Arel.when(s.is_null).then(Arel.null).else(Arel::Nodes.build_quoted('"') + s + '"')
+          Arel.when(s.is_null).then(Arel.null).else(make_json_string(s))
         when :time
           s = v.format('%H:%M:%S')
-          Arel.when(s.is_null).then(Arel.null).else(Arel::Nodes.build_quoted('"') + s + '"')
+          Arel.when(s.is_null).then(Arel.null).else(make_json_string(s))
         when :nil
           Arel.null
         else
