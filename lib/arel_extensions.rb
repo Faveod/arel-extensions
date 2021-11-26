@@ -105,6 +105,10 @@ module Arel
     ArelExtensions::Nodes::Duration.new("#{s}i", expr)
   end
 
+  def self.grouping *v
+    Arel::Nodes::Grouping.new(*v)
+  end
+
   # The TRUE pseudo literal.
   def self.true
     Arel::Nodes::Equality.new(1, 1)
@@ -121,8 +125,8 @@ module Arel
   end
 
   def self.tuple *v
-    tmp = Arel::Nodes::Grouping.new(nil)
-    Arel::Nodes::Grouping.new(v.map{|e| tmp.convert_to_node(e)})
+    tmp = Arel.grouping(nil)
+    Arel.grouping v.map{|e| tmp.convert_to_node(e)}
   end
 end
 

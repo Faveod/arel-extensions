@@ -48,7 +48,7 @@ module ArelExtensions
         when NilClass
           Arel.null
         when Arel::SelectManager
-          Arel::Nodes::Grouping.new(n)
+          Arel.grouping(n)
         else
           convert_to_node(n)
         end
