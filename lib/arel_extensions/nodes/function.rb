@@ -52,7 +52,9 @@ module ArelExtensions
         case att
         when Arel::Attributes::Attribute
           begin
-            Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
+            if Arel::Table.engine.connection.tables.include? att.relation.table_name 
+              Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
+            end
           rescue
             att
           end
