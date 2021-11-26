@@ -34,9 +34,9 @@ class Arel::Nodes::Grouping
 end
 
 class Arel::Nodes::Ordering
-	def eql? other
-		self.hash.eql? other.hash
-	end
+  def eql? other
+    self.hash.eql? other.hash
+  end
 end
 
 class Arel::Nodes::Function
@@ -88,11 +88,13 @@ module Arel
   end
 
   def self.json *expr
-    if expr.length == 1
-      ArelExtensions::Nodes::Json.new(expr.first)
-    else
-      ArelExtensions::Nodes::Json.new(expr)
-    end
+    ArelExtensions::Nodes::Json.new(
+      if expr.length == 1
+        expr.first
+      else
+        expr
+      end
+    )
   end
 
   def self.when condition
@@ -100,15 +102,17 @@ module Arel
   end
 
   def self.duration s, expr
-    ArelExtensions::Nodes::Duration.new(s.to_s+'i',expr)
+    ArelExtensions::Nodes::Duration.new("#{s}i", expr)
   end
 
+  # The TRUE pseudo literal.
   def self.true
-    Arel::Nodes::Equality.new(1,1)
+    Arel::Nodes::Equality.new(1, 1)
   end
 
+  # The FALSE pseudo literal.
   def self.false
-    Arel::Nodes::Equality.new(1,0)
+    Arel::Nodes::Equality.new(1, 0)
   end
 
   # The NULL literal.
