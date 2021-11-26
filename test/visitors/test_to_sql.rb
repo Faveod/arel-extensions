@@ -373,7 +373,7 @@ module ArelExtensions
         end
 
         it "should respecting Grouping" do
-          g = ->(*v) { Arel::Nodes::Grouping.new(v) }
+          g = ->(*v) { Arel.grouping(v) }
           _(compile(g[@table[:id], @table[:age]].in [g[1, 42]]))
             .must_be_like %{("users"."id", "users"."age") IN ((1, 42))}
           _(compile(g[@table[:id], @table[:age]].in [g[1, 42], g[2, 51]]))

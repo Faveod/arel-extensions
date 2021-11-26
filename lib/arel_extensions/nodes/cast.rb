@@ -42,7 +42,7 @@ module ArelExtensions
         when :ruby_time
           ArelExtensions::Nodes::DateAdd.new [self, other]
         else
-          Arel::Nodes::Grouping.new(Arel::Nodes::Addition.new self, other)
+          Arel.grouping(Arel::Nodes::Addition.new self, other)
         end
       end
 
