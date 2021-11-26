@@ -10,10 +10,6 @@ module ArelExtensions
         @substitute = convert_to_node(substitute)
         super([@left,@pattern,@substitute])
       end
-
-      def +(other)
-        return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
-      end
     end
 
     class RegexpReplace < Function
@@ -25,10 +21,6 @@ module ArelExtensions
         @pattern = (pattern.is_a?(Regexp) ? pattern : %r[#{pattern}])
         @substitute = convert_to_node(substitute)
         super([@left,@pattern,@substitute])
-      end
-
-      def +(other)
-        return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
       end
     end
   end
