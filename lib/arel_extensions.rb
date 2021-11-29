@@ -202,6 +202,10 @@ end
 class Arel::SelectManager
   include ArelExtensions::SetFunctions
   include ArelExtensions::Nodes
+
+  def as table_name
+    Arel::TableAlias.new(self, table_name)
+  end
 end
 
 class Arel::Nodes::As
