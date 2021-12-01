@@ -289,7 +289,7 @@ module ArelExtensions
         _(compile((@table[:age] + 42).as('alias'))).must_be_like %{("users"."age" + 42) AS alias}
         _(compile(@table[:name].coalesce('').as('alias'))).must_be_like %{COALESCE("users"."name", '') AS alias}
         _(compile(Arel::Nodes.build_quoted('test').as('alias'))).must_be_like %{'test' AS alias}
-        _(compile(@table.project(@table[:name]).as('alias'))).must_be_like %{(SELECT "users"."name" FROM "users") alias}
+        _(compile(@table.project(@table[:name]).as('alias'))).must_be_like %{(SELECT "users"."name" FROM "users") "alias"}
         _(compile(@table[:name].when("smith").then("cool").else("uncool").as('alias')))
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END AS alias}
       end
