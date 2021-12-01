@@ -9,9 +9,17 @@ if defined?(Arel::Visitors::Oracle)
   require 'arel_extensions/visitors/oracle12'
 end
 
-if defined?(Arel::Visitors::MSSQL)
+if defined?(Arel::Visitors::SQLServer) || defined?(Arel::Visitors::MSSQL)
   require 'arel_extensions/visitors/mssql'
+end
 
+if defined?(Arel::Visitors::SQLServer)
+  class Arel::Visitors::SQLServer
+    include ArelExtensions::Visitors::MSSQL
+  end
+end
+
+if defined?(Arel::Visitors::MSSQL)
   class Arel::Visitors::MSSQL
     include ArelExtensions::Visitors::MSSQL
 
