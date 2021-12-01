@@ -204,7 +204,7 @@ class Arel::SelectManager
   include ArelExtensions::Nodes
 
   def as table_name
-    Arel::TableAlias.new(self, table_name)
+    Arel::Nodes::TableAlias.new(self, table_name)
   end
 end
 
