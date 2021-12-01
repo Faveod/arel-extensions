@@ -104,6 +104,10 @@ module ArelExtensions
       def as other
         Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
       end
+
+      def xas other
+        Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
+      end
     end
   end
 end

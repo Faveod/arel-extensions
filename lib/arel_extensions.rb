@@ -153,6 +153,11 @@ class Arel::Nodes::Function
     end
     res
   end
+
+  def xas other
+    Arel::Nodes::As.new(self, Arel.sql(other))
+  end
+
 end
 
 class Arel::Nodes::Grouping
