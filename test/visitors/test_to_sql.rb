@@ -296,8 +296,8 @@ module ArelExtensions
           _(compile(exp.as('alias'))).must_be_like res
           _(compile(exp.xas('alias'))).must_be_like res
 
-          no_as = res.gsub('AS alias', '')
-          _(compile(exp.xas(nil))).must_be_like res
+          res_no_alias = res.gsub(/\s*(?:AS alias|"alias")\s*\z/, '')
+          _(compile(exp.xas(nil))).must_be_like res_no_alias
         end
       end
 

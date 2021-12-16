@@ -34,6 +34,7 @@ module ArelExtensions
       include Arel::Math
       include Arel::Predications
       include Arel::OrderPredications
+      include ArelExtensions::Aliases
       include ArelExtensions::Math
       include ArelExtensions::Comparators
       include ArelExtensions::Predications
@@ -102,11 +103,7 @@ module ArelExtensions
       alias :== :eql?
 
       def as other
-        Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
-      end
-
-      def xas other
-        Arel::Nodes::As.new self, Arel::Nodes::SqlLiteral.new(other)
+        Arel::Nodes::As.new self, Arel.sql(other)
       end
     end
   end
