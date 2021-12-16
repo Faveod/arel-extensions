@@ -52,6 +52,7 @@ if Gem::Version.new(Arel::VERSION) >= Gem::Version.new("7.1.0")
 end
 
 require 'arel_extensions/version'
+require 'arel_extensions/aliases'
 require 'arel_extensions/attributes'
 require 'arel_extensions/visitors'
 require 'arel_extensions/nodes'
@@ -136,6 +137,7 @@ class Arel::Attributes::Attribute
 end
 
 class Arel::Nodes::Function
+  include ArelExtensions::Aliases
   include ArelExtensions::Math
   include ArelExtensions::Comparators
   include ArelExtensions::DateDuration
@@ -153,16 +155,6 @@ class Arel::Nodes::Function
     end
     res
   end
-
-  # Install an alias, if present.
-  def xas other
-    if other.present?
-      Arel::Nodes::As.new(self, Arel.sql(other))
-    else
-      self
-    end
-  end
-
 end
 
 class Arel::Nodes::Grouping
@@ -215,6 +207,15 @@ class Arel::SelectManager
 
   def as table_name
     Arel::Nodes::TableAlias.new(self, table_name)
+  end
+
+  # Install an alias, if present.
+  def xas table_name
+    if table_name.present?
+      as table_name
+    else
+      self
+    end
   end
 end
 

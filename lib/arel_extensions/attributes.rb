@@ -1,3 +1,4 @@
+require 'arel_extensions/aliases'
 require 'arel_extensions/math'
 require 'arel_extensions/comparators'
 require 'arel_extensions/date_duration'
@@ -8,6 +9,7 @@ require 'arel_extensions/predications'
 
 module ArelExtensions
   module Attributes
+    include ArelExtensions::Aliases
     include ArelExtensions::Math
     include ArelExtensions::Comparators
     include ArelExtensions::DateDuration
