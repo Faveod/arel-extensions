@@ -295,6 +295,9 @@ module ArelExtensions
         }.each do |exp, res|
           _(compile(exp.as('alias'))).must_be_like res
           _(compile(exp.xas('alias'))).must_be_like res
+
+          no_as = res.gsub('AS alias', '')
+          _(compile(exp.xas(nil))).must_be_like res
         end
       end
 
