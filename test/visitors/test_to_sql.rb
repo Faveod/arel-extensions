@@ -282,16 +282,20 @@ module ArelExtensions
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END ILIKE 'value'}
       end
 
-      it "should be possible to use as on anything" do
-        _(compile(@table[:name].as('alias'))).must_be_like %{"users"."name" AS alias}
-        _(compile(@table[:name].concat(' test').as('alias'))).must_be_like %{CONCAT("users"."name", ' test') AS alias}
-        _(compile((@table[:name] + ' test').as('alias'))).must_be_like %{CONCAT("users"."name", ' test') AS alias}
-        _(compile((@table[:age] + 42).as('alias'))).must_be_like %{("users"."age" + 42) AS alias}
-        _(compile(@table[:name].coalesce('').as('alias'))).must_be_like %{COALESCE("users"."name", '') AS alias}
-        _(compile(Arel::Nodes.build_quoted('test').as('alias'))).must_be_like %{'test' AS alias}
-        _(compile(@table.project(@table[:name]).as('alias'))).must_be_like %{(SELECT "users"."name" FROM "users") "alias"}
-        _(compile(@table[:name].when("smith").then("cool").else("uncool").as('alias')))
-          .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END AS alias}
+      it "should be possible to use as/xas on anything" do
+        {
+          @table[:name] => %{"users"."name" AS alias},
+          @table[:name].concat(' test') => %{CONCAT("users"."name", ' test') AS alias},
+          (@table[:name] + ' test') => %{CONCAT("users"."name", ' test') AS alias},
+          (@table[:age] + 42) => %{("users"."age" + 42) AS alias},
+          @table[:name].coalesce('') => %{COALESCE("users"."name", '') AS alias},
+          Arel::Nodes.build_quoted('test') => %{'test' AS alias},
+          @table.project(@table[:name]) => %{(SELECT "users"."name" FROM "users") "alias"},
+          @table[:name].when("smith").then("cool").else("uncool") => %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END AS alias},
+        }.each do |exp, res|
+          _(compile(exp.as('alias'))).must_be_like res
+          _(compile(exp.xas('alias'))).must_be_like res
+        end
       end
 
       it "should accept comparators on functions" do
