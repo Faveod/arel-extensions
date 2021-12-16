@@ -225,7 +225,11 @@ end
 class Arel::Table
   alias_method(:old_alias, :alias) rescue nil
   def alias(name = "#{self.name}_2")
-    name.blank? ? self : Arel::Nodes::TableAlias.new(self,name)
+    if name.present?
+      Arel::Nodes::TableAlias.new(self, name)
+    else
+      self
+    end
   end
 end
 
