@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency('arel', '>= 6.0')
 
   s.add_development_dependency('minitest', '~> 5.9')
-  s.add_development_dependency('rdoc', '>= 6.3.1')
+  s.add_development_dependency('rdoc', '~> 6.1.0')
   s.add_development_dependency('rake', '~> 12.3.3')
 end
