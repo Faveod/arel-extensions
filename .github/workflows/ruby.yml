@@ -48,7 +48,7 @@ jobs:
     strategy:
       matrix:
         ruby-version:
-          - 3.0.0-preview1
+          - 3.0
           - 2.7
           - 2.5
           - 2.3
