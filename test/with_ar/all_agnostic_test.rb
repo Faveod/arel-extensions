@@ -1080,7 +1080,7 @@ module ArelExtensions
       end
 
       def test_json
-        skip "Can't be tested on travis"
+        skip "Can't be tested on postgresql" if @env_db == 'postgresql'
         # creation
         assert_equal 'Arthur', t(@arthur, Arel.json(@name))
         assert_equal %w[Arthur Arthur], parse_json(t(@arthur, Arel.json(@name, @name)))
