@@ -6,6 +6,7 @@ cache:
 branches:
   only:
     - master
+    - appveyor
 
 services:
   - mssql2014
@@ -29,6 +30,7 @@ test_script:
   - ruby --version
   - gem --version
   - bundler --version
+  - gem update --system
   - bundle exec rake test
   - ps: Start-Service 'MSSQL$SQL2014'
   - timeout /t 4 /nobreak > NUL
