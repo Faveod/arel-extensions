@@ -86,9 +86,15 @@ module ArelExtensions
         else
           collector = visit o.left, collector
         end
-        collector << " AS \""
+        collector << " AS "
+
+        # sometimes these values are already quoted, if they are, don't double quote it
+        quote = o.right.is_a?(Arel::Nodes::SqlLiteral) && o.right[0] != '"' && o.right[-1] != '"'
+        
+        collector << '"' if quote
         collector = visit o.right, collector
-        collector << "\""
+        collector << '"' if quote
+        
         collector
       end
 
