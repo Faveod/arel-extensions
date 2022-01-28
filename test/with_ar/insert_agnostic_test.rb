@@ -2,7 +2,7 @@ require 'arelx_test_helper'
 require 'date'
 
 module ArelExtensions
-  module WthAr
+  module WithAr
     class InsertManagerTest < Minitest::Test
       def setup_db
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
