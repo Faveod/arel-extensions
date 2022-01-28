@@ -596,3 +596,15 @@ User.connection.execute(insert_manager.to_sql)
   </tr>
   </tbody>
 </table>
+
+## Version Compatibility
+
+<table>
+  <tr><th>Ruby</th> <th>Rails</th>    <th>Arel Extensions</th></tr>
+  <tr><td>3.1</td>  <td>6.1</td>      <td>2</td></tr>
+  <tr><td>3.0</td>  <td>6.1</td>      <td>2</td></tr>
+  <tr><td>2.7</td>  <td>6.1, 6.0</td> <td>2</td></tr>
+  <tr><td>2.5</td>  <td>6.1, 6.0</td> <td>2</td></tr>
+  <tr><td>2.5</td>  <td>5.2</td>      <td>1</td></tr>
+</table>
+
