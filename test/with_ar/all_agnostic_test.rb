@@ -2,7 +2,7 @@ require 'arelx_test_helper'
 require 'date'
 
 module ArelExtensions
-  module WthAr
+  module WithAr
     class ListTest < Minitest::Test
       require 'minitest/pride'
       def connect_db

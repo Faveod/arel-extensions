@@ -1,7 +1,7 @@
 require 'arelx_test_helper'
 
 module ArelExtensions
-  module WthAr
+  module WithAr
     describe 'the sqlite visitor can do maths' do
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')

@@ -2,7 +2,7 @@ require 'arelx_test_helper'
 require 'date'
 
 module ArelExtensions
-  module WthAr
+  module WithAr
     describe 'the sqlite visitor can do string operations' do
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
