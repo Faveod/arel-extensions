@@ -88,6 +88,15 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
+      - name: Install FreeTDS
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y freetds-dev
+      - name: Install MSSQL 2019
+        uses: potatoqualitee/mssqlsuite@v1
+        with:
+          install: sqlengine, sqlclient, sqlpackage, localdb
+          sa-password: Password12!
       - name: Update system-wide gems
         run: gem update --system
       - name: bundle install
@@ -118,3 +127,6 @@ jobs:
           mysql --host 127.0.0.1 --port 3306 -uroot -e 'create user travis;'
           mysql --host 127.0.0.1 --port 3306 -uroot -e 'GRANT ALL PRIVILEGES ON arext_test.* TO travis;'
           rake test:mysql
+      - name: Run test mssql
+        run: rake test:mssql
+
