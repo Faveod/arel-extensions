@@ -608,3 +608,33 @@ User.connection.execute(insert_manager.to_sql)
   <tr><td>2.5</td>  <td>5.2</td>      <td>1</td></tr>
 </table>
 
+## Development
+
+Let's say you want to develop/test for `ruby 2.7.5` and `rails 5.2`.
+
+You will need to fix your ruby version:
+
+```bash
+rbenv install 2.7.5
+rbenv local 2.7.5
+```
+
+Fix your gemfiles:
+
+```bash
+bundle config set --local gemfile ./gemfiles/rails6.gemfile
+```
+
+Install dependencies:
+```bash
+bundle install
+```
+
+Develop, then test:
+
+```bash
+bundle exec rake test:to_sql
+```
+
+Refer to the [Version Compatibility](#version-compatibility) section to correctly
+set your gemfile.
