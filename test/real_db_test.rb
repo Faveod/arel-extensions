@@ -8,7 +8,11 @@ require 'arel_extensions'
 def setup_db
   ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
   ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
-  ActiveRecord.default_timezone = :utc
+  if ActiveRecord::VERSION::MAJOR >= 7
+    ActiveRecord.default_timezone = :utc
+  else
+    ActiveRecord::Base.default_timezone = :utc
+  end
   @cnx = ActiveRecord::Base.connection
   if ActiveRecord::Base.connection.adapter_name =~ /sqlite/i
     $sqlite = true

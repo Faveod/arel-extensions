@@ -7,7 +7,11 @@ module ArelExtensions
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-mysql" : :mysql))
-        ActiveRecord.default_timezone = :utc
+        if ActiveRecord::VERSION::MAJOR >= 7
+          ActiveRecord.default_timezone = :utc
+        else
+          ActiveRecord::Base.default_timezone = :utc
+        end
         begin
           @cnx = ActiveRecord::Base.connection
         rescue => e
