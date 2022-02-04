@@ -7,7 +7,11 @@ module ArelExtensions
       before do
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
-        ActiveRecord.default_timezone = :utc
+        if ActiveRecord::VERSION::MAJOR >= 7
+          ActiveRecord.default_timezone = :utc
+        else
+          ActiveRecord::Base.default_timezone = :utc
+        end
         @cnx = ActiveRecord::Base.connection
         Arel::Table.engine = ActiveRecord::Base
         @cnx.drop_table(:users) rescue nil

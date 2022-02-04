@@ -14,7 +14,11 @@ module ArelExtensions
           @env_db = ENV['DB']
         end
         ActiveRecord::Base.establish_connection(@env_db.try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
-        ActiveRecord.default_timezone = :utc
+        if ActiveRecord::VERSION::MAJOR >= 7
+          ActiveRecord.default_timezone = :utc
+        else
+          ActiveRecord::Base.default_timezone = :utc
+        end
         @cnx = ActiveRecord::Base.connection
         $sqlite = @cnx.adapter_name =~ /sqlite/i
         $load_extension_disabled ||= false
