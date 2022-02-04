@@ -9,8 +9,8 @@ group :development, :test do
   gem 'activerecord', '~> 6.0.0'
 
   gem "sqlite3", '~> 1.4', platforms: [:mri]
- gem "mysql2", '0.5.2', platforms: [:mri]
- gem "pg",'< 1.0.0', platforms: [:mri]
+  gem "mysql2", '0.5.2', platforms: [:mri]
+  gem "pg",'< 1.0.0', platforms: [:mri]
 
   gem "tiny_tds", platforms: [:mri, :mingw, :x64_mingw, :mswin]
   gem "activerecord-sqlserver-adapter", '~> 6.0', platforms: [:mri, :mingw, :x64_mingw, :mswin]
