@@ -171,7 +171,7 @@ module ArelExtensions
         # This should works no matter which version of rails is used
         assert User.group(:score).average(:id).values.all?{|e| !e.nil?}
 
-        # Since Rails 7, a patch to calculations.rb has tirggered a double 
+        # Since Rails 7, a patch to calculations.rb has tirggered a double
         # quoting of the alias name. See https://github.com/rails/rails/commit/7e6e9091e55c3357b0162d44b6ab955ed0c718d5
         # Before the patch that fixed this the following error would occur:
         #   ActiveRecord::StatementInvalid: PG::SyntaxError: ERROR:  zero-length delimited identifier at or near """"
@@ -454,8 +454,8 @@ module ArelExtensions
         skip "not yet implemented" if $sqlite
 
         date1 = Date.new(2016, 5, 23)
-        durPos = 10.years
-        durNeg = -10.years
+        durPos = 5.years
+        durNeg = -5.years
         date2 = date1 + durPos
         date3 = date1 - durPos
         date4 = date1 + 23.days
@@ -482,9 +482,9 @@ module ArelExtensions
         assert_includes [datetime1 + (12*60+42).minutes,"2014-03-04 01:24:00 UTC"],
                         t(@lucas,(@updated_at + Arel.duration('mn',(@updated_at.hour*60 + @updated_at.minute))))
 
-        assert_includes ["2024-03-03"], t(@lucas,(@updated_at + durPos).format('%Y-%m-%d'))
+        assert_includes ["2019-03-03"], t(@lucas,(@updated_at + durPos).format('%Y-%m-%d'))
         # puts (@updated_at - durPos).to_sql
-        assert_includes ["2004-03-03"], t(@lucas,(@updated_at - durPos).format('%Y-%m-%d'))
+        assert_includes ["2009-03-03"], t(@lucas,(@updated_at - durPos).format('%Y-%m-%d'))
 
 
         # we test with the ruby object or the string because some adapters don't return an object Date
