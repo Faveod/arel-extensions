@@ -77,7 +77,17 @@ require 'arel_extensions/nodes/soundex'
 require 'arel_extensions/nodes/cast'
 require 'arel_extensions/nodes/json'
 
-
+# It seems like the code in lib/arel_extensions/visitors.rb that is supposed
+# to inject ArelExtension is not enough. Different versions of the sqlserver
+# adapter behave differently. It doesn't always proc, so we added this for
+# coverage.
+if defined?(Arel::Visitors::SQLServer)
+  Arel::Visitors.const_set('MSSQL', Arel::Visitors::SQLServer)
+  require 'arel_extensions/visitors/mssql'
+  class Arel::Visitors::SQLServer
+    include ArelExtensions::Visitors::MSSQL
+  end
+end
 
 module Arel
   def self.rand
