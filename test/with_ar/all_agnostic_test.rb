@@ -509,7 +509,8 @@ module ArelExtensions
           assert_equal Time, t(@lucas,@updated_at.cast(:string).cast(:datetime)).class
           assert_equal Time, t(@lucas,@updated_at.cast(:time)).class
 
-          assert_equal "2014-03-03 12:42:00", t(@lucas,@updated_at.cast(:string)) unless @env_db == 'mssql' # locale dependent
+          # mysql adapter in rails7 adds some infos we just squeeze here
+          assert_equal "2014-03-03 12:42:00", t(@lucas,@updated_at.cast(:string)).split('.').first unless @env_db == 'mssql' # locale dependent
           assert_equal Date.parse("2014-03-03"), t(@lucas,Arel::Nodes.build_quoted('2014-03-03').cast(:date))
           assert_equal Date.parse("5014-03-03"), t(@lucas,(@age.cast(:string) + '014-03-03').cast(:date))
           assert_equal Time.parse("2014-03-03 12:42:00 UTC"), t(@lucas,@updated_at.cast(:string).cast(:datetime))
