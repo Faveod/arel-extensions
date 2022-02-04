@@ -1,3 +1,3 @@
 module ArelExtensions
-  VERSION = "1.2.27".freeze
+  VERSION = "1.3.0".freeze
 end
