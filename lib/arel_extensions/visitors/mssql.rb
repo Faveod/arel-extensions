@@ -155,10 +155,19 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Length o, collector
-        collector << "#{o.bytewise ? 'DATALENGTH' : 'LEN'}("
-        collector = visit o.expr, collector
-        collector << ")"
-        collector
+        if o.bytewise
+          collector << "(DATALENGTH("
+          collector = visit o.expr, collector
+          collector << ") / DATALENGTH( LEFT( COALESCE("
+          collector = visit o.expr, collector
+          collector << ", '#' ), 1 ) ))"
+          collector
+        else
+          collector << "LEN("
+          collector = visit o.expr, collector
+          collector << ")"
+          collector
+        end
       end
 
       def visit_ArelExtensions_Nodes_Round o, collector
