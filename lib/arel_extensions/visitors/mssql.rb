@@ -393,6 +393,27 @@ module ArelExtensions
         collector
       end
 
+      alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil
+      def visit_Arel_Nodes_As o, collector
+        if o.left.is_a?(Arel::Nodes::Binary)
+          collector << '('
+          collector = visit o.left, collector
+          collector << ')'
+        else
+          collector = visit o.left, collector
+        end
+        collector << " AS "
+
+        # sometimes these values are already quoted, if they are, don't double quote it
+        quote = o.right.is_a?(Arel::Nodes::SqlLiteral) && o.right[0] != '"' && o.right[-1] != '"'
+
+        collector << '"' if quote
+        collector = visit o.right, collector
+        collector << '"' if quote
+
+        collector
+      end
+
       # SQL Server does not know about REGEXP
       def visit_Arel_Nodes_Regexp o, collector
         collector = visit o.left, collector
