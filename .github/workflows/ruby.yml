@@ -102,16 +102,14 @@ jobs:
           sa-password: Password12!
       - name: Update system-wide gems
         run: gem update --system
-      - name: bundle install
-        run: |
-          bundle config set gemfile ./gemfiles/rails${{ matrix.rails }}.gemfile
-          bundle install
       - name: Download gem from build job
         uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.ruby }}-${{ matrix.rails }}-gem
-      - name: Install downloaded gem
-        run: gem install --local *.gem --verbose
+      - name: bundle install
+        run: |
+          bundle config set gemfile ./gemfiles/rails${{ matrix.rails }}.gemfile
+          bundle install
       - name: Run test to_sql
         run: bundle exec rake test:to_sql
       - name: Run test Postgres
