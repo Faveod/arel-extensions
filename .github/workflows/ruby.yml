@@ -63,6 +63,7 @@ jobs:
         image: postgres:11.6-alpine
         env:
           POSTGRES_DB: arext_test
+          POSTGRES_PASSWORD: secret
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
@@ -75,7 +76,7 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_USERNAME: travis
+          MYSQL_USERNAME: root
           MYSQL_DATABASE: arext_test
         ports:
           - 3306:3306
