@@ -28,7 +28,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: Setup gemspec
-        if: ${{ matrix.rails == '6_1' || matrix.rails == '6' }}
+        if: ${{ matrix.rails != '5_2' }}
         run: |
           cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
           cp ./version_v2.rb lib/arel_extensions/version.rb
