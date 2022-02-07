@@ -112,25 +112,72 @@ jobs:
       - name: Install downloaded gem
         run: gem install --local *.gem --verbose
       - name: Run test to_sql
-        run: rake test:to_sql
+        run: bundle exec rake test:to_sql
       - name: Run test Postgres
         env:
           PGHOST: localhost
           PGUSER: postgres
-        run: rake test:postgresql
+        run: bundle exec rake test:postgresql
       - name: Run test MySql
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: arext_test
-          DB_USERNAME: travis
+          DB_USERNAME: root
+        run: bundle exec rake test:mysql
+
+  job_test_mssql:
+    name: test mssql on linux
+    needs: job_build_gem
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [3.1, 3.0, 2.7, 2.5]
+        rails: [7, 6_1, 6, 5_2]
+        exclude: [
+          {ruby: 3.1, rails: 6  },
+          {ruby: 3.1, rails: 5_2},
+          {ruby: 3.0, rails: 6  },
+          {ruby: 3.0, rails: 5_2},
+          {ruby: 2.7, rails: 5_2},
+          {ruby: 2.5, rails: 7 },
+        ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Install FreeTDS
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y freetds-dev
+      - name: Install MSSQL 2019
+        uses: potatoqualitee/mssqlsuite@v1
+        with:
+          install: sqlengine, sqlclient, sqlpackage, localdb
+          sa-password: Password12!
+      - name: Update system-wide gems
+        run: gem update --system
+      - name: Download gem from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.ruby }}-${{ matrix.rails }}-gem
+      - name: Setup Gemfile
+        if: ${{ matrix.rails != '5_2' }}
+        run: |
+          cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
+          cp ./version_v2.rb lib/arel_extensions/version.rb
+          cp ./gemfiles/rails${{ matrix.rails }}.gemfile ./Gemfile
+      - name: bundle install
         run: |
           mysql --host 127.0.0.1 --port 3306 -uroot -e 'create user travis;'
           mysql --host 127.0.0.1 --port 3306 -uroot -e 'GRANT ALL PRIVILEGES ON arext_test.* TO travis;'
           rake test:mysql
       - name: Run test mssql
-        run: rake test:mssql
+        run: bundle exec rake test:mssql
 
 
   job_test_windows:
@@ -178,6 +225,6 @@ jobs:
       - name: Install downloaded gem
         run: gem install --local *.gem --verbose
       - name: Run test to_sql
-        run: rake test:to_sql
+        run: bundle exec rake test:to_sql
       - name: Run test mssql
-        run: rake test:mssql
+        run: bundle exec rake test:mssql
