@@ -44,15 +44,15 @@ module ArelExtensions
           col = nil
         end
         if (!col) # if the column doesn't exist in the database
-          Arel.grouping(Arel::Nodes::Addition.new(self, other))
+          Arel.grouping(Arel::Nodes::Addition.new(self, Arel::Nodes.build_quoted(other)))
         else
           arg = col.type
           if arg == :integer || (!arg)
             other = other.to_i if other.is_a?(String)
-            Arel.grouping(Arel::Nodes::Addition.new self, other)
+            Arel.grouping(Arel::Nodes::Addition.new self, Arel::Nodes.build_quoted(other))
           elsif arg == :decimal || arg == :float
             other = Arel.sql(other) if other.is_a?(String) # Arel should accept Float & BigDecimal!
-            Arel.grouping(Arel::Nodes::Addition.new self, other)
+            Arel.grouping(Arel::Nodes::Addition.new self, Arel::Nodes.build_quoted(other))
           elsif arg == :datetime || arg == :date
             ArelExtensions::Nodes::DateAdd.new [self, other]
           elsif arg == :string || arg == :text
@@ -68,23 +68,23 @@ module ArelExtensions
       case self
       when Arel::Nodes::Grouping
         if self.expr.left.is_a?(Date) || self.expr.left.is_a?(DateTime)
-          Arel.grouping(ArelExtensions::Nodes::DateSub.new [self, other])
+          Arel.grouping(ArelExtensions::Nodes::DateSub.new [self, Arel::Nodes.build_quoted(other)])
         else
-          Arel.grouping(Arel::Nodes::Subtraction.new(self, other))
+          Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel::Nodes.build_quoted(other)))
         end
       when ArelExtensions::Nodes::Function, ArelExtensions::Nodes::Case
         case self.return_type
         when :string, :text # ???
-          Arel.grouping(Arel::Nodes::Subtraction.new(self, other)) # ??
+          Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel::Nodes.build_quoted(other))) # ??
         when :integer, :decimal, :float, :number
-          Arel.grouping(Arel::Nodes::Subtraction.new(self, other))
+          Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel::Nodes.build_quoted(other)))
         when :date, :datetime
-          ArelExtensions::Nodes::DateSub.new [self, other]
+          ArelExtensions::Nodes::DateSub.new [self, Arel::Nodes.build_quoted(other)]
         else
-          Arel.grouping(Arel::Nodes::Subtraction.new(self, other))
+          Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel::Nodes.build_quoted(other)))
         end
       when Arel::Nodes::Function
-        Arel.grouping(Arel::Nodes::Subtraction.new(self, other))
+        Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel::Nodes.build_quoted(other)))
       else
         begin
           col = Arel::Table.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s]
@@ -92,7 +92,7 @@ module ArelExtensions
           col = nil
         end
         if (!col) # if the column doesn't exist in the database
-          Arel.grouping(Arel::Nodes::Subtraction.new(self, other))
+          Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel::Nodes.build_quoted(other)))
         else
           arg = col.type
           if (arg == :date || arg == :datetime)
@@ -127,7 +127,7 @@ module ArelExtensions
             when String
               Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.sql(other)))
             else
-              Arel.grouping(Arel::Nodes::Subtraction.new(self, other))
+              Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel::Nodes.build_quoted(other)))
             end
           end
         end
