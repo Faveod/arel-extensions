@@ -525,7 +525,7 @@ module ArelExtensions
         # puts @age.is_null.inspect
         # puts @age.is_null.to_sql
         # puts @age=='34'
-        assert_equal "Test", User.select(@name).where(@age.is_null.to_sql).first.name
+        assert_equal "Test", User.select(@name).where(@age.is_null).first.name
       end
 
       def test_math_plus
