@@ -141,9 +141,9 @@ module ArelExtensions
             when 'h','mn','s'
               Arel.sql('second')
             when /i\z/
-              Arel.sql(Arel::Visitors::MSSQL::DATE_MAPPING[v.left[0..-2]])
+              Arel.sql(ArelExtensions::Visitors::MSSQL::LOADED_VISITOR::DATE_MAPPING[v.left[0..-2]])
             else
-              Arel.sql(Arel::Visitors::MSSQL::DATE_MAPPING[v.left])
+              Arel.sql(ArelExtensions::Visitors::MSSQL::LOADED_VISITOR::DATE_MAPPING[v.left])
             end
           end
         end
