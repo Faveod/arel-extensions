@@ -1,3 +1,5 @@
+require 'arel_extensions/helpers'
+
 module ArelExtensions
   module Nodes
     if Gem::Version.new(Arel::VERSION) < Gem::Version.new("7.1.0")
@@ -57,11 +59,7 @@ module ArelExtensions
           when Date, DateTime,Time
             :datetime
           when Arel::Attributes::Attribute
-            begin
-              Arel::Table.engine.connection.schema_cache.columns_hash(obj.relation.table_name)[obj.name.to_s].type
-            rescue Exception
-              :string
-            end
+            ArelExtensions::column_of(obj.relation.table_name, obj.name.to_s)&.type || :string
           else
             :string
           end
