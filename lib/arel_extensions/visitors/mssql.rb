@@ -211,19 +211,11 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Trim o, collector
-        if o.right
-          collector << "REPLACE(REPLACE(LTRIM(RTRIM(REPLACE(REPLACE("
-          collector = visit o.left, collector
-          collector << ", ' ', '~'), "
-          collector = visit o.right, collector
-          collector << ", ' '))), ' ', "
-          collector = visit o.right, collector
-          collector << "), '~', ' ')"
-        else
-          collector << "LTRIM(RTRIM("
-          collector = visit o.left, collector
-          collector << "))"
-        end
+        collector << 'TRIM( '
+        collector = visit o.right, collector
+        collector << " FROM "
+        collector = visit o.left, collector
+        collector << ")"
         collector
       end
 
