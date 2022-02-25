@@ -297,6 +297,8 @@ module ArelExtensions
               collector << ')'                                  if !fmt
               collector << LOADED_VISITOR::COMMA << "'#{fmt}')" if fmt
               collector << ')'
+            when s.scan(/^%%/)
+              collector = visit Arel::Nodes.build_quoted('%'), collector
             when s.scan(/[^%]+|./)
               collector = visit Arel::Nodes.build_quoted(s.matched), collector
             end
