@@ -117,7 +117,16 @@ module ArelExtensions
           if @date_type == :date
             v.to_i / (24*3600)
           elsif @date_type == :datetime
-            v.to_i
+            if v.parts.size == 1
+              #       first entry in the dict v.parts; one of [:years, :months, :weeks, :days, :hours, :minutes, :seconds]
+              #       |     the value
+              #       |     |
+              #       |     |
+              #       v     v
+              v.parts.first.second
+            else
+              v.to_i
+            end
           end
         else
           v
@@ -130,7 +139,17 @@ module ArelExtensions
           if @date_type == :date
             Arel.sql('day')
           elsif @date_type == :datetime
-            Arel.sql('second')
+            res = if v.parts.size == 1
+                    #       first entry in the dict v.parts; one of [:years, :months, :weeks, :days, :hours, :minutes, :seconds]
+                    #       |     the key
+                    #       |     |     convert symbol to string
+                    #       |     |     |   remove the plural suffix `s`
+                    #       v     v     v   v
+                    v.parts.first.first.to_s[0..-2]
+                  else
+                    'second'
+                  end
+            Arel.sql(res)
           end
         else
           if ArelExtensions::Nodes::Duration === v
