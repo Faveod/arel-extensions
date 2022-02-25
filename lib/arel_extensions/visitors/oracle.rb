@@ -517,7 +517,7 @@ module ArelExtensions
         if element.is_a?(Time)
           ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
         elsif element.is_a?(Arel::Attributes::Attribute)
-          col = Arel::Table.engine.connection.schema_cache.columns_hash(element.relation.table_name)[element.name.to_s]
+          col = ArelExtensions::column_of(element.relation.table_name, element.name.to_s)
           if col && (col.type == :time)
             ArelExtensions::Nodes::Format.new [element, '%H:%M:%S']
           else
