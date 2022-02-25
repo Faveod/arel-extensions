@@ -19,6 +19,10 @@ module ArelExtensions
         '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
       }.freeze
 
+      LOADED_VISITOR::DATE_FORMAT_FORMAT = {
+        'YY' => '0#', 'MM' => '0#', 'DD' => '0#', 'hh' => '0#', 'mi' => '0#', 'ss' => '0#'
+      }
+
       LOADED_VISITOR::DATE_FORMAT_REGEX =
         Regexp.new(
           LOADED_VISITOR::DATE_FORMAT_DIRECTIVES
@@ -281,11 +285,18 @@ module ArelExtensions
             case
             when s.scan(LOADED_VISITOR::DATE_FORMAT_REGEX)
               dir = LOADED_VISITOR::DATE_FORMAT_DIRECTIVES[s.matched]
-              collector << 'LTRIM(STR(DATEPART('
+              fmt = LOADED_VISITOR::DATE_FORMAT_FORMAT[dir]
+              collector << 'TRIM('
+              collector << 'FORMAT(' if fmt
+              collector << 'STR('    if !fmt
+              collector << 'DATEPART('
               collector << dir
               collector << LOADED_VISITOR::COMMA
               collector = visit o.left, collector
-              collector << ')))'
+              collector << ')'
+              collector << ')'                                  if !fmt
+              collector << LOADED_VISITOR::COMMA << "'#{fmt}')" if fmt
+              collector << ')'
             when s.scan(/[^%]+|./)
               collector = visit Arel::Nodes.build_quoted(s.matched), collector
             end
