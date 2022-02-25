@@ -90,11 +90,11 @@ module ArelExtensions
 
         # sometimes these values are already quoted, if they are, don't double quote it
         quote = o.right.is_a?(Arel::Nodes::SqlLiteral) && o.right[0] != '"' && o.right[-1] != '"'
-        
+
         collector << '"' if quote
         collector = visit o.right, collector
         collector << '"' if quote
-        
+
         collector
       end
 
@@ -289,9 +289,9 @@ module ArelExtensions
               return collector
             end
         end
-        collector << "EXTRACT(#{DATE_MAPPING[o.left]} FROM "
+        collector << "EXTRACT(#{DATE_MAPPING[o.left]} FROM CAST("
         collector = visit o.right, collector
-        collector << ")"
+        collector << " AS TIMESTAMP))"
         collector << " * (INTERVAL '1' #{interval})" if interval && o.with_interval
         collector
       end
