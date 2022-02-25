@@ -51,13 +51,7 @@ module ArelExtensions
       def type_of_attribute(att)
         case att
         when Arel::Attributes::Attribute
-          begin
-            if Arel::Table.engine.connection.tables.include? att.relation.table_name 
-              Arel::Table.engine.connection.schema_cache.columns_hash(att.relation.table_name)[att.name.to_s].type
-            end
-          rescue
-            att
-          end
+          ArelExtensions::column_of(att.relation.table_name, att.name.to_s)&.type || att
         when ArelExtensions::Nodes::Function
           att.return_type
           #        else
