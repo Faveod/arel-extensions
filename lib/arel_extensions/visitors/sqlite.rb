@@ -1,3 +1,5 @@
+require 'arel_extensions/helpers'
+
 module ArelExtensions
   module Visitors
     class Arel::Visitors::SQLite
@@ -327,7 +329,7 @@ module ArelExtensions
         if element.is_a?(Time)
           return Arel::Nodes::NamedFunction.new('STRFTIME',[element, '%H:%M:%S'])
         elsif element.is_a?(Arel::Attributes::Attribute)
-          col = Arel::Table.engine.connection.schema_cache.columns_hash(element.relation.table_name)[element.name.to_s]
+          col = ArelExtensions::column_of(element.relation.table_name, element.name.to_s)
           if col && (col.type == :time)
             return Arel::Nodes::NamedFunction.new('STRFTIME',[element, '%H:%M:%S'])
           else
