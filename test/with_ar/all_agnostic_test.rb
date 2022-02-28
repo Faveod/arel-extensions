@@ -673,6 +673,7 @@ module ArelExtensions
       end
 
       def test_subquery_with_order
+        skip if ['mssql'].include?(@env_db) && Arel::VERSION.to_i < 10
         assert_equal 9, User.where(:name => User.select(:name).order(:name)).count
         assert_equal 9, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count
         if !['mysql'].include?(@env_db)  # MySql can't have limit in IN subquery
