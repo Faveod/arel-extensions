@@ -381,9 +381,10 @@ module ArelExtensions
         else
           collector = visit o.left, collector
         end
-        collector << " AS \""
+        sep = o.right.size > 1 && o.right[0] == '"' && o.right[-1] == '"' ? '' : '"'
+        collector << " AS #{sep}"
         collector = visit o.right, collector
-        collector << "\""
+        collector << "#{sep}"
         collector
       end
 
