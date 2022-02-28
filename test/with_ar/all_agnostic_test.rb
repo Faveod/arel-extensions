@@ -33,7 +33,7 @@ module ArelExtensions
           t.column :name, :string
           t.column :comments, :text
           t.column :created_at, :date
-          t.column :updated_at, :datetime
+          t.column :updated_at, :datetime, precision: nil
           t.column :duration, :time
           t.column :other, :string
           t.column :score, :decimal, :precision => 20, :scale => 10
