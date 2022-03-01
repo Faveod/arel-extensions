@@ -370,6 +370,15 @@ module ArelExtensions
         assert_equal '2016-05-23', t(@lucas, @created_at.format('%Y-%m-%d'))
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S'))
         assert_equal '12:42%', t(@lucas, @updated_at.format('%R%%'))
+        if ['postgresql'].include?(ENV['DB'])
+          assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', 'UTC'))
+          assert_equal '2014/03/03 15:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', 'America/Sao Paulo (-03)'))
+          assert_equal '2014/03/03 22:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', 'Pacific/Tahiti (-10)'))
+
+          # Winter/Summer time
+          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', 'Europe/Paris'))
+          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', 'Europe/Paris'))
+        end
       end
 
       def test_coalesce

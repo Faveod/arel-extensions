@@ -5,11 +5,12 @@ module ArelExtensions
     class Format < Function
       RETURN_TYPE = :string
 
-      attr_accessor :col_type, :iso_format
+      attr_accessor :col_type, :iso_format, :time_zone
 
       def initialize expr
-        col = expr.first
+        col = expr[0]
         @iso_format = convert_format(expr[1])
+        @time_zone  = Arel::Nodes.build_quoted(expr[2]) if expr[2]
         @col_type = type_of_attribute(col)
         super [col, convert_to_string_node(@iso_format)]
       end

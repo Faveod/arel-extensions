@@ -40,8 +40,8 @@ module ArelExtensions
       ArelExtensions::Nodes::Duration.new "s", self
     end
 
-    def format(tpl)
-      ArelExtensions::Nodes::Format.new [self, tpl]
+    def format(tpl, time_zone = nil)
+      ArelExtensions::Nodes::Format.new [self, tpl, time_zone]
     end
   end
 end
