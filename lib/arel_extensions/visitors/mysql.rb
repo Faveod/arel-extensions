@@ -209,7 +209,13 @@ module ArelExtensions
         when :date, :datetime, :time
           fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
           collector << "DATE_FORMAT("
+          collector << "CONVERT_TZ(" if o.time_zone
           collector = visit o.left, collector
+          if o.time_zone
+            collector << COMMA << "'UTC'" << COMMA
+            collector = visit o.time_zone, collector
+            collector << ')'
+          end
           collector << COMMA
           collector = visit Arel::Nodes.build_quoted(fmt), collector
           collector << ")"
