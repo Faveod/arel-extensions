@@ -409,6 +409,12 @@ module ArelExtensions
                             'tahiti'    => 'Pacific/Tahiti',
                             'paris'     => 'Europe/Paris'
                            },
+          'oracle'  => {
+                            'utc'       => 'UTC',
+                            'sao_paulo' => 'America/Sao_Paulo',
+                            'tahiti'    => 'Pacific/Tahiti',
+                            'paris'     => 'Europe/Paris'
+                            },
           'postgresql'  => {
                             'utc'       => 'UTC',
                             'sao_paulo' => 'America/Sao Paulo (-03)',
