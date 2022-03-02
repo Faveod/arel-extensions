@@ -397,6 +397,12 @@ module ArelExtensions
         #
         # so it looks like a more reliably portable way of specifying it.
         time_zones = {
+          'mssql'       => {
+                            'utc'       => 'UTC',
+                            'sao_paulo' => 'Argentina Standard Time',
+                            'tahiti'    => 'Hawaiian Standard Time',
+                            'paris'     => 'Central European Standard Time'
+                           },
           'mysql'       => {
                             'utc'       => 'UTC',
                             'sao_paulo' => 'America/Sao_Paulo',

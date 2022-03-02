@@ -270,7 +270,16 @@ module ArelExtensions
         if fmt = LOADED_VISITOR::DATE_CONVERT_FORMATS[f]
           collector << "CONVERT(VARCHAR(#{f.length})"
           collector << LOADED_VISITOR::COMMA
+          if o.time_zone
+            collector << 'CONVERT(datetime'
+            collector << LOADED_VISITOR::COMMA
+            collector << ' '
+          end
           collector = visit o.left, collector
+          if o.time_zone
+            collector << ") AT TIME ZONE 'UTC' AT TIME ZONE "
+            collector = visit o.time_zone, collector
+          end
           collector << LOADED_VISITOR::COMMA
           collector << fmt.to_s
           collector << ')'
@@ -292,7 +301,16 @@ module ArelExtensions
               collector << 'DATEPART('
               collector << dir
               collector << LOADED_VISITOR::COMMA
+              if o.time_zone
+                collector << 'CONVERT(datetime'
+                collector << LOADED_VISITOR::COMMA
+                collector << ' '
+              end
               collector = visit o.left, collector
+              if o.time_zone
+                collector << ") AT TIME ZONE 'UTC' AT TIME ZONE "
+                collector = visit o.time_zone, collector
+              end
               collector << ')'
               collector << ')'                                  if !fmt
               collector << LOADED_VISITOR::COMMA << "'#{fmt}')" if fmt
