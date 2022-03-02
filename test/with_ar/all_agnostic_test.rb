@@ -370,15 +370,56 @@ module ArelExtensions
         assert_equal '2016-05-23', t(@lucas, @created_at.format('%Y-%m-%d'))
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S'))
         assert_equal '12:42%', t(@lucas, @updated_at.format('%R%%'))
-        if ['postgresql'].include?(ENV['DB'])
-          assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', 'UTC'))
-          assert_equal '2014/03/03 15:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', 'America/Sao Paulo (-03)'))
-          assert_equal '2014/03/03 22:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', 'Pacific/Tahiti (-10)'))
 
-          # Winter/Summer time
-          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', 'Europe/Paris'))
-          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', 'Europe/Paris'))
-        end
+        # The following tests will ensure proper conversion of timestamps to
+        # requested timezones.
+        #
+        # The names of the timezones is highly dependant on the underlying
+        # operating system, and this is why we need to handle each database
+        # separately: the images we're using to test these databases are
+        # different. So don't rely on the provided examples. Your setup is your
+        # reference.
+        #
+        # One could always have portable code if s/he uses standard
+        # abbreviations, like:
+        #
+        # 1. CET  => Central European Time
+        # 2. CEST => Central European Summer Time
+        #
+        # Which implies that the caller should handle daylight saving detection.
+        # In fact, CET will handle daylight saving in MySQL but not Postgres.
+        #
+        # It looks like the posix convention is supported by mysql and
+        # postgresql, e.g.:
+        #
+        # posix/Europe/Paris
+        # posix/America/Nipigon
+        #
+        # so it looks like a more reliably portable way of specifying it.
+        time_zones = {
+          'mysql'       => {
+                            'utc'       => 'UTC',
+                            'sao_paulo' => 'America/Sao_Paulo',
+                            'tahiti'    => 'Pacific/Tahiti',
+                            'paris'     => 'Europe/Paris'
+                           },
+          'postgresql'  => {
+                            'utc'       => 'UTC',
+                            'sao_paulo' => 'America/Sao Paulo (-03)',
+                            'tahiti'    => 'Pacific/Tahiti (-10)',
+                            'paris'     => 'Europe/Paris'
+                            },
+        }
+
+        tz = time_zones[ENV['DB']]
+        skip "Unsupported timezone conversion for DB=#{ENV['DB']}" if tz.nil?
+        assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['utc']))
+        assert_equal '2014/03/03 09:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['sao_paulo']))
+        assert_equal '2014/03/03 02:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['tahiti']))
+
+        # Winter/Summer time
+        assert_equal '2022/02/01 11:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
+        assert_equal '2022/08/01 12:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
       end
 
       def test_coalesce
