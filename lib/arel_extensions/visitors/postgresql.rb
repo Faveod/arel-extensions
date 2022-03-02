@@ -295,7 +295,7 @@ module ArelExtensions
         end
         collector << "EXTRACT(#{DATE_MAPPING[o.left]} FROM CAST("
         collector = visit o.right, collector
-        collector << " AS TIMESTAMP))"
+        collector << " AS TIMESTAMP WITH TIME ZONE))"
         collector << " * (INTERVAL '1' #{interval})" if interval && o.with_interval
         collector
       end
@@ -378,7 +378,7 @@ module ArelExtensions
         when :number, :decimal, :float
           Arel::Nodes::SqlLiteral.new('numeric')
         when :datetime
-          Arel::Nodes::SqlLiteral.new('timestamp')
+          Arel::Nodes::SqlLiteral.new('timestamp with time zone')
         when :date
           Arel::Nodes::SqlLiteral.new('date')
         when :binary
