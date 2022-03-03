@@ -5,6 +5,27 @@ module ArelExtensions
   module VisitorToSql
     describe 'the to_sql visitor' do
       before do
+        if Arel::Table.engine.is_a?(ActiveRecord::Base)
+          puts "This is a hack."
+          # As a matter of fact, if the whole if-block is removed, the to_sql
+          # test become flaky.
+          #
+          # The first time `Arel::Table.engine` is called
+          # from `ArelExtenstions::column_of_via_arel_table(table_name, column_name)`
+          # in   `lib/arel_extensions/helpers.rb`
+          # will almost always fail. It's important to note that when the test
+          # fails, it's always on 1 test case, and every subsequent test that
+          # calls to these methods passes.
+          #
+          # After investigation, it turned out that `Arel::Table.engine` will be
+          # of type `ActiveRecord::Base` instead of the expected `FakeRecord::Base`
+          # as set in this `before` block, in the `@conn` instance variable.
+          # Subsequent calls to `column_of_via_arel_table` will have
+          # `Arel::Table.engine` of the expected type.
+          #
+          # It is still unclear why the call in the condition of this if-block
+          # fixes this behavior.
+        end
         @conn = FakeRecord::Base.new
         Arel::Table.engine = @conn
         @visitor = Arel::Visitors::ToSql.new @conn.connection

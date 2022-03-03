@@ -18,7 +18,12 @@ module ArelExtensions
   def self.column_of_via_arel_table(table_name, column_name)
     begin
       Arel::Table.engine.connection.schema_cache.columns_hash(table_name)[column_name]
-    rescue
+    rescue NoMethodError
+      nil
+    rescue Exception => e
+      puts "Failed to fetch column info for #{table_name}.#{column_name} ."
+      puts "This should never be reached."
+      puts "#{e.class}: #{e}"
       nil
     end
   end
@@ -35,6 +40,7 @@ module ArelExtensions
       elsif ActiveRecord::Base.connection.pool.respond_to?(:schema_cache)
         ActiveRecord::Base.connection.pool.schema_cache.columns_hash(table_name)[column_name]
       else
+        puts ">>> We really shouldn't be here #{table_name}.#{column_name}"
         column_of_via_arel_table(table_name, column_name)
       end
     end
