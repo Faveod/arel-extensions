@@ -52,7 +52,6 @@ end
 load_lib(db_and_gem[ENV['DB']])
 
 require 'arel_extensions'
-Arel::Table.engine = FakeRecord::Base.new
 
 $arel_silence_type_casting_deprecation = true
 
