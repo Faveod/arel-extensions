@@ -130,18 +130,35 @@ t[:birthdate].month.to_sql
 
 t[:birthdate].year.to_sql
 # => YEAR(my_table.birthdate)
+```
 
+### Datetime
+
+```ruby
+# datetime difference
+t[:birthdate] - Time.utc(2014, 3, 3, 12, 41, 18)
+
+# comparison
+t[:birthdate] >= '2014-03-03 10:10:10'
+```
+
+### Format and Time Zone Conversion
+
+`format` has two forms:
+
+```ruby
 t[:birthdate].format('%Y-%m-%d').to_sql
 # => DATE_FORMAT(my_table.birthdate, '%Y-%m-%d')
 ```
 
-### Time Zone conversion
+Which formats the datetime without any time zone conversion.
+The second form is:
 
 ```ruby
 t[:birthdate].format('%Y/%m/%d %H:%M:%S', 'posix/Pacific/Tahiti')
 # => DATE_FORMAT(CONVERT_TZ(CAST(my_table.birthdate AS datetime), 'UTC', 'posix/Pacific/Tahiti'), '%Y/%m/%d %H:%i:%S')          ## MySQL
 # => TO_CHAR(CAST(my_table.birthdate AS timestamp with time zone) AT TIME ZONE 'posix/Pacific/Tahiti', 'YYYY/MM/DD HH24:MI:SS') ## PostgreSQL
-# => CONVERT(datetime, my_table.birthdate) AT TIME ZONE 'UTC' AT TIME ZONE N'posix/Pacific/Tahiti'                              ## SQL Server
+# => CONVERT(datetime, my_table.birthdate) AT TIME ZONE 'UTC' AT TIME ZONE N'posix/Pacific/Tahiti'                              ## SQL Server (& truncated for clarity)
 #                                                                            ^^^^^^^^^^^^^^^^^^^^ 🚨 Invalid timezone for SQL Server. Explanation below.
 ```
 
@@ -157,10 +174,10 @@ Warning:
   zone name that enforces proper daylight saving conversions.
   - ☣️ Choosing `GMT+offset` will certainly bypass daylight saving computations.
   - ☣️ Choosing abbreviate forms like `CET`, which stands for `Central European
-    Time` will behahave differently on `PostgreSQL` and `MySQL`. Don't assume
+    Time` will behave differently on `PostgreSQL` and `MySQL`. Don't assume
     uniform behavior, or even a _rational_ one.
 - ⚠️ SQLite is not supported.
-- 🚨 Alywas test against your setup 🚨
+- 🚨 Always test against your setup 🚨
 
 ## Unions
 
