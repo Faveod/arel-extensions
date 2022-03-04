@@ -152,7 +152,9 @@ t[:birthdate].format('%Y-%m-%d').to_sql
 ```
 
 Which formats the datetime without any time zone conversion.
-The second form is:
+The second form accepts 2 kinds of values:
+
+1. String:
 
 ```ruby
 t[:birthdate].format('%Y/%m/%d %H:%M:%S', 'posix/Pacific/Tahiti')
@@ -162,7 +164,18 @@ t[:birthdate].format('%Y/%m/%d %H:%M:%S', 'posix/Pacific/Tahiti')
 #                                                                            ^^^^^^^^^^^^^^^^^^^^ 🚨 Invalid timezone for SQL Server. Explanation below.
 ```
 
-This will convert the datetime field to the supplied time zone.
+which will convert the datetime field to the supplied time zone. This generally
+means that you're letting the RDBMS decide or infer what is the timezone of the
+column before conversion to the supplied timezone.
+
+1. Hash of the form `{ src_time_zone => dst_time_zone }`:
+
+```ruby
+t[:birthdate].format('%Y/%m/%d %H:%M:%S', { 'posix/Europe/Paris' => 'posix/Pacific/Tahiti' })
+```
+
+which will explicitly indicate the original timestamp that should be considered
+by the RDBMS.
 
 Warning:
 
@@ -176,6 +189,14 @@ Warning:
   - ☣️ Choosing abbreviate forms like `CET`, which stands for `Central European
     Time` will behave differently on `PostgreSQL` and `MySQL`. Don't assume
     uniform behavior, or even a _rational_ one.
+- ⚠️ Pay attention to the type of the `datetime` column you're working with. For
+  example, in Postgres, a `datetime` can be one of the following types:
+  1. `timestamp with time zone`
+  2. `timestamp without time zone`
+  In the first case, you don't need to supply a conversion hash because postgres
+  knows how to convert it to the desired time zone. However, if you do the same
+  for the second case, you might get surprises, especially if your Postgres
+  installation's default timezone is not `UTC`.
 - ⚠️ SQLite is not supported.
 - 🚨 Always test against your setup 🚨
 

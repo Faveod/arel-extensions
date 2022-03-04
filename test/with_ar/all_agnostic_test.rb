@@ -403,35 +403,32 @@ module ArelExtensions
                             'tahiti'    => 'Hawaiian Standard Time',
                             'paris'     => 'Central European Standard Time'
                            },
-          'mysql'       => {
+          'posix'       => {
                             'utc'       => 'UTC',
                             'sao_paulo' => 'America/Sao_Paulo',
                             'tahiti'    => 'Pacific/Tahiti',
                             'paris'     => 'Europe/Paris'
-                           },
-          'oracle'  => {
-                            'utc'       => 'UTC',
-                            'sao_paulo' => 'America/Sao_Paulo',
-                            'tahiti'    => 'Pacific/Tahiti',
-                            'paris'     => 'Europe/Paris'
-                            },
-          'postgresql'  => {
-                            'utc'       => 'UTC',
-                            'sao_paulo' => 'America/Sao Paulo (-03)',
-                            'tahiti'    => 'Pacific/Tahiti (-10)',
-                            'paris'     => 'Europe/Paris'
-                            },
+                           }
         }
 
-        tz = time_zones[ENV['DB']]
-        skip "Unsupported timezone conversion for DB=#{ENV['DB']}" if tz.nil?
+        skip "Unsupported timezone conversion for DB=#{ENV['DB']}" if !['mssql', 'mysql', 'oracle', 'postgresql'].include?(ENV['DB'])
+
+        tz = ENV['DB'] == 'mssql' ? time_zones['mssql'] : time_zones['posix']
+
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['utc']))
-        assert_equal '2014/03/03 09:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['sao_paulo']))
-        assert_equal '2014/03/03 02:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['tahiti']))
+        assert_equal '2014/03/03 09:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['sao_paulo'] }))
+        assert_equal '2014/03/03 02:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['tahiti'] }))
+        assert_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
 
         # Winter/Summer time
-        assert_equal '2022/02/01 11:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
-        assert_equal '2022/08/01 12:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
+        assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
+        if ENV['DB'] == 'mssql'
+          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
+          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
+        else
+          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
+          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
+        end
       end
 
       def test_coalesce

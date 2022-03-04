@@ -449,9 +449,16 @@ module ArelExtensions
         collector << "TO_CHAR("
         collector << "CAST(" if o.time_zone
         collector = visit o.left, collector
-        if o.time_zone
-          collector << " as timestamp) at time zone "
-          collector = visit o.time_zone, collector
+        case o.time_zone
+        when Hash
+          src_tz, dst_tz = o.time_zone.first
+          collector << ' as timestamp) at time zone '
+          collector = visit Arel::Nodes.build_quoted(src_tz), collector
+          collecto < ' at time zone '
+          collector = visit Arel::Nodes.build_quoted(dst_tz), collector
+        when String
+          collector << ' as timestamp) at time zone '
+          collector = visit Arel::Nodes.build_quoted(o.time_zone), collector
         end
         collector << COMMA
         collector = visit Arel::Nodes.build_quoted(fmt), collector

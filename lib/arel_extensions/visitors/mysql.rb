@@ -211,9 +211,17 @@ module ArelExtensions
           collector << "DATE_FORMAT("
           collector << "CONVERT_TZ(" if o.time_zone
           collector = visit o.left, collector
-          if o.time_zone
+          case o.time_zone
+          when Hash
+            src_tz, dst_tz = o.time_zone.first
+            collector << COMMA
+            collector = visit Arel::Nodes.build_quoted(src_tz), collector
+            collector << COMMA
+            collector = visit Arel::Nodes.build_quoted(dst_tz), collector
+            collector << ')'
+          when String
             collector << COMMA << "'UTC'" << COMMA
-            collector = visit o.time_zone, collector
+            collector = visit Arel::Nodes.build_quoted(o.time_zone), collector
             collector << ')'
           end
           collector << COMMA
