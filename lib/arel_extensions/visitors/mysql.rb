@@ -8,6 +8,7 @@ module ArelExtensions
 
       DATE_FORMAT_DIRECTIVES = { # ISO C / POSIX
         '%Y' => '%Y', '%C' =>   '', '%y' => '%y', '%m' => '%m', '%B' => '%M', '%b' => '%b', '%^b' => '%b',  # year, month
+        '%V' => '%v', '%G' => '%x',                                                                         # ISO week number and year of week
         '%d' => '%d', '%e' => '%e', '%j' => '%j', '%w' => '%w', '%A' => '%W',                               # day, weekday
         '%H' => '%H', '%k' => '%k', '%I' => '%I', '%l' => '%l', '%P' => '%p', '%p' => '%p',                 # hours
         '%M' => '%i', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => ''
