@@ -418,7 +418,14 @@ module ArelExtensions
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['utc']))
         assert_equal '2014/03/03 09:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['sao_paulo'] }))
         assert_equal '2014/03/03 02:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['tahiti'] }))
+
+        # Skipping conversion from UTC to the desired timezones fails in SQL
+        # Server and Postgres. This is mainly due to the fact that timezone
+        # information is not preserved in the column itself.
+        #
+        # MySQL is happy to consider that times by default are in UTC.
         assert_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
+        refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['paris'])) if !['mysql'].include?(ENV['DB'])
 
         # Winter/Summer time
         assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
