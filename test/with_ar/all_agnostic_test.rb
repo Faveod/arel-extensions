@@ -371,6 +371,16 @@ module ArelExtensions
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S'))
         assert_equal '12:42%', t(@lucas, @updated_at.format('%R%%'))
 
+        if !['sqlite'].include?(ENV['DB'])
+          # week number
+          assert_equal '10', t(@lucas, @updated_at.format('%V'))
+        end
+
+        if !['sqlite', 'mssql'].include?(ENV['DB'])
+          # year of week
+          assert_equal '2014', t(@lucas, @updated_at.format('%G'))
+        end
+
         # The following tests will ensure proper conversion of timestamps to
         # requested timezones.
         #

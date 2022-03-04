@@ -14,13 +14,14 @@ module ArelExtensions
 
       LOADED_VISITOR::DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' =>   '', '%b' => '', '%^b' => '', # year, month
-        '%d' => 'DD', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '', # day, weekday
-        '%H' => 'hh', '%k' => '', '%I' =>   '', '%l' =>   '', '%P' => '', '%p' => '', # hours
+        '%V' => 'iso_week', '%G' => '',                                                                # ISO week number and year of week
+        '%d' => 'DD', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                              # day, weekday
+        '%H' => 'hh', '%k' => '', '%I' =>   '', '%l' =>   '', '%P' => '', '%p' => '',                  # hours
         '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
       }.freeze
 
       LOADED_VISITOR::DATE_FORMAT_FORMAT = {
-        'YY' => '0#', 'MM' => '0#', 'DD' => '0#', 'hh' => '0#', 'mi' => '0#', 'ss' => '0#'
+        'YY' => '0#', 'MM' => '0#', 'DD' => '0#', 'hh' => '0#', 'mi' => '0#', 'ss' => '0#', 'iso_week' => '0#'
       }
 
       LOADED_VISITOR::DATE_FORMAT_REGEX =
