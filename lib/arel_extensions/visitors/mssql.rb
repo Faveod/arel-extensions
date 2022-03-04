@@ -276,9 +276,16 @@ module ArelExtensions
             collector << ' '
           end
           collector = visit o.left, collector
-          if o.time_zone
-            collector << ") AT TIME ZONE 'UTC' AT TIME ZONE "
-            collector = visit o.time_zone, collector
+          case o.time_zone
+          when Hash
+            src_tz, dst_tz = o.time_zone.first
+            collector << ') AT TIME ZONE '
+            collector = visit Arel::Nodes.build_quoted(src_tz), collector
+            collector << ' AT TIME ZONE '
+            collector = visit Arel::Nodes.build_quoted(dst_tz), collector
+          when String
+            collector << ') AT TIME ZONE '
+            collector = visit Arel::Nodes.build_quoted(o.time_zone), collector
           end
           collector << LOADED_VISITOR::COMMA
           collector << fmt.to_s
@@ -307,9 +314,16 @@ module ArelExtensions
                 collector << ' '
               end
               collector = visit o.left, collector
-              if o.time_zone
-                collector << ") AT TIME ZONE 'UTC' AT TIME ZONE "
-                collector = visit o.time_zone, collector
+              case o.time_zone
+              when Hash
+                src_tz, dst_tz = o.time_zone.first.first, o.time_zone.first.second
+                collector << ") AT TIME ZONE "
+                collector = visit Arel::Nodes.build_quoted(src_tz), collector
+                collector << " AT TIME ZONE "
+                collector = visit Arel::Nodes.build_quoted(dst_tz), collector
+              when String
+                collector << ") AT TIME ZONE "
+                collector = visit Arel::Nodes.build_quoted(o.time_zone), collector
               end
               collector << ')'
               collector << ')'                                  if !fmt
