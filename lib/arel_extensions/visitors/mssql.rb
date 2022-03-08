@@ -13,16 +13,20 @@ module ArelExtensions
       }.freeze
 
       LOADED_VISITOR::DATE_FORMAT_DIRECTIVES = {
-        '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' => '', '%b' => '', '%^b' => '', # year, month
-        '%V' => 'iso_week', '%G' => '',                                                                # ISO week number and year of week
-        '%d' => 'DD', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                              # day, weekday
-        '%H' => 'hh', '%k' => '', '%I' =>   '', '%l' =>   '', '%P' => '', '%p' => '',                  # hours
+        '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' => 'month', '%^B' => '', '%b' => '', '%^b' => '', # year, month
+        '%V' => 'iso_week', '%G' => '',                                                                                # ISO week number and year of week
+        '%d' => 'DD', '%e' => ''  , '%j' => ''  , '%w' => 'dw', %'a' => '', '%A' => 'weekday',                         # day, weekday
+        '%H' => 'hh', '%k' => ''  , '%I' => ''  , '%l' => ''  , '%P' => '', '%p' => '',                                # hours
         '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
       }.freeze
 
       LOADED_VISITOR::DATE_FORMAT_FORMAT = {
         'YY' => '0#', 'MM' => '0#', 'DD' => '0#', 'hh' => '0#', 'mi' => '0#', 'ss' => '0#', 'iso_week' => '0#'
       }
+
+      LOADED_VISITOR::DATE_NAME = [
+        '%B', '%A'
+      ]
 
       LOADED_VISITOR::DATE_FORMAT_REGEX =
         Regexp.new(
@@ -303,10 +307,11 @@ module ArelExtensions
             when s.scan(LOADED_VISITOR::DATE_FORMAT_REGEX)
               dir = LOADED_VISITOR::DATE_FORMAT_DIRECTIVES[s.matched]
               fmt = LOADED_VISITOR::DATE_FORMAT_FORMAT[dir]
+              date_name = LOADED_VISITOR::DATE_NAME.include?(s.matched)
               collector << 'TRIM('
               collector << 'FORMAT(' if fmt
-              collector << 'STR('    if !fmt
-              collector << 'DATEPART('
+              collector << 'STR('    if !fmt && !date_name
+              collector << (date_name ? 'DATENAME(' : 'DATEPART(')
               collector << dir
               collector << LOADED_VISITOR::COMMA
               if o.time_zone
@@ -327,7 +332,7 @@ module ArelExtensions
                 collector = visit Arel.quoted(o.time_zone), collector
               end
               collector << ')'
-              collector << ')'                                  if !fmt
+              collector << ')'                                  if !fmt && !date_name
               collector << LOADED_VISITOR::COMMA << "'#{fmt}')" if fmt
               collector << ')'
             when s.scan(/^%%/)
