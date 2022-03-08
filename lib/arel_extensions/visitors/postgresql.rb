@@ -8,11 +8,11 @@ module ArelExtensions
 
       DATE_FORMAT_DIRECTIVES = {
         '%Y' => 'YYYY', '%C' => 'CC', '%y' => 'YY',
-        '%m' => 'MM', '%B' => 'Month', '%^B' => 'MONTH', '%b' => 'Mon', '%^b' => 'MON',
-        '%V' => 'IW', '%G' => 'IYYY',                                                     # ISO week number and year of week
-        '%d' => 'DD', '%e' => 'FMDD', '%j' => 'DDD', '%w' => '', '%A' => 'Day',           # day, weekday
-        '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM', # hours
-        '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz',             # seconds, subseconds
+        '%m' => 'MM', '%B' => 'TMMonth', '%^B' => 'TMMONTH', '%b' => 'TMMon', '%^b' => 'TMMON',
+        '%V' => 'IW', '%G' => 'IYYY',                                                              # ISO week number and year of week
+        '%d' => 'DD', '%e' => 'FMDD', '%j' => 'DDD', '%w' => '', '%a' => 'TMDy', '%A' => 'TMDay',  # day, weekday
+        '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM',          # hours
+        '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz',                      # seconds, subseconds
         '%%' => '%',
       }.freeze
 

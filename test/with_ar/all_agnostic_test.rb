@@ -479,6 +479,16 @@ module ArelExtensions
         end
       end
 
+      def test_format_date_with_names
+        skip "#{ENV['DB']} does not support word-based formatting for month and day names" if ['mssql'].include?(ENV['DB'])
+        assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
+        assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
+
+        skip "#{ENV['DB']} does not support ALLCAPS month and day names" if ['mysql'].include?(ENV['DB'])
+        assert_equal 'Mon, 03 MAR 14', t(@lucas, @updated_at.format('%a, %d %^b %y'))
+        assert_equal 'Monday, 03 MARCH 14', t(@lucas, @updated_at.format('%A, %d %^B %y'))
+      end
+
       def test_coalesce
         assert_equal 'Camille concat', t(@camille, @name.coalesce(nil, 'default') + ' concat')
 
