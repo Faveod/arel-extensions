@@ -480,13 +480,60 @@ module ArelExtensions
       end
 
       def test_format_date_with_names
-        skip "#{ENV['DB']} does not support word-based formatting for month and day names" if ['mssql'].include?(ENV['DB'])
+        skip "#{ENV['DB']} does not support a variety of word-based formatting for month and day names" if ['mssql'].include?(ENV['DB'])
         assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
         assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
 
         skip "#{ENV['DB']} does not support ALLCAPS month and day names" if ['mysql'].include?(ENV['DB'])
         assert_equal 'Mon, 03 MAR 14', t(@lucas, @updated_at.format('%a, %d %^b %y'))
         assert_equal 'Monday, 03 MARCH 14', t(@lucas, @updated_at.format('%A, %d %^B %y'))
+      end
+
+      def switch_to_lang(lang)
+        languages = {
+          'mssql'      => { :en => 'English',    :fr => 'French'     },
+          'mysql'      => { :en => 'en_US',      :fr => 'fr_FR'      },
+          'postgresql' => { :en => 'en_US.utf8', :fr => 'fr_FR.utf8' }
+        }
+
+        sql = {
+          'mssql'      => ->(l) { "SET LANGUAGE #{l};"          },
+          'mysql'      => ->(l) { "SET lc_time_names = '#{l}';" },
+          'postgresql' => ->(l) { "SET lc_time to '#{l}';"      }
+        }
+
+        User.connection.execute(sql[ENV['DB']][languages[ENV['DB']][lang]])
+      end
+
+      def test_format_date_with_names_and_lang_switch
+        skip "#{ENV['DB']} does not support word-based formatting for month and day names" if ['sqlite'].include?(ENV['DB'])
+
+        # the begin-rescue block is here to make sure we set the db back to en_US
+        # if we fail, so that other tests don't get contaminated.
+        #
+        # Tests should assert one single thing in principle, but until we
+        # refactor this whole thing, we'll have to do tricks of this sort.
+        switch_to_lang(:en)
+        case ENV['DB']
+        when 'mysql', 'postgresql'
+          assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
+          assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
+        when 'mssql'
+          assert_equal 'Monday, 03 March 2014', t(@lucas, @updated_at.format('%A, %d %B %y'))
+        end
+        switch_to_lang(:fr)
+        case ENV['DB']
+        when 'mysql'
+          assert_equal 'lun, 03 mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
+          assert_equal 'lundi, 03 mars 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
+        when 'postgresql'
+          assert_equal 'Lun., 03 Mars 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
+          assert_equal 'Lundi, 03 Mars 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
+        when 'mssql'
+          assert_equal 'lundi, 03 mars 2014', t(@lucas, @updated_at.format('%A, %d %B %y'))
+        end
+      ensure
+        switch_to_lang(:en)
       end
 
       def test_coalesce
