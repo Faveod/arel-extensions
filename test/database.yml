@@ -8,26 +8,26 @@ jdbc-sqlite:
   timeout: 500
 mysql:
   adapter: mysql2
-  database: arext_test
+  database: arelx_test
   username: root
   host: 127.0.0.1
   port: 3306
   encoding: utf8
 jdbc-mysql:
   adapter: jdbcmysql
-  database: arext_test
+  database: arelx_test
   username: root
   encoding: utf8
 postgresql:
   adapter: postgresql
-  database: arext_test
+  database: arelx_test
   username: postgres
   password: secret
   host: 127.0.0.1
   port: 5432
 jdbc-postgresql:
   adapter: jdbcpostgresql
-  database: arext_test
+  database: arelx_test
   username: postgres
   password: secret
   host: 127.0.0.1
@@ -45,7 +45,7 @@ jdbc-oracle:
 ibm_db:
   adapter:  ibm_db
   username: travis
-  database: arext_test
+  database: arelx_test
 mssql:
   adapter: sqlserver
   host: localhost
