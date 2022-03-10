@@ -16,16 +16,12 @@ module ArelExtensions
   # coveing all these cases.
 
   def self.column_of_via_arel_table(table_name, column_name)
-    begin
-      Arel::Table.engine.connection.schema_cache.columns_hash(table_name)[column_name]
+    Arel::Table.engine.connection.schema_cache.columns_hash(table_name)[column_name]
     rescue NoMethodError
       nil
-    rescue Exception => e
-      puts "Failed to fetch column info for #{table_name}.#{column_name} ."
-      puts "This should never be reached."
-      puts "#{e.class}: #{e}"
+    rescue => e
+      warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of_via_arel_table`\n#{e.class}: #{e}")
       nil
-    end
   end
 
   def self.column_of(table_name, column_name)
@@ -44,7 +40,12 @@ module ArelExtensions
         column_of_via_arel_table(table_name, column_name)
       end
     end
-    rescue
+    rescue ActiveRecord::ConnectionNotEstablished
+      column_of_via_arel_table(table_name, column_name)
+    rescue ActiveRecord::StatementInvalid
+      nil
+    rescue => e
+      warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of`\n#{e.class}: #{e}")
       nil
   end
 end
