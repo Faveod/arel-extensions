@@ -281,12 +281,12 @@ module ArelExtensions
           when Hash
             src_tz, dst_tz = o.time_zone.first
             collector << ') AT TIME ZONE '
-            collector = visit Arel::Nodes.build_quoted(src_tz), collector
+            collector = visit Arel.quoted(src_tz), collector
             collector << ' AT TIME ZONE '
-            collector = visit Arel::Nodes.build_quoted(dst_tz), collector
+            collector = visit Arel.quoted(dst_tz), collector
           when String
             collector << ') AT TIME ZONE '
-            collector = visit Arel::Nodes.build_quoted(o.time_zone), collector
+            collector = visit Arel.quoted(o.time_zone), collector
           end
           collector << LOADED_VISITOR::COMMA
           collector << fmt.to_s
@@ -319,21 +319,21 @@ module ArelExtensions
               when Hash
                 src_tz, dst_tz = o.time_zone.first.first, o.time_zone.first.second
                 collector << ") AT TIME ZONE "
-                collector = visit Arel::Nodes.build_quoted(src_tz), collector
+                collector = visit Arel.quoted(src_tz), collector
                 collector << " AT TIME ZONE "
-                collector = visit Arel::Nodes.build_quoted(dst_tz), collector
+                collector = visit Arel.quoted(dst_tz), collector
               when String
                 collector << ") AT TIME ZONE "
-                collector = visit Arel::Nodes.build_quoted(o.time_zone), collector
+                collector = visit Arel.quoted(o.time_zone), collector
               end
               collector << ')'
               collector << ')'                                  if !fmt
               collector << LOADED_VISITOR::COMMA << "'#{fmt}')" if fmt
               collector << ')'
             when s.scan(/^%%/)
-              collector = visit Arel::Nodes.build_quoted('%'), collector
+              collector = visit Arel.quoted('%'), collector
             when s.scan(/[^%]+|./)
-              collector = visit Arel::Nodes.build_quoted(s.matched), collector
+              collector = visit Arel.quoted(s.matched), collector
             end
           end
           collector << ')'
@@ -483,7 +483,7 @@ module ArelExtensions
           if o.separator && o.separator != 'NULL'
             visit o.separator, collector
           else
-            visit Arel::Nodes.build_quoted(','), collector
+            visit Arel.quoted(','), collector
           end
         collector << ") WITHIN GROUP (ORDER BY "
         if o.order.present?
@@ -537,43 +537,43 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
         col = o.left.coalesce(0)
-        locale = Arel::Nodes.build_quoted(o.locale.tr('_','-'))
-        param = Arel::Nodes.build_quoted("N#{o.precision}")
+        locale = Arel.quoted(o.locale.tr('_','-'))
+        param = Arel.quoted("N#{o.precision}")
         sign = ArelExtensions::Nodes::Case.new.when(col<0).
                   then('-').
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = o.flags.include?('+') || o.flags.include?(' ') ?
-              Arel::Nodes.build_quoted(1) :
+              Arel.quoted(1) :
               ArelExtensions::Nodes::Case.new.when(col<0).then(1).else(0)
 
         number =
           if o.scientific_notation
             ArelExtensions::Nodes::Concat.new([
                   Arel::Nodes::NamedFunction.new('FORMAT',[
-                    col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor),
+                    col.abs/Arel.quoted(10).pow(col.abs.log10.floor),
                     param,
                     locale
                   ]),
                   o.type,
                   Arel::Nodes::NamedFunction.new('FORMAT',[
                     col.abs.log10.floor,
-                    Arel::Nodes.build_quoted('N0'),
+                    Arel.quoted('N0'),
                     locale
                   ])
                 ])
           else
             Arel::Nodes::NamedFunction.new('FORMAT',[
-                Arel::Nodes.build_quoted(col.abs),
+                Arel.quoted(col.abs),
                 param,
                 locale
               ])
           end
 
-        repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
-          when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
-          then(Arel::Nodes.build_quoted(
+        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
+          when(Arel.quoted(o.width).abs-(number.length+sign_length)>0).
+          then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-            ).repeat(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length))
+            ).repeat(Arel.quoted(o.width).abs-(number.length+sign_length))
           ).
           else('')
         before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
@@ -587,7 +587,7 @@ module ArelExtensions
             number,
             after
           ])
-        collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector
+        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix),full_number,Arel.quoted(o.suffix)]), collector
         collector
       end
 
@@ -623,7 +623,7 @@ module ArelExtensions
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
         else
-          collector = visit Arel::Nodes.build_quoted('$.')+o.key, collector
+          collector = visit Arel.quoted('$.')+o.key, collector
         end
         collector << ')'
         collector

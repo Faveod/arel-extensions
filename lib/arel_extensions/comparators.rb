@@ -1,19 +1,19 @@
 module ArelExtensions
   module Comparators
     def >(other)
-      Arel::Nodes::GreaterThan.new self, Arel::Nodes.build_quoted(other, self)
+      Arel::Nodes::GreaterThan.new self, Arel.quoted(other, self)
     end
 
     def >=(other)
-      Arel::Nodes::GreaterThanOrEqual.new self, Arel::Nodes.build_quoted(other, self)
+      Arel::Nodes::GreaterThanOrEqual.new self, Arel.quoted(other, self)
     end
 
     def <(other)
-      Arel::Nodes::LessThan.new self, Arel::Nodes.build_quoted(other, self)
+      Arel::Nodes::LessThan.new self, Arel.quoted(other, self)
     end
 
     def <=(other)
-      Arel::Nodes::LessThanOrEqual.new self, Arel::Nodes.build_quoted(other, self)
+      Arel::Nodes::LessThanOrEqual.new self, Arel.quoted(other, self)
     end
 
     # REGEXP function
@@ -52,7 +52,7 @@ module ArelExtensions
       else
         raise(ArgumentError)
       end
-      Arel::Nodes.build_quoted(other, self)
+      Arel.quoted(other, self)
     end
   end
 end

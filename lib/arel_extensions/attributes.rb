@@ -19,11 +19,11 @@ module ArelExtensions
     include ArelExtensions::Predications
 
     def ==(other)
-      Arel::Nodes::Equality.new self, Arel::Nodes.build_quoted(other, self)
+      Arel::Nodes::Equality.new self, Arel.quoted(other, self)
     end
 
     def !=(other)
-      Arel::Nodes::NotEqual.new self, Arel::Nodes.build_quoted(other, self)
+      Arel::Nodes::NotEqual.new self, Arel.quoted(other, self)
     end
   end
 end

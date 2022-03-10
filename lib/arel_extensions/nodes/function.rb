@@ -41,11 +41,11 @@ module ArelExtensions
       end
 
       def ==(other)
-        Arel::Nodes::Equality.new self, Arel::Nodes.build_quoted(other, self)
+        Arel::Nodes::Equality.new self, Arel.quoted(other, self)
       end
 
       def !=(other)
-        Arel::Nodes::NotEqual.new self, Arel::Nodes.build_quoted(other, self)
+        Arel::Nodes::NotEqual.new self, Arel.quoted(other, self)
       end
 
       def type_of_attribute(att)
@@ -64,13 +64,13 @@ module ArelExtensions
         when Arel::Attributes::Attribute, Arel::Nodes::Node, Integer
           object
         when DateTime
-          Arel::Nodes.build_quoted(object, self)
+          Arel.quoted(object, self)
         when Time
-          Arel::Nodes.build_quoted(object.strftime('%H:%M:%S'), self)
+          Arel.quoted(object.strftime('%H:%M:%S'), self)
         when MBSTRING, String, Symbol
-          Arel::Nodes.build_quoted(object.to_s)
+          Arel.quoted(object.to_s)
         when Date
-          Arel::Nodes.build_quoted(object.to_s, self)
+          Arel.quoted(object.to_s, self)
         when NilClass
           Arel.sql('NULL')
         when ActiveSupport::Duration
@@ -87,7 +87,7 @@ module ArelExtensions
         when Arel::Nodes::Node
           object
         when Integer
-          Arel::Nodes.build_quoted(object.to_s)
+          Arel.quoted(object.to_s)
         when Arel::Attributes::Attribute
           case self.type_of_attribute(object)
           when :date
@@ -98,17 +98,17 @@ module ArelExtensions
             object
           end
         when DateTime
-          Arel::Nodes.build_quoted(object, self)
+          Arel.quoted(object, self)
         when Time
-          Arel::Nodes.build_quoted(object.strftime('%H:%M:%S'), self)
+          Arel.quoted(object.strftime('%H:%M:%S'), self)
         when MBSTRING, String
-          Arel::Nodes.build_quoted(object.to_s)
+          Arel.quoted(object.to_s)
         when Date
-          Arel::Nodes.build_quoted(object, self)
+          Arel.quoted(object, self)
         when NilClass
           Arel.sql(nil)
         when ActiveSupport::Duration
-          Arel::Nodes.build_quoted(object.to_i.to_s)
+          Arel.quoted(object.to_i.to_s)
         else
           raise(ArgumentError, "#{object.class} cannot be converted to CONCAT arg")
         end
@@ -119,11 +119,11 @@ module ArelExtensions
         when Arel::Attributes::Attribute, Arel::Nodes::Node
           object
         when DateTime, Time
-          Arel::Nodes.build_quoted(Date.new(object.year, object.month, object.day), self)
+          Arel.quoted(Date.new(object.year, object.month, object.day), self)
         when MBSTRING, String
-          Arel::Nodes.build_quoted(Date.parse(object.to_s), self)
+          Arel.quoted(Date.parse(object.to_s), self)
         when Date
-          Arel::Nodes.build_quoted(object, self)
+          Arel.quoted(object, self)
         else
           raise(ArgumentError, "#{object.class} cannot be converted to Date")
         end
@@ -134,11 +134,11 @@ module ArelExtensions
         when Arel::Attributes::Attribute, Arel::Nodes::Node
           object
         when DateTime, Time
-          Arel::Nodes.build_quoted(object, self)
+          Arel.quoted(object, self)
         when MBSTRING, String
-          Arel::Nodes.build_quoted(Time.parse(object.to_s), self)
+          Arel.quoted(Time.parse(object.to_s), self)
         when Date
-          Arel::Nodes.build_quoted(Time.utc(object.year, object.month, object.day, 0, 0, 0), self)
+          Arel.quoted(Time.utc(object.year, object.month, object.day, 0, 0, 0), self)
         else
           raise(ArgumentError, "#{object.class} cannot be converted to Datetime")
         end

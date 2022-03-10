@@ -15,7 +15,7 @@ module ArelExtensions
     def * other
       case other
       when Float, BigDecimal
-        super(Arel::Nodes.build_quoted(other))
+        super(Arel.quoted(other))
       else
         super(other)
       end
@@ -25,7 +25,7 @@ module ArelExtensions
     def / other
       case other
       when Float, BigDecimal
-        super(Arel::Nodes.build_quoted(other))
+        super(Arel.quoted(other))
       else
         super(other)
       end
@@ -111,7 +111,7 @@ module ArelExtensions
         # opts = {:locale => 'fr_FR', :type => "e"/"f"/"d", :prefix => "$ ", :suffix => " %", :flags => " +-#0", :width => 5, :precision => 6}
         ArelExtensions::Nodes::FormattedNumber.new [self,opts]
       rescue Exception
-        Arel::Nodes.build_quoted('Wrong Format')
+        Arel.quoted('Wrong Format')
       end
     end
   end

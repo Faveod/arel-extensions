@@ -6,9 +6,9 @@ module ArelExtensions
 
     def matches(other, escape = nil,case_sensitive = nil)
       if Arel::VERSION.to_i < 7
-        Arel::Nodes::Matches.new(self, Arel::Nodes.build_quoted(other), escape)
+        Arel::Nodes::Matches.new(self, Arel.quoted(other), escape)
       else
-        Arel::Nodes::Matches.new(self, Arel::Nodes.build_quoted(other), escape, case_sensitive)
+        Arel::Nodes::Matches.new(self, Arel.quoted(other), escape, case_sensitive)
       end
     end
 
@@ -81,13 +81,13 @@ module ArelExtensions
       when Arel::Attributes::Attribute, Arel::Nodes::Node, Integer
         object
       when DateTime
-        Arel::Nodes.build_quoted(object, self)
+        Arel.quoted(object, self)
       when Time
-        Arel::Nodes.build_quoted(object.strftime('%H:%M:%S'), self)
+        Arel.quoted(object.strftime('%H:%M:%S'), self)
       when String
-        Arel::Nodes.build_quoted(object)
+        Arel.quoted(object)
       when Date
-        Arel::Nodes.build_quoted(object.to_s, self)
+        Arel.quoted(object.to_s, self)
       when NilClass
         Arel.sql('NULL')
       when ActiveSupport::Duration
