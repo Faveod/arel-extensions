@@ -90,12 +90,17 @@ if defined?(Arel::Visitors::SQLServer)
 end
 
 module Arel
-  def self.rand
-    ArelExtensions::Nodes::Rand.new
+  def self.duration s, expr
+    ArelExtensions::Nodes::Duration.new("#{s}i", expr)
   end
 
-  def self.shorten s
-    Base64.urlsafe_encode64(Digest::MD5.new.digest(s)).tr('=', '').tr('-', '_')
+  # The FALSE pseudo literal.
+  def self.false
+    Arel::Nodes::Equality.new(1, 0)
+  end
+
+  def self.grouping *v
+    Arel::Nodes::Grouping.new(*v)
   end
 
   def self.json *expr
@@ -108,16 +113,17 @@ module Arel
     )
   end
 
-  def self.when condition
-    ArelExtensions::Nodes::Case.new.when(condition)
+  # The NULL literal.
+  def self.null
+    Arel::Nodes.build_quoted(nil)
   end
 
-  def self.duration s, expr
-    ArelExtensions::Nodes::Duration.new("#{s}i", expr)
+  def self.rand
+    ArelExtensions::Nodes::Rand.new
   end
 
-  def self.grouping *v
-    Arel::Nodes::Grouping.new(*v)
+  def self.shorten s
+    Base64.urlsafe_encode64(Digest::MD5.new.digest(s)).tr('=', '').tr('-', '_')
   end
 
   # The TRUE pseudo literal.
@@ -125,19 +131,18 @@ module Arel
     Arel::Nodes::Equality.new(1, 1)
   end
 
-  # The FALSE pseudo literal.
-  def self.false
-    Arel::Nodes::Equality.new(1, 0)
-  end
-
-  # The NULL literal.
-  def self.null
-    Arel::Nodes.build_quoted(nil)
-  end
-
   def self.tuple *v
     tmp = Arel.grouping(nil)
     Arel.grouping v.map{|e| tmp.convert_to_node(e)}
+  end
+
+  # For instance
+  #
+  # ```
+  # Arel.when(at[field].is_null).then(0).else(1)
+  # ```
+  def self.when condition
+    ArelExtensions::Nodes::Case.new.when(condition)
   end
 end
 
@@ -168,13 +173,13 @@ class Arel::Nodes::Function
 end
 
 class Arel::Nodes::Grouping
-    include ArelExtensions::Math
-    include ArelExtensions::Comparators
-    include ArelExtensions::DateDuration
-    include ArelExtensions::MathFunctions
-    include ArelExtensions::NullFunctions
-    include ArelExtensions::StringFunctions
-    include ArelExtensions::Predications
+  include ArelExtensions::Math
+  include ArelExtensions::Comparators
+  include ArelExtensions::DateDuration
+  include ArelExtensions::MathFunctions
+  include ArelExtensions::NullFunctions
+  include ArelExtensions::StringFunctions
+  include ArelExtensions::Predications
 end
 
 class Arel::Nodes::Unary
