@@ -1,5 +1,3 @@
-require 'arel_extensions/helpers'
-
 require 'arel_extensions/nodes'
 require 'arel_extensions/nodes/function'
 require 'arel_extensions/nodes/concat'
