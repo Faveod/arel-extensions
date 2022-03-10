@@ -38,7 +38,7 @@ module ArelExtensions
       when Arel::Nodes::Function
         Arel.grouping(Arel::Nodes::Addition.new self, other)
       else
-        col = self.respond_to?(:relation)? ArelExtensions.column_of(self.relation.table_name, self.name.to_s) : nil
+        col = Arel.column_of(self.relation.table_name, self.name.to_s) if self.respond_to?(:relation)
         if (!col) # if the column doesn't exist in the database
           Arel.grouping(Arel::Nodes::Addition.new(self, Arel.quoted(other)))
         else
@@ -82,7 +82,7 @@ module ArelExtensions
       when Arel::Nodes::Function
         Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
       else
-        col = ArelExtensions.column_of(self.relation.table_name, self.name.to_s)
+        col = Arel.column_of(self.relation.table_name, self.name.to_s)
         if (!col) # if the column doesn't exist in the database
           Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
         else
@@ -90,7 +90,7 @@ module ArelExtensions
           if (arg == :date || arg == :datetime)
             case other
             when Arel::Attributes::Attribute
-              col2 = ArelExtensions.column_of(other.relation.table_name, other.name.to_s)
+              col2 = Arel.column_of(other.relation.table_name, other.name.to_s)
               if (!col2) # if the column doesn't exist in the database
                 ArelExtensions::Nodes::DateSub.new [self, other]
               else
