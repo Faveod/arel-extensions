@@ -91,6 +91,10 @@ if defined?(Arel::Visitors::SQLServer)
 end
 
 module Arel
+  def self.column_of table_name, column_name
+    ArelExtensions.column_of(table_name, column_name)
+  end
+
   def self.duration s, expr
     ArelExtensions::Nodes::Duration.new("#{s}i", expr)
   end
