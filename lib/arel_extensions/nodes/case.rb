@@ -59,7 +59,7 @@ module ArelExtensions
           when Date, DateTime,Time
             :datetime
           when Arel::Attributes::Attribute
-            ArelExtensions::column_of(obj.relation.table_name, obj.name.to_s)&.type || :string
+            ArelExtensions.column_of(obj.relation.table_name, obj.name.to_s)&.type || :string
           else
             :string
           end
