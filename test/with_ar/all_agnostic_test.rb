@@ -107,6 +107,14 @@ module ArelExtensions
         end
       end
 
+      # Connection and column info
+      def test_column_of
+        assert_nil ArelExtensions.column_of('chupa', 'maflavla'), 'Non-existent table and column should return nil'
+        assert_nil ArelExtensions.column_of('chupa', 'updated_at'), 'Non-existent table but existent column should return nil'
+        assert_nil ArelExtensions.column_of('user_tests', 'maflavla'), 'Existent table but non-existent column should return nil'
+        assert_equal 'updated_at', ArelExtensions.column_of("user_tests", 'updated_at').name, 'An existing column name should be returned'
+      end
+
       # Math Functions
       def test_classical_arel
         assert_in_epsilon 42.16, t(@laure, @score + 22), 0.01
