@@ -1,7 +1,6 @@
 Code quality:
 + codeclimate.com
 + gemnasium
-+ appveyor.com (windows)
 + hakiri.io
 - coveralls.io
 - inch-ci.org
