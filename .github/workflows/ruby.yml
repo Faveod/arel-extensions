@@ -162,13 +162,13 @@ jobs:
       postgres:
         image: postgres:11.6-alpine
         env:
-          POSTGRES_DB: arext_test
+          POSTGRES_DB: arelx_test
           POSTGRES_PASSWORD: secret
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: >-
-          --health-cmd "pg_isready -d arext_test -U postgres -p 5432"
+          --health-cmd "pg_isready -d arelx_test -U postgres -p 5432"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -229,7 +229,7 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_USERNAME: root
-          MYSQL_DATABASE: arext_test
+          MYSQL_DATABASE: arelx_test
         ports:
           - 3306:3306
         options: >-
@@ -268,7 +268,7 @@ jobs:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
-          DB_DATABASE: arext_test
+          DB_DATABASE: arelx_test
           DB_USERNAME: root
         run: bundle exec rake test:mysql
 
