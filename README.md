@@ -1,6 +1,5 @@
 # Arel Extensions
 
-[![Travis Build Status](https://img.shields.io/travis/Faveod/arel-extensions.svg?label=Travis%20build)](http://travis-ci.org/Faveod/arel-extensions)
 [![AppVeyor Build Status](https://img.shields.io/appveyor/ci/yazfav/arel-extensions.svg?label=AppVeyor%20build)](https://ci.appveyor.com/project/yazfav/arel-extensions)
 [![Security](https://hakiri.io/github/Faveod/arel-extensions/master.svg)](https://hakiri.io/github/Faveod/arel-extensions/master)
 ![](http://img.shields.io/badge/license-MIT-brightgreen.svg)
