@@ -29,23 +29,22 @@ module ArelExtensions
   end
 
   def self.column_of(table_name, column_name)
-    begin
-      use_arel_table = !ActiveRecord::Base.connected? || \
-        (ActiveRecord::Base.connection.pool.respond_to?(:schema_cache) && ActiveRecord::Base.connection.pool.schema_cache.nil?)
+    pool = ActiveRecord::Base.connection.pool
+    use_arel_table = !ActiveRecord::Base.connected? || \
+      (pool.respond_to?(:schema_cache) && pool.schema_cache.nil?)
 
-      if use_arel_table
-        column_of_via_arel_table(table_name, column_name)
+    if use_arel_table
+      column_of_via_arel_table(table_name, column_name)
+    else
+      if pool.respond_to?(:pool_config)
+        pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
+      elsif pool.respond_to?(:schema_cache)
+        pool.schema_cache.columns_hash(table_name)[column_name]
       else
-        if ActiveRecord::Base.connection.pool.respond_to?(:pool_config)
-          ActiveRecord::Base.connection.pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
-        elsif ActiveRecord::Base.connection.pool.respond_to?(:schema_cache)
-          ActiveRecord::Base.connection.pool.schema_cache.columns_hash(table_name)[column_name]
-        else
-          column_of_via_arel_table(table_name, column_name)
-        end
+        column_of_via_arel_table(table_name, column_name)
       end
+    end
     rescue
       nil
-    end
   end
 end
