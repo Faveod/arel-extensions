@@ -115,7 +115,8 @@ module Arel
 
   # The NULL literal.
   def self.null
-    Arel::Nodes.build_quoted(nil)
+    Arel.quoted(nil)
+  end
 
   def self.quoted *args
     Arel::Nodes.build_quoted(*args)

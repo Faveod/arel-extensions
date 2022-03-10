@@ -389,7 +389,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
-        format = Arel::Nodes::NamedFunction.new('printf',[Arel::Nodes.build_quoted(o.original_string),o.left])
+        format = Arel::Nodes::NamedFunction.new('printf',[Arel.quoted(o.original_string),o.left])
         locale_map = NUMBER_COMMA_MAPPING[o.locale]
         if locale_map
           format = format.replace(',',locale_map[',']).replace('.',locale_map['.'])

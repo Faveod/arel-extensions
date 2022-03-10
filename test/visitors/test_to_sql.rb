@@ -135,7 +135,7 @@ module ArelExtensions
 
         # some optimization on concat
         _(compile(c + 'test' + ' chain')).must_be_like %{CONCAT(\"users\".\"name\", 'test chain')}
-        _(compile(Arel::Nodes.build_quoted('test') + ' chain')).must_be_like %{'test chain'}
+        _(compile(Arel.quoted('test') + ' chain')).must_be_like %{'test chain'}
         _(compile(c + '' + c)).must_be_like %{CONCAT(\"users\".\"name\", \"users\".\"name\")}
 
         _(compile(c.md5)).must_be_like %{MD5(\"users\".\"name\")}
@@ -310,7 +310,7 @@ module ArelExtensions
           (@table[:name] + ' test') => %{CONCAT("users"."name", ' test') AS alias},
           (@table[:age] + 42) => %{("users"."age" + 42) AS alias},
           @table[:name].coalesce('') => %{COALESCE("users"."name", '') AS alias},
-          Arel::Nodes.build_quoted('test') => %{'test' AS alias},
+          Arel.quoted('test') => %{'test' AS alias},
           @table.project(@table[:name]) => %{(SELECT "users"."name" FROM "users") "alias"},
           @table[:name].when("smith").then("cool").else("uncool") => %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END AS alias},
         }.each do |exp, res|

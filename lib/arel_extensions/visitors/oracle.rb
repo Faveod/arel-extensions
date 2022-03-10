@@ -134,7 +134,7 @@ module ArelExtensions
           if o.separator && o.separator != 'NULL'
             visit o.separator, collector
           else
-            visit Arel::Nodes.build_quoted(','), collector
+            visit Arel.quoted(','), collector
           end
         collector << ") WITHIN GROUP (ORDER BY "
         if !o.order.blank?
@@ -222,7 +222,7 @@ module ArelExtensions
           collector << "TO_CHAR("
           collector = visit o.right, collector
           collector << COMMA
-          collector = visit Arel::Nodes.build_quoted(DATE_MAPPING[o.left]), collector
+          collector = visit Arel.quoted(DATE_MAPPING[o.left]), collector
         else
           right = case o.left
           when  'd','m','y'
@@ -454,15 +454,15 @@ module ArelExtensions
         when Hash
           src_tz, dst_tz = o.time_zone.first
           collector << ' as timestamp) at time zone '
-          collector = visit Arel::Nodes.build_quoted(src_tz), collector
+          collector = visit Arel.quoted(src_tz), collector
           collecto < ' at time zone '
-          collector = visit Arel::Nodes.build_quoted(dst_tz), collector
+          collector = visit Arel.quoted(dst_tz), collector
         when String
           collector << ' as timestamp) at time zone '
-          collector = visit Arel::Nodes.build_quoted(o.time_zone), collector
+          collector = visit Arel.quoted(o.time_zone), collector
         end
         collector << COMMA
-        collector = visit Arel::Nodes.build_quoted(fmt), collector
+        collector = visit Arel.quoted(fmt), collector
         collector << ")"
         collector
       end
@@ -627,23 +627,23 @@ module ArelExtensions
         comma_in_format = o.precision == 0 ? '' : 'D'
         nines_after = (1..o.precision-1).map{'9'}.join('')+'0'
         if comma.length == 1
-          options = Arel::Nodes.build_quoted("NLS_NUMERIC_CHARACTERS = '"+comma+" '")
+          options = Arel.quoted("NLS_NUMERIC_CHARACTERS = '"+comma+" '")
           nines_before = ("999"*4+"990")
         else
-          options = Arel::Nodes.build_quoted("NLS_NUMERIC_CHARACTERS = '"+comma+"'")
+          options = Arel.quoted("NLS_NUMERIC_CHARACTERS = '"+comma+"'")
           nines_before = ("999G"*4+"990")
         end
         sign = ArelExtensions::Nodes::Case.new.when(col<0).
                   then('-').
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = o.flags.include?('+') || o.flags.include?(' ') ?
-                Arel::Nodes.build_quoted(1) :
+                Arel.quoted(1) :
                 ArelExtensions::Nodes::Case.new.when(col<0).then(1).else(0)
 
         if o.scientific_notation
           number = Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                Arel::Nodes.build_quoted(col.abs),
-                Arel::Nodes.build_quoted('FM'+nines_before+comma_in_format+nines_after+'EEEE'),
+                Arel.quoted(col.abs),
+                Arel.quoted('FM'+nines_before+comma_in_format+nines_after+'EEEE'),
                 options
               ])
           if o.type == 'e'
@@ -651,17 +651,17 @@ module ArelExtensions
           end
         else
           number = Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                Arel::Nodes.build_quoted(col.abs),
-                Arel::Nodes.build_quoted('FM'+nines_before+comma_in_format+nines_after),
+                Arel.quoted(col.abs),
+                Arel.quoted('FM'+nines_before+comma_in_format+nines_after),
                 options
               ])
         end
 
-        repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
-          when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
-          then(Arel::Nodes.build_quoted(
+        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
+          when(Arel.quoted(o.width).abs-(number.length+sign_length)>0).
+          then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-            ).repeat(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length))
+            ).repeat(Arel.quoted(o.width).abs-(number.length+sign_length))
           ).
           else('')
         before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
@@ -674,7 +674,7 @@ module ArelExtensions
             number,
             after
           ])
-        collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector
+        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix),full_number,Arel.quoted(o.suffix)]), collector
         collector
       end
 

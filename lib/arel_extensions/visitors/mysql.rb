@@ -216,17 +216,17 @@ module ArelExtensions
           when Hash
             src_tz, dst_tz = o.time_zone.first
             collector << COMMA
-            collector = visit Arel::Nodes.build_quoted(src_tz), collector
+            collector = visit Arel.quoted(src_tz), collector
             collector << COMMA
-            collector = visit Arel::Nodes.build_quoted(dst_tz), collector
+            collector = visit Arel.quoted(dst_tz), collector
             collector << ')'
           when String
             collector << COMMA << "'UTC'" << COMMA
-            collector = visit Arel::Nodes.build_quoted(o.time_zone), collector
+            collector = visit Arel.quoted(o.time_zone), collector
             collector << ')'
           end
           collector << COMMA
-          collector = visit Arel::Nodes.build_quoted(fmt), collector
+          collector = visit Arel.quoted(fmt), collector
           collector << ")"
         when :integer, :float, :decimal
           collector << "FORMAT("
@@ -384,7 +384,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
         col = o.left.coalesce(0)
-        params = o.locale ? [o.precision,Arel::Nodes.build_quoted(o.locale)] : [o.precision]
+        params = o.locale ? [o.precision,Arel.quoted(o.locale)] : [o.precision]
         sign = ArelExtensions::Nodes::Case.new.when(col<0).
                   then('-').
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
@@ -394,7 +394,7 @@ module ArelExtensions
           if o.scientific_notation
             ArelExtensions::Nodes::Concat.new([
                     Arel::Nodes::NamedFunction.new('FORMAT',[
-                      col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor)
+                      col.abs/Arel.quoted(10).pow(col.abs.log10.floor)
                     ]+params),
                     o.type,
                     Arel::Nodes::NamedFunction.new('FORMAT',[
@@ -406,11 +406,11 @@ module ArelExtensions
             Arel::Nodes::NamedFunction.new('FORMAT',[col.abs]+params)
           end
 
-        repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
-          when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
-          then(Arel::Nodes.build_quoted(
+        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
+          when(Arel.quoted(o.width).abs-(number.length+sign_length)>0).
+          then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-            ).repeat(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length))
+            ).repeat(Arel.quoted(o.width).abs-(number.length+sign_length))
           ).
           else('')
         before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
@@ -423,7 +423,7 @@ module ArelExtensions
             number,
             after
           ])
-        collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector
+        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix),full_number,Arel.quoted(o.suffix)]), collector
         collector
       end
 
@@ -542,7 +542,7 @@ module ArelExtensions
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
         else
-          collector = visit Arel::Nodes.build_quoted('$.')+o.key, collector
+          collector = visit Arel.quoted('$.')+o.key, collector
         end
         collector << ')'
         collector
@@ -555,7 +555,7 @@ module ArelExtensions
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
         else
-          collector = visit Arel::Nodes.build_quoted('$.')+o.key, collector
+          collector = visit Arel.quoted('$.')+o.key, collector
         end
         collector << COMMA
         collector = visit o.value, collector

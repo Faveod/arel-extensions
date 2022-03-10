@@ -4,7 +4,7 @@ module ArelExtensions
       attr_accessor :case_sensitive if Arel::VERSION.to_i < 7
 
       def initialize(left, right, escape = nil)
-        r = Arel::Nodes.build_quoted(right)
+        r = Arel.quoted(right)
         if Arel::VERSION.to_i < 7 # managed by default in version 7+ (rails 5), so useful for rails 3 & 4
           super(left, r, escape)
           @case_sensitive = false

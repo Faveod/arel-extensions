@@ -140,7 +140,7 @@ module ArelExtensions
           if o.separator && o.separator != 'NULL'
             visit o.separator, collector
           else
-            visit Arel::Nodes.build_quoted(','), collector
+            visit Arel.quoted(','), collector
           end
         collector << ")"
         collector
@@ -182,15 +182,15 @@ module ArelExtensions
         when Hash
           src_tz, dst_tz = o.time_zone.first
           collector << ') AT TIME ZONE '
-          collector = visit Arel::Nodes.build_quoted(src_tz), collector
+          collector = visit Arel.quoted(src_tz), collector
           collector << ' AT TIME ZONE '
-          collector = visit Arel::Nodes.build_quoted(dst_tz), collector
+          collector = visit Arel.quoted(dst_tz), collector
         when String
           collector << ') AT TIME ZONE '
-          collector = visit Arel::Nodes.build_quoted(o.time_zone), collector
+          collector = visit Arel.quoted(o.time_zone), collector
         end
         collector << COMMA
-        collector = visit Arel::Nodes.build_quoted(fmt), collector
+        collector = visit Arel.quoted(fmt), collector
         collector << ")"
         collector
       end
@@ -335,11 +335,11 @@ module ArelExtensions
         tab = o.pattern.inspect+ 'g' # Make it always global
         pattern = tab.split('/')[1..-2].join('/')
         flags = tab.split('/')[-1]
-        visit Arel::Nodes.build_quoted(pattern), collector
+        visit Arel.quoted(pattern), collector
         collector << Arel::Visitors::ToSql::COMMA
         visit o.substitute, collector
         collector << Arel::Visitors::ToSql::COMMA
-        visit Arel::Nodes.build_quoted(flags+"g"), collector
+        visit Arel.quoted(flags+"g"), collector
         collector << ")"
         collector
       end
@@ -422,29 +422,29 @@ module ArelExtensions
             ArelExtensions::Nodes::Concat.new([
                 Arel::Nodes::NamedFunction.new('TRIM',[
                   Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                    Arel.when(col.not_eq 0).then(col.abs/Arel::Nodes.build_quoted(10).pow(col.abs.log10.floor)).else(1),
-                    Arel::Nodes.build_quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
+                    Arel.when(col.not_eq 0).then(col.abs/Arel.quoted(10).pow(col.abs.log10.floor)).else(1),
+                    Arel.quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
                   ])]),
                 o.type,
                 Arel::Nodes::NamedFunction.new('TRIM',[
                   Arel::Nodes::NamedFunction.new('TO_CHAR',[
                     Arel.when(col.not_eq 0).then(col.abs.log10.floor).else(0),
-                    Arel::Nodes.build_quoted('FM'+nines_before)
+                    Arel.quoted('FM'+nines_before)
                   ])])
               ])
           else
             Arel::Nodes::NamedFunction.new('TRIM',[
               Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                Arel::Nodes.build_quoted(col.abs),
-                Arel::Nodes.build_quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
+                Arel.quoted(col.abs),
+                Arel.quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
               ])])
           end
 
-        repeated_char = (o.width == 0) ? Arel::Nodes.build_quoted('') : ArelExtensions::Nodes::Case.new().
-          when(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length)>0).
-          then(Arel::Nodes.build_quoted(
+        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
+          when(Arel.quoted(o.width).abs-(number.length+sign_length)>0).
+          then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-            ).repeat(Arel::Nodes.build_quoted(o.width).abs-(number.length+sign_length))
+            ).repeat(Arel.quoted(o.width).abs-(number.length+sign_length))
           ).
           else('')
         before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
@@ -457,7 +457,7 @@ module ArelExtensions
             number,
             after
           ])
-        collector = visit ArelExtensions::Nodes::Concat.new([Arel::Nodes.build_quoted(o.prefix),full_number,Arel::Nodes.build_quoted(o.suffix)]), collector
+        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix),full_number,Arel.quoted(o.suffix)]), collector
         collector
       end
 
@@ -528,7 +528,7 @@ module ArelExtensions
           end
           collector << ')'
         when String,Numeric,TrueClass,FalseClass
-          collector = visit Arel::Nodes.build_quoted("#{o.dict}"), collector
+          collector = visit Arel.quoted("#{o.dict}"), collector
           collector << '::jsonb'
         when NilClass
           collector  << %Q['null'::jsonb]

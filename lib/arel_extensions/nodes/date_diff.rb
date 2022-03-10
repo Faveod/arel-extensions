@@ -50,9 +50,9 @@ module ArelExtensions
         v = self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
-            return Arel::Nodes.build_quoted((v.value >= 0 ? '+' : '-') + v.inspect)
+            return Arel.quoted((v.value >= 0 ? '+' : '-') + v.inspect)
           elsif @date_type == :datetime
-            return Arel::Nodes.build_quoted((v.value >= 0 ? '+' : '-') + v.inspect)
+            return Arel.quoted((v.value >= 0 ? '+' : '-') + v.inspect)
           end
         else
           return v
@@ -179,7 +179,7 @@ module ArelExtensions
         when DateTime, Time, Date
           raise(ArgumentError, "#{object.class} cannot be converted to Integer")
         when String
-          Arel::Nodes.build_quoted(object)
+          Arel.quoted(object)
         else
           raise(ArgumentError, "#{object.class} cannot be converted to Integer")
         end

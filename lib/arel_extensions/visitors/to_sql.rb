@@ -6,7 +6,7 @@ module ArelExtensions
       # Escape properly the string expression expr.
       # Take care of escaping.
       def make_json_string expr
-        Arel::Nodes.build_quoted('"') \
+        Arel.quoted('"') \
         + expr
             .coalesce('')
             .replace('\\','\\\\').replace('"','\"').replace("\n", '\n') \
@@ -14,7 +14,7 @@ module ArelExtensions
       end
 
       def make_json_null
-        Arel::Nodes.build_quoted("null")
+        Arel.quoted("null")
       end
 
       # Math Functions
@@ -162,7 +162,7 @@ module ArelExtensions
         collector << "REGEXP_REPLACE("
         visit o.left, collector
         collector << COMMA
-        visit Arel::Nodes.build_quoted(o.pattern.to_s), collector
+        visit Arel.quoted(o.pattern.to_s), collector
         collector << COMMA
         visit o.substitute, collector
         collector << ")"
@@ -254,7 +254,7 @@ module ArelExtensions
         collector << 'LENGTH(TRIM(COALESCE('
         collector = visit o.expr, collector
         collector << COMMA
-        collector = visit Arel::Nodes.build_quoted(''), collector
+        collector = visit Arel.quoted(''), collector
         collector << "))) = 0"
         collector
       end
@@ -264,7 +264,7 @@ module ArelExtensions
         collector << 'LENGTH(TRIM(COALESCE('
         collector = visit o.expr, collector
         collector << COMMA
-        collector = visit Arel::Nodes.build_quoted(''), collector
+        collector = visit Arel.quoted(''), collector
         collector << "))) > 0"
         collector
       end
@@ -517,14 +517,14 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Case_When o, collector
         collector << "WHEN "
-        visit Arel::Nodes.build_quoted(o.left), collector
+        visit Arel.quoted(o.left), collector
         collector << " THEN "
-        visit Arel::Nodes.build_quoted(o.right), collector
+        visit Arel.quoted(o.right), collector
       end
 
       def visit_ArelExtensions_Nodes_Case_Else o, collector
         collector << "ELSE "
-        visit Arel::Nodes.build_quoted(o.expr), collector
+        visit Arel.quoted(o.expr), collector
       end
 
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
@@ -626,7 +626,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Json o,collector
         case o.dict
         when Array
-          res = Arel::Nodes.build_quoted('[')
+          res = Arel.quoted('[')
           o.dict.each.with_index do |v,i|
             if i != 0
               res += ', '
@@ -636,7 +636,7 @@ module ArelExtensions
           res += ']'
           collector = visit res, collector
         when Hash
-          res = Arel::Nodes.build_quoted('{')
+          res = Arel.quoted('{')
           o.dict.each.with_index do |(k,v),i|
             if i != 0
               res += ', '
@@ -654,10 +654,10 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_JsonGroup o, collector
         if o.as_array
-          res = Arel::Nodes.build_quoted('[') + (o.orders ? o.dict.group_concat(', ', order: Array(o.orders)) : o.dict.group_concat(', ')).coalesce('') + ']'
+          res = Arel.quoted('[') + (o.orders ? o.dict.group_concat(', ', order: Array(o.orders)) : o.dict.group_concat(', ')).coalesce('') + ']'
           collector = visit res, collector
         else
-          res = Arel::Nodes.build_quoted('{')
+          res = Arel.quoted('{')
           orders = o.orders || o.dict.keys
           o.dict.each.with_index do |(k,v),i|
             if i != 0

@@ -182,7 +182,7 @@ module ArelExtensions
       def test_concat
         assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
         assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
-        assert_equal 'Test Laure', t(@laure, Arel::Nodes.build_quoted('Test ') + @name)
+        assert_equal 'Test Laure', t(@laure, Arel.quoted('Test ') + @name)
 
         skip "No group_concat in SqlServer before 2017" if @env_db == 'mssql'
         assert_equal "Lucas Sophie", t(User.where(:name => ['Lucas', 'Sophie']), @name.group_concat(' '))
@@ -430,11 +430,11 @@ module ArelExtensions
         # Winter/Summer time
         assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
         if ENV['DB'] == 'mssql'
-          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
-          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
+          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
+          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
         else
-          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
-          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel::Nodes.build_quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
+          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
+          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
         end
       end
 
@@ -450,7 +450,7 @@ module ArelExtensions
           '2028-01-01 10:42:00' => '52', # Saturday
           '2034-01-01 10:42:00' => '52', # Sunday
         }.each do |date, exp|
-          assert_equal exp, t(@lucas, Arel::Nodes.build_quoted(date).cast(:datetime).format('%V'))
+          assert_equal exp, t(@lucas, Arel.quoted(date).cast(:datetime).format('%V'))
         end
       end
 
@@ -467,7 +467,7 @@ module ArelExtensions
           '2028-01-01 10:42:00' => '2027', # Saturday
           '2034-01-01 10:42:00' => '2033', # Sunday
         }.each do |date, exp|
-          assert_equal exp, t(@lucas, Arel::Nodes.build_quoted(date).cast(:datetime).format('%G'))
+          assert_equal exp, t(@lucas, Arel.quoted(date).cast(:datetime).format('%G'))
         end
       end
 
@@ -610,7 +610,7 @@ module ArelExtensions
 
           # mysql adapter in rails7 adds some infos we just squeeze here
           assert_equal "2014-03-03 12:42:00", t(@lucas,@updated_at.cast(:string)).split('.').first unless @env_db == 'mssql' # locale dependent
-          assert_equal Date.parse("2014-03-03"), t(@lucas,Arel::Nodes.build_quoted('2014-03-03').cast(:date))
+          assert_equal Date.parse("2014-03-03"), t(@lucas,Arel.quoted('2014-03-03').cast(:date))
           assert_equal Date.parse("5014-03-03"), t(@lucas,(@age.cast(:string) + '014-03-03').cast(:date))
           assert_equal Time.parse("2014-03-03 12:42:00 UTC"), t(@lucas,@updated_at.cast(:string).cast(:datetime))
           assert_equal Date.parse("2014-03-03"), t(@lucas,@updated_at.cast(:date))
