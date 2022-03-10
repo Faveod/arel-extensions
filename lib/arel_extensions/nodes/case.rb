@@ -1,5 +1,3 @@
-require 'arel_extensions/helpers'
-
 module ArelExtensions
   module Nodes
     if Gem::Version.new(Arel::VERSION) < Gem::Version.new("7.1.0")
