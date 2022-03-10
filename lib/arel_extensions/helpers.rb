@@ -29,20 +29,23 @@ module ArelExtensions
   end
 
   def self.column_of(table_name, column_name)
-    use_arel_table = !ActiveRecord::Base.connected? || \
-      (ActiveRecord::Base.connection.pool.respond_to?(:schema_cache) && ActiveRecord::Base.connection.pool.schema_cache.nil?)
+    begin
+      use_arel_table = !ActiveRecord::Base.connected? || \
+        (ActiveRecord::Base.connection.pool.respond_to?(:schema_cache) && ActiveRecord::Base.connection.pool.schema_cache.nil?)
 
-    if use_arel_table
-      column_of_via_arel_table(table_name, column_name)
-    else
-      if ActiveRecord::Base.connection.pool.respond_to?(:pool_config)
-        ActiveRecord::Base.connection.pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
-      elsif ActiveRecord::Base.connection.pool.respond_to?(:schema_cache)
-        ActiveRecord::Base.connection.pool.schema_cache.columns_hash(table_name)[column_name]
-      else
-        puts ">>> We really shouldn't be here #{table_name}.#{column_name}"
+      if use_arel_table
         column_of_via_arel_table(table_name, column_name)
+      else
+        if ActiveRecord::Base.connection.pool.respond_to?(:pool_config)
+          ActiveRecord::Base.connection.pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
+        elsif ActiveRecord::Base.connection.pool.respond_to?(:schema_cache)
+          ActiveRecord::Base.connection.pool.schema_cache.columns_hash(table_name)[column_name]
+        else
+          column_of_via_arel_table(table_name, column_name)
+        end
       end
+    rescue
+      nil
     end
   end
 end
