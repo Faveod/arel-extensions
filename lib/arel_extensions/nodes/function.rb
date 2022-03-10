@@ -51,7 +51,7 @@ module ArelExtensions
       def type_of_attribute(att)
         case att
         when Arel::Attributes::Attribute
-          ArelExtensions.column_of(att.relation.table_name, att.name.to_s)&.type || att
+          Arel.column_of(att.relation.table_name, att.name.to_s)&.type || att
         when ArelExtensions::Nodes::Function
           att.return_type
           #        else

@@ -327,7 +327,7 @@ module ArelExtensions
         if element.is_a?(Time)
           return Arel::Nodes::NamedFunction.new('STRFTIME',[element, '%H:%M:%S'])
         elsif element.is_a?(Arel::Attributes::Attribute)
-          col = ArelExtensions.column_of(element.relation.table_name, element.name.to_s)
+          col = Arel.column_of(element.relation.table_name, element.name.to_s)
           if col && (col.type == :time)
             return Arel::Nodes::NamedFunction.new('STRFTIME',[element, '%H:%M:%S'])
           else
