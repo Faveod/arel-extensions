@@ -21,5 +21,4 @@ ratings:
   - "**.rb"
   - "**.md"
 exclude_paths:
-- .travis/**/*
 - test/**/*
