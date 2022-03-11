@@ -1,5 +1,6 @@
 # Arel Extensions
 
+![GitHub workflow](https://github.com/Faveod/arel-extensions/actions/workflows/ruby.yml/badge.svg)
 [![Security](https://hakiri.io/github/Faveod/arel-extensions/master.svg)](https://hakiri.io/github/Faveod/arel-extensions/master)
 ![](http://img.shields.io/badge/license-MIT-brightgreen.svg)
 
