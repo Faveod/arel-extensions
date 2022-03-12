@@ -412,7 +412,7 @@ module ArelExtensions
         nines_after = (1..o.precision).map{'9'}.join('')
         nines_before = ("999#{thousand_separator}"*4+"990")
 
-        sign = ArelExtensions::Nodes::Case.new.when(col<0).
+        sign = Arel.when(col<0).
                   then('-').
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = ArelExtensions::Nodes::Length.new([sign])
