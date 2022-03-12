@@ -790,24 +790,24 @@ module ArelExtensions
       end
 
       def test_in_with_nil
-        assert_equal true, @myung.where(@age.in(1)).blank?
-        assert_equal false, @myung.where(@age.in(23)).blank?
-        assert_equal true, @myung.where(@age.in([1])).blank?
-        assert_equal true, @myung.where(@age.in([1,2])).blank?
-        assert_equal false, @myung.where(@age.in([1,23])).blank?
-        assert_equal true, @myung.where(@age.in(nil)).blank?
-        assert_equal true, @myung.where(@age.in([nil])).blank?
-        assert_equal true, @myung.where(@age.in([nil,1])).blank?
-        assert_equal false, @myung.where(@age.in([nil,23])).blank?
-        assert_equal true, @myung.where(@age.in([nil,1,2])).blank?
-        assert_equal false, @myung.where(@age.in([nil,1,23])).blank?
-        assert_equal true, @test.where(@age.in(1)).blank?
-        assert_equal true, @test.where(@age.in([1])).blank?
-        assert_equal true, @test.where(@age.in([1,2])).blank?
-        assert_equal false, @test.where(@age.in(nil)).blank?
-        assert_equal false, @test.where(@age.in([nil])).blank?
-        assert_equal false, @test.where(@age.in([nil,1])).blank?
-        assert_equal false, @test.where(@age.in([nil,1,2])).blank?
+        assert_predicate @myung.where(@age.in(1)), :blank?
+        assert_predicate @myung.where(@age.in(23)), :present?
+        assert_predicate @myung.where(@age.in([1])), :blank?
+        assert_predicate @myung.where(@age.in([1,2])), :blank?
+        assert_predicate @myung.where(@age.in([1,23])), :present?
+        assert_predicate @myung.where(@age.in(nil)), :blank?
+        assert_predicate @myung.where(@age.in([nil])), :blank?
+        assert_predicate @myung.where(@age.in([nil,1])), :blank?
+        assert_predicate @myung.where(@age.in([nil,23])), :present?
+        assert_predicate @myung.where(@age.in([nil,1,2])), :blank?
+        assert_predicate @myung.where(@age.in([nil,1,23])), :present?
+        assert_predicate @test.where(@age.in(1)), :blank?
+        assert_predicate @test.where(@age.in([1])), :blank?
+        assert_predicate @test.where(@age.in([1,2])), :blank?
+        assert_predicate @test.where(@age.in(nil)), :present?
+        assert_predicate @test.where(@age.in([nil])), :present?
+        assert_predicate @test.where(@age.in([nil,1])), :present?
+        assert_predicate @test.where(@age.in([nil,1,2])), :present?
       end
 
       def test_scope_with_in_plus_new
@@ -821,33 +821,33 @@ module ArelExtensions
       end
 
       def test_is_not_null
-        assert_equal false, @myung.where(@age.is_not_null).blank?
-        assert_equal true, @test.where(@age.is_not_null).blank?
+        assert_predicate @myung.where(@age.is_not_null), :present?
+        assert_predicate @test.where(@age.is_not_null), :blank?
       end
 
       def test_not_in_with_nil
-        assert_equal false, @myung.where(@age.not_in(1)).blank?
-        assert_equal true, @myung.where(@age.not_in(23)).blank?
-        assert_equal false, @myung.where(@age.not_in([1])).blank?
-        assert_equal false, @myung.where(@age.not_in([1,2])).blank?
-        assert_equal true, @myung.where(@age.not_in([1,23])).blank?
-        assert_equal false, @myung.where(@age.not_in(nil)).blank?
-        assert_equal false, @myung.where(@age.not_in([nil])).blank?
-        assert_equal false, @myung.where(@age.not_in([nil,1])).blank?
-        assert_equal true, @myung.where(@age.not_in([nil,23])).blank?
-        assert_equal false, @myung.where(@age.not_in([nil,1,2])).blank?
-        assert_equal true, @myung.where(@age.not_in([nil,1,23])).blank?
+        assert_predicate @myung.where(@age.not_in(1)), :present?
+        assert_predicate @myung.where(@age.not_in(23)), :blank?
+        assert_predicate @myung.where(@age.not_in([1])), :present?
+        assert_predicate @myung.where(@age.not_in([1,2])), :present?
+        assert_predicate @myung.where(@age.not_in([1,23])), :blank?
+        assert_predicate @myung.where(@age.not_in(nil)), :present?
+        assert_predicate @myung.where(@age.not_in([nil])), :present?
+        assert_predicate @myung.where(@age.not_in([nil,1])), :present?
+        assert_predicate @myung.where(@age.not_in([nil,23])), :blank?
+        assert_predicate @myung.where(@age.not_in([nil,1,2])), :present?
+        assert_predicate @myung.where(@age.not_in([nil,1,23])), :blank?
 
-        assert_equal false, @myung.where(@age.not_in(1..2)).blank?
+        assert_predicate @myung.where(@age.not_in(1..2)), :present?
 
         # if the column is null, the entry will never be selected with not in (like every DBMS does)
-        # assert_equal false , @test.where(@age.not_in(1)).blank?
-        # assert_equal false , @test.where(@age.not_in([1])).blank?
-        # assert_equal false , @test.where(@age.not_in([1,2])).blank?
-        # assert_equal true  , @test.where(@age.not_in(nil)).blank?
-        # assert_equal true  , @test.where(@age.not_in([nil])).blank?
-        # assert_equal true  , @test.where(@age.not_in([nil,1])).blank?
-        # assert_equal true  , @test.where(@age.not_in([nil,1,2])).blank?
+        # assert_predicate @test.where(@age.not_in(1)), :present?
+        # assert_predicate @test.where(@age.not_in([1])), :present?
+        # assert_predicate @test.where(@age.not_in([1,2])), :present?
+        # assert_predicate @test.where(@age.not_in(nil)), :blank?
+        # assert_predicate @test.where(@age.not_in([nil])), :blank?
+        # assert_predicate @test.where(@age.not_in([nil,1])), :blank?
+        # assert_predicate @test.where(@age.not_in([nil,1,2])), :blank?
       end
 
       def test_in_on_grouping
