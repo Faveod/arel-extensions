@@ -105,7 +105,7 @@ module FakeRecord
     attr_reader :spec, :connection
 
     def initialize
-      @spec = Spec.new({:adapter => 'america'})
+      @spec = Spec.new({adapter: 'america'})
       @connection = Connection.new
       @connection.visitor = Arel::Visitors::ToSql.new(connection)
     end

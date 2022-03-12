@@ -36,11 +36,11 @@ module ArelExtensions
           t.column :updated_at, :datetime, precision: nil
           t.column :duration, :time
           t.column :other, :string
-          t.column :score, :decimal, :precision => 20, :scale => 10
+          t.column :score, :decimal, precision: 20, scale: 10
         end
         @cnx.drop_table(:product_tests) rescue nil
         @cnx.create_table :product_tests do |t|
-          t.column :price, :decimal, :precision => 20, :scale => 10
+          t.column :price, :decimal, precision: 20, scale: 10
         end
       end
 
@@ -55,24 +55,24 @@ module ArelExtensions
         d = Date.new(2016, 5, 23)
         connect_db
         setup_db
-        u = User.create :age => 5, :name => "Lucas", :created_at => d, :score => 20.16, :updated_at => Time.utc(2014, 3, 3, 12, 42, 0)
-        @lucas = User.where(:id => u.id)
-        u = User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
-        @sophie = User.where(:id => u.id)
-        u = User.create :age => 20, :name => "Camille", :created_at => d, :score => -20.16, :comments => ''
-        @camille = User.where(:id => u.id)
-        u = User.create :age => 21, :name => "Arthur", :created_at => d, :score => 65.62, :comments => 'arrêté'
-        @arthur = User.where(:id => u.id)
-        u = User.create :age => 23, :name => "Myung", :created_at => d, :score => 20.16, :comments => ' '
-        @myung = User.where(:id => u.id)
-        u = User.create :age => 25, :name => "Laure", :created_at => d, :score => 20.16, :duration => Time.utc(2001, 1, 1, 12, 42, 21),:updated_at => Time.utc(2014, 3, 3, 12, 42, 0)
-        @laure = User.where(:id => u.id)
-        u = User.create :age => nil, :name => "Test", :created_at => d, :score => 1.62, :other => 'toto'
-        @test = User.where(:id => u.id)
-        u = User.create :age => -42, :name => "Negatif", :comments => '1,22,3,42,2', :created_at => d, :updated_at => d.to_time, :score => 0.17
-        @neg = User.where(:id => u.id)
-        u = User.create :age => 15, :name => "Justin", :created_at => d, :score => 11.0
-        @justin = User.where(:id => u.id)
+        u = User.create age: 5, name: "Lucas", created_at: d, score: 20.16, updated_at: Time.utc(2014, 3, 3, 12, 42, 0)
+        @lucas = User.where(id: u.id)
+        u = User.create age: 15, name: "Sophie", created_at: d, score: 20.16
+        @sophie = User.where(id: u.id)
+        u = User.create age: 20, name: "Camille", created_at: d, score: -20.16, comments: ''
+        @camille = User.where(id: u.id)
+        u = User.create age: 21, name: "Arthur", created_at: d, score: 65.62, comments: 'arrêté'
+        @arthur = User.where(id: u.id)
+        u = User.create age: 23, name: "Myung", created_at: d, score: 20.16, comments: ' '
+        @myung = User.where(id: u.id)
+        u = User.create age: 25, name: "Laure", created_at: d, score: 20.16, duration: Time.utc(2001, 1, 1, 12, 42, 21),updated_at: Time.utc(2014, 3, 3, 12, 42, 0)
+        @laure = User.where(id: u.id)
+        u = User.create age: nil, name: "Test", created_at: d, score: 1.62, other: 'toto'
+        @test = User.where(id: u.id)
+        u = User.create age: -42, name: "Negatif", comments: '1,22,3,42,2', created_at: d, updated_at: d.to_time, score: 0.17
+        @neg = User.where(id: u.id)
+        u = User.create age: 15, name: "Justin", created_at: d, score: 11.0
+        @justin = User.where(id: u.id)
 
         @age = User.arel_table[:age]
         @name = User.arel_table[:name]
@@ -193,16 +193,16 @@ module ArelExtensions
         assert_equal 'Test Laure', t(@laure, Arel.quoted('Test ') + @name)
 
         skip "No group_concat in SqlServer before 2017" if @env_db == 'mssql'
-        assert_equal "Lucas Sophie", t(User.where(:name => ['Lucas', 'Sophie']), @name.group_concat(' '))
-        assert_equal "Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie']), @name.group_concat(','))
-        assert_equal "Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie']), @name.group_concat)
+        assert_equal "Lucas Sophie", t(User.where(name: ['Lucas', 'Sophie']), @name.group_concat(' '))
+        assert_equal "Lucas,Sophie", t(User.where(name: ['Lucas', 'Sophie']), @name.group_concat(','))
+        assert_equal "Lucas,Sophie", t(User.where(name: ['Lucas', 'Sophie']), @name.group_concat)
 
         skip "No order in group_concat in SqlLite" if $sqlite
-        assert_equal "Arthur,Lucas,Sophie", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.asc))
-        assert_equal "Sophie,Lucas,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.desc))
-        assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',[@score.asc,@name.asc]))
-        assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@score.asc,@name.asc))
-        assert_equal "Lucas,Sophie,Arthur", t(User.where(:name => ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',order: [@score.asc,@name.asc]))
+        assert_equal "Arthur,Lucas,Sophie", t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.asc))
+        assert_equal "Sophie,Lucas,Arthur", t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.desc))
+        assert_equal "Lucas,Sophie,Arthur", t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',[@score.asc,@name.asc]))
+        assert_equal "Lucas,Sophie,Arthur", t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@score.asc,@name.asc))
+        assert_equal "Lucas,Sophie,Arthur", t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',order: [@score.asc,@name.asc]))
       end
 
       def test_length
@@ -781,11 +781,11 @@ module ArelExtensions
 
       def test_subquery_with_order
         skip if ['mssql'].include?(@env_db) && Arel::VERSION.to_i < 10
-        assert_equal 9, User.where(:name => User.select(:name).order(:name)).count
+        assert_equal 9, User.where(name: User.select(:name).order(:name)).count
         assert_equal 9, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count
         if !['mysql'].include?(@env_db)  # MySql can't have limit in IN subquery
-          assert_equal 2, User.where(:name => User.select(:name).order(:name).limit(2)).count
-          # assert_equal 6, User.where(:name => User.select(:name).order(:name).offset(2)).count
+          assert_equal 2, User.where(name: User.select(:name).order(:name).limit(2)).count
+          # assert_equal 6, User.where(name: User.select(:name).order(:name).offset(2)).count
         end
       end
 

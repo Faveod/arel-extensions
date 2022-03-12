@@ -29,15 +29,15 @@ module ArelExtensions
         class User < ActiveRecord::Base
         end
         d = Date.new(2016, 5,23)
-        @lucas = User.create! :age => 5, :name => "Lucas", :created_at => d, :score => 20.16
-        sophie = User.create :age => 15, :name => "Sophie", :created_at => d, :score => 20.16
-        @sophie = User.where(:id => sophie.id)
-        User.create! :age => 20, :name => "Camille", :created_at => d, :score => 20.16
-        User.create! :age => 21, :name => "Arthur", :created_at => d, :score => 65.62
-        User.create! :age => 23, :name => "Myung", :created_at => d, :score => 20.16
-        @laure = User.create :age => 25, :name => "Laure", :created_at => d, :score =>20.16
-        User.create! :age => nil, :name => "Test", :created_at => d, :score => 1.62
-        @neg = User.create :age => -20, :name => "Negatif", :created_at => d, :score => 0.17
+        @lucas = User.create! age: 5, name: "Lucas", created_at: d, score: 20.16
+        sophie = User.create age: 15, name: "Sophie", created_at: d, score: 20.16
+        @sophie = User.where(id: sophie.id)
+        User.create! age: 20, name: "Camille", created_at: d, score: 20.16
+        User.create! age: 21, name: "Arthur", created_at: d, score: 65.62
+        User.create! age: 23, name: "Myung", created_at: d, score: 20.16
+        @laure = User.create age: 25, name: "Laure", created_at: d, score: 20.16
+        User.create! age: nil, name: "Test", created_at: d, score: 1.62
+        @neg = User.create age: -20, name: "Negatif", created_at: d, score: 0.17
         @table = Arel::Table.new(:users)
         @name = @table[:name]
       end
@@ -60,8 +60,8 @@ module ArelExtensions
         assert_equal 1, User.where((User.arel_table[:age] + User.arel_table[:age]).eq(10)).count
 
         # Replace
-        assert_equal "LucaX", User.where(:id => @lucas).select(@name.replace("s","X").as("res")).first.res
-        assert_equal "replace", User.where(:id => @lucas).select(@name.replace(@name,"replace").as("res")).first.res
+        assert_equal "LucaX", User.where(id: @lucas).select(@name.replace("s","X").as("res")).first.res
+        assert_equal "replace", User.where(id: @lucas).select(@name.replace(@name,"replace").as("res")).first.res
       end
     end
   end

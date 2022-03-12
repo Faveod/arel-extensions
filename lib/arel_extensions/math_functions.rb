@@ -108,7 +108,7 @@ module ArelExtensions
           locale: locale,
           original_string: format_string
         }
-        # opts = {:locale => 'fr_FR', :type => "e"/"f"/"d", :prefix => "$ ", :suffix => " %", :flags => " +-#0", :width => 5, :precision => 6}
+        # opts = {locale: 'fr_FR', type: "e"/"f"/"d", prefix: "$ ", suffix: " %", flags: " +-#0", width: 5, precision: 6}
         ArelExtensions::Nodes::FormattedNumber.new [self,opts]
       rescue Exception
         Arel.quoted('Wrong Format')
