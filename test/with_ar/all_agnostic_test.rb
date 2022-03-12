@@ -622,7 +622,7 @@ module ArelExtensions
           assert_equal Date.parse("5014-03-03"), t(@lucas,(@age.cast(:string) + '014-03-03').cast(:date))
           assert_equal Time.parse("2014-03-03 12:42:00 UTC"), t(@lucas,@updated_at.cast(:string).cast(:datetime))
           assert_equal Date.parse("2014-03-03"), t(@lucas,@updated_at.cast(:date))
-          assert_equal "12:42:00", t(@lucas,@updated_at.cast(:time).cast(:string)).split('.').first unless @env_db == 'oracle'  # DateTime
+          assert_equal "12:42:00", t(@lucas,@updated_at.cast(:time).cast(:string)).split('.').first unless @env_db == 'oracle' # DateTime
         end
       end
 
@@ -783,7 +783,7 @@ module ArelExtensions
         skip if ['mssql'].include?(@env_db) && Arel::VERSION.to_i < 10
         assert_equal 9, User.where(name: User.select(:name).order(:name)).count
         assert_equal 9, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count
-        if !['mysql'].include?(@env_db)  # MySql can't have limit in IN subquery
+        if !['mysql'].include?(@env_db) # MySql can't have limit in IN subquery
           assert_equal 2, User.where(name: User.select(:name).order(:name).limit(2)).count
           # assert_equal 6, User.where(name: User.select(:name).order(:name).offset(2)).count
         end
