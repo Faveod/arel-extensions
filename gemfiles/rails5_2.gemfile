@@ -4,7 +4,7 @@ gem 'rails', '~> 5.2.0'
 gem 'arel', '~> 9'
 
 group :development, :test do
-  gem 'bigdecimal', '1.3.5', :platforms => [:mri, :mingw, :x64_mingw, :mswin]
+  gem 'bigdecimal', '1.3.5', platforms: [:mri, :mingw, :x64_mingw, :mswin]
   gem 'activesupport', '~> 5.2.0'
   gem 'activemodel', '~> 5.2.0'
   gem 'activerecord', '~> 5.2.0'
@@ -14,7 +14,7 @@ group :development, :test do
   gem "pg",'< 1.0.0', platforms: [:mri]
 
   gem "tiny_tds", platforms: [:mri, :mingw, :x64_mingw, :mswin]
-  gem "activerecord-sqlserver-adapter", '~> 5.2',  :platforms => [:mri, :mingw, :x64_mingw, :mswin]
+  gem "activerecord-sqlserver-adapter", '~> 5.2',  platforms: [:mri, :mingw, :x64_mingw, :mswin]
 
   gem 'ruby-oci8', platforms: [:mri, :mswin, :mingw] if ENV.has_key? 'ORACLE_HOME'
   gem 'activerecord-oracle_enhanced-adapter', '~> 5.2.0' if ENV.has_key? 'ORACLE_HOME'

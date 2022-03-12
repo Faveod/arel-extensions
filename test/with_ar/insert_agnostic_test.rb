@@ -33,7 +33,7 @@ module ArelExtensions
           t.column :comments, :text
           t.column :created_at, :date
           t.column :updated_at, :datetime
-          t.column :score, :decimal, :precision => 20, :scale => 10
+          t.column :score, :decimal, precision: 20, scale: 10
         end
         if @env_db == 'oracle'
           @cnx.execute(%q[CREATE OR REPLACE trigger user_tests_trg
