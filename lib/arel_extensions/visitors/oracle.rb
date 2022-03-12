@@ -633,12 +633,12 @@ module ArelExtensions
           options = Arel.quoted("NLS_NUMERIC_CHARACTERS = '"+comma+"'")
           nines_before = ("999G"*4+"990")
         end
-        sign = ArelExtensions::Nodes::Case.new.when(col<0).
+        sign = Arel.when(col<0).
                   then('-').
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = o.flags.include?('+') || o.flags.include?(' ') ?
                 Arel.quoted(1) :
-                ArelExtensions::Nodes::Case.new.when(col<0).then(1).else(0)
+                Arel.when(col<0).then(1).else(0)
 
         if o.scientific_notation
           number = Arel::Nodes::NamedFunction.new('TO_CHAR',[

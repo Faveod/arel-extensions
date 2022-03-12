@@ -291,7 +291,7 @@ module ArelExtensions
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' WHEN 'doe' THEN 'fine' ELSE 'uncool' END}
         _(@table[:name].when("smith").then(1).when("doe").then(2).else(0).to_sql)
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}
-        _(ArelExtensions::Nodes::Case.new.when(@table[:name] == "smith").then(1).when(@table[:name] == "doe").then(2).else(0).to_sql)
+        _(Arel.when(@table[:name] == "smith").then(1).when(@table[:name] == "doe").then(2).else(0).to_sql)
           .must_be_like %{CASE WHEN "users"."name" = 'smith' THEN 1 WHEN "users"."name" = 'doe' THEN 2 ELSE 0 END}
         _(ArelExtensions::Nodes::Case.new(@table[:name]).when("smith").then(1).when("doe").then(2).else(0).to_sql)
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}

@@ -539,12 +539,12 @@ module ArelExtensions
         col = o.left.coalesce(0)
         locale = Arel.quoted(o.locale.tr('_','-'))
         param = Arel.quoted("N#{o.precision}")
-        sign = ArelExtensions::Nodes::Case.new.when(col<0).
+        sign = Arel.when(col<0).
                   then('-').
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = o.flags.include?('+') || o.flags.include?(' ') ?
               Arel.quoted(1) :
-              ArelExtensions::Nodes::Case.new.when(col<0).then(1).else(0)
+              Arel.when(col<0).then(1).else(0)
 
         number =
           if o.scientific_notation
