@@ -1,5 +1,3 @@
-# coding: utf-8
-
 require 'arel_extensions/nodes/then'
 
 module ArelExtensions
