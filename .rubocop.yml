@@ -1,7 +1,7 @@
 AllCops:
   DisabledByDefault: true
   Exclude:
-  - "test/**/*"
+  - "vendor/**/*"
 
 Layout/EndOfLine:
   Enabled: true

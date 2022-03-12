@@ -7,7 +7,7 @@ require 'active_record'
 require 'support/fake_record'
 
 def colored(color, msg)
-  ENV["TERM"] =~ /^xterm|-256color$/ ? "\x1b[#{color}m#{msg}\x1b[89m\x1b[0m"  : "#{msg}"
+  ENV["TERM"] =~ /^xterm|-256color$/ ? "\x1b[#{color}m#{msg}\x1b[89m\x1b[0m" : "#{msg}"
 end
 
 YELLOW = "33"
@@ -26,7 +26,7 @@ end
 #     The issue also seems to be related to arel version: at some point, arel
 #     dropped its wide support for DBs and kept Postgres, MySQL and SQLite.
 #     Here, we're just trying to load the correct ones.
-db_and_gem =  if RUBY_ENGINE == 'jruby'
+db_and_gem = if RUBY_ENGINE == 'jruby'
                 {
                   'oracle'     => 'activerecord-oracle_enhanced-adapter',
                   'mssql'      => 'activerecord-jdbcsqlserver-adapter'
