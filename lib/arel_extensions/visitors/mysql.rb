@@ -17,13 +17,13 @@ module ArelExtensions
 
       # Math functions
       def visit_ArelExtensions_Nodes_Log10 o, collector
-          collector << "LOG10("
-          o.expressions.each_with_index { |arg, i|
-            collector << Arel::Visitors::ToSql::COMMA if i != 0
-            collector = visit arg, collector
-          }
-          collector << ")"
-          collector
+        collector << "LOG10("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Power o, collector
@@ -76,15 +76,15 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_SMatches o, collector
-          collector = visit o.left.collate, collector
-          collector << ' LIKE '
-          collector = visit o.right.collate, collector
-          if o.escape
-            collector << ' ESCAPE '
-            visit o.escape, collector
-          else
-            collector
-          end
+        collector = visit o.left.collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
       end
 
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
@@ -162,21 +162,21 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Trim o, collector
-          collector << 'TRIM(' # BOTH
-          collector = visit o.right, collector
-          collector << " FROM "
-          collector = visit o.left, collector
-          collector << ")"
-          collector
+        collector << 'TRIM(' # BOTH
+        collector = visit o.right, collector
+        collector << " FROM "
+        collector = visit o.left, collector
+        collector << ")"
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Ltrim o, collector
-          collector << 'TRIM(LEADING '
-          collector = visit o.right, collector
-          collector << " FROM "
-          collector = visit o.left, collector
-          collector << ")"
-          collector
+        collector << 'TRIM(LEADING '
+        collector = visit o.right, collector
+        collector << " FROM "
+        collector = visit o.left, collector
+        collector << ")"
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Rtrim o, collector
@@ -288,16 +288,15 @@ module ArelExtensions
           collector << ") + 1) % 7"
         else
           if o.with_interval
-            case o.left
-            when 'd','m','y'
-              interval = 'DAY'
-            when 'h','mn','s'
-              interval = 'SECOND'
-            when /i\z/
-              interval = DATE_MAPPING[o.left[0..-2]]
-            else
-              interval = nil
-            end
+            interval =
+              case o.left
+              when 'd','m','y'
+                'DAY'
+              when 'h','mn','s'
+                'SECOND'
+              when /i\z/
+                DATE_MAPPING[o.left[0..-2]]
+              end
           end
           collector << " INTERVAL " if o.with_interval && interval
           collector << "#{DATE_MAPPING[o.left]}("

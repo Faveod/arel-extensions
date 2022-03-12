@@ -295,24 +295,25 @@ module ArelExtensions
         collector << "CAST("
         collector = visit o.left, collector
         collector << " AS "
-        case o.as_attr
-        when :string
-          as_attr = Arel::Nodes::SqlLiteral.new('char')
-        when :int
-          as_attr = Arel::Nodes::SqlLiteral.new('int')
-        when :decimal, :float, :number
-          as_attr = Arel::Nodes::SqlLiteral.new('float')
-        when :datetime
-          as_attr = Arel::Nodes::SqlLiteral.new('datetime')
-        when :time
-          as_attr = Arel::Nodes::SqlLiteral.new('time')
-        when :binary
-          as_attr = Arel::Nodes::SqlLiteral.new('binary')
-        when :text, :ntext
-          as_attr = Arel::Nodes::SqlLiteral.new('text')
-        else
-          as_attr = Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
-        end
+        as_attr =
+          case o.as_attr
+          when :string
+            Arel::Nodes::SqlLiteral.new('char')
+          when :int
+            Arel::Nodes::SqlLiteral.new('int')
+          when :decimal, :float, :number
+            Arel::Nodes::SqlLiteral.new('float')
+          when :datetime
+            Arel::Nodes::SqlLiteral.new('datetime')
+          when :time
+            Arel::Nodes::SqlLiteral.new('time')
+          when :binary
+            Arel::Nodes::SqlLiteral.new('binary')
+          when :text, :ntext
+            Arel::Nodes::SqlLiteral.new('text')
+          else
+            Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
+          end
         collector = visit as_attr, collector
         collector << ")"
         collector
@@ -329,11 +330,12 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
-        collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-                      'TIMEDIFF('
-                    else
-                      'DATEDIFF('
-                    end
+        collector <<
+          if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+            'TIMEDIFF('
+          else
+            'DATEDIFF('
+          end
         collector = visit o.left, collector
         collector << COMMA
         collector = visit o.right, collector

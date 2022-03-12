@@ -269,7 +269,7 @@ module ArelExtensions
                 when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
                   collector = visit value.as(attr.name), collector
                 when Integer
-                  collector <<  value.to_s
+                  collector << value.to_s
                   if idx == 0
                     collector << " AS "
                     collector << quote(attr.name)
