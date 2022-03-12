@@ -4,7 +4,7 @@ require 'date'
 module ArelExtensions
   module WithAr
     class InsertManagerTest < Minitest::Test
-      def setup_db
+      def connect_db
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
           @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
@@ -26,6 +26,9 @@ module ArelExtensions
             @cnx.execute(sql) rescue $stderr << "can't create functions\n"
           end
         end
+      end
+
+      def setup_db
         @cnx.drop_table(:user_tests) rescue nil
         @cnx.create_table :user_tests do |t|
           t.column :age, :integer
@@ -52,6 +55,7 @@ END;])
       end
 
       def setup
+        connect_db
         setup_db
         @table = Arel::Table.new(:user_tests)
         @cols = ['id', 'name', 'comments', 'created_at']
@@ -80,7 +84,6 @@ END;])
         insert_manager.bulk_insert(@cols2, @data2)
         @cnx.execute(insert_manager.to_sql)
         assert_equal 4, User.count, "insertions failed"
-
       end
     end
   end
