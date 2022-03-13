@@ -292,29 +292,22 @@ module ArelExtensions
       # comparators
 
       def visit_ArelExtensions_Nodes_Cast o, collector
+        as_attr =
+          case o.as_attr
+          when :binary                   then 'binary'
+          when :datetime                 then 'datetime'
+          when :decimal, :float, :number then 'float'
+          when :int                      then 'int'
+          when :string                   then 'char'
+          when :text, :ntext             then 'text'
+          when :time                     then 'time'
+          else                           o.as_attr.to_s
+          end
+
         collector << "CAST("
         collector = visit o.left, collector
         collector << " AS "
-        as_attr =
-          case o.as_attr
-          when :string
-            Arel::Nodes::SqlLiteral.new('char')
-          when :int
-            Arel::Nodes::SqlLiteral.new('int')
-          when :decimal, :float, :number
-            Arel::Nodes::SqlLiteral.new('float')
-          when :datetime
-            Arel::Nodes::SqlLiteral.new('datetime')
-          when :time
-            Arel::Nodes::SqlLiteral.new('time')
-          when :binary
-            Arel::Nodes::SqlLiteral.new('binary')
-          when :text, :ntext
-            Arel::Nodes::SqlLiteral.new('text')
-          else
-            Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
-          end
-        collector = visit as_attr, collector
+        collector = visit Arel::Nodes::SqlLiteral.new(as_attr), collector
         collector << ")"
         collector
       end

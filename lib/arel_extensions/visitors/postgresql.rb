@@ -372,35 +372,37 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Cast o, collector
-        as_attr = case o.as_attr
-        when :string
-          Arel::Nodes::SqlLiteral.new('varchar')
-        when :text, :ntext
-          Arel::Nodes::SqlLiteral.new('text')
-        when :time
-          Arel::Nodes::SqlLiteral.new('time')
-        when :int
-          collector << "CAST(CAST("
-          collector = visit o.left, collector
-          collector << " AS numeric) AS int)"
-          return collector
-        when :number, :decimal, :float
-          Arel::Nodes::SqlLiteral.new('numeric')
-        when :datetime
-          Arel::Nodes::SqlLiteral.new('timestamp with time zone')
-        when :date
-          Arel::Nodes::SqlLiteral.new('date')
-        when :binary
-          Arel::Nodes::SqlLiteral.new('binary')
-        when :jsonb
-          Arel::Nodes::SqlLiteral.new('jsonb')
-        else
-          Arel::Nodes::SqlLiteral.new(o.as_attr.to_s)
-        end
+        as_attr =
+          case o.as_attr
+          when :string
+            'varchar'
+          when :text, :ntext
+            'text'
+          when :time
+            'time'
+          when :int
+            collector << "CAST(CAST("
+            collector = visit o.left, collector
+            collector << " AS numeric) AS int)"
+            return collector
+          when :number, :decimal, :float
+            'numeric'
+          when :datetime
+            'timestamp with time zone'
+          when :date
+            'date'
+          when :binary
+            'binary'
+          when :jsonb
+            'jsonb'
+          else
+            o.as_attr.to_s
+          end
+
         collector << "CAST("
         collector = visit o.left, collector
         collector << " AS "
-        collector = visit as_attr, collector
+        collector = visit Arel::Nodes::SqlLiteral.new(as_attr), collector
         collector << ")"
         collector
       end
