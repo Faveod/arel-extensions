@@ -45,10 +45,9 @@ module ArelExtensions
         collector << ')'
         if o.escape
           collector << ' ESCAPE '
-          visit o.escape, collector
-        else
-          collector
+          collector = visit o.escape, collector
         end
+        collector
       end
 
       def visit_ArelExtensions_Nodes_AiMatches o, collector
@@ -57,10 +56,9 @@ module ArelExtensions
         collector = visit o.right.ai_collate, collector
         if o.escape
           collector << ' ESCAPE '
-          visit o.escape, collector
-        else
-          collector
+          collector = visit o.escape, collector
         end
+        collector
       end
 
       def visit_ArelExtensions_Nodes_AiIMatches o, collector
@@ -69,10 +67,9 @@ module ArelExtensions
         collector = visit o.right.ai_collate, collector
         if o.escape
           collector << ' ESCAPE '
-          visit o.escape, collector
-        else
-          collector
+          collector = visit o.escape, collector
         end
+        collector
       end
 
       def visit_ArelExtensions_Nodes_SMatches o, collector
@@ -81,10 +78,9 @@ module ArelExtensions
         collector = visit o.right.collate, collector
         if o.escape
           collector << ' ESCAPE '
-          visit o.escape, collector
-        else
-          collector
+          collector = visit o.escape, collector
         end
+        collector
       end
 
       def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
@@ -95,10 +91,9 @@ module ArelExtensions
         collector << ')'
         if o.escape
           collector << ' ESCAPE '
-          visit o.escape, collector
-        else
-          collector
+          collector = visit o.escape, collector
         end
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Collate o, collector
@@ -376,7 +371,6 @@ module ArelExtensions
         collector = visit o.right, collector
         collector << '`' if quote
 
-        collector
         collector
       end
 
