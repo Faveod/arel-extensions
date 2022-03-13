@@ -329,23 +329,22 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Cast o, collector
+        as_attr =
+          case o.as_attr
+          when :binary           then 'binary'
+          when :date             then 'date'
+          when :datetime         then 'datetime'
+          when :int              then 'signed'
+          when :number, :decimal then 'decimal(20,6)'
+          when :string           then 'char'
+          when :time             then 'time'
+          else                        o.as_attr.to_s
+          end
+
         collector << "CAST("
         collector = visit o.left, collector
         collector << " AS "
-        as_attr =
-          Arel::Nodes::SqlLiteral.new(
-            case o.as_attr
-            when :string           then 'char'
-            when :time             then 'time'
-            when :int              then 'signed'
-            when :number, :decimal then 'decimal(20,6)'
-            when :datetime         then 'datetime'
-            when :date             then 'date'
-            when :binary           then 'binary'
-            else                        o.as_attr.to_s
-            end
-          )
-        collector = visit as_attr, collector
+        collector = visit Arel::Nodes::SqlLiteral.new(as_attr), collector
         collector << ")"
         collector
       end
