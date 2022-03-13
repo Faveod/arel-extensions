@@ -195,7 +195,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_RegexpReplace o, collector
         if !regexp_replace_supported?
-          warn("Warning : ArelExtensions: REGEXP_REPLACE does not seem to be available in the current version of the DBMS, it might crash")
+          warn("Warning: ArelExtensions: REGEXP_REPLACE does not seem to be available in the current version of the DBMS, it might crash")
         end
         super(o,collector)
       end
@@ -421,8 +421,8 @@ module ArelExtensions
 
       def visit_Aggregate_For_AggregateFunction o, collector
         if !window_supported?
-            warn("Warning : ArelExtensions: Window Functions are not available in the current version of the DBMS.")
-            return collector
+          warn("Warning: ArelExtensions: Window Functions are not available in the current version of the DBMS.")
+          return collector
         end
 
         if !o.order.empty? || !o.group.empty?
