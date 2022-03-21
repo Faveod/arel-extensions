@@ -1,16 +1,16 @@
 module ArelExtensions
   module Nodes
     class Union < Arel::Nodes::Union
-      def initialize left,right
-        return super(left,right)
+      def initialize left, right
+        return super(left, right)
       end
 
       def +(other)
-        return ArelExtensions::Nodes::Union.new(self,other)
+        return ArelExtensions::Nodes::Union.new(self, other)
       end
 
       def union(other)
-        return ArelExtensions::Nodes::UnionAll.new(self,other)
+        return ArelExtensions::Nodes::UnionAll.new(self, other)
       end
 
       def as other

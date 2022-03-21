@@ -28,7 +28,7 @@ module ArelExtensions
         end
         class User < ActiveRecord::Base
         end
-        d = Date.new(2016, 5,23)
+        d = Date.new(2016, 5, 23)
         User.create age: 5, name: 'Lucas', created_at: d, score: 20.16
         User.create age: 15, name: 'Sophie', created_at: d, score: 20.16
         User.create age: 20, name: 'Camille', created_at: d, score: 20.16

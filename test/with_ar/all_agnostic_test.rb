@@ -65,7 +65,7 @@ module ArelExtensions
         @arthur = User.where(id: u.id)
         u = User.create age: 23, name: 'Myung', created_at: d, score: 20.16, comments: ' '
         @myung = User.where(id: u.id)
-        u = User.create age: 25, name: 'Laure', created_at: d, score: 20.16, duration: Time.utc(2001, 1, 1, 12, 42, 21),updated_at: Time.utc(2014, 3, 3, 12, 42, 0)
+        u = User.create age: 25, name: 'Laure', created_at: d, score: 20.16, duration: Time.utc(2001, 1, 1, 12, 42, 21), updated_at: Time.utc(2014, 3, 3, 12, 42, 0)
         @laure = User.where(id: u.id)
         u = User.create age: nil, name: 'Test', created_at: d, score: 1.62, other: 'toto'
         @test = User.where(id: u.id)
@@ -198,11 +198,11 @@ module ArelExtensions
         assert_equal 'Lucas,Sophie', t(User.where(name: ['Lucas', 'Sophie']), @name.group_concat)
 
         skip 'No order in group_concat in SqlLite' if $sqlite
-        assert_equal 'Arthur,Lucas,Sophie', t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.asc))
-        assert_equal 'Sophie,Lucas,Arthur', t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@name.desc))
-        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',[@score.asc,@name.asc]))
-        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',@score.asc,@name.asc))
-        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: ['Lucas', 'Sophie','Arthur']), @name.group_concat(',',order: [@score.asc,@name.asc]))
+        assert_equal 'Arthur,Lucas,Sophie', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', @name.asc))
+        assert_equal 'Sophie,Lucas,Arthur', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', @name.desc))
+        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', [@score.asc, @name.asc]))
+        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', @score.asc, @name.asc))
+        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', order: [@score.asc, @name.asc]))
       end
 
       def test_length
@@ -231,7 +231,7 @@ module ArelExtensions
         else
           assert_equal('', t(@lucas, @name.substring(42)))
         end
-        assert_equal 'Lu', t(@lucas, @name.substring(1,2))
+        assert_equal 'Lu', t(@lucas, @name.substring(1, 2))
 
         assert_equal 'C', t(@camille, @name[0, 1])
         assert_equal 'C', t(@camille, @name[0])
@@ -240,12 +240,12 @@ module ArelExtensions
         else
           assert_equal('', t(@lucas, @name[42]))
         end
-        assert_equal 'Lu', t(@lucas, @name[0,2])
+        assert_equal 'Lu', t(@lucas, @name[0, 2])
         assert_equal 'Lu', t(@lucas, @name[0..1])
 
         # substring should accept string function
         assert_equal 'Ce', t(@camille, @name.substring(1, 1).concat('e'))
-        assert_equal 'Ce', t(@camille, @name.substring(1, 1)+'e')
+        assert_equal 'Ce', t(@camille, @name.substring(1, 1) + 'e')
       end
 
       def test_find_in_set
@@ -278,16 +278,16 @@ module ArelExtensions
         skip "Sqlite can't compare time" if $sqlite
         skip "Oracle can't compare time" if @env_db == 'oracle'
         # @created_at == 2016-05-23
-        assert_includes [true,'t',1], t(@laure, Arel.when(@created_at >= '2014-01-01').then(1).else(0))
-        assert_includes [false,'f',0], t(@laure, Arel.when(@created_at >= '2018-01-01').then(1).else(0))
+        assert_includes [true, 't', 1], t(@laure, Arel.when(@created_at >= '2014-01-01').then(1).else(0))
+        assert_includes [false, 'f', 0], t(@laure, Arel.when(@created_at >= '2018-01-01').then(1).else(0))
         # @updated_at == 2014-03-03 12:42:00
-        assert_includes [true,'t',1], t(@laure, Arel.when(@updated_at >= '2014-03-03 10:10:10').then(1).else(0))
-        assert_includes [false,'f',0], t(@laure, Arel.when(@updated_at >= '2014-03-03 13:10:10').then(1).else(0))
+        assert_includes [true, 't', 1], t(@laure, Arel.when(@updated_at >= '2014-03-03 10:10:10').then(1).else(0))
+        assert_includes [false, 'f', 0], t(@laure, Arel.when(@updated_at >= '2014-03-03 13:10:10').then(1).else(0))
         # @duration == 12:42:21
         # puts @laure.select(Arel.when(@duration >= '10:10:10').then(1).else(0)).to_sql
         # puts @laure.select(Arel.when(@duration >= '14:10:10').then(1).else(0)).to_sql
-        assert_includes [true,'t',1], t(@laure, Arel.when(@duration >= '10:10:10').then(1).else(0))
-        assert_includes [false,'f',0], t(@laure, Arel.when(@duration >= '14:10:10').then(1).else(0))
+        assert_includes [true, 't', 1], t(@laure, Arel.when(@duration >= '10:10:10').then(1).else(0))
+        assert_includes [false, 'f', 0], t(@laure, Arel.when(@duration >= '14:10:10').then(1).else(0))
       end
 
       def test_regexp_not_regexp
@@ -497,7 +497,7 @@ module ArelExtensions
         assert_equal 'Camille', t(@camille, @name.coalesce(nil, 'default'))
         assert_equal 20, t(@test, @age.coalesce(nil, 20))
 
-        assert_equal 20, t(@test, @age.coalesce(10)+10)
+        assert_equal 20, t(@test, @age.coalesce(10) + 10)
         assert_equal 'Laure10', t(@laure, @comments.coalesce('Laure') + 10)
       end
 
@@ -571,27 +571,27 @@ module ArelExtensions
         datetime1 = Time.utc(2014, 3, 3, 12, 42, 0)
         # Pull Request #5 tests
         # puts (@created_at + durPos).cast(:date).to_sql
-        assert_includes [date2,'2026-05-23'], t(@test,(@created_at + durPos).cast(:date))
-        assert_includes [date3,'2006-05-23'], t(@test,(@created_at + durNeg).cast(:date))
+        assert_includes [date2, '2026-05-23'], t(@test, (@created_at + durPos).cast(:date))
+        assert_includes [date3, '2006-05-23'], t(@test, (@created_at + durNeg).cast(:date))
 
         # puts (@created_at + @created_at.day).cast(:date).to_sql
-        assert_includes [date4,'2016-06-15'], t(@test,(@created_at + @created_at.day).cast(:date))
+        assert_includes [date4, '2016-06-15'], t(@test, (@created_at + @created_at.day).cast(:date))
         # puts (@created_at - @created_at.day).cast(:date).to_sql
-        assert_includes [date5,'2016-04-30'], t(@test,(@created_at - @created_at.day).cast(:date))
+        assert_includes [date5, '2016-04-30'], t(@test, (@created_at - @created_at.day).cast(:date))
 
-        assert_includes [datetime1 + 42.seconds,'2014-03-03 12:42:42 UTC'], t(@lucas,(@updated_at + @updated_at.minute))
-        assert_includes [datetime1 - 42.seconds,'2014-03-03 12:41:18 UTC'], t(@lucas,(@updated_at - @updated_at.minute))
+        assert_includes [datetime1 + 42.seconds, '2014-03-03 12:42:42 UTC'], t(@lucas, (@updated_at + @updated_at.minute))
+        assert_includes [datetime1 - 42.seconds, '2014-03-03 12:41:18 UTC'], t(@lucas, (@updated_at - @updated_at.minute))
 
         # (@updated_at + Arel.duration('s',(@updated_at.hour*60 + @updated_at.minute))).to_sql
-        assert_includes [datetime1 + (12*60+42).seconds,'2014-03-03 12:54:42 UTC'],
-                        t(@lucas,(@updated_at + Arel.duration('s',(@updated_at.hour*60 + @updated_at.minute))))
+        assert_includes [datetime1 + (12 * 60 + 42).seconds, '2014-03-03 12:54:42 UTC'],
+                        t(@lucas, (@updated_at + Arel.duration('s', (@updated_at.hour * 60 + @updated_at.minute))))
 
-        assert_includes [datetime1 + (12*60+42).minutes,'2014-03-04 01:24:00 UTC'],
-                        t(@lucas,(@updated_at + Arel.duration('mn',(@updated_at.hour*60 + @updated_at.minute))))
+        assert_includes [datetime1 + (12 * 60 + 42).minutes, '2014-03-04 01:24:00 UTC'],
+                        t(@lucas, (@updated_at + Arel.duration('mn', (@updated_at.hour * 60 + @updated_at.minute))))
 
-        assert_includes ['2024-03-03'], t(@lucas,(@updated_at + durPos).format('%Y-%m-%d'))
+        assert_includes ['2024-03-03'], t(@lucas, (@updated_at + durPos).format('%Y-%m-%d'))
         # puts (@updated_at - durPos).to_sql
-        assert_includes ['2004-03-03'], t(@lucas,(@updated_at - durPos).format('%Y-%m-%d'))
+        assert_includes ['2004-03-03'], t(@lucas, (@updated_at - durPos).format('%Y-%m-%d'))
 
 
         # we test with the ruby object or the string because some adapters don't return an object Date
@@ -605,24 +605,24 @@ module ArelExtensions
         if @env_db == 'mysql' || @env_db == 'postgresql' || @env_db == 'oracle' || @env_db == 'mssql'
           assert_equal 1, t(@laure, Arel.when(@duration.cast(:time).cast(:string).eq('12:42:21')).then(1).else(0)) unless @env_db == 'oracle' || @env_db == 'mssql'
           assert_equal 1, t(@laure, Arel.when(@duration.cast(:time).eq('12:42:21')).then(1).else(0)) unless @env_db == 'oracle'
-          assert_equal '20.16', t(@laure,@score.cast(:string)).gsub(/[0]*\z/,'')
-          assert_equal '20.161', t(@laure,@score.cast(:string)+1).gsub(/[0]*1\z/,'1')
-          assert_equal 21.16, t(@laure,@score.cast(:string).cast(:decimal)+1)
-          assert_equal 21, t(@laure,@score.cast(:string).cast(:int)+1)
+          assert_equal '20.16', t(@laure, @score.cast(:string)).gsub(/[0]*\z/, '')
+          assert_equal '20.161', t(@laure, @score.cast(:string) + 1).gsub(/[0]*1\z/, '1')
+          assert_equal 21.16, t(@laure, @score.cast(:string).cast(:decimal) + 1)
+          assert_equal 21, t(@laure, @score.cast(:string).cast(:int) + 1)
 
-          assert_equal String, t(@lucas,@updated_at.cast(:string)).class
+          assert_equal String, t(@lucas, @updated_at.cast(:string)).class
 
-          assert_equal Date, t(@lucas,@updated_at.cast(:date)).class unless @env_db == 'oracle' # DateTime
-          assert_equal Time, t(@lucas,@updated_at.cast(:string).cast(:datetime)).class
-          assert_equal Time, t(@lucas,@updated_at.cast(:time)).class
+          assert_equal Date, t(@lucas, @updated_at.cast(:date)).class unless @env_db == 'oracle' # DateTime
+          assert_equal Time, t(@lucas, @updated_at.cast(:string).cast(:datetime)).class
+          assert_equal Time, t(@lucas, @updated_at.cast(:time)).class
 
           # mysql adapter in rails7 adds some infos we just squeeze here
-          assert_equal '2014-03-03 12:42:00', t(@lucas,@updated_at.cast(:string)).split('.').first unless @env_db == 'mssql' # locale dependent
+          assert_equal '2014-03-03 12:42:00', t(@lucas, @updated_at.cast(:string)).split('.').first unless @env_db == 'mssql' # locale dependent
           assert_equal Date.parse('2014-03-03'), t(@lucas, Arel.quoted('2014-03-03').cast(:date))
-          assert_equal Date.parse('5014-03-03'), t(@lucas,(@age.cast(:string) + '014-03-03').cast(:date))
-          assert_equal Time.parse('2014-03-03 12:42:00 UTC'), t(@lucas,@updated_at.cast(:string).cast(:datetime))
-          assert_equal Date.parse('2014-03-03'), t(@lucas,@updated_at.cast(:date))
-          assert_equal '12:42:00', t(@lucas,@updated_at.cast(:time).cast(:string)).split('.').first unless @env_db == 'oracle' # DateTime
+          assert_equal Date.parse('5014-03-03'), t(@lucas, (@age.cast(:string) + '014-03-03').cast(:date))
+          assert_equal Time.parse('2014-03-03 12:42:00 UTC'), t(@lucas, @updated_at.cast(:string).cast(:datetime))
+          assert_equal Date.parse('2014-03-03'), t(@lucas, @updated_at.cast(:date))
+          assert_equal '12:42:00', t(@lucas, @updated_at.cast(:time).cast(:string)).split('.').first unless @env_db == 'oracle' # DateTime
         end
       end
 
@@ -703,38 +703,38 @@ module ArelExtensions
       def test_case
         assert_equal 4, User.find_by_sql(@ut.project(@score.when(20.16).then(1).else(0).as('score_bin')).to_sql).sum(&:score_bin)
         assert_equal 4, User.where(@score.when(20.16).then(1).else(0).eq(1)).count
-        assert_equal 2, t(@arthur, @score.when(65.62,1).else(0)+1)
-        assert_equal 0, t(@arthur, @score.when(65.62,1).else(0)-1)
-        assert_equal '11', t(@arthur, @score.when(65.62).then('1').else('0')+'1')
-        assert_equal 66.62, t(@arthur, @score.when(65.62).then(@score).else(@score)+1)
-        assert_equal '65.621', t(@arthur, @score.when(65.62).then(@score.cast(:string)).else(@score.cast(:string))+1).tr('0','') # tr is here because of precision on cast for some DBMS
+        assert_equal 2, t(@arthur, @score.when(65.62, 1).else(0) + 1)
+        assert_equal 0, t(@arthur, @score.when(65.62, 1).else(0) - 1)
+        assert_equal '11', t(@arthur, @score.when(65.62).then('1').else('0') + '1')
+        assert_equal 66.62, t(@arthur, @score.when(65.62).then(@score).else(@score) + 1)
+        assert_equal '65.621', t(@arthur, @score.when(65.62).then(@score.cast(:string)).else(@score.cast(:string)) + 1).tr('0', '') # tr is here because of precision on cast for some DBMS
       end
 
       def test_format_numbers
         # score of Arthur = 65.62
         skip ' Works with SQLite if the version used knows printf' if $sqlite
 
-        assert_equal 'Wrong Format', t(@arthur, @score.format_number('$ %...234.6F €','fr_FR'))
-        assert_equal 'AZERTY65,62', t(@arthur, @score.format_number('AZERTY%.2f','fr_FR'))
-        assert_equal '65,62AZERTY', t(@arthur, @score.format_number('%.2fAZERTY','fr_FR'))
-        assert_equal '$ 65.62 €', t(@arthur, @score.format_number('$ %.2f €','en_US'))
-        assert_equal '$ 66 €', t(@arthur, @score.format_number('$ %.0f €','en_US'))
-        assert_equal '$ 0065,62 €', t(@arthur, @score.format_number('$ %07.2f €','fr_FR'))
-        assert_equal '$ 65,62   €', t(@arthur, @score.format_number('$ %-07.2f €','fr_FR'))
-        assert_equal '$ 65,62   €', t(@arthur, @score.format_number('$ %-7.2f €','fr_FR'))
-        assert_equal '$   65,62 €', t(@arthur, @score.format_number('$ % 7.2f €','fr_FR'))
-        assert_equal '$    65,6 €', t(@arthur, @score.format_number('$ % 7.1f €','fr_FR'))
-        assert_equal '$  +65,62 €', t(@arthur, @score.format_number('$ % +7.2f €','fr_FR'))
-        assert_equal '$ +065,62 €', t(@arthur, @score.format_number('$ %0+7.2f €','fr_FR'))
-        assert_includes ['$ 6,56e1 €','$ 6,56e+01 €'], t(@arthur, @score.format_number('$ %.2e €','fr_FR'))
-        assert_includes ['$ 6,56E1 €','$ 6,56E+01 €'], t(@arthur, @score.format_number('$ %.2E €','fr_FR'))
-        assert_includes ['$ 6,562E1 €','$ 6,562E+01 €'], t(@arthur, @score.format_number('$ %.3E €','fr_FR'))
-        assert_equal '123 456 765,6', t(@arthur, (@score+123456700).format_number('%.1f','sv_SE')).gsub("\u00A0",' ') # some DBMS put no-break space here (it makes sense thus)
-        assert_equal '123456765,6', t(@arthur, (@score+123456700).format_number('%.1f','fr_FR')).gsub("\u00A0",'') # because SqlServer does it like no one else
-        assert_equal '123,456,765.6', t(@arthur, (@score+123456700).format_number('%.1f','en_US'))
-        assert_equal '   123,456,765.6', t(@arthur, (@score+123456700).format_number('%16.1f','en_US'))
-        assert_equal '$ 0,00 €', t(@arthur, @score.when(65.62).then(Arel.sql('null')).else(1).format_number('$ %.2f €','fr_FR'))
-        assert_equal '$ 0,00 €', t(@arthur, (@score-65.62).format_number('$ %.2f €','fr_FR'))
+        assert_equal 'Wrong Format', t(@arthur, @score.format_number('$ %...234.6F €', 'fr_FR'))
+        assert_equal 'AZERTY65,62', t(@arthur, @score.format_number('AZERTY%.2f', 'fr_FR'))
+        assert_equal '65,62AZERTY', t(@arthur, @score.format_number('%.2fAZERTY', 'fr_FR'))
+        assert_equal '$ 65.62 €', t(@arthur, @score.format_number('$ %.2f €', 'en_US'))
+        assert_equal '$ 66 €', t(@arthur, @score.format_number('$ %.0f €', 'en_US'))
+        assert_equal '$ 0065,62 €', t(@arthur, @score.format_number('$ %07.2f €', 'fr_FR'))
+        assert_equal '$ 65,62   €', t(@arthur, @score.format_number('$ %-07.2f €', 'fr_FR'))
+        assert_equal '$ 65,62   €', t(@arthur, @score.format_number('$ %-7.2f €', 'fr_FR'))
+        assert_equal '$   65,62 €', t(@arthur, @score.format_number('$ % 7.2f €', 'fr_FR'))
+        assert_equal '$    65,6 €', t(@arthur, @score.format_number('$ % 7.1f €', 'fr_FR'))
+        assert_equal '$  +65,62 €', t(@arthur, @score.format_number('$ % +7.2f €', 'fr_FR'))
+        assert_equal '$ +065,62 €', t(@arthur, @score.format_number('$ %0+7.2f €', 'fr_FR'))
+        assert_includes ['$ 6,56e1 €', '$ 6,56e+01 €'], t(@arthur, @score.format_number('$ %.2e €', 'fr_FR'))
+        assert_includes ['$ 6,56E1 €', '$ 6,56E+01 €'], t(@arthur, @score.format_number('$ %.2E €', 'fr_FR'))
+        assert_includes ['$ 6,562E1 €', '$ 6,562E+01 €'], t(@arthur, @score.format_number('$ %.3E €', 'fr_FR'))
+        assert_equal '123 456 765,6', t(@arthur, (@score + 123456700).format_number('%.1f', 'sv_SE')).gsub("\u00A0", ' ') # some DBMS put no-break space here (it makes sense thus)
+        assert_equal '123456765,6', t(@arthur, (@score + 123456700).format_number('%.1f', 'fr_FR')).gsub("\u00A0", '') # because SqlServer does it like no one else
+        assert_equal '123,456,765.6', t(@arthur, (@score + 123456700).format_number('%.1f', 'en_US'))
+        assert_equal '   123,456,765.6', t(@arthur, (@score + 123456700).format_number('%16.1f', 'en_US'))
+        assert_equal '$ 0,00 €', t(@arthur, @score.when(65.62).then(Arel.sql('null')).else(1).format_number('$ %.2f €', 'fr_FR'))
+        assert_equal '$ 0,00 €', t(@arthur, (@score - 65.62).format_number('$ %.2f €', 'fr_FR'))
       end
 
       def test_accent_insensitive
@@ -754,7 +754,7 @@ module ArelExtensions
           assert_equal '1', t(@arthur, Arel.when(@comments.ai_matches('arrete')).then('1').else('0'))
           assert_equal '1', t(@arthur, Arel.when(@comments.ai_matches('àrrétè')).then('1').else('0'))
           assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('arretez')).then('1').else('0'))
-          if !['oracle','postgresql','mysql'].include?(@env_db) # AI => CI
+          if !['oracle', 'postgresql', 'mysql'].include?(@env_db) # AI => CI
             assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('Arrete')).then('1').else('0'))
             assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('Arrêté')).then('1').else('0'))
           end
@@ -793,27 +793,27 @@ module ArelExtensions
         assert_predicate @myung.where(@age.in(1)), :blank?
         assert_predicate @myung.where(@age.in(23)), :present?
         assert_predicate @myung.where(@age.in([1])), :blank?
-        assert_predicate @myung.where(@age.in([1,2])), :blank?
-        assert_predicate @myung.where(@age.in([1,23])), :present?
+        assert_predicate @myung.where(@age.in([1, 2])), :blank?
+        assert_predicate @myung.where(@age.in([1, 23])), :present?
         assert_predicate @myung.where(@age.in(nil)), :blank?
         assert_predicate @myung.where(@age.in([nil])), :blank?
-        assert_predicate @myung.where(@age.in([nil,1])), :blank?
-        assert_predicate @myung.where(@age.in([nil,23])), :present?
-        assert_predicate @myung.where(@age.in([nil,1,2])), :blank?
-        assert_predicate @myung.where(@age.in([nil,1,23])), :present?
+        assert_predicate @myung.where(@age.in([nil, 1])), :blank?
+        assert_predicate @myung.where(@age.in([nil, 23])), :present?
+        assert_predicate @myung.where(@age.in([nil, 1, 2])), :blank?
+        assert_predicate @myung.where(@age.in([nil, 1, 23])), :present?
         assert_predicate @test.where(@age.in(1)), :blank?
         assert_predicate @test.where(@age.in([1])), :blank?
-        assert_predicate @test.where(@age.in([1,2])), :blank?
+        assert_predicate @test.where(@age.in([1, 2])), :blank?
         assert_predicate @test.where(@age.in(nil)), :present?
         assert_predicate @test.where(@age.in([nil])), :present?
-        assert_predicate @test.where(@age.in([nil,1])), :present?
-        assert_predicate @test.where(@age.in([nil,1,2])), :present?
+        assert_predicate @test.where(@age.in([nil, 1])), :present?
+        assert_predicate @test.where(@age.in([nil, 1, 2])), :present?
       end
 
       def test_scope_with_in_plus_new
         begin
-          @test.where(@age.in([1,2])).new
-          @test.where(@age.not_in([1,2])).new
+          @test.where(@age.in([1, 2])).new
+          @test.where(@age.not_in([1, 2])).new
           assert true
         rescue
           assert false
@@ -829,14 +829,14 @@ module ArelExtensions
         assert_predicate @myung.where(@age.not_in(1)), :present?
         assert_predicate @myung.where(@age.not_in(23)), :blank?
         assert_predicate @myung.where(@age.not_in([1])), :present?
-        assert_predicate @myung.where(@age.not_in([1,2])), :present?
-        assert_predicate @myung.where(@age.not_in([1,23])), :blank?
+        assert_predicate @myung.where(@age.not_in([1, 2])), :present?
+        assert_predicate @myung.where(@age.not_in([1, 23])), :blank?
         assert_predicate @myung.where(@age.not_in(nil)), :present?
         assert_predicate @myung.where(@age.not_in([nil])), :present?
-        assert_predicate @myung.where(@age.not_in([nil,1])), :present?
-        assert_predicate @myung.where(@age.not_in([nil,23])), :blank?
-        assert_predicate @myung.where(@age.not_in([nil,1,2])), :present?
-        assert_predicate @myung.where(@age.not_in([nil,1,23])), :blank?
+        assert_predicate @myung.where(@age.not_in([nil, 1])), :present?
+        assert_predicate @myung.where(@age.not_in([nil, 23])), :blank?
+        assert_predicate @myung.where(@age.not_in([nil, 1, 2])), :present?
+        assert_predicate @myung.where(@age.not_in([nil, 1, 23])), :blank?
 
         assert_predicate @myung.where(@age.not_in(1..2)), :present?
 
@@ -852,13 +852,13 @@ module ArelExtensions
 
       def test_in_on_grouping
         skip 'We should modify the visitor of IN to make it work' if $sqlite || @env_db == 'mssql'
-        assert_equal 2, User.where(Arel.tuple(@name,@age).in(Arel.tuple('Myung',23), Arel.tuple('Arthur',21))).count
-        assert_equal 1, User.where(Arel.tuple(@name,@age).in(Arel.tuple('Myung',23))).count
-        assert_equal 0, User.where(Arel.tuple(@name,@age).in([])).count
+        assert_equal 2, User.where(Arel.tuple(@name, @age).in(Arel.tuple('Myung', 23), Arel.tuple('Arthur', 21))).count
+        assert_equal 1, User.where(Arel.tuple(@name, @age).in(Arel.tuple('Myung', 23))).count
+        assert_equal 0, User.where(Arel.tuple(@name, @age).in([])).count
       end
 
       def test_alias_shortened
-        if ['postgresql','oracle'].include?(@env_db)
+        if ['postgresql', 'oracle'].include?(@env_db)
           new_alias = Arel.shorten('azerty' * 15)
           at = User.arel_table.alias('azerty' * 15)
           assert_equal "\"user_tests\" \"#{new_alias}\"".downcase, User.arel_table.alias('azerty' * 15).to_sql.downcase
@@ -890,55 +890,55 @@ module ArelExtensions
 
       def test_levenshtein_distance
         skip 'Not Yet Implemented' if $sqlite
-        assert_equal 0,  t(@arthur,@name.levenshtein_distance('Arthur'))
-        assert_equal 2,  t(@arthur,@name.levenshtein_distance('Artoor'))
-        assert_equal 1,  t(@arthur,@name.levenshtein_distance('Artehur'))
+        assert_equal 0,  t(@arthur, @name.levenshtein_distance('Arthur'))
+        assert_equal 2,  t(@arthur, @name.levenshtein_distance('Artoor'))
+        assert_equal 1,  t(@arthur, @name.levenshtein_distance('Artehur'))
       end
 
       def test_json
         skip "Can't be tested on travis"
         # creation
         assert_equal 'Arthur', t(@arthur, Arel.json(@name))
-        assert_equal ['Arthur','Arthur'], parse_json(t(@arthur, Arel.json(@name,@name)))
-        assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 'ArthurArthur'}), parse_json(t(@arthur, Arel.json({@name => @name,@name+'2' => @name+@name})))
-        assert_equal ({'Arthur' => 'Arthur','Arthur2' => 1}), parse_json(t(@arthur, Arel.json({@name => @name,@name+'2' => 1})))
-        assert_equal ([{'age' => 21},{'name' => 'Arthur','score' => 65.62}]), parse_json(t(@arthur, Arel.json([{age: @age},{name: @name,score: @score}])))
+        assert_equal ['Arthur', 'Arthur'], parse_json(t(@arthur, Arel.json(@name, @name)))
+        assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 'ArthurArthur'}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => @name + @name})))
+        assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 1}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => 1})))
+        assert_equal ([{'age' => 21}, {'name' => 'Arthur', 'score' => 65.62}]), parse_json(t(@arthur, Arel.json([{age: @age}, {name: @name, score: @score}])))
 
         # aggregate
         assert_equal ({'5' => 'Lucas', '15' => 'Sophie', '23' => 'Myung', '25' => 'Laure'}),
                      parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16), Arel.json({@age => @name}).group(false)))
-        assert_equal ({'5' => 'Lucas', '15' => 'Sophie', '23' => 'Myung', '25' => 'Laure', 'Laure'=>25, 'Lucas'=>5, 'Myung'=>23, 'Sophie'=>15}),
-                     parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16), Arel.json({@age => @name,@name => @age}).group(false)))
-        assert_equal ([{'5' => 'Lucas'},{ '15' => 'Sophie'},{ '23' => 'Myung'},{ '25' => 'Laure'}]),
-                     parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score), Arel.json({@age => @name}).group(true,[@age])))
+        assert_equal ({'5' => 'Lucas', '15' => 'Sophie', '23' => 'Myung', '25' => 'Laure', 'Laure' => 25, 'Lucas' => 5, 'Myung' => 23, 'Sophie' => 15}),
+                     parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16), Arel.json({@age => @name, @name => @age}).group(false)))
+        assert_equal ([{'5' => 'Lucas'}, { '15' => 'Sophie'}, { '23' => 'Myung'}, { '25' => 'Laure'}]),
+                     parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score), Arel.json({@age => @name}).group(true, [@age])))
 
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_sql
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_a
 
-        skip 'Not Yet Implemented' if $sqlite || ['oracle','mssql'].include?(@env_db)
+        skip 'Not Yet Implemented' if $sqlite || ['oracle', 'mssql'].include?(@env_db)
         # get
-        h1 = Arel.json({@name => @name+@name,@name+'2' => 1})
-        assert_equal 'ArthurArthur', parse_json(t(@arthur,h1.get(@name)))
-        h2 = Arel.json([{age: @age},{name: @name,score: @score}])
-        assert_equal ({'age' => 21}), parse_json(t(@arthur,h2.get(0)))
-        assert_equal 21, parse_json(t(@arthur,h2.get(0).get('age')))
-        assert_nil t(@arthur,h2.get('age'))
+        h1 = Arel.json({@name => @name + @name, @name + '2' => 1})
+        assert_equal 'ArthurArthur', parse_json(t(@arthur, h1.get(@name)))
+        h2 = Arel.json([{age: @age}, {name: @name, score: @score}])
+        assert_equal ({'age' => 21}), parse_json(t(@arthur, h2.get(0)))
+        assert_equal 21, parse_json(t(@arthur, h2.get(0).get('age')))
+        assert_nil t(@arthur, h2.get('age'))
         # set
-        assert_equal ({'Arthur' => ['toto', 'tata'], 'Arthur2' => 1}), parse_json(t(@arthur,h1.set(@name, ['toto','tata'])))
-        assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur,h1.set(@name+'3',2)))
-        assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => nil}), parse_json(t(@arthur,h1.set(@name+'3',nil)))
-        assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => {'a' => 2}}), parse_json(t(@arthur,h1.set(@name+'3',{a: 2})))
+        assert_equal ({'Arthur' => ['toto', 'tata'], 'Arthur2' => 1}), parse_json(t(@arthur, h1.set(@name, ['toto', 'tata'])))
+        assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.set(@name + '3', 2)))
+        assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => nil}), parse_json(t(@arthur, h1.set(@name + '3', nil)))
+        assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => {'a' => 2}}), parse_json(t(@arthur, h1.set(@name + '3', {a: 2})))
         # merge
-        assert_equal ({'Arthur' => ['toto', 'tata'], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur,h1.merge({@name => ['toto','tata']},{@name+'3' => 2})))
-        assert_equal ({'Arthur' => ['toto', 'tata'], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur,h1.merge({@name => ['toto','tata'], @name+'3' => 2})))
-        assert_equal ({'Arthur' => 'ArthurArthur','Arthur2' => 1}), parse_json(t(@arthur,h1.merge({})))
+        assert_equal ({'Arthur' => ['toto', 'tata'], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.merge({@name => ['toto', 'tata']}, {@name + '3' => 2})))
+        assert_equal ({'Arthur' => ['toto', 'tata'], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.merge({@name => ['toto', 'tata'], @name + '3' => 2})))
+        assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1}), parse_json(t(@arthur, h1.merge({})))
       end
 
       def test_as_on_everything
         name = @arthur.select(@name.as('NaMe')).first.attributes
         assert_equal 'Arthur', name['NaMe'] || name['name'] # because of Oracle
         assert_equal 'Arthur', @arthur.select(@name.as('Na Me')).first.attributes['Na Me']
-        assert_equal 'ArthurArthur', @arthur.select((@name+@name).as('Na-Me')).first.attributes['Na-Me']
+        assert_equal 'ArthurArthur', @arthur.select((@name + @name).as('Na-Me')).first.attributes['Na-Me']
       end
 
       def test_exists_in_subquery

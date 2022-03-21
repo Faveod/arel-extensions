@@ -53,12 +53,12 @@ module ArelExtensions
 
     # function gives the power of a number
     def pow exposant = 0
-        ArelExtensions::Nodes::Power.new [self,exposant]
+        ArelExtensions::Nodes::Power.new [self, exposant]
     end
 
     # function gives the power of a number
     def power exposant = 0
-        ArelExtensions::Nodes::Power.new [self,exposant]
+        ArelExtensions::Nodes::Power.new [self, exposant]
     end
 
     # Aggregate Functions
@@ -96,7 +96,7 @@ module ArelExtensions
     # function returning a number at a specific format
     def format_number format_string, locale = nil
       begin
-        sprintf(format_string,0) # this line is to get the right error message if the format_string is not correct
+        sprintf(format_string, 0) # this line is to get the right error message if the format_string is not correct
         m = /^(.*)%([ #+\-0]*)([1-9][0-9]+|[1-9]?)[.]?([0-9]*)([a-zA-Z])(.*)$/.match(format_string)
         opts = {
           prefix: m[1],
@@ -109,7 +109,7 @@ module ArelExtensions
           original_string: format_string
         }
         # opts = {locale: 'fr_FR', type: "e"/"f"/"d", prefix: "$ ", suffix: " %", flags: " +-#0", width: 5, precision: 6}
-        ArelExtensions::Nodes::FormattedNumber.new [self,opts]
+        ArelExtensions::Nodes::FormattedNumber.new [self, opts]
       rescue Exception
         Arel.quoted('Wrong Format')
       end

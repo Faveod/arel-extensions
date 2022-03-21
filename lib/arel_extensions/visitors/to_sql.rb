@@ -9,7 +9,7 @@ module ArelExtensions
         Arel.quoted('"') \
         + expr
             .coalesce('')
-            .replace('\\','\\\\').replace('"','\"').replace("\n", '\n') \
+            .replace('\\', '\\\\').replace('"', '\"').replace("\n", '\n') \
         + '"'
       end
 
@@ -451,7 +451,7 @@ module ArelExtensions
               end
               collector << COMMA unless i == len
             }
-            collector << (idx == row_nb-1 ? ')' : '), ')
+            collector << (idx == row_nb - 1 ? ')' : '), ')
           end
           collector
         end
@@ -473,7 +473,7 @@ module ArelExtensions
               end
               collector << COMMA unless i == len
             }
-            collector << (idx == row_nb-1 ? ')' : '), ')
+            collector << (idx == row_nb - 1 ? ')' : '), ')
           end
           collector
         end
@@ -598,7 +598,7 @@ module ArelExtensions
         collector
       end
 
-      def json_value(o,v)
+      def json_value(o, v)
         case o.type_of_node(v)
         when :string
           Arel.when(v.is_null).then(make_json_null).else(make_json_string(v))
@@ -618,26 +618,26 @@ module ArelExtensions
         end
       end
 
-      def visit_ArelExtensions_Nodes_Json o,collector
+      def visit_ArelExtensions_Nodes_Json o, collector
         case o.dict
         when Array
           res = Arel.quoted('[')
-          o.dict.each.with_index do |v,i|
+          o.dict.each.with_index do |v, i|
             if i != 0
               res += ', '
             end
-            res += json_value(o,v)
+            res += json_value(o, v)
           end
           res += ']'
           collector = visit res, collector
         when Hash
           res = Arel.quoted('{')
-          o.dict.each.with_index do |(k,v),i|
+          o.dict.each.with_index do |(k, v), i|
             if i != 0
               res += ', '
             end
             res += make_json_string(ArelExtensions::Nodes::Cast.new([k, :string])) + ': '
-            res += json_value(o,v)
+            res += json_value(o, v)
           end
           res += '}'
           collector = visit res, collector
@@ -654,12 +654,12 @@ module ArelExtensions
         else
           res = Arel.quoted('{')
           orders = o.orders || o.dict.keys
-          o.dict.each.with_index do |(k,v),i|
+          o.dict.each.with_index do |(k, v), i|
             if i != 0
               res = res + ', '
             end
             kv = make_json_string(ArelExtensions::Nodes::Cast.new([k, :string])) + ': '
-            kv += json_value(o,v)
+            kv += json_value(o, v)
             res = res + kv.group_concat(', ', order: Array(orders)).coalesce('')
           end
           res = res + '}'

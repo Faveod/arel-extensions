@@ -54,7 +54,7 @@ module ArelExtensions
           case obj
           when Integer, Float
             :number
-          when Date, DateTime,Time
+          when Date, DateTime, Time
             :datetime
           when Arel::Attributes::Attribute
             Arel.column_of(obj.relation.table_name, obj.name.to_s)&.type || :string

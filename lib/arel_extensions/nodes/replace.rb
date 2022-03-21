@@ -8,7 +8,7 @@ module ArelExtensions
         @left = convert_to_node(left)
         @pattern = convert_to_node(pattern)
         @substitute = convert_to_node(substitute)
-        super([@left,@pattern,@substitute])
+        super([@left, @pattern, @substitute])
       end
     end
 
@@ -20,7 +20,7 @@ module ArelExtensions
         @left = convert_to_node(left)
         @pattern = (pattern.is_a?(Regexp) ? pattern : %r[#{pattern}])
         @substitute = convert_to_node(substitute)
-        super([@left,@pattern,@substitute])
+        super([@left, @pattern, @substitute])
       end
     end
   end

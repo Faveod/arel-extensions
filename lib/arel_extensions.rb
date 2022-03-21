@@ -262,9 +262,9 @@ class Arel::Nodes::TableAlias
   def method_missing(*args)
     met = args.shift.to_sym
     if self.relation.respond_to?(met)
-      self.relation.send(met,args)
+      self.relation.send(met, args)
     else
-      super(met,*args)
+      super(met, *args)
     end
   end
 end

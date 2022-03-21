@@ -101,7 +101,7 @@ module ArelExtensions
           case o.expressions.first
           when Arel::Attributes::Attribute
             case o.option
-            when 'latin1','utf8'
+            when 'latin1', 'utf8'
               o.option
             else
               Arel::Table.engine.connection.charset || 'utf8'
@@ -143,7 +143,7 @@ module ArelExtensions
         collector = visit o.left, collector
         if !o.order.blank?
           collector << ' ORDER BY '
-          o.order.each_with_index do |order,i|
+          o.order.each_with_index do |order, i|
             collector << Arel::Visitors::ToSql::COMMA if i != 0
             collector = visit order, collector
           end
@@ -197,7 +197,7 @@ module ArelExtensions
         if !regexp_replace_supported?
           warn('Warning: ArelExtensions: REGEXP_REPLACE does not seem to be available in the current version of the DBMS, it might crash')
         end
-        super(o,collector)
+        super(o, collector)
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
@@ -285,9 +285,9 @@ module ArelExtensions
           if o.with_interval
             interval =
               case o.left
-              when 'd','m','y'
+              when 'd', 'm', 'y'
                 'DAY'
-              when 'h','mn','s'
+              when 'h', 'mn', 's'
                 'SECOND'
               when /i\z/
                 DATE_MAPPING[o.left[0..-2]]
@@ -350,7 +350,7 @@ module ArelExtensions
           o = o.dup
           o.orders = []
         end
-        old_visit_Arel_Nodes_SelectStatement(o,collector)
+        old_visit_Arel_Nodes_SelectStatement(o, collector)
       end
 
       alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil
@@ -376,8 +376,8 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
         col = o.left.coalesce(0)
-        params = o.locale ? [o.precision,Arel.quoted(o.locale)] : [o.precision]
-        sign = Arel.when(col<0).
+        params = o.locale ? [o.precision, Arel.quoted(o.locale)] : [o.precision]
+        sign = Arel.when(col < 0).
                   then('-').
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = ArelExtensions::Nodes::Length.new([sign])
@@ -385,28 +385,28 @@ module ArelExtensions
         number =
           if o.scientific_notation
             ArelExtensions::Nodes::Concat.new([
-                    Arel::Nodes::NamedFunction.new('FORMAT',[
-                      col.abs/Arel.quoted(10).pow(col.abs.log10.floor)
-                    ]+params),
+                    Arel::Nodes::NamedFunction.new('FORMAT', [
+                      col.abs / Arel.quoted(10).pow(col.abs.log10.floor)
+                    ] + params),
                     o.type,
-                    Arel::Nodes::NamedFunction.new('FORMAT',[
+                    Arel::Nodes::NamedFunction.new('FORMAT', [
                       col.abs.log10.floor,
                       0
                     ])
                   ])
           else
-            Arel::Nodes::NamedFunction.new('FORMAT',[col.abs]+params)
+            Arel::Nodes::NamedFunction.new('FORMAT', [col.abs] + params)
           end
 
         repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
-          when(Arel.quoted(o.width).abs-(number.length+sign_length)>0).
+          when(Arel.quoted(o.width).abs - (number.length + sign_length) > 0).
           then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-            ).repeat(Arel.quoted(o.width).abs-(number.length+sign_length))
+            ).repeat(Arel.quoted(o.width).abs - (number.length + sign_length))
           ).
           else('')
-        before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
-        middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
+        before = (!o.flags.include?('0')) && (!o.flags.include?('-')) ? repeated_char : ''
+        middle = (o.flags.include?('0')) && (!o.flags.include?('-'))  ? repeated_char : ''
         after  = o.flags.include?('-') ? repeated_char : ''
         full_number = ArelExtensions::Nodes::Concat.new([
             before,
@@ -415,7 +415,7 @@ module ArelExtensions
             number,
             after
           ])
-        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix),full_number,Arel.quoted(o.suffix)]), collector
+        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix), full_number, Arel.quoted(o.suffix)]), collector
         collector
       end
 
@@ -485,13 +485,13 @@ module ArelExtensions
         # corresponding mysql version of the current mariadb version (which is not very helpful most of the time)
       end
 
-      def visit_ArelExtensions_Nodes_Json o,collector
+      def visit_ArelExtensions_Nodes_Json o, collector
         return super if !json_supported?
 
         case o.dict
         when Array
           collector << 'JSON_ARRAY('
-          o.dict.each.with_index do |v,i|
+          o.dict.each.with_index do |v, i|
             if i != 0
               collector << COMMA
             end
@@ -500,7 +500,7 @@ module ArelExtensions
           collector << ')'
         when Hash
           collector << 'JSON_OBJECT('
-          o.dict.each.with_index do |(k,v),i|
+          o.dict.each.with_index do |(k, v), i|
             if i != 0
               collector << COMMA
             end
@@ -515,9 +515,9 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonMerge o,collector
+      def visit_ArelExtensions_Nodes_JsonMerge o, collector
         collector << 'JSON_MERGE_PATCH('
-        o.expressions.each.with_index do |v,i|
+        o.expressions.each.with_index do |v, i|
           if i != 0
             collector << COMMA
           end
@@ -527,27 +527,27 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonGet o,collector
+      def visit_ArelExtensions_Nodes_JsonGet o, collector
         collector << 'JSON_EXTRACT('
         collector = visit o.dict, collector
         collector << COMMA
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
         else
-          collector = visit Arel.quoted('$.')+o.key, collector
+          collector = visit Arel.quoted('$.') + o.key, collector
         end
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonSet o,collector
+      def visit_ArelExtensions_Nodes_JsonSet o, collector
         collector << 'JSON_SET('
         collector = visit o.dict, collector
         collector << COMMA
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
         else
-          collector = visit Arel.quoted('$.')+o.key, collector
+          collector = visit Arel.quoted('$.') + o.key, collector
         end
         collector << COMMA
         collector = visit o.value, collector
@@ -566,7 +566,7 @@ module ArelExtensions
           case o.dict
           when Hash
             collector << 'JSON_MERGE_PATCH(' if o.dict.length > 1
-            o.dict.each.with_index do |(k,v),i|
+            o.dict.each.with_index do |(k, v), i|
               if i != 0
                 collector << COMMA
               end

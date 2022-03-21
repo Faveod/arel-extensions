@@ -24,7 +24,7 @@ module ArelExtensions
           else
             return Arel.grouping(Arel::Nodes::Addition.new self, other)
           end
-        when ArelExtensions::Nodes::Function,ArelExtensions::Nodes::Case
+        when ArelExtensions::Nodes::Function, ArelExtensions::Nodes::Case
           return case self.return_type
         when :string, :text
           self.concat(other)

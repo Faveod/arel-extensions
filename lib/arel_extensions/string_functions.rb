@@ -101,27 +101,27 @@ module ArelExtensions
     end
 
     def ai_matches other # accent insensitive & case sensitive
-      ArelExtensions::Nodes::AiMatches.new(self,other)
+      ArelExtensions::Nodes::AiMatches.new(self, other)
     end
 
     def ai_imatches other # accent insensitive & case insensitive
-      ArelExtensions::Nodes::AiIMatches.new(self,other)
+      ArelExtensions::Nodes::AiIMatches.new(self, other)
     end
 
     def smatches other # accent sensitive & case sensitive
-      ArelExtensions::Nodes::SMatches.new(self,other)
+      ArelExtensions::Nodes::SMatches.new(self, other)
     end
 
     def ai_collate
-      ArelExtensions::Nodes::Collate.new(self,nil,true,false)
+      ArelExtensions::Nodes::Collate.new(self, nil, true, false)
     end
 
     def ci_collate
-      ArelExtensions::Nodes::Collate.new(self,nil,false,true)
+      ArelExtensions::Nodes::Collate.new(self, nil, false, true)
     end
 
-    def collate ai = false,ci = false, option = nil
-      ArelExtensions::Nodes::Collate.new(self,option,ai,ci)
+    def collate ai = false, ci = false, option = nil
+      ArelExtensions::Nodes::Collate.new(self, option, ai, ci)
     end
 
     # REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.

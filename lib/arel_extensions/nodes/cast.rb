@@ -19,11 +19,11 @@ module ArelExtensions
         when 'text', :text, 'ntext', :ntext
           @as_attr = expr[1].to_sym
           @return_type = :string
-        when :datetime, 'datetime','smalldatetime'
+        when :datetime, 'datetime', 'smalldatetime'
           @return_type = :datetime
-        when :time,'time'
+        when :time, 'time'
           @return_type = :time
-        when :date,'date'
+        when :date, 'date'
           @return_type = :date
         when :binary, 'binary', 'varbinary', 'image'
           @return_type = :binary

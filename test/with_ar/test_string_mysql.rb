@@ -35,7 +35,7 @@ module ArelExtensions
         end
         class User < ActiveRecord::Base
         end
-        d = Date.new(2016, 5,23)
+        d = Date.new(2016, 5, 23)
         @lucas = User.create age: 5, name: 'Lucas', created_at: d, score: 20.16
         sophie = User.create age: 15, name: 'Sophie', created_at: d, score: 20.16
         @sophie = User.where(id: sophie.id)
@@ -67,8 +67,8 @@ module ArelExtensions
         assert_equal 1, User.where((User.arel_table[:age] + User.arel_table[:age]).eq(10)).count
 
         # Replace
-        assert_equal 'LucaX', User.where(id: @lucas).select(@name.replace('s','X').as('res')).first.res
-        assert_equal 'replace', User.where(id: @lucas).select(@name.replace(@name,'replace').as('res')).first.res
+        assert_equal 'LucaX', User.where(id: @lucas).select(@name.replace('s', 'X').as('res')).first.res
+        assert_equal 'replace', User.where(id: @lucas).select(@name.replace(@name, 'replace').as('res')).first.res
       end
     end
   end

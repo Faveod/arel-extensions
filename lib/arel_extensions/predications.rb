@@ -1,10 +1,10 @@
 module ArelExtensions
   module Predications
     def when right, expression = nil
-      ArelExtensions::Nodes::Case.new(self).when(right,expression)
+      ArelExtensions::Nodes::Case.new(self).when(right, expression)
     end
 
-    def matches(other, escape = nil,case_sensitive = nil)
+    def matches(other, escape = nil, case_sensitive = nil)
       if Arel::VERSION.to_i < 7
         Arel::Nodes::Matches.new(self, Arel.quoted(other), escape)
       else
@@ -17,7 +17,7 @@ module ArelExtensions
     end
 
     def cast right
-      ArelExtensions::Nodes::Cast.new([self,right])
+      ArelExtensions::Nodes::Cast.new([self, right])
     end
 
     def in(*other) # In should handle nil element in the Array
@@ -72,7 +72,7 @@ module ArelExtensions
       when Arel::SelectManager
         Arel::Nodes::NotIn.new(self, other.ast)
       else
-        Arel::Nodes::NotIn.new(self,quoted_node(other))
+        Arel::Nodes::NotIn.new(self, quoted_node(other))
       end
     end
 

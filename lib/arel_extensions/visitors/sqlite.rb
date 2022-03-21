@@ -14,7 +14,7 @@ module ArelExtensions
       }.freeze
 
       NUMBER_COMMA_MAPPING = {
-        'fr_FR' => {',' => ' ', '.' =>','}
+        'fr_FR' => {',' => ' ', '.' => ','}
       }.freeze
 
       # String functions
@@ -43,9 +43,9 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_AiIMatches o, collector
-          collector = visit o.left.collate(true,true), collector
+          collector = visit o.left.collate(true, true), collector
           collector << ' LIKE '
-          collector = visit o.right.collate(true,true), collector
+          collector = visit o.right.collate(true, true), collector
           if o.escape
             collector << ' ESCAPE '
             visit o.escape, collector
@@ -325,11 +325,11 @@ module ArelExtensions
 
       def get_time_converted element
         if element.is_a?(Time)
-          return Arel::Nodes::NamedFunction.new('STRFTIME',[element, '%H:%M:%S'])
+          return Arel::Nodes::NamedFunction.new('STRFTIME', [element, '%H:%M:%S'])
         elsif element.is_a?(Arel::Attributes::Attribute)
           col = Arel.column_of(element.relation.table_name, element.name.to_s)
           if col && (col.type == :time)
-            return Arel::Nodes::NamedFunction.new('STRFTIME',[element, '%H:%M:%S'])
+            return Arel::Nodes::NamedFunction.new('STRFTIME', [element, '%H:%M:%S'])
           else
             return element
           end
@@ -387,10 +387,10 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
-        format = Arel::Nodes::NamedFunction.new('printf',[Arel.quoted(o.original_string),o.left])
+        format = Arel::Nodes::NamedFunction.new('printf', [Arel.quoted(o.original_string), o.left])
         locale_map = NUMBER_COMMA_MAPPING[o.locale]
         if locale_map
-          format = format.replace(',',locale_map[',']).replace('.',locale_map['.'])
+          format = format.replace(',', locale_map[',']).replace('.', locale_map['.'])
         end
         visit format, collector
         collector

@@ -197,14 +197,14 @@ module ArelExtensions
       end
 
       it 'should diff between time values' do
-        d2 = Time.new(2015,6,1)
-        d1 = DateTime.new(2015,6,2)
+        d2 = Time.new(2015, 6, 1)
+        d1 = DateTime.new(2015, 6, 2)
         _(compile(ArelExtensions::Nodes::DateDiff.new([d1, d2])))
           .must_match("DATEDIFF('2015-06-02', '2015-06-01')")
       end
 
       it 'should diff between time values and time col' do
-        d1 = DateTime.new(2015,6,2)
+        d1 = DateTime.new(2015, 6, 2)
         _(compile(ArelExtensions::Nodes::DateDiff.new([d1, @table[:updated_at]])))
           .must_match %{DATEDIFF('2015-06-02', "users"."updated_at")}
       end
@@ -297,9 +297,9 @@ module ArelExtensions
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}
         _(@table[:name].when('smith').then(1).when('doe').then(2).else(0).sum.to_sql)
           .must_be_like %{SUM(CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END)}
-        _(@table[:name].when('smith').then('cool').else('uncool').matches('value',false).to_sql)
+        _(@table[:name].when('smith').then('cool').else('uncool').matches('value', false).to_sql)
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END LIKE 'value'}
-        _(@table[:name].when('smith').then('cool').else('uncool').imatches('value',false).to_sql)
+        _(@table[:name].when('smith').then('cool').else('uncool').imatches('value', false).to_sql)
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' ELSE 'uncool' END ILIKE 'value'}
       end
 
@@ -339,7 +339,7 @@ module ArelExtensions
         fake_at = Arel::Table.new('fake_table')
         _(compile(fake_at['fake_attribute'].coalesce('other_value')))
           .must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value')}
-        _(compile(fake_at['fake_attribute'].coalesce('other_value1','other_value2')))
+        _(compile(fake_at['fake_attribute'].coalesce('other_value1', 'other_value2')))
           .must_be_like %{COALESCE("fake_table"."fake_attribute", 'other_value1', 'other_value2')}
         _(compile(fake_at['fake_attribute'].coalesce('other_value1').coalesce('other_value2')))
           .must_be_like %{COALESCE(COALESCE("fake_table"."fake_attribute", 'other_value1'), 'other_value2')}
@@ -370,15 +370,15 @@ module ArelExtensions
             .must_be_like %{ISNULL("users"."id")}
           _(compile(@table[:id].in([nil])))
             .must_be_like %{ISNULL("users"."id")}
-          _(compile(@table[:id].in([nil,1])))
+          _(compile(@table[:id].in([nil, 1])))
             .must_be_like %{(ISNULL("users"."id")) OR ("users"."id" = 1)}
-          _(compile(@table[:id].in([nil,1,2])))
+          _(compile(@table[:id].in([nil, 1, 2])))
             .must_be_like %{(ISNULL("users"."id")) OR ("users"."id" IN (1, 2))}
           _(compile(@table[:id].in(1)))
             .must_be_like %{"users"."id" IN (1)}
           _(compile(@table[:id].in([1])))
             .must_be_like %{"users"."id" = 1}
-          _(compile(@table[:id].in([1,2])))
+          _(compile(@table[:id].in([1, 2])))
             .must_be_like %{"users"."id" IN (1, 2)}
           _(compile(@table[:id].in([])))
             .must_be_like %{1 = 0}
@@ -418,15 +418,15 @@ module ArelExtensions
             .must_be_like %{NOT ISNULL("users"."id")}
           _(compile(@table[:id].not_in [nil]))
             .must_be_like %{NOT ISNULL("users"."id")}
-          _(compile(@table[:id].not_in [nil,1]))
+          _(compile(@table[:id].not_in [nil, 1]))
             .must_be_like %{(NOT ISNULL("users"."id")) AND ("users"."id" != 1)}
-          _(compile(@table[:id].not_in [nil,1,2]))
+          _(compile(@table[:id].not_in [nil, 1, 2]))
             .must_be_like %{(NOT ISNULL("users"."id")) AND ("users"."id" NOT IN (1, 2))}
           _(compile(@table[:id].not_in 1))
             .must_be_like %{"users"."id" NOT IN (1)}
           _(compile(@table[:id].not_in [1]))
             .must_be_like %{"users"."id" != 1}
-          _(compile(@table[:id].not_in [1,2]))
+          _(compile(@table[:id].not_in [1, 2]))
             .must_be_like %{"users"."id" NOT IN (1, 2)}
           _(compile(@table[:id].not_in []))
             .must_be_like %{1 = 1}
@@ -455,21 +455,21 @@ module ArelExtensions
 
       it 'should be possible to add and substract as much as we want' do
         c = @table[:name]
-        _(compile(c.locate('test')+1))
+        _(compile(c.locate('test') + 1))
           .must_be_like %{(LOCATE('test', "users"."name") + 1)}
-        _(compile(c.locate('test')-1))
+        _(compile(c.locate('test') - 1))
           .must_be_like %{(LOCATE('test', "users"."name") - 1)}
-        _(compile(c.locate('test')+c.locate('test')))
+        _(compile(c.locate('test') + c.locate('test')))
           .must_be_like %{(LOCATE('test', "users"."name") + LOCATE('test', "users"."name"))}
-        _(compile(c.locate('test')+1+c.locate('test')-1 + 1))
+        _(compile(c.locate('test') + 1 + c.locate('test') - 1 + 1))
           .must_be_like %{((((LOCATE('test', "users"."name") + 1) + LOCATE('test', "users"."name")) - 1) + 1)}
       end
 
       it 'should be possible to add and substract on some nodes' do
         c = @table[:name]
-        _(compile(c.when(0,0).else(42) + 42)).must_be_like %{(CASE "users"."name" WHEN 0 THEN 0 ELSE 42 END + 42)}
-        _(compile(c.when(0,0).else(42) - 42)).must_be_like %{(CASE "users"."name" WHEN 0 THEN 0 ELSE 42 END - 42)}
-        _(compile(c.when(0,'0').else('42') + '42')).must_be_like %{CONCAT(CASE "users"."name" WHEN 0 THEN '0' ELSE '42' END, '42')}
+        _(compile(c.when(0, 0).else(42) + 42)).must_be_like %{(CASE "users"."name" WHEN 0 THEN 0 ELSE 42 END + 42)}
+        _(compile(c.when(0, 0).else(42) - 42)).must_be_like %{(CASE "users"."name" WHEN 0 THEN 0 ELSE 42 END - 42)}
+        _(compile(c.when(0, '0').else('42') + '42')).must_be_like %{CONCAT(CASE "users"."name" WHEN 0 THEN '0' ELSE '42' END, '42')}
       end
 
       it 'should be possible to desc and asc on functions' do
@@ -480,7 +480,7 @@ module ArelExtensions
           .must_be_like %{SUBSTRING("users"."name", 2) ASC}
         _(compile(c.substring(2).desc))
           .must_be_like %{SUBSTRING("users"."name", 2) DESC}
-        _(compile((c.locate('test')+1).asc))
+        _(compile((c.locate('test') + 1).asc))
           .must_be_like %{(LOCATE('test', "users"."name") + 1) ASC}
       end
 
