@@ -14,23 +14,23 @@ module ArelExtensions
       NUMBER_COMMA_MAPPING = { 'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', ' }
 
       def visit_ArelExtensions_Nodes_Log10 o, collector
-          collector << "LOG("
-          o.expressions.each_with_index { |arg, i|
-            collector << Arel::Visitors::ToSql::COMMA if i != 0
-            collector = visit arg, collector
-          }
-          collector << ",10)"
-          collector
+        collector << "LOG("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector = visit arg, collector
+        }
+        collector << ",10)"
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Power o, collector
-            collector << "POWER("
-            o.expressions.each_with_index { |arg, i|
-              collector << Arel::Visitors::ToSql::COMMA if i != 0
-              collector = visit arg, collector
-            }
-            collector << ")"
-            collector
+        collector << "POWER("
+        o.expressions.each_with_index { |arg, i|
+          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector = visit arg, collector
+        }
+        collector << ")"
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Concat o, collector
@@ -483,10 +483,10 @@ module ArelExtensions
         def visit_ArelExtensions_InsertManager_BulkValues o, collector
           collector << "("
           o.left.each_with_index do |row, idx| # values
-          collector << " UNION ALL " if idx != 0
-          collector << "(SELECT "
-          len = row.length - 1
-          row.zip(o.cols).each_with_index { |(value, attr), i|
+            collector << " UNION ALL " if idx != 0
+            collector << "(SELECT "
+            len = row.length - 1
+            row.zip(o.cols).each_with_index { |(value, attr), i|
               case value
               when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
                 collector = visit value, collector
@@ -494,8 +494,8 @@ module ArelExtensions
                 collector << quote(value, attr && column_for(attr)).to_s
               end
               collector << COMMA unless i == len
-          }
-          collector << ' FROM DUAL)'
+            }
+            collector << ' FROM DUAL)'
           end
           collector << ")"
           collector
