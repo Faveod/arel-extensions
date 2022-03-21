@@ -1,9 +1,9 @@
 require 'bundler'
-Bundler::GemHelper.install_tasks name: "arel_extensions"
+Bundler::GemHelper.install_tasks name: 'arel_extensions'
 
 require 'rake/testtask'
 
-desc "Default Task"
+desc 'Default Task'
 task default: [:test]
 
 Rake::TestTask.new(:test) do |t|
@@ -21,7 +21,7 @@ namespace :test do
     t.pattern = 'test/visitors/test_to_sql.rb'
     t.warning = true
     t.verbose = true
-    t.ruby_opts = ["--dev"] if defined?(JRUBY_VERSION)
+    t.ruby_opts = ['--dev'] if defined?(JRUBY_VERSION)
   }
 end
 
@@ -33,7 +33,7 @@ end
       t.pattern = 'test/with_ar/*_agnostic_test.rb'
       t.warning = false
       t.verbose = true
-      t.ruby_opts = ["--dev"] if defined?(JRUBY_VERSION)
+      t.ruby_opts = ['--dev'] if defined?(JRUBY_VERSION)
     }
   end
 

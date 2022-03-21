@@ -3,7 +3,7 @@ require 'arel'
 module ArelExtensions
   module InsertManager
     def bulk_insert(cols, data)
-      raise ArgumentError, "cols must be present" if cols.blank?
+      raise ArgumentError, 'cols must be present' if cols.blank?
       columns =
         case cols.first
         when Array

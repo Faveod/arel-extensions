@@ -6,8 +6,8 @@ module ArelExtensions
     class InsertManagerTest < Minitest::Test
       def connect_db
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
-        if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx") || (RUBY_PLATFORM == 'java')) # not supported
-          @env_db = (RUBY_PLATFORM == 'java' ? "jdbc-sqlite" : 'sqlite')
+        if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx') || (RUBY_PLATFORM == 'java')) # not supported
+          @env_db = (RUBY_PLATFORM == 'java' ? 'jdbc-sqlite' : 'sqlite')
           skip "Platform not supported (DB: #{ENV['DB']}, RUBY_ENGINE: #{RUBY_ENGINE}, RUBY_PLATFORM: #{RUBY_PLATFORM})"
         else
           @env_db = ENV['DB']
@@ -60,13 +60,13 @@ END;])
         @table = Arel::Table.new(:user_tests)
         @cols = ['id', 'name', 'comments', 'created_at']
         @data = [
-          [23, 'nom1', "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.", '2016-01-01'],
-          [25, 'nom2', "sdfdsfdsfsdf", '2016-01-02']
+          [23, 'nom1', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.', '2016-01-01'],
+          [25, 'nom2', 'sdfdsfdsfsdf', '2016-01-02']
         ]
         @cols2 = ['name', 'comments', 'created_at']
         @data2 = [
-          ['nom3', "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.", '2016-01-01'],
-          ['nom4', "sdfdsfdsfsdf", '2016-01-04']
+          ['nom3', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.', '2016-01-01'],
+          ['nom4', 'sdfdsfdsfsdf', '2016-01-04']
         ]
       end
 
@@ -79,11 +79,11 @@ END;])
         insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(Arel::Table.engine).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         @cnx.execute(insert_manager.to_sql)
-        assert_equal 2, User.count, "insertions failed"
+        assert_equal 2, User.count, 'insertions failed'
         insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(Arel::Table.engine).into(@table)
         insert_manager.bulk_insert(@cols2, @data2)
         @cnx.execute(insert_manager.to_sql)
-        assert_equal 4, User.count, "insertions failed"
+        assert_equal 4, User.count, 'insertions failed'
       end
     end
   end

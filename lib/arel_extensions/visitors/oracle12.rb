@@ -10,21 +10,21 @@ module ArelExtensions
       end
 
       def visit_Arel_Nodes_Limit(o, collector)
-        collector << "FETCH FIRST "
+        collector << 'FETCH FIRST '
         collector = visit o.expr, collector
-        collector << " ROWS ONLY"
+        collector << ' ROWS ONLY'
       end
 
       def visit_Arel_Nodes_Offset(o, collector)
-        collector << "OFFSET "
+        collector << 'OFFSET '
         visit o.expr, collector
-        collector << " ROWS"
+        collector << ' ROWS'
       end
 
       def visit_Arel_Nodes_Except(o, collector)
-        collector << "( "
-        collector = infix_value o, collector, " MINUS "
-        collector << " )"
+        collector << '( '
+        collector = infix_value o, collector, ' MINUS '
+        collector << ' )'
       end
 
       def visit_Arel_Nodes_UpdateStatement(o, collector)
@@ -43,9 +43,9 @@ module ArelExtensions
       end
 
       def is_distinct_from(o, collector)
-        collector << "DECODE("
+        collector << 'DECODE('
         collector = visit [o.left, o.right, 0, 1], collector
-        collector << ")"
+        collector << ')'
       end
 
       def visit_ArelExtensions_Nodes_Json o,collector

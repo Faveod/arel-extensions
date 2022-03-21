@@ -10,8 +10,8 @@ module ArelExtensions
         @table = Arel::Table.new(:users)
         @cols = ['id', 'name', 'comments', 'created_at']
         @data = [
-          [23, 'nom1', "sdfdsfdsfsdf", '2016-01-01'],
-          [25, 'nom2', "sdfdsfdsfsdf", '2016-01-01']
+          [23, 'nom1', 'sdfdsfdsfsdf', '2016-01-01'],
+          [25, 'nom2', 'sdfdsfdsfsdf', '2016-01-01']
         ]
       end
 
@@ -24,7 +24,7 @@ module ArelExtensions
       end
 
 
-      it "should import large set of data using ToSql" do
+      it 'should import large set of data using ToSql' do
         insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(@conn).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         _(compile(insert_manager.ast))

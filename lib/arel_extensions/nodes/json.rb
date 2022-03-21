@@ -42,9 +42,9 @@ module ArelExtensions
         when String, Numeric, TrueClass, FalseClass
           convert_to_node(n)
         when Date
-          convert_to_node(n.strftime("%Y-%m-%d"))
+          convert_to_node(n.strftime('%Y-%m-%d'))
         when DateTime, Time
-          convert_to_node(n.strftime("%Y-%m-%dT%H:%M:%S.%L%:z"))
+          convert_to_node(n.strftime('%Y-%m-%dT%H:%M:%S.%L%:z'))
         when NilClass
           Arel.null
         when Arel::SelectManager

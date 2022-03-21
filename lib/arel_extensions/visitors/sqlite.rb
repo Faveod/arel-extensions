@@ -94,11 +94,11 @@ module ArelExtensions
 
       # Date operations
       def visit_ArelExtensions_Nodes_DateAdd o, collector
-        collector << "date("
+        collector << 'date('
         collector = visit o.expressions.first, collector
         collector << COMMA
         collector = visit o.sqlite_value, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
@@ -110,28 +110,28 @@ module ArelExtensions
           collector << ") - strftime('%s', "
           collector = visit o.right, collector
         else
-          collector << "julianday("
+          collector << 'julianday('
           collector = visit o.left, collector
-          collector << ") - julianday("
+          collector << ') - julianday('
           collector = visit o.right, collector
         end
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Duration o, collector
         collector << "strftime('#{DATE_MAPPING[o.left]}'#{COMMA}"
         collector = visit o.right, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Locate o, collector
-        collector << "instr("
+        collector << 'instr('
         collector = visit o.expr, collector
         collector << COMMA
         collector = visit o.right, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
@@ -141,17 +141,17 @@ module ArelExtensions
           collector = visit arg, collector
           collector << ' || ' unless i == o.expressions.length - 1
         }
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Substring o, collector
-        collector << "SUBSTR("
+        collector << 'SUBSTR('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
           collector = visit arg, collector
         }
-        collector << ")"
+        collector << ')'
         collector
       end
 
@@ -168,26 +168,26 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Rand o, collector
-        collector << "RANDOM("
+        collector << 'RANDOM('
         if o.left != nil && o.right != nil
           collector = visit o.left, collector
           collector << COMMA
           collector = visit o.right, collector
         end
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_Arel_Nodes_Regexp o, collector
         collector = visit o.left, collector
-        collector << " REGEXP"
+        collector << ' REGEXP'
         collector = visit o.right, collector
         collector
       end
 
       def visit_Arel_Nodes_NotRegexp o, collector
         collector = visit o.left, collector
-        collector << " NOT REGEXP "
+        collector << ' NOT REGEXP '
         collector = visit o.right, collector
         collector
       end
@@ -195,7 +195,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Wday o, collector
         collector << "STRFTIME('%w',"
         collector = visit o.date, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
@@ -208,32 +208,32 @@ module ArelExtensions
       #   AS FLOAT
       # )
       def visit_ArelExtensions_Nodes_Floor o, collector
-        collector << "CAST(CASE WHEN "
+        collector << 'CAST(CASE WHEN '
         collector = visit o.left, collector
-        collector << " >= 0 THEN CAST("
+        collector << ' >= 0 THEN CAST('
         collector = visit o.left, collector
-        collector << " AS INT) WHEN CAST("
+        collector << ' AS INT) WHEN CAST('
         collector = visit o.left, collector
-        collector << " AS INT) = "
+        collector << ' AS INT) = '
         collector = visit o.left, collector
-        collector << " THEN CAST("
+        collector << ' THEN CAST('
         collector = visit o.left, collector
-        collector << " AS INT) ELSE CAST(("
+        collector << ' AS INT) ELSE CAST(('
         collector = visit o.left, collector
-        collector << " - 1.0) AS INT) END AS FLOAT)"
+        collector << ' - 1.0) AS INT) END AS FLOAT)'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Ceil o, collector
-        collector << "CASE WHEN ROUND("
+        collector << 'CASE WHEN ROUND('
         collector = visit o.left, collector
-        collector << ", 1) > ROUND("
+        collector << ', 1) > ROUND('
         collector = visit o.left, collector
-        collector << ") THEN ROUND("
+        collector << ') THEN ROUND('
         collector = visit o.left, collector
-        collector << ") + 1 ELSE ROUND("
+        collector << ') + 1 ELSE ROUND('
         collector = visit o.left, collector
-        collector << ") END"
+        collector << ') END'
         collector
       end
 
@@ -249,7 +249,7 @@ module ArelExtensions
                 else
                   collector << quote(value, attr && column_for(attr)).to_s
                   if idx == 0
-                    collector << " AS "
+                    collector << ' AS '
                     collector << quote(attr.name)
                   end
                 end
@@ -271,13 +271,13 @@ module ArelExtensions
                 when Integer
                   collector << value.to_s
                   if idx == 0
-                    collector << " AS "
+                    collector << ' AS '
                     collector << quote(attr.name)
                   end
                 else
                   collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
                   if idx == 0
-                    collector << " AS "
+                    collector << ' AS '
                     collector << quote(attr.name)
                   end
                 end
@@ -296,7 +296,7 @@ module ArelExtensions
           else
             visit o.left, collector
           end
-        collector << " UNION "
+        collector << ' UNION '
         collector =
           if o.right.is_a?(Arel::SelectManager)
             visit o.right.ast, collector
@@ -313,7 +313,7 @@ module ArelExtensions
           else
             visit o.left, collector
           end
-        collector << " UNION ALL "
+        collector << ' UNION ALL '
         collector =
           if o.right.is_a?(Arel::SelectManager)
             visit o.right.ast, collector
@@ -341,7 +341,7 @@ module ArelExtensions
       remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil
       def visit_Arel_Nodes_GreaterThanOrEqual o, collector
         collector = visit get_time_converted(o.left), collector
-        collector << " >= "
+        collector << ' >= '
         collector = visit get_time_converted(o.right), collector
         collector
       end
@@ -349,7 +349,7 @@ module ArelExtensions
       remove_method(:visit_Arel_Nodes_GreaterThan) rescue nil
       def visit_Arel_Nodes_GreaterThan o, collector
         collector = visit get_time_converted(o.left), collector
-        collector << " > "
+        collector << ' > '
         collector = visit get_time_converted(o.right), collector
         collector
       end
@@ -357,7 +357,7 @@ module ArelExtensions
       remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil
       def visit_Arel_Nodes_LessThanOrEqual o, collector
         collector = visit get_time_converted(o.left), collector
-        collector << " <= "
+        collector << ' <= '
         collector = visit get_time_converted(o.right), collector
         collector
       end
@@ -365,7 +365,7 @@ module ArelExtensions
       remove_method(:visit_Arel_Nodes_LessThan) rescue nil
       def visit_Arel_Nodes_LessThan o, collector
         collector = visit get_time_converted(o.left), collector
-        collector << " < "
+        collector << ' < '
         collector = visit get_time_converted(o.right), collector
         collector
       end

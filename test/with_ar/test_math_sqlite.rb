@@ -29,14 +29,14 @@ module ArelExtensions
         class User < ActiveRecord::Base
         end
         d = Date.new(2016, 5,23)
-        User.create age: 5, name: "Lucas", created_at: d, score: 20.16
-        User.create age: 15, name: "Sophie", created_at: d, score: 20.16
-        User.create age: 20, name: "Camille", created_at: d, score: 20.16
-        User.create age: 21, name: "Arthur", created_at: d, score: 65.62
-        User.create age: 23, name: "Myung", created_at: d, score: 20.16
-        @laure = User.create age: 25, name: "Laure", created_at: d, score: 20.16
-        User.create age: nil, name: "Test", created_at: d, score: 1.62
-        @neg = User.create age: -20, name: "Negatif", created_at: d, score: 0.17
+        User.create age: 5, name: 'Lucas', created_at: d, score: 20.16
+        User.create age: 15, name: 'Sophie', created_at: d, score: 20.16
+        User.create age: 20, name: 'Camille', created_at: d, score: 20.16
+        User.create age: 21, name: 'Arthur', created_at: d, score: 65.62
+        User.create age: 23, name: 'Myung', created_at: d, score: 20.16
+        @laure = User.create age: 25, name: 'Laure', created_at: d, score: 20.16
+        User.create age: nil, name: 'Test', created_at: d, score: 1.62
+        @neg = User.create age: -20, name: 'Negatif', created_at: d, score: 0.17
         @table = Arel::Table.new(:users)
         @age = @table[:age]
       end
@@ -45,10 +45,10 @@ module ArelExtensions
         @cnx.drop_table(:products)
       end
 
-      it "should do maths" do
+      it 'should do maths' do
         # ABS
-        assert_equal 20, User.where(id: @neg.id).select(@age.abs.as("res")).first.res
-        assert_equal 14, User.where(id: @laure.id).select((@age - 39).abs.as("res")).first.res
+        assert_equal 20, User.where(id: @neg.id).select(@age.abs.as('res')).first.res
+        assert_equal 14, User.where(id: @laure.id).select((@age - 39).abs.as('res')).first.res
 
         # CEIL # require extensions
 

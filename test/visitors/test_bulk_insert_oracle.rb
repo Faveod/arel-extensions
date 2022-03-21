@@ -9,8 +9,8 @@ module ArelExtensions
         @table = Arel::Table.new(:users)
         @cols = ['name', 'comments', 'created_at']
         @data = [
-          ['nom1', "sdfdsfdsfsdf", '2016-01-01'],
-          ['nom2', "sdfdsfdsfsdf", '2016-01-01']
+          ['nom1', 'sdfdsfdsfsdf', '2016-01-01'],
+          ['nom2', 'sdfdsfdsfsdf', '2016-01-01']
         ]
       end
 
@@ -22,7 +22,7 @@ module ArelExtensions
         end
       end
 
-      it "should import large set of data in Oracle" do
+      it 'should import large set of data in Oracle' do
         insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(@conn).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         _(compile(insert_manager.ast))
