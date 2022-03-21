@@ -33,32 +33,32 @@ module ArelExtensions
 
     # Abs function returns the absolute value of a number passed as argument #
     def abs
-        ArelExtensions::Nodes::Abs.new [self]
+      ArelExtensions::Nodes::Abs.new [self]
     end
 
     # will rounded up any positive or negative decimal value within the function upwards #
     def ceil
-        ArelExtensions::Nodes::Ceil.new [self]
+      ArelExtensions::Nodes::Ceil.new [self]
     end
 
     # function rounded up any positive or negative decimal value down to the next least integer
     def floor
-        ArelExtensions::Nodes::Floor.new [self]
+      ArelExtensions::Nodes::Floor.new [self]
     end
 
     # function gives the base 10 log
     def log10
-        ArelExtensions::Nodes::Log10.new [self]
+      ArelExtensions::Nodes::Log10.new [self]
     end
 
     # function gives the power of a number
     def pow exposant = 0
-        ArelExtensions::Nodes::Power.new [self, exposant]
+      ArelExtensions::Nodes::Power.new [self, exposant]
     end
 
     # function gives the power of a number
     def power exposant = 0
-        ArelExtensions::Nodes::Power.new [self, exposant]
+      ArelExtensions::Nodes::Power.new [self, exposant]
     end
 
     # Aggregate Functions
@@ -86,11 +86,11 @@ module ArelExtensions
 
     # function is used to round a numeric field to the number of decimals specified
     def round precision = nil
-        if precision
-            ArelExtensions::Nodes::Round.new [self, precision]
-        else
-            ArelExtensions::Nodes::Round.new [self]
-        end
+      if precision
+        ArelExtensions::Nodes::Round.new [self, precision]
+      else
+        ArelExtensions::Nodes::Round.new [self]
+      end
     end
 
     # function returning a number at a specific format

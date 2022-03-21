@@ -29,7 +29,7 @@ module ArelExtensions
       end
 
       def expr
-         @expressions.first
+        @expressions.first
       end
 
       def left

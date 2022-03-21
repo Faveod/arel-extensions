@@ -9,6 +9,12 @@ Layout/EndOfLine:
 Layout/ExtraSpacing:
   Enabled: true
 
+Layout/IndentationWidth:
+  Enabled: true
+
+Layout/LineLength:
+  Enabled: false
+
 Layout/SpaceAfterComma:
   Enabled: true
 
@@ -20,6 +26,9 @@ Layout/SpaceAroundOperators:
 
 Layout/TrailingEmptyLines:
   Enabled: true
+
+Metrics/BlockLength:
+  Enabled: false
 
 Naming/FileName:
   Enabled: true
@@ -44,6 +53,9 @@ Style/Encoding:
 
 Style/MethodCallWithArgsParentheses:
   Enabled: false
+
+Style/MethodCallWithoutArgsParentheses:
+  Enabled: true
 
 Style/NegatedIf:
   Enabled: false

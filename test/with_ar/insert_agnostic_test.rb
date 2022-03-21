@@ -76,11 +76,11 @@ END;])
 
       # Math Functions
       def test_bulk_insert
-        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(Arel::Table.engine).into(@table)
+        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new.into(@table) : Arel::InsertManager.new(Arel::Table.engine).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         @cnx.execute(insert_manager.to_sql)
         assert_equal 2, User.count, 'insertions failed'
-        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(Arel::Table.engine).into(@table)
+        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new.into(@table) : Arel::InsertManager.new(Arel::Table.engine).into(@table)
         insert_manager.bulk_insert(@cols2, @data2)
         @cnx.execute(insert_manager.to_sql)
         assert_equal 4, User.count, 'insertions failed'

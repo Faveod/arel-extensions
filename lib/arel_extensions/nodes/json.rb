@@ -32,7 +32,7 @@ module ArelExtensions
           n.dict
         when Array
           n.map{|e|
-             (e.is_a?(Array) || e.is_a?(Hash)) ? Json.new(e) : convert_to_json_node(e)
+            (e.is_a?(Array) || e.is_a?(Hash)) ? Json.new(e) : convert_to_json_node(e)
           }
         when Hash
           n.reduce({}){|acc, v|

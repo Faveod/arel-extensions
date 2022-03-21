@@ -54,7 +54,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Log10 o, collector
-          collector << 'LOG10('
+        collector << 'LOG10('
           o.expressions.each_with_index { |arg, i|
             collector << Arel::Visitors::ToSql::COMMA if i != 0
             collector = visit arg, collector
@@ -81,7 +81,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
-          collector << '('
+        collector << '('
           collector = visit o.expr, collector
           collector << ' IS NOT NULL)'
           collector
@@ -570,7 +570,7 @@ module ArelExtensions
               ])
           end
 
-        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
+        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new.
           when(Arel.quoted(o.width).abs - (number.length + sign_length) > 0).
           then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')

@@ -35,7 +35,7 @@ def setup_db
   end
   @cnx.drop_table(:users) rescue nil
   @cnx.create_table :users do |t|
-      t.column :age, :integer
+    t.column :age, :integer
       t.column :name, :string
       t.column :created_at, :date
       t.column :updated_at, :date
@@ -83,7 +83,7 @@ class ListTest < Minitest::Test
 
   def test_coalesce
     if @cnx.adapter_name =~ /pgsql/i
-        assert_equal 100, User.where(User.arel_table[:name].eq('Test')).select((User.arel_table[:age].coalesce(100)).as('res')).first.res
+      assert_equal 100, User.where(User.arel_table[:name].eq('Test')).select((User.arel_table[:age].coalesce(100)).as('res')).first.res
         assert_equal 'Camille', User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].coalesce('Null', 'default')).as('res')).first.res
     else
       assert_equal 'Camille', User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].coalesce('Null', 20)).as('res')).first.res
@@ -229,7 +229,7 @@ class ListTest < Minitest::Test
   end
 
   def test_wday
-      d = Date.new(2016, 06, 26)
+    d = Date.new(2016, 06, 26)
       assert_equal 1, User.where(User.arel_table[:name].eq('Myung')).select((User.arel_table[:created_at].wday).as('res')).first.res.to_i
       assert_equal 0, User.select(d.wday).as('res').first.to_i
   end

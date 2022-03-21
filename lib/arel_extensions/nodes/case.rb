@@ -44,7 +44,7 @@ module ArelExtensions
 
       def return_type
         obj = if @conditions.length > 0
-            @conditions.last.right
+                @conditions.last.right
           elsif @default
             @default.expr
           end

@@ -44,14 +44,14 @@ module ArelExtensions
       end
 
       describe 'primitive methods' do
-       it 'should be able to recognize equal nodes' do
-         c = @table[:id]
-         _(c == 1).must_be :eql?, (c == 1)
-         _((c == 1).right.hash).must_equal (c == 1).right.hash
-         _((c == 1).hash).must_equal (c == 1).hash
+        it 'should be able to recognize equal nodes' do
+          c = @table[:id]
+          _(c == 1).must_be :eql?, (c == 1)
+          _((c == 1).right.hash).must_equal (c == 1).right.hash
+          _((c == 1).hash).must_equal (c == 1).hash
 
-         _([c == 1, c == 1].uniq).must_equal [c == 1]
-       end
+          _([c == 1, c == 1].uniq).must_equal [c == 1]
+        end
       end
 
       # Math Functions

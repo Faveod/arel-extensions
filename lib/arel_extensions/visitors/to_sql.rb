@@ -96,8 +96,8 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Concat o, collector
         collector << 'CONCAT('
         o.expressions.each_with_index { |arg, i|
-            collector << COMMA if i != 0
-            collector = visit arg, collector
+          collector << COMMA if i != 0
+          collector = visit arg, collector
         }
         collector << ')'
         collector
@@ -406,10 +406,10 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
-          collector << 'NOT ISNULL('
-          collector = visit o.expr, collector
-          collector << ')'
-          collector
+        collector << 'NOT ISNULL('
+        collector = visit o.expr, collector
+        collector << ')'
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Then o, collector
@@ -586,14 +586,14 @@ module ArelExtensions
         when 1
           collector = visit o.children[0], collector
         else
-            collector << '('
-            o.children.each_with_index { |arg, i|
-              if i != 0
-                collector << ') OR ('
-              end
-              collector = visit arg, collector
-            }
-            collector << ')'
+          collector << '('
+          o.children.each_with_index { |arg, i|
+            if i != 0
+              collector << ') OR ('
+            end
+            collector = visit arg, collector
+          }
+          collector << ')'
         end
         collector
       end
