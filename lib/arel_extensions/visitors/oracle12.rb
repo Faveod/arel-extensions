@@ -1,7 +1,7 @@
 module ArelExtensions
   module Visitors
-    Arel::Visitors.send(:remove_const,'Oracle12') if Arel::Visitors.const_defined?('Oracle12')
-    Arel::Visitors.const_set('Oracle12',Class.new(Arel::Visitors::Oracle)).class_eval do
+    Arel::Visitors.send(:remove_const, 'Oracle12') if Arel::Visitors.const_defined?('Oracle12')
+    Arel::Visitors.const_set('Oracle12', Class.new(Arel::Visitors::Oracle)).class_eval do
 
       def visit_Arel_Nodes_SelectOptions(o, collector)
         collector = maybe_visit o.offset, collector
@@ -48,11 +48,11 @@ module ArelExtensions
         collector << ')'
       end
 
-      def visit_ArelExtensions_Nodes_Json o,collector
+      def visit_ArelExtensions_Nodes_Json o, collector
         case o.dict
         when Array
           collector << 'json_array('
-          o.dict.each.with_index do |v,i|
+          o.dict.each.with_index do |v, i|
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
@@ -61,7 +61,7 @@ module ArelExtensions
           collector << ')'
         when Hash
           collector << 'json__object('
-          o.dict.each.with_index do |(k,v),i|
+          o.dict.each.with_index do |(k, v), i|
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
@@ -76,7 +76,7 @@ module ArelExtensions
           collector = visit Arel.quoted("#{o.dict}"), collector
           collector << ' FORMAT JSON'
         when NilClass
-          collector  << %Q['null' FORMAT JSON]
+          collector << %Q['null' FORMAT JSON]
         when Arel::Attributes::Attribute
           collector = visit o.dict.cast('JSON'), collector
         else

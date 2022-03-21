@@ -75,14 +75,14 @@ module ArelExtensions
       end
 
       it 'should diff between time values' do
-        d2 = Time.new(2015,6,1)
-        d1 = DateTime.new(2015,6,2)
-        _(compile(ArelExtensions::Nodes::DateDiff.new([d1,d2])))
+        d2 = Time.new(2015, 6, 1)
+        d1 = DateTime.new(2015, 6, 2)
+        _(compile(ArelExtensions::Nodes::DateDiff.new([d1, d2])))
           .must_match("TO_DATE('2015-06-02') - TO_DATE('2015-06-01')")
       end
 
       it 'should diff between time values and time col' do
-        d1 = DateTime.new(2015,6,2)
+        d1 = DateTime.new(2015, 6, 2)
         _(compile(ArelExtensions::Nodes::DateDiff.new([d1, @table[:updated_at]])))
           .must_match %{TO_DATE('2015-06-02') - "users"."updated_at"}
       end

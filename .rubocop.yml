@@ -9,7 +9,13 @@ Layout/EndOfLine:
 Layout/ExtraSpacing:
   Enabled: true
 
+Layout/SpaceAfterComma:
+  Enabled: true
+
 Layout/SpaceAroundEqualsInParameterDefault:
+  Enabled: true
+
+Layout/SpaceAroundOperators:
   Enabled: true
 
 Layout/TrailingEmptyLines:
@@ -37,6 +43,9 @@ Style/Encoding:
   Enabled: true
 
 Style/MethodCallWithArgsParentheses:
+  Enabled: false
+
+Style/NegatedIf:
   Enabled: false
 
 Style/StringLiterals:

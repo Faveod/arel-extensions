@@ -42,13 +42,13 @@ module ArelExtensions
       when String
         # Do nothing.
       when Regexp
-        other = other.source.gsub('\A','^')
-        other.gsub!('\z','$')
-        other.gsub!('\Z','$')
-        other.gsub!('\d','[0-9]')
-        other.gsub!('\D','[^0-9]')
-        other.gsub!('\w','[0-9A-Za-z]')
-        other.gsub!('\W','[^A-Za-z0-9_]')
+        other = other.source.gsub('\A', '^')
+        other.gsub!('\z', '$')
+        other.gsub!('\Z', '$')
+        other.gsub!('\d', '[0-9]')
+        other.gsub!('\D', '[^0-9]')
+        other.gsub!('\w', '[0-9A-Za-z]')
+        other.gsub!('\W', '[^A-Za-z0-9_]')
       else
         raise(ArgumentError)
       end

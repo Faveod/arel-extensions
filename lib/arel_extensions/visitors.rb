@@ -44,7 +44,7 @@ if defined?(Arel::Visitors::MSSQL)
         o = o.dup
         o.orders = []
       end
-      old_visit_Arel_Nodes_SelectStatement(o,collector)
+      old_visit_Arel_Nodes_SelectStatement(o, collector)
     end
   end
 
@@ -61,7 +61,7 @@ if defined?(Arel::Visitors::MSSQL)
               o = o.dup
               o.orders = []
             end
-            old_visit_Arel_Nodes_SelectStatement(o,collector)
+            old_visit_Arel_Nodes_SelectStatement(o, collector)
           end
 
           alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil

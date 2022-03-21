@@ -13,7 +13,7 @@ module ArelExtensions
       }.freeze
 
       LOADED_VISITOR::DATE_FORMAT_DIRECTIVES = {
-        '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' =>   '', '%b' => '', '%^b' => '', # year, month
+        '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' => '', '%b' => '', '%^b' => '', # year, month
         '%V' => 'iso_week', '%G' => '',                                                                # ISO week number and year of week
         '%d' => 'DD', '%e' => '', '%j' =>   '', '%w' => 'dw', '%A' => '',                              # day, weekday
         '%H' => 'hh', '%k' => '', '%I' =>   '', '%l' =>   '', '%P' => '', '%p' => '',                  # hours
@@ -35,7 +35,7 @@ module ArelExtensions
       # TODO; all others... http://www.sql-server-helper.com/tips/date-formats.aspx
       LOADED_VISITOR::DATE_CONVERT_FORMATS = {
         'YYYY-MM-DD' => 120,
-        'YY-MM-DD'  => 120,
+        'YY-MM-DD' => 120,
         'MM/DD/YYYY' => 101,
         'MM-DD-YYYY' => 110,
         'YYYY/MM/DD' => 111,
@@ -400,9 +400,9 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_AiIMatches o, collector
-        collector = visit o.left.collate(true,true), collector
+        collector = visit o.left.collate(true, true), collector
         collector << ' LIKE '
-        collector = visit o.right.collate(true,true), collector
+        collector = visit o.right.collate(true, true), collector
         if o.escape
           collector << ' ESCAPE '
           visit o.escape, collector
@@ -487,7 +487,7 @@ module ArelExtensions
           end
         collector << ') WITHIN GROUP (ORDER BY '
         if o.order.present?
-          o.order.each_with_index do |order,i|
+          o.order.each_with_index do |order, i|
             collector << Arel::Visitors::Oracle::COMMA if i != 0
             collector = visit order, collector
           end
@@ -516,7 +516,7 @@ module ArelExtensions
             'date'
           when :datetime
             'datetime'
-          when :number,:decimal, :float
+          when :number, :decimal, :float
             'decimal(10,6)'
           when :int
             collector << 'CAST(CAST('
@@ -538,32 +538,32 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_FormattedNumber o, collector
         col = o.left.coalesce(0)
-        locale = Arel.quoted(o.locale.tr('_','-'))
+        locale = Arel.quoted(o.locale.tr('_', '-'))
         param = Arel.quoted("N#{o.precision}")
-        sign = Arel.when(col<0).
+        sign = Arel.when(col < 0).
                   then('-').
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = o.flags.include?('+') || o.flags.include?(' ') ?
               Arel.quoted(1) :
-              Arel.when(col<0).then(1).else(0)
+              Arel.when(col < 0).then(1).else(0)
 
         number =
           if o.scientific_notation
             ArelExtensions::Nodes::Concat.new([
-                  Arel::Nodes::NamedFunction.new('FORMAT',[
-                    col.abs/Arel.quoted(10).pow(col.abs.log10.floor),
+                  Arel::Nodes::NamedFunction.new('FORMAT', [
+                    col.abs / Arel.quoted(10).pow(col.abs.log10.floor),
                     param,
                     locale
                   ]),
                   o.type,
-                  Arel::Nodes::NamedFunction.new('FORMAT',[
+                  Arel::Nodes::NamedFunction.new('FORMAT', [
                     col.abs.log10.floor,
                     Arel.quoted('N0'),
                     locale
                   ])
                 ])
           else
-            Arel::Nodes::NamedFunction.new('FORMAT',[
+            Arel::Nodes::NamedFunction.new('FORMAT', [
                 Arel.quoted(col.abs),
                 param,
                 locale
@@ -571,14 +571,14 @@ module ArelExtensions
           end
 
         repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
-          when(Arel.quoted(o.width).abs-(number.length+sign_length)>0).
+          when(Arel.quoted(o.width).abs - (number.length + sign_length) > 0).
           then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-            ).repeat(Arel.quoted(o.width).abs-(number.length+sign_length))
+            ).repeat(Arel.quoted(o.width).abs - (number.length + sign_length))
           ).
           else('')
-        before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
-        middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
+        before = (!o.flags.include?('0')) && (!o.flags.include?('-')) ? repeated_char : ''
+        middle = (o.flags.include?('0')) && (!o.flags.include?('-'))  ? repeated_char : ''
         after  = o.flags.include?('-') ? repeated_char : ''
         full_number =
           ArelExtensions::Nodes::Concat.new([
@@ -588,7 +588,7 @@ module ArelExtensions
             number,
             after
           ])
-        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix),full_number,Arel.quoted(o.suffix)]), collector
+        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix), full_number, Arel.quoted(o.suffix)]), collector
         collector
       end
 
@@ -617,14 +617,14 @@ module ArelExtensions
       end
 
 
-      def visit_ArelExtensions_Nodes_JsonGet o,collector
+      def visit_ArelExtensions_Nodes_JsonGet o, collector
         collector << 'JSON_VALUE('
         collector = visit o.dict, collector
         collector << Arel::Visitors::MySQL::COMMA
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
         else
-          collector = visit Arel.quoted('$.')+o.key, collector
+          collector = visit Arel.quoted('$.') + o.key, collector
         end
         collector << ')'
         collector

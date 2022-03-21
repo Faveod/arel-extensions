@@ -115,7 +115,7 @@ module ArelExtensions
         v ||= self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
-            v.to_i / (24*3600)
+            v.to_i / (24 * 3600)
           elsif @date_type == :datetime
             if v.parts.size == 1
               #       first entry in the dict v.parts; one of [:years, :months, :weeks, :days, :hours, :minutes, :seconds]
@@ -155,9 +155,9 @@ module ArelExtensions
           if ArelExtensions::Nodes::Duration === v
             v.with_interval = true
             case v.left
-            when 'd','m','y'
+            when 'd', 'm', 'y'
               Arel.sql('day')
-            when 'h','mn','s'
+            when 'h', 'mn', 's'
               Arel.sql('second')
             when /i\z/
               Arel.sql(ArelExtensions::Visitors::MSSQL::LOADED_VISITOR::DATE_MAPPING[v.left[0..-2]])

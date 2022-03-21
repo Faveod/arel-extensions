@@ -290,9 +290,9 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Duration o, collector
         if o.with_interval
           interval = case o.left
-            when  'd','m','y'
+            when  'd', 'm', 'y'
               'DAY'
-            when 'h','mn','s'
+            when 'h', 'mn', 's'
               'SECOND'
             when /i\z/
               collector << '('
@@ -332,14 +332,14 @@ module ArelExtensions
         collector << 'REGEXP_REPLACE('
         visit o.left, collector
         collector << Arel::Visitors::ToSql::COMMA
-        tab = o.pattern.inspect+ 'g' # Make it always global
+        tab = o.pattern.inspect + 'g' # Make it always global
         pattern = tab.split('/')[1..-2].join('/')
         flags = tab.split('/')[-1]
         visit Arel.quoted(pattern), collector
         collector << Arel::Visitors::ToSql::COMMA
         visit o.substitute, collector
         collector << Arel::Visitors::ToSql::COMMA
-        visit Arel.quoted(flags+'g'), collector
+        visit Arel.quoted(flags + 'g'), collector
         collector << ')'
         collector
       end
@@ -412,9 +412,9 @@ module ArelExtensions
         comma = o.precision == 0 ? '' : (NUMBER_COMMA_MAPPING[o.locale][0] || '.')
         thousand_separator = NUMBER_COMMA_MAPPING[o.locale][1] || (NUMBER_COMMA_MAPPING[o.locale] ? '' : 'G')
         nines_after = (1..o.precision).map{'9'}.join('')
-        nines_before = ("999#{thousand_separator}"*4+'990')
+        nines_before = ("999#{thousand_separator}" * 4 + '990')
 
-        sign = Arel.when(col<0).
+        sign = Arel.when(col < 0).
                   then('-').
                   else(o.flags.include?('+') ? '+' : (o.flags.include?(' ') ? ' ' : ''))
         sign_length = ArelExtensions::Nodes::Length.new([sign])
@@ -422,35 +422,35 @@ module ArelExtensions
         number =
           if o.scientific_notation
             ArelExtensions::Nodes::Concat.new([
-                Arel::Nodes::NamedFunction.new('TRIM',[
-                  Arel::Nodes::NamedFunction.new('TO_CHAR',[
-                    Arel.when(col.not_eq 0).then(col.abs/Arel.quoted(10).pow(col.abs.log10.floor)).else(1),
-                    Arel.quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
+                Arel::Nodes::NamedFunction.new('TRIM', [
+                  Arel::Nodes::NamedFunction.new('TO_CHAR', [
+                    Arel.when(col.not_eq 0).then(col.abs / Arel.quoted(10).pow(col.abs.log10.floor)).else(1),
+                    Arel.quoted('FM' + nines_before + '"' + comma + '"V' + nines_after)
                   ])]),
                 o.type,
-                Arel::Nodes::NamedFunction.new('TRIM',[
-                  Arel::Nodes::NamedFunction.new('TO_CHAR',[
+                Arel::Nodes::NamedFunction.new('TRIM', [
+                  Arel::Nodes::NamedFunction.new('TO_CHAR', [
                     Arel.when(col.not_eq 0).then(col.abs.log10.floor).else(0),
-                    Arel.quoted('FM'+nines_before)
+                    Arel.quoted('FM' + nines_before)
                   ])])
               ])
           else
-            Arel::Nodes::NamedFunction.new('TRIM',[
-              Arel::Nodes::NamedFunction.new('TO_CHAR',[
+            Arel::Nodes::NamedFunction.new('TRIM', [
+              Arel::Nodes::NamedFunction.new('TO_CHAR', [
                 Arel.quoted(col.abs),
-                Arel.quoted('FM'+nines_before+'"'+comma+'"V'+nines_after)
+                Arel.quoted('FM' + nines_before + '"' + comma + '"V' + nines_after)
               ])])
           end
 
         repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
-          when(Arel.quoted(o.width).abs-(number.length+sign_length)>0).
+          when(Arel.quoted(o.width).abs - (number.length + sign_length) > 0).
           then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-            ).repeat(Arel.quoted(o.width).abs-(number.length+sign_length))
+            ).repeat(Arel.quoted(o.width).abs - (number.length + sign_length))
           ).
           else('')
-        before = (!o.flags.include?('0'))&&(!o.flags.include?('-')) ? repeated_char : ''
-        middle = (o.flags.include?('0'))&&(!o.flags.include?('-'))  ? repeated_char : ''
+        before = (!o.flags.include?('0')) && (!o.flags.include?('-')) ? repeated_char : ''
+        middle = (o.flags.include?('0')) && (!o.flags.include?('-'))  ? repeated_char : ''
         after  = o.flags.include?('-') ? repeated_char : ''
         full_number = ArelExtensions::Nodes::Concat.new([
             before,
@@ -459,7 +459,7 @@ module ArelExtensions
             number,
             after
           ])
-        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix),full_number,Arel.quoted(o.suffix)]), collector
+        collector = visit ArelExtensions::Nodes::Concat.new([Arel.quoted(o.prefix), full_number, Arel.quoted(o.suffix)]), collector
         collector
       end
 
@@ -471,7 +471,7 @@ module ArelExtensions
           o = o.dup
           o.orders = []
         end
-        old_visit_Arel_Nodes_SelectStatement(o,collector)
+        old_visit_Arel_Nodes_SelectStatement(o, collector)
       end
 
       alias_method(:old_visit_Arel_Nodes_TableAlias, :visit_Arel_Nodes_TableAlias) rescue nil
@@ -479,7 +479,7 @@ module ArelExtensions
         if o.name.length > 63
           o = Arel::Table.new(o.table_name).alias(Arel.shorten(o.name))
         end
-        old_visit_Arel_Nodes_TableAlias(o,collector)
+        old_visit_Arel_Nodes_TableAlias(o, collector)
       end
 
       alias_method(:old_visit_Arel_Attributes_Attribute, :visit_Arel_Attributes_Attribute) rescue nil
@@ -507,11 +507,11 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Json o,collector
+      def visit_ArelExtensions_Nodes_Json o, collector
         case o.dict
         when Array
           collector << 'to_jsonb(array['
-          o.dict.each.with_index do |v,i|
+          o.dict.each.with_index do |v, i|
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
@@ -520,7 +520,7 @@ module ArelExtensions
           collector << '])'
         when Hash
           collector << 'jsonb_build_object('
-          o.dict.each.with_index do |(k,v),i|
+          o.dict.each.with_index do |(k, v), i|
             if i != 0
               collector << Arel::Visitors::MySQL::COMMA
             end
@@ -529,11 +529,11 @@ module ArelExtensions
             collector = visit v, collector
           end
           collector << ')'
-        when String,Numeric,TrueClass,FalseClass
+        when String, Numeric, TrueClass, FalseClass
           collector = visit Arel.quoted("#{o.dict}"), collector
           collector << '::jsonb'
         when NilClass
-          collector  << %Q['null'::jsonb]
+          collector << %Q['null'::jsonb]
         else
           collector = visit o.dict, collector
           collector << '::jsonb'
@@ -541,8 +541,8 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonMerge o,collector
-        o.expressions.each.with_index do |v,i|
+      def visit_ArelExtensions_Nodes_JsonMerge o, collector
+        o.expressions.each.with_index do |v, i|
           if i != 0
             collector << ' || '
           end
@@ -551,14 +551,14 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonGet o,collector
+      def visit_ArelExtensions_Nodes_JsonGet o, collector
         collector = visit o.dict, collector
         collector << ' ->> '
         collector = visit o.key, collector
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonSet o,collector
+      def visit_ArelExtensions_Nodes_JsonSet o, collector
         collector << 'jsonb_set('
         collector = visit o.dict, collector
         collector << Arel::Visitors::MySQL::COMMA
@@ -580,7 +580,7 @@ module ArelExtensions
         else
           case o.dict
           when Hash
-            o.dict.each.with_index do |(k,v),i|
+            o.dict.each.with_index do |(k, v), i|
               if i != 0
                 collector << ' || '
               end

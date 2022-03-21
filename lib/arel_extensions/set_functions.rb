@@ -4,15 +4,15 @@ require 'arel_extensions/nodes/union_all'
 module ArelExtensions
   module SetFunctions
     def +(other)
-      ArelExtensions::Nodes::Union.new(self,other)
+      ArelExtensions::Nodes::Union.new(self, other)
     end
 
     def union(other)
-      ArelExtensions::Nodes::Union.new(self,other)
+      ArelExtensions::Nodes::Union.new(self, other)
     end
 
     def union_all(other)
-      ArelExtensions::Nodes::UnionAll.new(self,other)
+      ArelExtensions::Nodes::UnionAll.new(self, other)
     end
 
     def uniq

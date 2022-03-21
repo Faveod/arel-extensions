@@ -22,17 +22,17 @@ module ArelExtensions
         case list
         when String
           i = list.split(',').index(val.to_s)
-          func.result = i ? (i+1) : 0
+          func.result = i ? (i + 1) : 0
         when NilClass
           func.result = nil
         else
           i = list.to_s.split(',').index(val.to_s)
-          func.result = i ? (i+1) : 0
+          func.result = i ? (i + 1) : 0
         end
       end
       db.create_function('instr', 1) do |func, value1, value2|
         i = value1.to_s.index(value2.to_s)
-        func.result = i ? (i+1) : 0
+        func.result = i ? (i + 1) : 0
       end rescue 'function instr already here (>= 3.8.5)'
     end
 
@@ -52,7 +52,7 @@ module ArelExtensions
           sql.split(/^GO\s*$/).each {|str|
             @cnx.execute(str.strip) unless str.blank?
           }
-        elsif env_db =='mysql'
+        elsif env_db == 'mysql'
           sql.split('$$')[1..-2].each { |str|
             @cnx.execute(str.strip) unless str.strip.blank?
           }

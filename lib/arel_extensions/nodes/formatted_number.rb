@@ -3,7 +3,7 @@ module ArelExtensions
     class FormattedNumber < Function
       RETURN_TYPE = :string
 
-      attr_accessor :locale, :prefix, :suffix, :flags, :scientific_notation, :width,:precision, :type, :original_string
+      attr_accessor :locale, :prefix, :suffix, :flags, :scientific_notation, :width, :precision, :type, :original_string
 
       def initialize expr
         # expr[1] = {locale: 'fr_FR', type: "e"/"f"/"d", prefix: "$ ", suffix: " %", flags: " +-#0", width: 5, precision: 6}
