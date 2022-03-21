@@ -17,22 +17,22 @@ module ArelExtensions
 
       # Math functions
       def visit_ArelExtensions_Nodes_Log10 o, collector
-        collector << "LOG10("
+        collector << 'LOG10('
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Power o, collector
-        collector << "POW("
+        collector << 'POW('
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
-        collector << ")"
+        collector << ')'
         collector
       end
 
@@ -123,23 +123,23 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Concat o, collector
-        collector << "CONCAT("
+        collector << 'CONCAT('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
           if (arg.is_a?(Numeric)) || (arg.is_a?(Arel::Attributes::Attribute))
-            collector << "CAST("
+            collector << 'CAST('
             collector = visit arg, collector
-            collector << " AS char)"
+            collector << ' AS char)'
           else
             collector = visit arg, collector
           end
         }
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
-        collector << "GROUP_CONCAT("
+        collector << 'GROUP_CONCAT('
         collector = visit o.left, collector
         if !o.order.blank?
           collector << ' ORDER BY '
@@ -152,50 +152,50 @@ module ArelExtensions
           collector << ' SEPARATOR '
           collector = visit o.separator, collector
         end
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Trim o, collector
         collector << 'TRIM(' # BOTH
         collector = visit o.right, collector
-        collector << " FROM "
+        collector << ' FROM '
         collector = visit o.left, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Ltrim o, collector
         collector << 'TRIM(LEADING '
         collector = visit o.right, collector
-        collector << " FROM "
+        collector << ' FROM '
         collector = visit o.left, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Rtrim o, collector
         collector << 'TRIM(TRAILING '
         collector = visit o.right, collector
-        collector << " FROM "
+        collector << ' FROM '
         collector = visit o.left, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Repeat o, collector
-        collector << "REPEAT("
+        collector << 'REPEAT('
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::ToSql::COMMA if i != 0
           collector = visit arg, collector
         }
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_RegexpReplace o, collector
         if !regexp_replace_supported?
-          warn("Warning: ArelExtensions: REGEXP_REPLACE does not seem to be available in the current version of the DBMS, it might crash")
+          warn('Warning: ArelExtensions: REGEXP_REPLACE does not seem to be available in the current version of the DBMS, it might crash')
         end
         super(o,collector)
       end
@@ -204,8 +204,8 @@ module ArelExtensions
         case o.col_type
         when :date, :datetime, :time
           fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
-          collector << "DATE_FORMAT("
-          collector << "CONVERT_TZ(" if o.time_zone
+          collector << 'DATE_FORMAT('
+          collector << 'CONVERT_TZ(' if o.time_zone
           collector = visit o.left, collector
           case o.time_zone
           when Hash
@@ -222,15 +222,15 @@ module ArelExtensions
           end
           collector << COMMA
           collector = visit Arel.quoted(fmt), collector
-          collector << ")"
+          collector << ')'
         when :integer, :float, :decimal
-          collector << "FORMAT("
+          collector << 'FORMAT('
           collector = visit o.left, collector
           collector << Arel::Visitors::ToSql::COMMA
           collector << '2'
           collector << Arel::Visitors::ToSql::COMMA
           collector = visit o.right, collector
-          collector << ")"
+          collector << ')'
         else
           collector = visit o.left, collector
         end
@@ -248,7 +248,7 @@ module ArelExtensions
           collector = visit o.right, collector
           collector << COMMA
           collector = visit o.left, collector
-          collector << ")"
+          collector << ')'
         else
           collector << '('
           collector = visit o.left, collector
@@ -268,19 +268,19 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_DateAdd o, collector
-        collector << "DATE_ADD("
+        collector << 'DATE_ADD('
         collector = visit o.left, collector
         collector << COMMA
         collector = visit o.mysql_value(o.right), collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_Duration o, collector
         if o.left == 'wd'
-          collector << "(WEEKDAY("
+          collector << '(WEEKDAY('
           collector = visit o.right, collector
-          collector << ") + 1) % 7"
+          collector << ') + 1) % 7'
         else
           if o.with_interval
             interval =
@@ -293,33 +293,33 @@ module ArelExtensions
                 DATE_MAPPING[o.left[0..-2]]
               end
           end
-          collector << " INTERVAL " if o.with_interval && interval
+          collector << ' INTERVAL ' if o.with_interval && interval
           collector << "#{DATE_MAPPING[o.left]}("
           collector = visit o.right, collector
-          collector << ")"
+          collector << ')'
           collector << " #{interval} " if o.with_interval && interval
         end
         collector
       end
 
       def visit_ArelExtensions_Nodes_IsNull o, collector
-        collector << "ISNULL("
+        collector << 'ISNULL('
         collector = visit o.expr, collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
-          collector << "NOT ISNULL("
+          collector << 'NOT ISNULL('
           collector = visit o.expr, collector
-          collector << ")"
+          collector << ')'
           collector
       end
 
       def visit_ArelExtensions_Nodes_Wday o, collector
-        collector << "(WEEKDAY("
+        collector << '(WEEKDAY('
         collector = visit o.date, collector
-        collector << ") + 1) % 7"
+        collector << ') + 1) % 7'
         collector
       end
 
@@ -336,11 +336,11 @@ module ArelExtensions
           else                        o.as_attr.to_s
           end
 
-        collector << "CAST("
+        collector << 'CAST('
         collector = visit o.left, collector
-        collector << " AS "
+        collector << ' AS '
         collector = visit Arel::Nodes::SqlLiteral.new(as_attr), collector
-        collector << ")"
+        collector << ')'
         collector
       end
 
@@ -362,7 +362,7 @@ module ArelExtensions
         else
           collector = visit o.left, collector
         end
-        collector << " AS "
+        collector << ' AS '
 
         # sometimes these values are already quoted, if they are, don't double quote it
         quote = o.right.is_a?(Arel::Nodes::SqlLiteral) && o.right[0] != '`' && o.right[-1] != '`'
@@ -421,39 +421,39 @@ module ArelExtensions
 
       def visit_Aggregate_For_AggregateFunction o, collector
         if !window_supported?
-          warn("Warning: ArelExtensions: Window Functions are not available in the current version of the DBMS.")
+          warn('Warning: ArelExtensions: Window Functions are not available in the current version of the DBMS.')
           return collector
         end
 
         if !o.order.empty? || !o.group.empty?
-          collector << " OVER ("
+          collector << ' OVER ('
           if !o.group.empty?
-            collector << " PARTITION BY ("
+            collector << ' PARTITION BY ('
             visit o.group, collector
-            collector << ")"
+            collector << ')'
           end
           if !o.order.empty?
-            collector << " ORDER BY ("
+            collector << ' ORDER BY ('
             visit o.order, collector
-            collector << ")"
+            collector << ')'
           end
-          collector << ")"
+          collector << ')'
         end
         collector
       end
 
       def visit_ArelExtensions_Nodes_Std o, collector
-        collector << (o.unbiased_estimator ? "STDDEV_SAMP(" : "STDDEV_POP(")
+        collector << (o.unbiased_estimator ? 'STDDEV_SAMP(' : 'STDDEV_POP(')
         visit o.left, collector
-        collector << ")"
+        collector << ')'
         visit_Aggregate_For_AggregateFunction o, collector
         collector
       end
 
       def visit_ArelExtensions_Nodes_Variance o, collector
-        collector << (o.unbiased_estimator ? "VAR_SAMP(" : "VAR_POP(")
+        collector << (o.unbiased_estimator ? 'VAR_SAMP(' : 'VAR_POP(')
         visit o.left, collector
-        collector << ")"
+        collector << ')'
         visit_Aggregate_For_AggregateFunction o, collector
         collector
       end

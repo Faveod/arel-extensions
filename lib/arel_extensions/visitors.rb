@@ -32,9 +32,9 @@ if defined?(Arel::Visitors::MSSQL)
       else
         collector = visit o.left, collector
       end
-      collector << " AS ["
+      collector << ' AS ['
       collector = visit o.right, collector
-      collector << "]"
+      collector << ']'
       collector
     end
 
@@ -73,9 +73,9 @@ if defined?(Arel::Visitors::MSSQL)
             else
               collector = visit o.left, collector
             end
-            collector << " AS ["
+            collector << ' AS ['
             collector = visit o.right, collector
-            collector << "]"
+            collector << ']'
             collector
           end
 

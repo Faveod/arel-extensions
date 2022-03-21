@@ -39,6 +39,9 @@ Style/Encoding:
 Style/MethodCallWithArgsParentheses:
   Enabled: false
 
+Style/StringLiterals:
+  Enabled: true
+
 # Performance cops have been transferred to rubocop-performance gem.
 require: rubocop-performance
 

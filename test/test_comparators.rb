@@ -17,23 +17,23 @@ module ArelExtensions
         @visitor.accept(node, Arel::Collectors::SQLString.new).value
       end
 
-      it "< is equal lt" do
+      it '< is equal lt' do
         _(compile(@table[:id] < 10)).must_be_like('"users"."id" < 10')
       end
 
-      it "<= is equal lteq" do
+      it '<= is equal lteq' do
         _(compile(@table[:id] <= 10)).must_be_like('"users"."id" <= 10')
       end
 
-      it "> is equal gt" do
+      it '> is equal gt' do
         _(compile(@table[:id] > 10)).must_be_like('"users"."id" > 10')
       end
 
-      it "< is equal gteq" do
+      it '< is equal gteq' do
         _(compile(@table[:id] >= 10)).must_be_like('"users"."id" >= 10')
       end
 
-      it "should compare with dates" do
+      it 'should compare with dates' do
         _(compile(@table[:created_at] >= Date.new(2016, 3, 31)))
           .must_be_like %{"users"."created_at" >= '2016-03-31'}
       end

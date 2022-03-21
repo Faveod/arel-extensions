@@ -29,15 +29,15 @@ module ArelExtensions
         @table = Arel::Table.new(:users)
         @cols = ['id', 'name', 'comments', 'created_at']
         @data = [
-              [23, 'nom1', "sdfdsfdsfsdf", '2016-01-01'],
-              [25, 'nom2', "sdfdsfdsfsdf", '2016-01-01']
+              [23, 'nom1', 'sdfdsfdsfsdf', '2016-01-01'],
+              [25, 'nom2', 'sdfdsfdsfsdf', '2016-01-01']
         ]
       end
       after do
         @cnx.drop_table(:users)
       end
 
-      it "should import large set of data" do
+      it 'should import large set of data' do
         insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(ActiveRecord::Base).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         _(insert_manager.to_sql)
