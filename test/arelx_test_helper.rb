@@ -26,17 +26,18 @@ end
 #     The issue also seems to be related to arel version: at some point, arel
 #     dropped its wide support for DBs and kept Postgres, MySQL and SQLite.
 #     Here, we're just trying to load the correct ones.
-db_and_gem = if RUBY_ENGINE == 'jruby'
-                {
-                  'oracle'     => 'activerecord-oracle_enhanced-adapter',
-                  'mssql'      => 'activerecord-jdbcsqlserver-adapter'
-                }
-              else
-                {
-                  'oracle'     => 'activerecord-oracle_enhanced-adapter',
-                  'mssql'      => 'activerecord-sqlserver-adapter'
-                }
-              end
+db_and_gem =
+  if RUBY_ENGINE == 'jruby'
+    {
+      'oracle'     => 'activerecord-oracle_enhanced-adapter',
+      'mssql'      => 'activerecord-jdbcsqlserver-adapter'
+    }
+  else
+    {
+      'oracle'     => 'activerecord-oracle_enhanced-adapter',
+      'mssql'      => 'activerecord-sqlserver-adapter'
+    }
+  end
 
 def load_lib(gem)
   if gem && (RUBY_ENGINE == 'jruby' || Arel::VERSION.to_i > 9)

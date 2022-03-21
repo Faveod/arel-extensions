@@ -31,27 +31,27 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_AiMatches o, collector
-          collector = visit o.left.ai_collate, collector
-          collector << ' LIKE '
-          collector = visit o.right.ai_collate, collector
-          if o.escape
-            collector << ' ESCAPE '
-            visit o.escape, collector
-          else
-            collector
-          end
+        collector = visit o.left.ai_collate, collector
+        collector << ' LIKE '
+        collector = visit o.right.ai_collate, collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
       end
 
       def visit_ArelExtensions_Nodes_AiIMatches o, collector
-          collector = visit o.left.collate(true, true), collector
-          collector << ' LIKE '
-          collector = visit o.right.collate(true, true), collector
-          if o.escape
-            collector << ' ESCAPE '
-            visit o.escape, collector
-          else
-            collector
-          end
+        collector = visit o.left.collate(true, true), collector
+        collector << ' LIKE '
+        collector = visit o.right.collate(true, true), collector
+        if o.escape
+          collector << ' ESCAPE '
+          visit o.escape, collector
+        else
+          collector
+        end
       end
 
       def visit_ArelExtensions_Nodes_SMatches o, collector
@@ -162,7 +162,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
-          collector = visit o.expr, collector
+        collector = visit o.expr, collector
           collector << ' IS NOT NULL'
           collector
       end
@@ -243,16 +243,16 @@ module ArelExtensions
             collector << 'SELECT '
             len = row.length - 1
             row.zip(o.cols).each_with_index { |(value, attr), i|
-                case value
-                when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
-                  collector = visit value.as(attr.name), collector
-                else
-                  collector << quote(value, attr && column_for(attr)).to_s
-                  if idx == 0
-                    collector << ' AS '
-                    collector << quote(attr.name)
-                  end
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value.as(attr.name), collector
+              else
+                collector << quote(value, attr && column_for(attr)).to_s
+                if idx == 0
+                  collector << ' AS '
+                  collector << quote(attr.name)
                 end
+              end
                 collector << COMMA unless i == len
             }
             collector << ' UNION ALL ' unless idx == o.left.length - 1
@@ -265,22 +265,22 @@ module ArelExtensions
             collector << 'SELECT '
             len = row.length - 1
             row.zip(o.cols).each_with_index { |(value, attr), i|
-                case value
-                when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
-                  collector = visit value.as(attr.name), collector
-                when Integer
-                  collector << value.to_s
-                  if idx == 0
-                    collector << ' AS '
-                    collector << quote(attr.name)
-                  end
-                else
-                  collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
-                  if idx == 0
-                    collector << ' AS '
-                    collector << quote(attr.name)
-                  end
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                collector = visit value.as(attr.name), collector
+              when Integer
+                collector << value.to_s
+                if idx == 0
+                  collector << ' AS '
+                  collector << quote(attr.name)
                 end
+              else
+                collector << (attr && attr.able_to_type_cast? ? quote(attr.type_cast_for_database(value)) : quote(value).to_s)
+                if idx == 0
+                  collector << ' AS '
+                  collector << quote(attr.name)
+                end
+              end
                 collector << COMMA unless i == len
             }
             collector << ' UNION ALL ' unless idx == o.left.length - 1

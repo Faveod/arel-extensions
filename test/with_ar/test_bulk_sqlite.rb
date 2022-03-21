@@ -38,7 +38,7 @@ module ArelExtensions
       end
 
       it 'should import large set of data' do
-        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(ActiveRecord::Base).into(@table)
+        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new.into(@table) : Arel::InsertManager.new(ActiveRecord::Base).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         _(insert_manager.to_sql)
           .must_be_like %Q[INSERT INTO "users" ("id", "name", "comments", "created_at")

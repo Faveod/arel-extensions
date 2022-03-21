@@ -108,21 +108,21 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Collate o, collector
-      if o.ai
-        collector << 'NLSSORT('
-        collector = visit o.expressions.first, collector
-        collector << COMMA
-        collector << "'NLS_SORT = BINARY_AI NLS_COMP = LINGUISTIC'"
-        collector << ')'
-      elsif o.ci
-        collector << 'NLSSORT('
-        collector = visit o.expressions.first, collector
-        collector << COMMA
-        collector << "'NLS_SORT = BINARY_CI NLS_COMP = LINGUISTIC'"
-        collector << ')'
-      else
-        collector = visit o.expressions.first, collector
-      end
+        if o.ai
+          collector << 'NLSSORT('
+          collector = visit o.expressions.first, collector
+          collector << COMMA
+          collector << "'NLS_SORT = BINARY_AI NLS_COMP = LINGUISTIC'"
+          collector << ')'
+        elsif o.ci
+          collector << 'NLSSORT('
+          collector = visit o.expressions.first, collector
+          collector << COMMA
+          collector << "'NLS_SORT = BINARY_CI NLS_COMP = LINGUISTIC'"
+          collector << ')'
+        else
+          collector = visit o.expressions.first, collector
+        end
       collector
       end
 
@@ -657,7 +657,7 @@ module ArelExtensions
               ])
         end
 
-        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
+        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new.
           when(Arel.quoted(o.width).abs - (number.length + sign_length) > 0).
           then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')

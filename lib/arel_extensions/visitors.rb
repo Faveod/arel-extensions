@@ -92,6 +92,6 @@ if defined?(Arel::Visitors::MSSQL)
     end
   rescue LoadError
   rescue => e
-      e
+    e
   end
 end

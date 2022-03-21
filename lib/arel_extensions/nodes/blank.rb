@@ -16,7 +16,7 @@ module ArelExtensions
       RETURN_TYPE = :boolean
 
       def initialize expr
-          super expr.first
+        super expr.first
       end
     end
   end

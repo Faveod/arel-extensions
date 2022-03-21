@@ -310,7 +310,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
-          collector << 'NOT ISNULL('
+        collector << 'NOT ISNULL('
           collector = visit o.expr, collector
           collector << ')'
           collector
@@ -398,7 +398,7 @@ module ArelExtensions
             Arel::Nodes::NamedFunction.new('FORMAT', [col.abs] + params)
           end
 
-        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
+        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new.
           when(Arel.quoted(o.width).abs - (number.length + sign_length) > 0).
           then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')

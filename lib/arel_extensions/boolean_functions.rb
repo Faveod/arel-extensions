@@ -30,7 +30,7 @@ class Arel::Nodes::And
   def self.new *children
     children =
       children.flatten.map { |c|
-      c.is_a?(self) ? c.children : c
+        c.is_a?(self) ? c.children : c
       }.flatten
     super(children)
   end
@@ -50,7 +50,7 @@ class Arel::Nodes::Or
   def self.new *children
     children =
       children.flatten.map { |c|
-      c.is_a?(self) ? c.children : c
+        c.is_a?(self) ? c.children : c
       }.flatten
     super(*children)
   end

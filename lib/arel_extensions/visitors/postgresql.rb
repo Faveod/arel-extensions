@@ -147,21 +147,21 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Trim o, collector
-          collector << 'TRIM(BOTH '
-          collector = visit o.right, collector
-          collector << ' FROM '
-          collector = visit o.left, collector
-          collector << ')'
-          collector
+        collector << 'TRIM(BOTH '
+        collector = visit o.right, collector
+        collector << ' FROM '
+        collector = visit o.left, collector
+        collector << ')'
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Ltrim o, collector
-          collector << 'TRIM(LEADING '
-          collector = visit o.right, collector
-          collector << ' FROM '
-          collector = visit o.left, collector
-          collector << ')'
-          collector
+        collector << 'TRIM(LEADING '
+        collector = visit o.right, collector
+        collector << ' FROM '
+        collector = visit o.left, collector
+        collector << ')'
+        collector
       end
 
       def visit_ArelExtensions_Nodes_Rtrim o, collector
@@ -264,9 +264,9 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         if o.right_node_type == :ruby_date || o.right_node_type == :ruby_time || o.right_node_type == :date || o.right_node_type == :datetime || o.right_node_type == :time
           collector << if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
-                          "DATEDIFF('second', "
+                         "DATEDIFF('second', "
                       else
-                          "DATEDIFF('day', "
+                        "DATEDIFF('day', "
                       end
           collector = visit o.right, collector
           collector << (o.right_node_type == :date ? '::date' : '::timestamp')
@@ -351,7 +351,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_IsNotNull o, collector
-          collector = visit o.expr, collector
+        collector = visit o.expr, collector
           collector << ' IS NOT NULL'
           collector
       end
@@ -442,7 +442,7 @@ module ArelExtensions
               ])])
           end
 
-        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new().
+        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new.
           when(Arel.quoted(o.width).abs - (number.length + sign_length) > 0).
           then(Arel.quoted(
               o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')

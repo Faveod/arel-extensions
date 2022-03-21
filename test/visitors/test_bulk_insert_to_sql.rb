@@ -25,7 +25,7 @@ module ArelExtensions
 
 
       it 'should import large set of data using ToSql' do
-        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new().into(@table) : Arel::InsertManager.new(@conn).into(@table)
+        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new.into(@table) : Arel::InsertManager.new(@conn).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         _(compile(insert_manager.ast))
           .must_be_like %Q[INSERT INTO "users" ("id", "name", "comments", "created_at") VALUES (23, 'nom1', 'sdfdsfdsfsdf', '2016-01-01'), (25, 'nom2', 'sdfdsfdsfsdf', '2016-01-01')]
