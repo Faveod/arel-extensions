@@ -32,13 +32,13 @@ module ArelExtensions
           @as_attr = :string
         end
         tab = [convert_to_node(expr.first)]
-        return super(tab)
+        super(tab)
       end
 
       def +(other)
         case @return_type
         when :string
-          return ArelExtensions::Nodes::Concat.new [self, other]
+          ArelExtensions::Nodes::Concat.new [self, other]
         when :ruby_time
           ArelExtensions::Nodes::DateAdd.new [self, other]
         else

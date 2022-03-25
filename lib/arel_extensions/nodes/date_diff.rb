@@ -43,19 +43,19 @@ module ArelExtensions
         tab = expr.map do |arg|
           convert(arg)
         end
-        return super(tab)
+        super(tab)
       end
 
       def sqlite_value
         v = self.expressions.last
         if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
           if @date_type == :date
-            return Arel.quoted((v.value >= 0 ? '+' : '-') + v.inspect)
+            Arel.quoted((v.value >= 0 ? '+' : '-') + v.inspect)
           elsif @date_type == :datetime
-            return Arel.quoted((v.value >= 0 ? '+' : '-') + v.inspect)
+            Arel.quoted((v.value >= 0 ? '+' : '-') + v.inspect)
           end
         else
-          return v
+          v
         end
       end
 

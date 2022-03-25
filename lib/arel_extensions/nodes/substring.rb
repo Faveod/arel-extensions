@@ -8,7 +8,7 @@ module ArelExtensions
         if expr[2]
           tab << convert_to_node(expr[2])
         end
-        return super(tab)
+        super(tab)
       end
     end
   end
