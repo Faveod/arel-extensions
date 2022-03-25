@@ -39,11 +39,11 @@ module ArelExtensions
         Arel.grouping(Arel::Nodes::Addition.new self, other)
       else
         col = Arel.column_of(self.relation.table_name, self.name.to_s) if self.respond_to?(:relation)
-        if (!col) # if the column doesn't exist in the database
+        if !col # if the column doesn't exist in the database
           Arel.grouping(Arel::Nodes::Addition.new(self, Arel.quoted(other)))
         else
           arg = col.type
-          if arg == :integer || (!arg)
+          if arg == :integer || !arg
             other = other.to_i if other.is_a?(String)
             Arel.grouping(Arel::Nodes::Addition.new self, Arel.quoted(other))
           elsif arg == :decimal || arg == :float
@@ -83,7 +83,7 @@ module ArelExtensions
         Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
       else
         col = Arel.column_of(self.relation.table_name, self.name.to_s)
-        if (!col) # if the column doesn't exist in the database
+        if !col # if the column doesn't exist in the database
           Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
         else
           arg = col.type
@@ -91,7 +91,7 @@ module ArelExtensions
             case other
             when Arel::Attributes::Attribute
               col2 = Arel.column_of(other.relation.table_name, other.name.to_s)
-              if (!col2) # if the column doesn't exist in the database
+              if !col2 # if the column doesn't exist in the database
                 ArelExtensions::Nodes::DateSub.new [self, other]
               else
                 arg2 = col2.type

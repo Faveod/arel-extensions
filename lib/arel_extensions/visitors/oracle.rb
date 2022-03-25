@@ -601,7 +601,7 @@ module ArelExtensions
         else
           collector = visit o.left, collector
         end
-        quote = o.right.to_s =~ /(\A["].*["]\z)|\A[a-zA-Z_]*\z/ ? '' : '"'
+        quote = /(\A".*"\z)|\A[a-zA-Z_]*\z/.match?(o.right.to_s) ? '' : '"'
         collector << " AS #{quote}"
         collector = visit o.right, collector
         collector << "#{quote}"
@@ -664,8 +664,8 @@ module ArelExtensions
             ).repeat(Arel.quoted(o.width).abs - (number.length + sign_length))
           ).
           else('')
-        before = (!o.flags.include?('0')) && (!o.flags.include?('-')) ? repeated_char : ''
-        middle = (o.flags.include?('0')) && (!o.flags.include?('-'))  ? repeated_char : ''
+        before = !o.flags.include?('0') && !o.flags.include?('-') ? repeated_char : ''
+        middle = o.flags.include?('0') && !o.flags.include?('-')  ? repeated_char : ''
         after  = o.flags.include?('-') ? repeated_char : ''
         full_number = ArelExtensions::Nodes::Concat.new([
             before,

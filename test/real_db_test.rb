@@ -14,7 +14,7 @@ def setup_db
     ActiveRecord::Base.default_timezone = :utc
   end
   @cnx = ActiveRecord::Base.connection
-  if ActiveRecord::Base.connection.adapter_name =~ /sqlite/i
+  if /sqlite/i.match?(ActiveRecord::Base.connection.adapter_name)
     $sqlite = true
     db = @cnx.raw_connection
     if !$load_extension_disabled
@@ -82,7 +82,7 @@ class ListTest < Minitest::Test
   end
 
   def test_coalesce
-    if @cnx.adapter_name =~ /pgsql/i
+    if /pgsql/i.match?(@cnx.adapter_name)
       assert_equal 100, User.where(User.arel_table[:name].eq('Test')).select((User.arel_table[:age].coalesce(100)).as('res')).first.res
         assert_equal 'Camille', User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].coalesce('Null', 'default')).as('res')).first.res
     else
@@ -128,7 +128,7 @@ class ListTest < Minitest::Test
   end
 
   def test_isnull
-    if ActiveRecord::Base.connection.adapter_name =~ /pgsql/i
+    if /pgsql/i.match?(ActiveRecord::Base.connection.adapter_name)
       assert_equal 100, User.where(User.arel_table[:name].eq('Test')).select((User.arel_table[:age].isnull(100)).as('res')).first.res
     else
       assert_equal 'default', User.where(User.arel_table[:name].eq('Test')).select((User.arel_table[:age].isnull('default')).as('res')).first.res
@@ -196,8 +196,8 @@ class ListTest < Minitest::Test
   end
 
   def test_replace
-    assert_equal 'LucaX', User.where(User.arel_table[:name].eq('Lucas')).select(((User.arel_table[:name]).replace('s', 'X')).as('res')).first.res
-    assert_equal 'replace', User.where(User.arel_table[:name].eq('Lucas')).select(((User.arel_table[:name]).replace(User.arel_table[:name], 'replace')).as('res')).first.res
+    assert_equal 'LucaX', User.where(User.arel_table[:name].eq('Lucas')).select((User.arel_table[:name].replace('s', 'X')).as('res')).first.res
+    assert_equal 'replace', User.where(User.arel_table[:name].eq('Lucas')).select((User.arel_table[:name].replace(User.arel_table[:name], 'replace')).as('res')).first.res
   end
 
   def test_round

@@ -56,7 +56,7 @@ module ArelExtensions
         collector << 'COALESCE('
         collector = visit o.left, collector
         collector << ','
-        if (o.right.is_a?(Arel::Attributes::Attribute))
+        if o.right.is_a?(Arel::Attributes::Attribute)
           collector = visit o.right, collector
         else
           collector << "'#{o.right}'"

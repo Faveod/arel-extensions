@@ -582,8 +582,8 @@ module ArelExtensions
             ).repeat(Arel.quoted(o.width).abs - (number.length + sign_length))
           ).
           else('')
-        before = (!o.flags.include?('0')) && (!o.flags.include?('-')) ? repeated_char : ''
-        middle = (o.flags.include?('0')) && (!o.flags.include?('-'))  ? repeated_char : ''
+        before = !o.flags.include?('0') && !o.flags.include?('-') ? repeated_char : ''
+        middle = o.flags.include?('0') && !o.flags.include?('-')  ? repeated_char : ''
         after  = o.flags.include?('-') ? repeated_char : ''
         full_number =
           ArelExtensions::Nodes::Concat.new([

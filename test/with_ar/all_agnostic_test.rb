@@ -602,8 +602,8 @@ module ArelExtensions
       def test_datetime_diff
         assert_equal 0, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 42)).to_i
         if @env_db == 'oracle' && Arel::VERSION.to_i > 6 # in rails 5, result is multiplied by 24*60*60 = 86400...
-          assert_equal 42 * 86400, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
-          assert_equal(-3600 * 86400, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
+          assert_equal 42 * 86_400, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
+          assert_equal(-3600 * 86_400, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
         else
           assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
           assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
@@ -658,12 +658,12 @@ module ArelExtensions
       # TODO; cast types
       def test_cast_types
         assert_equal '5', t(@lucas, @age.cast(:string))
-        skip 'jdbc adapters does not work properly here (v52 works fine)' if RUBY_PLATFORM =~ /java/i
+        skip 'jdbc adapters does not work properly here (v52 works fine)' if RUBY_PLATFORM.match?(/java/i)
         if @env_db == 'mysql' || @env_db == 'postgresql' || @env_db == 'oracle' || @env_db == 'mssql'
           assert_equal 1, t(@laure, Arel.when(@duration.cast(:time).cast(:string).eq('12:42:21')).then(1).else(0)) unless @env_db == 'oracle' || @env_db == 'mssql'
           assert_equal 1, t(@laure, Arel.when(@duration.cast(:time).eq('12:42:21')).then(1).else(0)) unless @env_db == 'oracle'
-          assert_equal '20.16', t(@laure, @score.cast(:string)).gsub(/[0]*\z/, '')
-          assert_equal '20.161', t(@laure, @score.cast(:string) + 1).gsub(/[0]*1\z/, '1')
+          assert_equal '20.16', t(@laure, @score.cast(:string)).gsub(/0*\z/, '')
+          assert_equal '20.161', t(@laure, @score.cast(:string) + 1).gsub(/0*1\z/, '1')
           assert_equal 21.16, t(@laure, @score.cast(:string).cast(:decimal) + 1)
           assert_equal 21, t(@laure, @score.cast(:string).cast(:int) + 1)
 
@@ -747,8 +747,8 @@ module ArelExtensions
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(23)) + @ut.project(@age).where(@age.eq(21))).as('my_union')).length
         assert_equal 2, User.select('*').from((@ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(20)) + @ut.project(@age).where(@age.eq(21))).as('my_union')).length
 
-        assert_equal 3, User.find_by_sql((@ut.project(@age).where(@age.gt(22)).union_all(@ut.project(@age).where(@age.lt(0)))).to_sql).length
-        assert_equal 3, User.find_by_sql((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(20))).union_all(@ut.project(@age).where(@age.eq(21)))).to_sql).length
+        assert_equal 3, User.find_by_sql(@ut.project(@age).where(@age.gt(22)).union_all(@ut.project(@age).where(@age.lt(0))).to_sql).length
+        assert_equal 3, User.find_by_sql(@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(20))).union_all(@ut.project(@age).where(@age.eq(21))).to_sql).length
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.gt(22)).union_all(@ut.project(@age).where(@age.lt(0)))).as('my_union')).length
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(23))).union_all(@ut.project(@age).where(@age.eq(21)))).as('my_union')).length
         assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(20))).union_all(@ut.project(@age).where(@age.eq(21)))).as('my_union')).length
@@ -786,10 +786,10 @@ module ArelExtensions
         assert_includes ['$ 6,56e1 €', '$ 6,56e+01 €'], t(@arthur, @score.format_number('$ %.2e €', 'fr_FR'))
         assert_includes ['$ 6,56E1 €', '$ 6,56E+01 €'], t(@arthur, @score.format_number('$ %.2E €', 'fr_FR'))
         assert_includes ['$ 6,562E1 €', '$ 6,562E+01 €'], t(@arthur, @score.format_number('$ %.3E €', 'fr_FR'))
-        assert_equal '123 456 765,6', t(@arthur, (@score + 123456700).format_number('%.1f', 'sv_SE')).gsub("\u00A0", ' ') # some DBMS put no-break space here (it makes sense thus)
-        assert_equal '123456765,6', t(@arthur, (@score + 123456700).format_number('%.1f', 'fr_FR')).gsub("\u00A0", '') # because SqlServer does it like no one else
-        assert_equal '123,456,765.6', t(@arthur, (@score + 123456700).format_number('%.1f', 'en_US'))
-        assert_equal '   123,456,765.6', t(@arthur, (@score + 123456700).format_number('%16.1f', 'en_US'))
+        assert_equal '123 456 765,6', t(@arthur, (@score + 123_456_700).format_number('%.1f', 'sv_SE')).tr("\u00A0", ' ') # some DBMS put no-break space here (it makes sense thus)
+        assert_equal '123456765,6', t(@arthur, (@score + 123_456_700).format_number('%.1f', 'fr_FR')).delete("\u00A0") # because SqlServer does it like no one else
+        assert_equal '123,456,765.6', t(@arthur, (@score + 123_456_700).format_number('%.1f', 'en_US'))
+        assert_equal '   123,456,765.6', t(@arthur, (@score + 123_456_700).format_number('%16.1f', 'en_US'))
         assert_equal '$ 0,00 €', t(@arthur, @score.when(65.62).then(Arel.sql('null')).else(1).format_number('$ %.2f €', 'fr_FR'))
         assert_equal '$ 0,00 €', t(@arthur, (@score - 65.62).format_number('$ %.2f €', 'fr_FR'))
       end
@@ -959,14 +959,14 @@ module ArelExtensions
         assert_equal ['Arthur', 'Arthur'], parse_json(t(@arthur, Arel.json(@name, @name)))
         assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 'ArthurArthur'}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => @name + @name})))
         assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 1}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => 1})))
-        assert_equal ([{'age' => 21}, {'name' => 'Arthur', 'score' => 65.62}]), parse_json(t(@arthur, Arel.json([{age: @age}, {name: @name, score: @score}])))
+        assert_equal [{'age' => 21}, {'name' => 'Arthur', 'score' => 65.62}], parse_json(t(@arthur, Arel.json([{age: @age}, {name: @name, score: @score}])))
 
         # aggregate
         assert_equal ({'5' => 'Lucas', '15' => 'Sophie', '23' => 'Myung', '25' => 'Laure'}),
                      parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16), Arel.json({@age => @name}).group(false)))
         assert_equal ({'5' => 'Lucas', '15' => 'Sophie', '23' => 'Myung', '25' => 'Laure', 'Laure' => 25, 'Lucas' => 5, 'Myung' => 23, 'Sophie' => 15}),
                      parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16), Arel.json({@age => @name, @name => @age}).group(false)))
-        assert_equal ([{'5' => 'Lucas'}, { '15' => 'Sophie'}, { '23' => 'Myung'}, { '25' => 'Laure'}]),
+        assert_equal [{'5' => 'Lucas'}, { '15' => 'Sophie'}, { '23' => 'Myung'}, { '25' => 'Laure'}],
                      parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score), Arel.json({@age => @name}).group(true, [@age])))
 
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_sql

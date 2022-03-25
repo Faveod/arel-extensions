@@ -66,7 +66,7 @@ module FakeRecord
     end
 
     def in_clause_length
-      10000
+      10_000
     end
 
     def quote thing, column = nil
