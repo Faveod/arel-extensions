@@ -11,7 +11,7 @@ module ArelExtensions
           # test become flaky.
           #
           # The first time `Arel::Table.engine` is called
-          # from `ArelExtenstions::column_of_via_arel_table(table_name, column_name)`
+          # from `ArelExtensions.column_of_via_arel_table(table_name, column_name)`
           # in   `lib/arel_extensions/helpers.rb`
           # will almost always fail. It's important to note that when the test
           # fails, it's always on 1 test case, and every subsequent test that
