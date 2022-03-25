@@ -325,16 +325,16 @@ module ArelExtensions
 
       def get_time_converted element
         if element.is_a?(Time)
-          return Arel::Nodes::NamedFunction.new('STRFTIME', [element, '%H:%M:%S'])
+          Arel::Nodes::NamedFunction.new('STRFTIME', [element, '%H:%M:%S'])
         elsif element.is_a?(Arel::Attributes::Attribute)
           col = Arel.column_of(element.relation.table_name, element.name.to_s)
           if col && (col.type == :time)
-            return Arel::Nodes::NamedFunction.new('STRFTIME', [element, '%H:%M:%S'])
+            Arel::Nodes::NamedFunction.new('STRFTIME', [element, '%H:%M:%S'])
           else
-            return element
+            element
           end
         else
-          return element
+          element
         end
       end
 

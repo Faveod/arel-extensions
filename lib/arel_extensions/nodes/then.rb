@@ -5,7 +5,7 @@ module ArelExtensions
         tab = expr.map { |arg|
           convert_to_node(arg)
         }
-        return super(tab)
+        super(tab)
       end
     end
   end

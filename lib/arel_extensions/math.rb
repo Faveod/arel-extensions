@@ -16,16 +16,16 @@ module ArelExtensions
     # Date and integer adds or subtracts a specified time interval from a date.
     def +(other)
       case self
-        when Arel::Nodes::Quoted
-          return self.concat(other)
-        when Arel::Nodes::Grouping
-          if self.expr.left.is_a?(String) || self.expr.right.is_a?(String)
-            return self.concat(other)
-          else
-            return Arel.grouping(Arel::Nodes::Addition.new self, other)
-          end
-        when ArelExtensions::Nodes::Function, ArelExtensions::Nodes::Case
-          return case self.return_type
+      when Arel::Nodes::Quoted
+        self.concat(other)
+      when Arel::Nodes::Grouping
+        if self.expr.left.is_a?(String) || self.expr.right.is_a?(String)
+          self.concat(other)
+        else
+          Arel.grouping(Arel::Nodes::Addition.new self, other)
+        end
+      when ArelExtensions::Nodes::Function, ArelExtensions::Nodes::Case
+        case self.return_type
         when :string, :text
           self.concat(other)
         when :integer, :decimal, :float, :number, :int

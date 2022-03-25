@@ -27,7 +27,7 @@ module ArelExtensions
         when DateTime, Time
           @left_node_type = :ruby_time
         end
-        return super(tab)
+        super(tab)
       end
     end
   end

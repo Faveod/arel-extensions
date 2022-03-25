@@ -7,11 +7,11 @@ module ArelExtensions
         tab = expr.map { |arg|
           convert_to_node(arg)
         }
-        return super(tab)
+        super(tab)
       end
 
       def +(other)
-        return ArelExtensions::Nodes::Concat.new(self.expressions + [other])
+        ArelExtensions::Nodes::Concat.new(self.expressions + [other])
       end
     end
   end

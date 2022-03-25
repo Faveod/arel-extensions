@@ -10,7 +10,7 @@ module ArelExtensions
         @ci = ci
         @option = option
         tab = [convert_to_node(left)]
-        return super(tab)
+        super(tab)
       end
     end
   end
