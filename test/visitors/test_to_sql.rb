@@ -273,13 +273,13 @@ module ArelExtensions
         c = @table.project(@table[:name])
         _(compile(c.union_all(c)))
           .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
-        _((c.union_all(c)).to_sql)
+        _(c.union_all(c).to_sql)
           .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
-        _((c.union_all(c.union_all(c))).to_sql)
+        _(c.union_all(c.union_all(c)).to_sql)
           .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
-        _(((c.union_all(c)).union_all(c)).to_sql)
+        _((c.union_all(c)).union_all(c).to_sql)
           .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
-        _((c.union_all(c).union_all(c)).to_sql)
+        _(c.union_all(c).union_all(c).to_sql)
           .must_be_like %{(SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")}
         _((c.union_all(c)).as('union_table').to_sql)
           .must_be_like %{((SELECT "users"."name" FROM "users") UNION ALL (SELECT "users"."name" FROM "users")) union_table}

@@ -126,7 +126,7 @@ module ArelExtensions
         collector << 'CONCAT('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
-          if (arg.is_a?(Numeric)) || (arg.is_a?(Arel::Attributes::Attribute))
+          if arg.is_a?(Numeric) || arg.is_a?(Arel::Attributes::Attribute)
             collector << 'CAST('
             collector = visit arg, collector
             collector << ' AS char)'
@@ -405,8 +405,8 @@ module ArelExtensions
             ).repeat(Arel.quoted(o.width).abs - (number.length + sign_length))
           ).
           else('')
-        before = (!o.flags.include?('0')) && (!o.flags.include?('-')) ? repeated_char : ''
-        middle = (o.flags.include?('0')) && (!o.flags.include?('-'))  ? repeated_char : ''
+        before = !o.flags.include?('0') && !o.flags.include?('-') ? repeated_char : ''
+        middle = o.flags.include?('0') && !o.flags.include?('-')  ? repeated_char : ''
         after  = o.flags.include?('-') ? repeated_char : ''
         full_number = ArelExtensions::Nodes::Concat.new([
             before,

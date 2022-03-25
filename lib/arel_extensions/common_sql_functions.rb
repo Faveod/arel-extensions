@@ -38,8 +38,8 @@ module ArelExtensions
 
     def add_sql_functions(env_db = nil)
       env_db ||= @cnx.adapter_name
-      env_db = 'mysql' if env_db =~ /mysql/i
-      if env_db =~ /sqlite/i
+      env_db = 'mysql' if /mysql/i.match?(env_db)
+      if /sqlite/i.match?(env_db)
         begin
           add_sqlite_functions
         rescue => e

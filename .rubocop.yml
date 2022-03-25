@@ -60,6 +60,15 @@ Style/MethodCallWithoutArgsParentheses:
 Style/NegatedIf:
   Enabled: false
 
+Style/NumericLiterals:
+  Enabled: true
+
+Style/RedundantParentheses:
+  Enabled: true
+
+Style/RedundantRegexpCharacterClass:
+  Enabled: true
+
 Style/StringLiterals:
   Enabled: true
 
@@ -70,4 +79,10 @@ Performance/DoubleStartEndWith:
   Enabled: true
 
 Performance/RedundantMerge:
+  Enabled: true
+
+Performance/RegexpMatch:
+  Enabled: true
+
+Performance/StringReplacement:
   Enabled: true

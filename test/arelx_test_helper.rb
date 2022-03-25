@@ -7,7 +7,7 @@ require 'active_record'
 require 'support/fake_record'
 
 def colored(color, msg)
-  ENV['TERM'] =~ /^xterm|-256color$/ ? "\x1b[#{color}m#{msg}\x1b[89m\x1b[0m" : "#{msg}"
+  /^xterm|-256color$/.match?(ENV['TERM']) ? "\x1b[#{color}m#{msg}\x1b[89m\x1b[0m" : "#{msg}"
 end
 
 YELLOW = '33'
