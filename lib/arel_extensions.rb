@@ -268,3 +268,12 @@ class Arel::Nodes::TableAlias
     end
   end
 end
+
+
+class Arel::Attributes::Attribute
+  def to_sql(engine = Arel::Table.engine)
+    collector = Arel::Collectors::SQLString.new
+    collector = engine.connection.visitor.accept self, collector
+    collector.value
+  end
+end
