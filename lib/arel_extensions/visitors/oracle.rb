@@ -627,10 +627,10 @@ module ArelExtensions
         comma_in_format = o.precision == 0 ? '' : 'D'
         nines_after = (1..o.precision - 1).map{'9'}.join('') + '0'
         if comma.length == 1
-          options = Arel.quoted("NLS_NUMERIC_CHARACTERS = '" + comma + " '")
+          options = Arel.quoted("NLS_NUMERIC_CHARACTERS = '#{comma} '")
           nines_before = ('999' * 4 + '990')
         else
-          options = Arel.quoted("NLS_NUMERIC_CHARACTERS = '" + comma + "'")
+          options = Arel.quoted("NLS_NUMERIC_CHARACTERS = '#{comma}'")
           nines_before = ('999G' * 4 + '990')
         end
         sign = Arel.when(col < 0).
@@ -643,7 +643,7 @@ module ArelExtensions
         if o.scientific_notation
           number = Arel::Nodes::NamedFunction.new('TO_CHAR', [
                 Arel.quoted(col.abs),
-                Arel.quoted('FM' + nines_before + comma_in_format + nines_after + 'EEEE'),
+                Arel.quoted("FM#{nines_before}#{comma_in_format}#{nines_after}EEEE"),
                 options
               ])
           if o.type == 'e'
@@ -652,7 +652,7 @@ module ArelExtensions
         else
           number = Arel::Nodes::NamedFunction.new('TO_CHAR', [
                 Arel.quoted(col.abs),
-                Arel.quoted('FM' + nines_before + comma_in_format + nines_after),
+                Arel.quoted("FM#{nines_before}#{comma_in_format}#{nines_after}"),
                 options
               ])
         end

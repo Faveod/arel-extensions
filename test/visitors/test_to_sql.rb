@@ -576,7 +576,7 @@ module ArelExtensions
         end
       end
 
-      puts 'AREL VERSION : ' + Arel::VERSION.to_s
+      puts "AREL VERSION: #{Arel::VERSION}"
     end
   end
 end
