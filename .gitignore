@@ -1,9 +1,10 @@
-coverage/*
-config/database.yml
-spec/support/fixtures/*database*
 *.DS_Store
+*.swp
+.bundle
+Gemfile.lock
+config/database.yml
+coverage/*
 debug.log
 pkg
-.bundle
-*.swp
-Gemfile.lock
+spec/support/fixtures/*database*
+vendor/
