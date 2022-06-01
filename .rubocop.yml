@@ -72,6 +72,11 @@ Style/RedundantRegexpCharacterClass:
 Style/RedundantReturn:
   Enabled: true
 
+# Even when conservative, this is unsafe.
+#Style/StringConcatenation:
+#  Enabled: true
+#  Mode: 'conservative'
+
 Style/StringLiterals:
   Enabled: true
 
