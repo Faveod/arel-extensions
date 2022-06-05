@@ -398,13 +398,18 @@ module ArelExtensions
             Arel::Nodes::NamedFunction.new('FORMAT', [col.abs] + params)
           end
 
-        repeated_char = (o.width == 0) ? Arel.quoted('') : ArelExtensions::Nodes::Case.new.
-          when(Arel.quoted(o.width).abs - (number.length + sign_length) > 0).
-          then(Arel.quoted(
-              o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
-            ).repeat(Arel.quoted(o.width).abs - (number.length + sign_length))
-          ).
-          else('')
+        repeated_char =
+          if o.width == 0
+            Arel.quoted('')
+          else
+            Arel
+              .when(Arel.quoted(o.width).abs - (number.length + sign_length) > 0)
+              .then(Arel.quoted(
+                      o.flags.include?('-') ? ' ' : (o.flags.include?('0') ? '0' : ' ')
+                    ).repeat(Arel.quoted(o.width).abs - (number.length + sign_length))
+                   )
+              .else('')
+          end
         before = !o.flags.include?('0') && !o.flags.include?('-') ? repeated_char : ''
         middle = o.flags.include?('0') && !o.flags.include?('-')  ? repeated_char : ''
         after  = o.flags.include?('-') ? repeated_char : ''
