@@ -27,7 +27,7 @@ module ArelExtensions
           t.column :price, :decimal
         end
         @table = Arel::Table.new(:users)
-        @cols = ['id', 'name', 'comments', 'created_at']
+        @cols = %w[id name comments created_at]
         @data = [
               [23, 'nom1', 'sdfdsfdsfsdf', '2016-01-01'],
               [25, 'nom2', 'sdfdsfdsfsdf', '2016-01-01']

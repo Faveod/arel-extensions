@@ -157,7 +157,7 @@ module ArelExtensions
           collector = visit o.right, collector
         else
           left = o.left.end_with?('i') ? o.left[0..-2] : o.left
-          conv = ['h', 'mn', 's'].include?(o.left)
+          conv = %w[h mn s].include?(o.left)
           collector << 'DATEPART('
           collector << LOADED_VISITOR::DATE_MAPPING[left]
           collector << LOADED_VISITOR::COMMA

@@ -84,6 +84,9 @@ Style/RedundantReturn:
 Style/StringLiterals:
   Enabled: true
 
+Style/WordArray:
+  Enabled: true
+
 # Performance cops have been transferred to rubocop-performance gem.
 require: rubocop-performance
 
