@@ -11,7 +11,7 @@ module ArelExtensions
         '%H' => 'HH24', '%k' => '', '%I' => 'HH', '%l' => '', '%P' => 'am', '%p' => 'AM',                   # hours
         '%M' => 'MI', '%S' => 'SS', '%L' => 'MS', '%N' => 'US', '%z' => 'tz'                                # seconds, subseconds
       }
-      NUMBER_COMMA_MAPPING = { 'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', ' }
+      NUMBER_COMMA_MAPPING = {'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', '}
 
       def visit_ArelExtensions_Nodes_Log10 o, collector
         collector << 'LOG('

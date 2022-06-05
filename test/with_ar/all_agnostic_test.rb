@@ -424,22 +424,22 @@ module ArelExtensions
         tz = ENV['DB'] == 'mssql' ? time_zones['mssql'] : time_zones['posix']
 
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['utc']))
-        assert_equal '2014/03/03 09:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['sao_paulo'] }))
-        assert_equal '2014/03/03 02:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['tahiti'] }))
+        assert_equal '2014/03/03 09:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['sao_paulo']}))
+        assert_equal '2014/03/03 02:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['tahiti']}))
 
         # Skipping conversion from UTC to the desired timezones fails in SQL
         # Server and Postgres. This is mainly due to the fact that timezone
         # information is not preserved in the column itself.
         #
         # MySQL is happy to consider that times by default are in UTC.
-        assert_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
+        assert_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
         refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['paris'])) if !['mysql'].include?(ENV['DB'])
 
         # Winter/Summer time
-        assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
+        assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
         if ENV['DB'] == 'mssql'
-          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
-          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', { tz['utc'] => tz['paris'] }))
+          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
+          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
         else
           assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
           assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
@@ -491,9 +491,9 @@ module ArelExtensions
 
       def switch_to_lang(lang)
         languages = {
-          'mssql'      => { :en => 'English',    :fr => 'French'     },
-          'mysql'      => { :en => 'en_US',      :fr => 'fr_FR'      },
-          'postgresql' => { :en => 'en_US.utf8', :fr => 'fr_FR.utf8' }
+          'mssql'      => {:en => 'English',    :fr => 'French'},
+          'mysql'      => {:en => 'en_US',      :fr => 'fr_FR'},
+          'postgresql' => {:en => 'en_US.utf8', :fr => 'fr_FR.utf8'}
         }
 
         sql = {
@@ -966,7 +966,7 @@ module ArelExtensions
                      parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16), Arel.json({@age => @name}).group(false)))
         assert_equal ({'5' => 'Lucas', '15' => 'Sophie', '23' => 'Myung', '25' => 'Laure', 'Laure' => 25, 'Lucas' => 5, 'Myung' => 23, 'Sophie' => 15}),
                      parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16), Arel.json({@age => @name, @name => @age}).group(false)))
-        assert_equal [{'5' => 'Lucas'}, { '15' => 'Sophie'}, { '23' => 'Myung'}, { '25' => 'Laure'}],
+        assert_equal [{'5' => 'Lucas'}, {'15' => 'Sophie'}, {'23' => 'Myung'}, {'25' => 'Laure'}],
                      parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score), Arel.json({@age => @name}).group(true, [@age])))
 
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_sql
