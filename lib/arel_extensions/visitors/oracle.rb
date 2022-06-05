@@ -455,7 +455,7 @@ module ArelExtensions
           src_tz, dst_tz = o.time_zone.first
           collector << ' as timestamp) at time zone '
           collector = visit Arel.quoted(src_tz), collector
-          collecto < ' at time zone '
+          collector < ' at time zone '
           collector = visit Arel.quoted(dst_tz), collector
         when String
           collector << ' as timestamp) at time zone '
