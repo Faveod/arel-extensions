@@ -12,10 +12,10 @@ group :development, :test do
   gem 'mysql2', '0.5.2', platforms: [:mri]
   gem 'pg', '~> 1.1', platforms: [:mri]
 
-  gem 'tiny_tds', platforms: [:mri, :mingw, :x64_mingw, :mswin]
-  gem 'activerecord-sqlserver-adapter', '~> 7.0.0.0', platforms: [:mri, :mingw, :x64_mingw, :mswin]
+  gem 'tiny_tds', platforms: %i[mri mingw x64_mingw mswin]
+  gem 'activerecord-sqlserver-adapter', '~> 7.0.0.0', platforms: %i[mri mingw x64_mingw mswin]
 
-  gem 'ruby-oci8', platforms: [:mri, :mswin, :mingw] if ENV.has_key? 'ORACLE_HOME'
+  gem 'ruby-oci8', platforms: %i[mri mswin mingw] if ENV.has_key? 'ORACLE_HOME'
   gem 'activerecord-oracle_enhanced-adapter', '~> 6.0.0' if ENV.has_key? 'ORACLE_HOME'
 end
 

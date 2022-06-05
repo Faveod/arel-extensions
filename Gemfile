@@ -12,10 +12,10 @@ group :development, :test do
   gem 'activerecord-jdbcmysql-adapter', platforms: :jruby
   gem 'activerecord-jdbcpostgresql-adapter', platforms: :jruby
 
-  gem 'tiny_tds', '~> 2.1', require: false, platforms: [:mri, :mingw, :x64_mingw, :mswin]
-  gem 'activerecord-sqlserver-adapter', '~> 6.0', platforms: [:mri, :mingw, :x64_mingw, :mswin]
+  gem 'tiny_tds', '~> 2.1', require: false, platforms: %i[mri mingw x64_mingw mswin]
+  gem 'activerecord-sqlserver-adapter', '~> 6.0', platforms: %i[mri mingw x64_mingw mswin]
 
-  gem 'ruby-oci8', platforms: [:mri, :mswin, :x64_mingw, :mingw]
+  gem 'ruby-oci8', platforms: %i[mri mswin x64_mingw mingw]
   gem 'activerecord-oracle_enhanced-adapter', '~> 1.6.0'
 
   gem 'activesupport', '~> 6.0'
