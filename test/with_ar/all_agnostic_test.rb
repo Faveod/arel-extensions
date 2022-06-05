@@ -193,16 +193,16 @@ module ArelExtensions
         assert_equal 'Test Laure', t(@laure, Arel.quoted('Test ') + @name)
 
         skip 'No group_concat in SqlServer before 2017' if @env_db == 'mssql'
-        assert_equal 'Lucas Sophie', t(User.where(name: ['Lucas', 'Sophie']), @name.group_concat(' '))
-        assert_equal 'Lucas,Sophie', t(User.where(name: ['Lucas', 'Sophie']), @name.group_concat(','))
-        assert_equal 'Lucas,Sophie', t(User.where(name: ['Lucas', 'Sophie']), @name.group_concat)
+        assert_equal 'Lucas Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat(' '))
+        assert_equal 'Lucas,Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat(','))
+        assert_equal 'Lucas,Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat)
 
         skip 'No order in group_concat in SqlLite' if $sqlite
-        assert_equal 'Arthur,Lucas,Sophie', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', @name.asc))
-        assert_equal 'Sophie,Lucas,Arthur', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', @name.desc))
-        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', [@score.asc, @name.asc]))
-        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', @score.asc, @name.asc))
-        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: ['Lucas', 'Sophie', 'Arthur']), @name.group_concat(',', order: [@score.asc, @name.asc]))
+        assert_equal 'Arthur,Lucas,Sophie', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', @name.asc))
+        assert_equal 'Sophie,Lucas,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', @name.desc))
+        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', [@score.asc, @name.asc]))
+        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', @score.asc, @name.asc))
+        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: [@score.asc, @name.asc]))
       end
 
       def test_length
@@ -419,7 +419,7 @@ module ArelExtensions
                            }
         }
 
-        skip "Unsupported timezone conversion for DB=#{ENV['DB']}" if !['mssql', 'mysql', 'oracle', 'postgresql'].include?(ENV['DB'])
+        skip "Unsupported timezone conversion for DB=#{ENV['DB']}" if !%w[mssql mysql oracle postgresql].include?(ENV['DB'])
 
         tz = ENV['DB'] == 'mssql' ? time_zones['mssql'] : time_zones['posix']
 
@@ -463,7 +463,7 @@ module ArelExtensions
       end
 
       def test_format_iso_year_of_week
-        skip "Unsupported ISO year of week for DB=#{ENV['DB']}" if ['mssql', 'sqlite'].include?(ENV['DB'])
+        skip "Unsupported ISO year of week for DB=#{ENV['DB']}" if %w[mssql sqlite].include?(ENV['DB'])
         assert_equal '2014', t(@lucas, @updated_at.format('%G'))
 
         {
@@ -811,7 +811,7 @@ module ArelExtensions
           assert_equal '1', t(@arthur, Arel.when(@comments.ai_matches('arrete')).then('1').else('0'))
           assert_equal '1', t(@arthur, Arel.when(@comments.ai_matches('àrrétè')).then('1').else('0'))
           assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('arretez')).then('1').else('0'))
-          if !['oracle', 'postgresql', 'mysql'].include?(@env_db) # AI => CI
+          if !%w[oracle postgresql mysql].include?(@env_db) # AI => CI
             assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('Arrete')).then('1').else('0'))
             assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('Arrêté')).then('1').else('0'))
           end
@@ -915,7 +915,7 @@ module ArelExtensions
       end
 
       def test_alias_shortened
-        if ['postgresql', 'oracle'].include?(@env_db)
+        if %w[postgresql oracle].include?(@env_db)
           new_alias = Arel.shorten('azerty' * 15)
           at = User.arel_table.alias('azerty' * 15)
           assert_equal "\"user_tests\" \"#{new_alias}\"".downcase, User.arel_table.alias('azerty' * 15).to_sql.downcase
@@ -956,7 +956,7 @@ module ArelExtensions
         skip "Can't be tested on travis"
         # creation
         assert_equal 'Arthur', t(@arthur, Arel.json(@name))
-        assert_equal ['Arthur', 'Arthur'], parse_json(t(@arthur, Arel.json(@name, @name)))
+        assert_equal %w[Arthur Arthur], parse_json(t(@arthur, Arel.json(@name, @name)))
         assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 'ArthurArthur'}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => @name + @name})))
         assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 1}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => 1})))
         assert_equal [{'age' => 21}, {'name' => 'Arthur', 'score' => 65.62}], parse_json(t(@arthur, Arel.json([{age: @age}, {name: @name, score: @score}])))
@@ -972,7 +972,7 @@ module ArelExtensions
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_sql
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_a
 
-        skip 'Not Yet Implemented' if $sqlite || ['oracle', 'mssql'].include?(@env_db)
+        skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
         # get
         h1 = Arel.json({@name => @name + @name, @name + '2' => 1})
         assert_equal 'ArthurArthur', parse_json(t(@arthur, h1.get(@name)))
@@ -981,13 +981,13 @@ module ArelExtensions
         assert_equal 21, parse_json(t(@arthur, h2.get(0).get('age')))
         assert_nil t(@arthur, h2.get('age'))
         # set
-        assert_equal ({'Arthur' => ['toto', 'tata'], 'Arthur2' => 1}), parse_json(t(@arthur, h1.set(@name, ['toto', 'tata'])))
+        assert_equal ({'Arthur' => %w[toto tata], 'Arthur2' => 1}), parse_json(t(@arthur, h1.set(@name, %w[toto tata])))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.set(@name + '3', 2)))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => nil}), parse_json(t(@arthur, h1.set(@name + '3', nil)))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => {'a' => 2}}), parse_json(t(@arthur, h1.set(@name + '3', {a: 2})))
         # merge
-        assert_equal ({'Arthur' => ['toto', 'tata'], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.merge({@name => ['toto', 'tata']}, {@name + '3' => 2})))
-        assert_equal ({'Arthur' => ['toto', 'tata'], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.merge({@name => ['toto', 'tata'], @name + '3' => 2})))
+        assert_equal ({'Arthur' => %w[toto tata], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.merge({@name => %w[toto tata]}, {@name + '3' => 2})))
+        assert_equal ({'Arthur' => %w[toto tata], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.merge({@name => %w[toto tata], @name + '3' => 2})))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1}), parse_json(t(@arthur, h1.merge({})))
       end
 

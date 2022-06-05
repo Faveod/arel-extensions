@@ -58,15 +58,15 @@ END;])
         connect_db
         setup_db
         @table = Arel::Table.new(:user_tests)
-        @cols = ['id', 'name', 'comments', 'created_at']
+        @cols = %w[id name comments created_at]
         @data = [
           [23, 'nom1', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.', '2016-01-01'],
           [25, 'nom2', 'sdfdsfdsfsdf', '2016-01-02']
         ]
-        @cols2 = ['name', 'comments', 'created_at']
+        @cols2 = %w[name comments created_at]
         @data2 = [
           ['nom3', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.', '2016-01-01'],
-          ['nom4', 'sdfdsfdsfsdf', '2016-01-04']
+          %w[nom4 sdfdsfdsfsdf 2016-01-04]
         ]
       end
 

@@ -8,7 +8,7 @@ module ArelExtensions
         @visitor = Arel::Visitors::SQLite.new @conn.connection
         @table = Arel::Table.new(:users)
         Arel::Table.engine = @conn
-        @cols = ['id', 'name', 'comments', 'created_at']
+        @cols = %w[id name comments created_at]
         @data = [
           [23, 'nom1', 'sdfdsfdsfsdf', '2016-01-01'],
           [25, 'nom2', 'sdfdsfdsfsdf', '2016-01-01']

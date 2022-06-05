@@ -7,10 +7,10 @@ module ArelExtensions
         @conn = FakeRecord::Base.new
         @visitor = Arel::Visitors::Oracle.new @conn.connection
         @table = Arel::Table.new(:users)
-        @cols = ['name', 'comments', 'created_at']
+        @cols = %w[name comments created_at]
         @data = [
-          ['nom1', 'sdfdsfdsfsdf', '2016-01-01'],
-          ['nom2', 'sdfdsfdsfsdf', '2016-01-01']
+          %w[nom1 sdfdsfdsfsdf 2016-01-01],
+          %w[nom2 sdfdsfdsfsdf 2016-01-01]
         ]
       end
 
