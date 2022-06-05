@@ -1,4 +1,5 @@
 require 'arel'
+require 'base64'
 
 require 'arel_extensions/railtie' if defined?(Rails::Railtie)
 

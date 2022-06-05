@@ -587,7 +587,7 @@ module ArelExtensions
       alias_method(:old_visit_Arel_Nodes_TableAlias, :visit_Arel_Nodes_TableAlias) rescue nil
       def visit_Arel_Nodes_TableAlias o, collector
         if o.name.length > 30
-          o = Arel::Table.new(o.table_name).alias(Base64.urlsafe_encode64(Digest::MD5.new.digest(o.name)).tr('=', '').tr('-', '_'))
+          o = Arel::Table.new(o.table_name).alias(Arel.shorten(o.name))
         end
         old_visit_Arel_Nodes_TableAlias(o, collector)
       end
