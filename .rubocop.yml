@@ -55,6 +55,10 @@ Style/EmptyElse:
 Style/Encoding:
   Enabled: true
 
+Style/HashSyntax:
+  Enabled: true
+  EnforcedStyle: ruby19
+
 Style/MethodCallWithArgsParentheses:
   Enabled: false
 

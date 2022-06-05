@@ -491,9 +491,9 @@ module ArelExtensions
 
       def switch_to_lang(lang)
         languages = {
-          'mssql'      => {:en => 'English',    :fr => 'French'},
-          'mysql'      => {:en => 'en_US',      :fr => 'fr_FR'},
-          'postgresql' => {:en => 'en_US.utf8', :fr => 'fr_FR.utf8'}
+          'mssql'      => {en: 'English',    fr: 'French'},
+          'mysql'      => {en: 'en_US',      fr: 'fr_FR'},
+          'postgresql' => {en: 'en_US.utf8', fr: 'fr_FR.utf8'}
         }
 
         sql = {
