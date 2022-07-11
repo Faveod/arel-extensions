@@ -480,7 +480,7 @@ module ArelExtensions
       end
 
       def test_format_date_with_names
-        skip "#{ENV['DB']} does not support a variety of word-based formatting for month and day names" if ['mssql'].include?(ENV['DB'])
+        skip "#{ENV['DB']} does not support a variety of word-based formatting for month and day names" if %w[mssql sqlite].include?(ENV['DB'])
         assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
         assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
 
