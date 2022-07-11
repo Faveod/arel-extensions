@@ -513,27 +513,29 @@ module ArelExtensions
         #
         # Tests should assert one single thing in principle, but until we
         # refactor this whole thing, we'll have to do tricks of this sort.
-        switch_to_lang(:en)
-        case ENV['DB']
-        when 'mysql', 'postgresql'
-          assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
-          assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
-        when 'mssql'
-          assert_equal 'Monday, 03 March 2014', t(@lucas, @updated_at.format('%A, %d %B %y'))
+        begin
+          switch_to_lang(:en)
+          case ENV['DB']
+          when 'mysql', 'postgresql'
+            assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
+            assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
+          when 'mssql'
+            assert_equal 'Monday, 03 March 2014', t(@lucas, @updated_at.format('%A, %d %B %y'))
+          end
+          switch_to_lang(:fr)
+          case ENV['DB']
+          when 'mysql'
+            assert_equal 'lun, 03 mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
+            assert_equal 'lundi, 03 mars 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
+          when 'postgresql'
+            assert_equal 'Lun., 03 Mars 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
+            assert_equal 'Lundi, 03 Mars 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
+          when 'mssql'
+            assert_equal 'lundi, 03 mars 2014', t(@lucas, @updated_at.format('%A, %d %B %y'))
+          end
+        ensure
+          switch_to_lang(:en)
         end
-        switch_to_lang(:fr)
-        case ENV['DB']
-        when 'mysql'
-          assert_equal 'lun, 03 mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
-          assert_equal 'lundi, 03 mars 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
-        when 'postgresql'
-          assert_equal 'Lun., 03 Mars 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
-          assert_equal 'Lundi, 03 Mars 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
-        when 'mssql'
-          assert_equal 'lundi, 03 mars 2014', t(@lucas, @updated_at.format('%A, %d %B %y'))
-        end
-      ensure
-        switch_to_lang(:en)
       end
 
       def test_coalesce
