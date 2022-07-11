@@ -148,32 +148,41 @@ jobs:
       matrix:
         ruby: [3.1, 3.0, 2.7, 2.5, jruby-9.2, jruby-9.3]
         rails: [7, 6_1, 6, 5_2]
-        exclude: [
-          {ruby: 3.1,       rails: 6  },
-          {ruby: 3.1,       rails: 5_2},
-          {ruby: 3.0,       rails: 6  },
-          {ruby: 3.0,       rails: 5_2},
-          {ruby: 2.7,       rails: 5_2},
-          {ruby: 2.5,       rails: 7 },
-          {ruby: jruby-9.2, rails: 7},
-          {ruby: jruby-9.3, rails: 7},
-        ]
-    services:
-      postgres:
-        image: postgres:11.6-alpine
-        env:
-          POSTGRES_DB: arelx_test
-          POSTGRES_PASSWORD: secret
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: >-
-          --health-cmd "pg_isready -d arelx_test -U postgres -p 5432"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        exclude:
+          [
+            { ruby: 3.1, rails: 6 },
+            { ruby: 3.1, rails: 5_2 },
+            { ruby: 3.0, rails: 6 },
+            { ruby: 3.0, rails: 5_2 },
+            { ruby: 2.7, rails: 5_2 },
+            { ruby: 2.5, rails: 7 },
+            { ruby: jruby-9.2, rails: 7 },
+            { ruby: jruby-9.3, rails: 7 },
+          ]
     steps:
       - uses: actions/checkout@v2
+        # PostgreSQL requires locales to be installed on the system to be able
+        # to do time and currency conversions at runtime.
+        #
+        # That's why we're not launching it as a service; pre-built images
+        # lack loaclization.
+        #
+        # After we install locales, we'll install PostgreSQL binaries and start
+        # the service.
+      - name: setup locale
+        run: |
+          sudo locale-gen fr_FR.utf8
+          sudo update-locale
+      - name: setup postgres 11
+        run: |
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee  /etc/apt/sources.list.d/pgdg.list
+          sudo apt update
+          sudo apt -y install postgresql-11
+          sudo systemctl enable postgresql
+          sudo systemctl start postgresql
+          sudo su -c "psql -c \"alter user postgres with password 'secret'\"" postgres
+          sudo su -c "createdb arelx_test" postgres
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
