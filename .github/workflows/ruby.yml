@@ -290,6 +290,7 @@ jobs:
       matrix:
         ruby: [3.1, 3.0, 2.7, 2.5, jruby-9.2, jruby-9.3]
         rails: [7, 6_1, 6, 5_2]
+        version: [2017, 2019]
         exclude: [
           {ruby: 3.1,       rails: 6  },
           {ruby: 3.1,       rails: 5_2 },
@@ -314,9 +315,10 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
-      - name: Install MSSQL 2019
-        uses: potatoqualitee/mssqlsuite@v1
+      - name: Install MSSQL ${{ matrix.version }}
+        uses: potatoqualitee/mssqlsuite@v1.5.1
         with:
+          version: ${{ matrix.version }}
           install: sqlengine, sqlclient, sqlpackage, localdb
           sa-password: Password12!
       - name: Update system-wide gems
