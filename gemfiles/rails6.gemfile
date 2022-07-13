@@ -14,6 +14,7 @@ group :development, :test do
 
   gem 'tiny_tds', platforms: %i[mri mingw x64_mingw mswin]
   gem 'activerecord-sqlserver-adapter', '~> 6.0', platforms: %i[mri mingw x64_mingw mswin]
+  gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw]
 
   gem 'ruby-oci8', platforms: %i[mri mswin mingw] if ENV.has_key? 'ORACLE_HOME'
   gem 'activerecord-oracle_enhanced-adapter', '~> 6.0.0' if ENV.has_key? 'ORACLE_HOME'
