@@ -28,4 +28,4 @@ group :development, :test do
   gem 'activerecord-jdbcsqlserver-adapter', '~> 52.0', platforms: :jruby
 end
 
-gemspec path: '../'
+gemspec path: Dir.pwd
