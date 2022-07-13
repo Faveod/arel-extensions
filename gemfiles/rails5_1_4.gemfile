@@ -27,4 +27,4 @@ group :development, :test do
   gem 'activerecord-jdbcmssql-adapter', platforms: :jruby
 end
 
-gemspec path: '../'
+gemspec path: Dir.pwd

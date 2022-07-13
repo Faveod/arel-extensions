@@ -19,4 +19,4 @@ group :development, :test do
   gem 'activerecord-oracle_enhanced-adapter', '~> 6.0.0' if ENV.has_key? 'ORACLE_HOME'
 end
 
-gemspec path: '../'
+gemspec path: Dir.pwd

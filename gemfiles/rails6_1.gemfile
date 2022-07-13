@@ -26,4 +26,4 @@ group :development, :test do
   gem 'activerecord-jdbcpostgresql-adapter', platforms: :jruby
 end
 
-gemspec path: '../'
+gemspec path: Dir.pwd

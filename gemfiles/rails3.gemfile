@@ -17,4 +17,4 @@ group :development, :test do
   gem 'activerecord', '~> 3.2'
 end
 
-gemspec path: '../'
+gemspec path: Dir.pwd
