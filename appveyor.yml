@@ -1,0 +1,103 @@
+image: Visual Studio 2015
+
+version: "{build}"
+
+cache:
+  - vendor/bundle
+
+environment:
+  matrix:
+    - RUBY_VERSION: 25-x64
+      RAILS: 5_2
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 25-x64
+      RAILS: 5_2
+      SQL: MSSQL$SQL2014
+    - RUBY_VERSION: 25-x64
+      RAILS: 6
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 25-x64
+      RAILS: 6
+      SQL: MSSQL$SQL2014
+    - RUBY_VERSION: 25-x64
+      RAILS: 6_1
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 25-x64
+      RAILS: 6_1
+      SQL: MSSQL$SQL2014
+    - RUBY_VERSION: 27-x64
+      RAILS: 6
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 27-x64
+      RAILS: 6
+      SQL: MSSQL$SQL2014
+    - RUBY_VERSION: 27-x64
+      RAILS: 6_1
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 27-x64
+      RAILS: 6_1
+      SQL: MSSQL$SQL2014
+    - RUBY_VERSION: 27-x64
+      RAILS: 7
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 27-x64
+      RAILS: 7
+      SQL: MSSQL$SQL2014
+    - RUBY_VERSION: 30-x64
+      RAILS: 6_1
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 30-x64
+      RAILS: 6_1
+      SQL: MSSQL$SQL2014
+    - RUBY_VERSION: 30-x64
+      RAILS: 7
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 30-x64
+      RAILS: 7
+      SQL: MSSQL$SQL2014
+    - RUBY_VERSION: 31-x64
+      RAILS: 6_1
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 31-x64
+      RAILS: 6_1
+      SQL: MSSQL$SQL2014
+    - RUBY_VERSION: 31-x64
+      RAILS: 7
+      SQL: MSSQL$SQL2012SP1
+    - RUBY_VERSION: 31-x64
+      RAILS: 7
+      SQL: MSSQL$SQL2014
+
+install:
+  - set PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
+  - bundle config --local path vendor/bundle
+  - cp ./gemfiles/rails%RAILS%.gemfile ./Gemfile
+  - bundle config set gemfile ./gemfiles/rails%RAILS%.gemfile
+  - bundle install
+
+build: off
+
+before_test:
+  - ruby -v
+  - gem -v
+  - bundle -v
+
+test_script:
+  - ps: Get-Service '*SQL*'
+  - net start %SQL%
+  - timeout /t 4 /nobreak > NUL
+  - bundle exec rake test:mssql
+
+for:
+-
+  matrix:
+    except:
+      - RAILS: 5_2
+  install:
+    - set PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
+    - bundle config --local path vendor/bundle
+    - cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
+    - cp ./version_v2.rb lib/arel_extensions/version.rb
+    - cp ./gemfiles/rails%RAILS%.gemfile ./Gemfile
+    - bundle config set gemfile ./gemfiles/rails%RAILS%.gemfile
+    - bundle install
