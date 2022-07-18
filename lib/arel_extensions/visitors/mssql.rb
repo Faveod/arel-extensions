@@ -220,11 +220,19 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Trim o, collector
-        collector << 'TRIM( '
-        collector = visit o.right, collector
-        collector << ' FROM '
-        collector = visit o.left, collector
-        collector << ')'
+        # NOTE: in MSSQL's `blank`, o.right is the space char so we need to
+        # account for it.
+        if o.right && !/\A\s\Z/.match(o.right.expr)
+          collector << 'dbo.TrimChar('
+          collector = visit o.left, collector
+          collector << Arel::Visitors::MSSQL::COMMA
+          collector = visit o.right, collector
+          collector << ')'
+        else
+          collector << "LTRIM(RTRIM("
+          collector = visit o.left, collector
+          collector << "))"
+        end
         collector
       end
 
@@ -308,7 +316,7 @@ module ArelExtensions
               dir = LOADED_VISITOR::DATE_FORMAT_DIRECTIVES[s.matched]
               fmt = LOADED_VISITOR::DATE_FORMAT_FORMAT[dir]
               date_name = LOADED_VISITOR::DATE_NAME.include?(s.matched)
-              collector << 'TRIM('
+              collector << 'LTRIM(RTRIM('
               collector << 'FORMAT(' if fmt
               collector << 'STR('    if !fmt && !date_name
               collector << (date_name ? 'DATENAME(' : 'DATEPART(')
@@ -334,7 +342,7 @@ module ArelExtensions
               collector << ')'
               collector << ')'                                  if !fmt && !date_name
               collector << LOADED_VISITOR::COMMA << "'#{fmt}')" if fmt
-              collector << ')'
+              collector << '))'
             when s.scan(/^%%/)
               collector = visit Arel.quoted('%'), collector
             when s.scan(/[^%]+|./)
