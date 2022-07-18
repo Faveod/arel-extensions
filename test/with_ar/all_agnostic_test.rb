@@ -420,6 +420,11 @@ module ArelExtensions
         }
 
         skip "Unsupported timezone conversion for DB=#{ENV['DB']}" if !%w[mssql mysql oracle postgresql].include?(ENV['DB'])
+        # TODO: Standarize timezone conversion across all databases.
+        #       This test case will be refactored and should work the same across all vendors.
+        if ENV['DB'] == 'mssql' && /Microsoft SQL Server (\d+)/.match(ActiveRecord::Base.connection.select_value('SELECT @@version'))[1].to_i < 2016
+          skip "SQL Server < 2016 is not currently supported"
+        end
 
         tz = ENV['DB'] == 'mssql' ? time_zones['mssql'] : time_zones['posix']
 
