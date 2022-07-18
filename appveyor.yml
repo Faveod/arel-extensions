@@ -70,6 +70,8 @@ environment:
 
 install:
   - set PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
+  - gem update --system
+  - gem install rubygems-update && update_rubygems
   - bundle config --local path vendor/bundle
   - cp ./gemfiles/rails%RAILS%.gemfile ./Gemfile
   - bundle config set gemfile ./gemfiles/rails%RAILS%.gemfile
@@ -95,9 +97,11 @@ for:
       - RAILS: 5_2
   install:
     - set PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
-    - bundle config --local path vendor/bundle
     - cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
     - cp ./version_v2.rb lib/arel_extensions/version.rb
     - cp ./gemfiles/rails%RAILS%.gemfile ./Gemfile
+    - gem update --system
+    - gem install rubygems-update && update_rubygems
+    - bundle config --local path vendor/bundle
     - bundle config set gemfile ./gemfiles/rails%RAILS%.gemfile
     - bundle install
