@@ -39,7 +39,7 @@ module ArelExtensions
         Arel.grouping(Arel::Nodes::Addition.new self, other)
       else
         col =
-          if self.is_a?(Arel::Attribute) && self.respond_to?(:type_caster)
+          if self.is_a?(Arel::Attribute) && self.respond_to?(:type_caster) && self.able_to_type_cast?
             self.type_caster
           else
             Arel.column_of(self.relation.table_name, self.name.to_s) if self.respond_to?(:relation)
@@ -88,7 +88,7 @@ module ArelExtensions
         Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
       else
         col =
-          if self.is_a?(Arel::Attribute) && self.respond_to?(:type_caster)
+          if self.is_a?(Arel::Attribute) && self.respond_to?(:type_caster) && self.able_to_type_cast?
             self.type_caster
           else
             Arel.column_of(self.relation.table_name, self.name.to_s) if self.respond_to?(:relation)
@@ -101,7 +101,7 @@ module ArelExtensions
             case other
             when Arel::Attributes::Attribute
               col2 =
-                if other.is_a?(Arel::Attribute) && other.respond_to?(:type_caster)
+                if other.is_a?(Arel::Attribute) && other.respond_to?(:type_caster) && other.able_to_type_cast?
                   other.type_caster
                 else
                   Arel.column_of(other.relation.table_name, other.name.to_s) if other.respond_to?(:relation)
