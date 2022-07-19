@@ -9,9 +9,6 @@ environment:
   matrix:
     - RUBY_VERSION: 25-x64
       RAILS: 5_2
-      SQL: MSSQL$SQL2008R2SP2
-    - RUBY_VERSION: 25-x64
-      RAILS: 5_2
       SQL: MSSQL$SQL2012SP1
     - RUBY_VERSION: 25-x64
       RAILS: 5_2
@@ -21,9 +18,6 @@ environment:
       SQL: MSSQL$SQL2016
     - RUBY_VERSION: 25-x64
       RAILS: 6
-      SQL: MSSQL$SQL2008R2SP2
-    - RUBY_VERSION: 25-x64
-      RAILS: 6
       SQL: MSSQL$SQL2012SP1
     - RUBY_VERSION: 25-x64
       RAILS: 6
@@ -31,9 +25,6 @@ environment:
     - RUBY_VERSION: 25-x64
       RAILS: 6
       SQL: MSSQL$SQL2016
-    - RUBY_VERSION: 25-x64
-      RAILS: 6_1
-      SQL: MSSQL$SQL2008R2SP2
     - RUBY_VERSION: 25-x64
       RAILS: 6_1
       SQL: MSSQL$SQL2012SP1
