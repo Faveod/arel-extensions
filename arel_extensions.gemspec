@@ -8,7 +8,11 @@ Gem::Specification.new do |s|
   s.authors     = ['Yann Azoury', 'Félix Bellanger', 'Julien Delporte']
   s.email       = ['yann.azoury@faveod.com', 'felix.bellanger@faveod.com', 'julien.delporte@faveod.com']
   s.homepage    = 'https://github.com/Faveod/arel-extensions'
-  s.description = 'Adds new features to Arel'
+  s.description = <<~TXT
+    Arel Extensions adds shortcuts, fixes and new ORM mappings (Ruby to SQL) to Arel.
+    It aims to ensure pure Ruby syntax for most usual cases.
+    It allows to use more advanced SQL functions for any supported RDBMS.
+  TXT
   s.summary     = 'Extending Arel'
   s.license     = 'MIT'
 
