@@ -1,7 +1,7 @@
 # Arel Extensions
 
 ![GitHub workflow](https://github.com/Faveod/arel-extensions/actions/workflows/ruby.yml/badge.svg)
-[![AppVeyor Build Status](https://img.shields.io/appveyor/ci/yazfav/arel-extensions.svg?label=AppVeyor%20build)](https://ci.appveyor.com/project/yazfav/arel-extensions)
+[![AppVeyor Build Status](https://img.shields.io/appveyor/ci/jdelporte/arel-extensions.svg?label=AppVeyor%20build)](https://ci.appveyor.com/project/jdelporte/arel-extensions)
 [![Security](https://hakiri.io/github/Faveod/arel-extensions/master.svg)](https://hakiri.io/github/Faveod/arel-extensions/master)
 ![](http://img.shields.io/badge/license-MIT-brightgreen.svg)
 
