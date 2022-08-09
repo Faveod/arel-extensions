@@ -200,6 +200,20 @@ module ArelExtensions
         # hybrid
         q = User.select(at[:name], at[:score], at[:age].sum).group(at[:score], Arel::Nodes::RollUp.new([at[:name]]))
         assert q.to_a.length > 0
+
+        ## Using Arel.rollup which is less verbose than the original way
+
+        # simple
+        q = User.select(at[:name], at[:age].sum).group(Arel.rollup(at[:name]))
+        assert q.to_a.length > 0
+
+        # multi
+        q = User.select(at[:name], at[:score], at[:age].sum).group(Arel.rollup([at[:score], at[:name]]))
+        assert q.to_a.length > 0
+
+        # hybrid
+        q = User.select(at[:name], at[:score], at[:age].sum).group(at[:score], Arel.rollup([at[:name]]))
+        assert q.to_a.length > 0
       end
 
       # String Functions
