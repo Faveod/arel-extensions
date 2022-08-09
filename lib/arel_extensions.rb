@@ -281,4 +281,14 @@ class Arel::Attributes::Attribute
     collector = engine.connection.visitor.accept self, collector
     collector.value
   end
+
+  def rollup
+    Arel::Nodes::RollUp.new([self])
+  end
+end
+
+class Arel::Nodes::Node
+  def rollup
+    Arel::Nodes::RollUp.new([self])
+  end
 end
