@@ -126,6 +126,11 @@ module ArelExtensions
       collector
       end
 
+      def visit_Arel_Nodes_RollUp(o, collector)
+        collector << "ROLLUP"
+        grouping_array_or_grouping_element o, collector
+      end
+
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << '(LISTAGG('
         collector = visit o.left, collector
@@ -704,6 +709,18 @@ module ArelExtensions
         collector = visit o.right, collector
         collector << ')'
         collector
+      end
+
+      # Utilized by GroupingSet, Cube & RollUp visitors to
+      # handle grouping aggregation semantics
+      def grouping_array_or_grouping_element(o, collector)
+        if o.expr.is_a? Array
+          collector << "( "
+          visit o.expr, collector
+          collector << " )"
+        else
+          visit o.expr, collector
+        end
       end
     end
   end
