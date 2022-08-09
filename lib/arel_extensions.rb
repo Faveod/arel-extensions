@@ -132,6 +132,10 @@ module Arel
     ArelExtensions::Nodes::Rand.new
   end
 
+  def self.rollup(*args)
+    Arel::Nodes::RollUp.new(args)
+  end
+
   def self.shorten s
     Base64.urlsafe_encode64(Digest::MD5.new.digest(s)).tr('=', '').tr('-', '_')
   end
