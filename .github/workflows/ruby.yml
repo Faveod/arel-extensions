@@ -73,7 +73,7 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
       - name: Update system-wide gems
-        run: gem update --system
+        run: gem update --system --no-document
       - name: Download gem from build job
         uses: actions/download-artifact@v2
         with:
@@ -121,7 +121,7 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
       - name: Update system-wide gems
-        run: gem update --system
+        run: gem update --system --no-document
       - name: Download gem from build job
         uses: actions/download-artifact@v2
         with:
@@ -192,7 +192,7 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
       - name: Update system-wide gems
-        run: gem update --system
+        run: gem update --system --no-document
       - name: Download gem from build job
         uses: actions/download-artifact@v2
         with:
@@ -257,7 +257,7 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
       - name: Update system-wide gems
-        run: gem update --system
+        run: gem update --system --no-document
       - name: Download gem from build job
         uses: actions/download-artifact@v2
         with:
@@ -322,7 +322,7 @@ jobs:
           install: sqlengine, sqlclient, sqlpackage, localdb
           sa-password: Password12!
       - name: Update system-wide gems
-        run: gem update --system
+        run: gem update --system --no-document
       - name: Download gem from build job
         uses: actions/download-artifact@v2
         with:
