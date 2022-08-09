@@ -186,6 +186,22 @@ module ArelExtensions
         assert User.group(:score).count(:id).values.all?{|e| !e.nil?}
       end
 
+      def test_rollup
+        skip "sqlite not supported" if $sqlite
+        at = User.arel_table
+        # single
+        q = User.select(at[:name], at[:age].sum).group(Arel::Nodes::RollUp.new([at[:name]]))
+        assert q.to_a.length > 0
+
+        # multi
+        q = User.select(at[:name], at[:score], at[:age].sum).group(Arel::Nodes::RollUp.new([at[:score], at[:name]]))
+        assert q.to_a.length > 0
+
+        # hybrid
+        q = User.select(at[:name], at[:score], at[:age].sum).group(at[:score], Arel::Nodes::RollUp.new([at[:name]]))
+        assert q.to_a.length > 0
+      end
+
       # String Functions
       def test_concat
         assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
