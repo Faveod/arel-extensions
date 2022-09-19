@@ -14,6 +14,15 @@ module ArelExtensions
         '%M' => '%i', '%S' => '%S', '%L' =>   '', '%N' => '%f', '%z' => ''
       }.freeze
 
+      # This helper method did not exist in rails < 5.2
+      if !Arel::Visitors::MySQL.method_defined?(:collect_nodes_for)
+        def collect_nodes_for(nodes, collector, spacer, connector = ", ")
+          if nodes&.any?
+            collector << spacer
+            inject_join nodes, collector, connector
+          end
+        end
+      end
 
         # The whole purpose of this override is to fix the behavior of RollUp.
         # All other databases treat RollUp sanely, execpt MySQL which requires

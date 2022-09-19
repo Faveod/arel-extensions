@@ -79,6 +79,7 @@ require 'arel_extensions/nodes/soundex'
 require 'arel_extensions/nodes/cast'
 require 'arel_extensions/nodes/json'
 require 'arel_extensions/nodes/rollup'
+require 'arel_extensions/nodes/select'
 
 # It seems like the code in lib/arel_extensions/visitors.rb that is supposed
 # to inject ArelExtension is not enough. Different versions of the sqlserver
