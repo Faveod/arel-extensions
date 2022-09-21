@@ -49,6 +49,82 @@ module ArelExtensions
         'YYYY-MM-DDTHH:MM:SS:MMM' => 126
       }.freeze
 
+      # Quoting in JRuby + AR < 5 requires special handling for MSSQL.
+      #
+      # It relied on @connection.quote, which in turn relied on column type for
+      # quoting. We need only to rely on the value type.
+      #
+      # It didn't handle numbers correctly: `quote(1, nil)` translated into
+      # `N'1'` which we don't want.
+      #
+      # The following is adapted from activerecord/lib/active_record/connection_adapters/abstract/quoting.rb
+      #
+      if RUBY_PLATFORM == 'java' && ActiveRecord::VERSION::MAJOR < 5
+        def quote_string(s)
+          s.gsub('\\', '\&\&').gsub("'", "''") # ' (for ruby-mode)
+        end
+
+        def quoted_binary(value) # :nodoc:
+          "'#{quote_string(value.to_s)}'"
+        end
+
+        def quoted_date(value)
+          if value.acts_like?(:time)
+            if ActiveRecord::Base.default_timezone == :utc
+              value = value.getutc if value.respond_to?(:getutc) && !value.utc?
+            else
+              value = value.getlocal if value.respond_to?(:getlocal)
+            end
+          end
+
+          result = value.to_s(:db)
+          if value.respond_to?(:usec) && value.usec > 0
+            result << '.' << sprintf('%06d', value.usec)
+          else
+            result
+          end
+        end
+
+        def quoted_true
+          'TRUE'
+        end
+
+        def quoted_false
+          'FALSE'
+        end
+
+        def quoted_time(value) # :nodoc:
+          value = value.change(year: 2000, month: 1, day: 1)
+          quoted_date(value).sub(/\A\d{4}-\d{2}-\d{2} /, "")
+        end
+
+        def quote value, column = nil
+          case value
+          when Arel::Nodes::SqlLiteral
+            value
+          when String, Symbol, ActiveSupport::Multibyte::Chars
+            "'#{quote_string(value.to_s)}'"
+          when true      
+            quoted_true
+          when false     
+            quoted_false
+          when nil       
+            'NULL'
+          # BigDecimals need to be put in a non-normalized form and quoted.
+          when BigDecimal
+            value.to_s('F')
+          when Numeric, ActiveSupport::Duration
+            value.to_s
+          when Date, Time
+            "'#{quoted_date(value)}'"
+          when Class
+            "'#{value}'"
+          else
+            raise TypeError, "can't quote #{value.class.name}"
+          end
+        end
+      end
+
       # Math Functions
       def visit_ArelExtensions_Nodes_Ceil o, collector
         collector << 'CEILING('
