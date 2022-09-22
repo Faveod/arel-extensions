@@ -19,6 +19,14 @@ if defined?(Arel::Visitors::SQLServer)
   end
 end
 
+if defined?(Arel::Visitors::DepthFirst)
+  class Arel::Visitors::DepthFirst
+    def visit_Arel_SelectManager o
+        visit o.ast
+    end
+  end
+end
+
 if defined?(Arel::Visitors::MSSQL)
   class Arel::Visitors::MSSQL
     include ArelExtensions::Visitors::MSSQL
