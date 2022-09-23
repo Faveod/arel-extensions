@@ -19,7 +19,8 @@ module ArelExtensions
       when Arel::Nodes::Quoted
         self.concat(other)
       when Arel::Nodes::Grouping
-        if self.expr.left.is_a?(String) || self.expr.right.is_a?(String)
+        # NOTE: if `expr` is not binary, then assume it's a string.
+        if !self.expr.respond_to?(:left) || self.expr.left.is_a?(String) || self.expr.right.is_a?(String)
           self.concat(other)
         else
           Arel.grouping(Arel::Nodes::Addition.new self, other)
