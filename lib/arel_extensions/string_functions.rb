@@ -184,6 +184,7 @@ module ArelExtensions
     def not_blank
       ArelExtensions::Nodes::NotBlank.new [self]
     end
+    alias present not_blank
 
     def repeat other = 1
       ArelExtensions::Nodes::Repeat.new [self, other]
