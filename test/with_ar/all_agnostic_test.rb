@@ -417,6 +417,23 @@ module ArelExtensions
         assert_equal 'true', t(@neg, @comments.not_blank.then('true', 'false'))
       end
 
+      # This test repeats a lot of `test_blank` cases.
+      def test_present
+        if @env_db == 'postgresql'
+          assert_includes [true, 't'], t(@myung, @name.present) # depends of adapter
+          assert_includes [false, 'f'], t(@myung, @comments.present)
+        end
+        assert_equal 1, @myung.where(@name.present).count
+        assert_equal 0, @myung.where(@comments.present).count
+        assert_equal 0, @sophie.where(@comments.present).count
+        assert_equal 0, @camille.where(@comments.present).count
+
+        assert_equal 1, @neg.where(@comments.present).count
+        assert_equal 'true', t(@myung, @name.present.then('true', 'false'))
+        assert_equal 'false', t(@myung, @comments.present.then('true', 'false'))
+        assert_equal 'true', t(@neg, @comments.present.then('true', 'false'))
+      end
+
       def test_format
         assert_equal '2016-05-23', t(@lucas, @created_at.format('%Y-%m-%d'))
         assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S'))
