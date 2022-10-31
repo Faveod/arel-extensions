@@ -625,6 +625,24 @@ module ArelExtensions
         assert_equal 'Laure10', t(@laure, @comments.coalesce('Laure') + 10)
       end
 
+      def test_coalesce_blank
+        assert_equal 'Myung', t(@myung, @comments.coalesce_blank('Myung').coalesce_blank('ignored'))
+        assert_equal 'Myung', t(@myung, @comments.coalesce_blank('', ' ', '   ').coalesce_blank('Myung'))
+        assert_equal 'Myung', t(@myung, @comments.coalesce_blank('', ' ', '   ', 'Myung'))
+        assert_equal '2016-05-23', t(@myung, @created_at.coalesce_blank(Date.new(2022, 1, 1)).format('%Y-%m-%d'))
+        assert_equal 'Laure', t(@laure, @comments.coalesce_blank('Laure'))
+        assert_equal 100, t(@test, @age.coalesce_blank(100))
+        assert_equal 20, t(@test, @age.coalesce_blank(20))
+        assert_equal 20, t(@test, @age.coalesce_blank(10) + 10)
+        assert_equal 'Laure10', t(@laure, @comments.coalesce_blank('Laure') + 10)
+
+        skip 'mssql does not support null in case results' if @env_db == 'mssql'
+
+        assert_equal 'Camille concat', t(@camille, @name.coalesce_blank(Arel.null, 'default') + ' concat')
+        assert_equal 'Myung', t(@myung, @comments.coalesce_blank(Arel.null, 'Myung'))
+        assert_equal 'Camille', t(@camille, @name.coalesce_blank(Arel.null, 'default'))
+      end
+
       # Comparators
       def test_number_comparator
         assert_equal 2, User.where(@age < 6).count
