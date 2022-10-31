@@ -19,5 +19,15 @@ module ArelExtensions
       args.unshift(self)
       ArelExtensions::Nodes::Coalesce.new args
     end
+
+    def coalesce_blank *args
+      res = Arel.when(self.cast(:string).present).then(self)
+      args[0...-1].each do |a|
+        val = a.is_a?(Arel::Nodes::Node) ? a : Arel.quoted(a)
+        res = res.when(val.present).then(a)
+      end
+      res = res.else(args[-1])
+      res
+    end
   end
 end
