@@ -35,12 +35,13 @@ module ArelExtensions
       include Arel::Predications
       include Arel::OrderPredications
       include ArelExtensions::Aliases
-      include ArelExtensions::Math
       include ArelExtensions::Comparators
-      include ArelExtensions::Predications
+      include ArelExtensions::DateDuration
+      include ArelExtensions::Math
       include ArelExtensions::MathFunctions
-      include ArelExtensions::StringFunctions
       include ArelExtensions::NullFunctions
+      include ArelExtensions::Predications
+      include ArelExtensions::StringFunctions
 
       def return_type
         obj = if @conditions.length > 0
