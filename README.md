@@ -293,6 +293,15 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
+    <td class="tg-yw4l">POSIX FORMATTING<br>column.format_number("$ %7.2f","en_US")</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ko">not implemented</td>
+  </tr>
+  <tr>
     <td class="tg-yw4l">RAND<br>Arel.rand</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -320,15 +329,6 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">POSIX FORMATTING<br>column.format_number("$ %7.2f","en_US")</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ko">not implemented</td>
-  </tr>
-  <tr>
     <th class="tg-ffjm" rowspan="17"><div>String functions</div></th>
     <td class="tg-yw4l">CONCAT<br>column + "string"</td>
     <td class="ok">✔</td>
@@ -337,6 +337,24 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="tg-j6lv">+</td>
     <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">FIND_IN_SET<br>column &amp; ("l")</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-orpl">Ruby function</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">ILIKE (in Arel6)<br/>column.imatches('%pattern')</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
   </tr>
   <tr>
     <td class="tg-yw4l">LENGTH<br>column.length</td>
@@ -355,96 +373,6 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="tg-j6lv">CHARINDEX()</td>
     <td class="ok">✔</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">SUBSTRING<br/>column[1..2]<br/>column.substring(1)<br/>column.substring(1, 1)</td>
-    <td class="ok">✔</td>
-    <td class="tg-j6lv">SUBSTR()</td>
-    <td class="tg-j6lv">SUBSTR()</td>
-    <td class="tg-j6lv">SUBSTR()</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">FIND_IN_SET<br>column &amp; ("l")</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="tg-orpl">Ruby function</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">SOUNDEX<br>column.soundex</td>
-    <td class="ok">✔</td>
-    <td class="tg-3oug">require fuzzystrmatch</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">REPLACE<br>column.replace("s","X")</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">REGEXP<br>column =~ "pattern"<br></td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="tg-3oug">require pcre.so</td>
-    <td class="tg-j6lv">REGEXP_LIKE</td>
-    <td class="tg-j6lv">LIKE</td>
-    <td class="ok">✔</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">NOT_REGEXP<br>column != "pattern"</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔<br></td>
-    <td class="tg-3oug">require pcre.so</td>
-    <td class="tg-j6lv">NOT REGEXP_LIKE </td>
-    <td class="tg-j6lv">NOT LIKE</td>
-    <td class="ok">✔</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">ILIKE (in Arel6)<br/>column.imatches('%pattern')</td>
-    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
-    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
-    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">TRIM (leading)<br>column.trim("LEADING","M")</td>
-    <td class="ok">✔</td>
-    <td class="tg-j6lv">LTRIM()</td>
-    <td class="tg-j6lv">LTRIM()</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="tg-j6lv">LTRIM()</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">TRIM (trailing)<br>column.trim("TRAILING","g")</td>
-    <td class="ok">✔</td>
-    <td class="tg-j6lv">RTRIM()</td>
-    <td class="tg-j6lv">RTRIM()</td>
-    <td class="ok">✔</td>
-    <td class="ok">✔</td>
-    <td class="tg-j6lv">Rtrim()</td>
-  </tr>
-  <tr>
-    <td class="tg-yw4l">TRIM (both)<br>column.trim("BOTH","e")</td>
-    <td class="ok">✔</td>
-    <td class="tg-j6lv">TRIM()<br></td>
-    <td class="tg-j6lv">TRIM()</td>
-    <td class="ok">✔</td>
-    <td class="tg-j6lv">LTRIM(RTRIM())</td>
-    <td class="tg-j6lv">TRIM()</td>
   </tr>
   <tr>
     <td class="tg-yw4l">Matching Accent/Case Insensitive<br>column.ai_imatches('blah')</td>
@@ -482,7 +410,78 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-j6lv">✔</td>
     <td class="tg-j6lv">?</td>
   </tr>
-
+  <tr>
+    <td class="tg-yw4l">NOT_REGEXP<br>column != "pattern"</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔<br></td>
+    <td class="tg-3oug">require pcre.so</td>
+    <td class="tg-j6lv">NOT REGEXP_LIKE </td>
+    <td class="tg-j6lv">NOT LIKE</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">REGEXP<br>column =~ "pattern"<br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-3oug">require pcre.so</td>
+    <td class="tg-j6lv">REGEXP_LIKE</td>
+    <td class="tg-j6lv">LIKE</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">REPLACE<br>column.replace("s","X")</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">SOUNDEX<br>column.soundex</td>
+    <td class="ok">✔</td>
+    <td class="tg-3oug">require fuzzystrmatch</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">SUBSTRING<br/>column[1..2]<br/>column.substring(1)<br/>column.substring(1, 1)</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">SUBSTR()</td>
+    <td class="tg-j6lv">SUBSTR()</td>
+    <td class="tg-j6lv">SUBSTR()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">TRIM (leading)<br>column.trim("LEADING","M")</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">LTRIM()</td>
+    <td class="tg-j6lv">LTRIM()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">LTRIM()</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">TRIM (trailing)<br>column.trim("TRAILING","g")</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">RTRIM()</td>
+    <td class="tg-j6lv">RTRIM()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">Rtrim()</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">TRIM (both)<br>column.trim("BOTH","e")</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">TRIM()<br></td>
+    <td class="tg-j6lv">TRIM()</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">LTRIM(RTRIM())</td>
+    <td class="tg-j6lv">TRIM()</td>
+  </tr>
   <tr>
     <th class="tg-4rp9" rowspan="6"><div>Date functions</div></th>
     <td class="tg-yw4l">DATEADD<br>column + 2.year<br></td>
@@ -539,8 +538,26 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <th class="tg-72dn" rowspan="8"><div>Comparators functions</div></th>
+    <th class="tg-72dn" rowspan="12"><div>Comparators functions</div></th>
+    <td class="tg-yw4l">BLANK<br>column.blank<br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
     <td class="tg-yw4l">COALESCE<br>column.coalesce(var)</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">COALESCE_BLANK<br>column.coalesce_blank(var)</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -554,6 +571,24 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="tg-j6lv">NVC()</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">NOT_BLANK<br>column.not_blank<br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">PRESENT<br>column.present<br>alias to NOT_BLANK<br></td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
   </tr>
