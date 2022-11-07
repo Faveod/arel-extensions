@@ -73,6 +73,8 @@ module ArelExtensions
         @neg = User.where(id: u.id)
         u = User.create age: 15, name: 'Justin', created_at: d, score: 11.0
         @justin = User.where(id: u.id)
+        u = User.create age: nil, name: 'nilly', created_at: nil, score: nil
+        @nilly = User.where(id: u.id)
 
         @age = User.arel_table[:age]
         @name = User.arel_table[:name]
@@ -149,7 +151,7 @@ module ArelExtensions
       def test_rand
         assert 42 != User.select(Arel.rand.as('res')).first.res
         assert 0 <= User.select(Arel.rand.abs.as('res')).first.res
-        assert_equal 9, User.order(Arel.rand).limit(50).count
+        assert_equal 10, User.order(Arel.rand).limit(50).count
       end
 
       def test_round
@@ -337,16 +339,16 @@ module ArelExtensions
         skip "Sqlite version can't load extension for regexp" if $sqlite && $load_extension_disabled
         skip 'SQL Server does not know about REGEXP without extensions' if @env_db == 'mssql'
         assert_equal 1, User.where(@name =~ '^M').count
-        assert_equal 7, User.where(@name !~ '^L').count
+        assert_equal 8, User.where(@name !~ '^L').count
         assert_equal 1, User.where(@name =~ /^M/).count
-        assert_equal 7, User.where(@name !~ /^L/).count
+        assert_equal 8, User.where(@name !~ /^L/).count
       end
 
       def test_imatches
         # puts User.where(@name.imatches('m%')).to_sql
         assert_equal 1, User.where(@name.imatches('m%')).count
         assert_equal 4, User.where(@name.imatches_any(['L%', '%e'])).count
-        assert_equal 7, User.where(@name.idoes_not_match('L%')).count
+        assert_equal 8, User.where(@name.idoes_not_match('L%')).count
       end
 
       def test_replace
@@ -371,8 +373,8 @@ module ArelExtensions
         skip "Sqlite version can't load extension for soundex" if $sqlite && $load_extension_disabled
         skip "PostgreSql version can't load extension for soundex" if @env_db == 'postgresql'
         assert_equal 'C540', t(@camille, @name.soundex)
-        assert_equal 9, User.where(@name.soundex.eq(@name.soundex)).count
-        assert_equal 9, User.where(@name.soundex == @name.soundex).count
+        assert_equal 10, User.where(@name.soundex.eq(@name.soundex)).count
+        assert_equal 10, User.where(@name.soundex == @name.soundex).count
       end
 
       def test_change_case
@@ -655,7 +657,7 @@ module ArelExtensions
       def test_date_comparator
         d = Date.new(2016, 5, 23)
         assert_equal 0, User.where(@created_at < d).count
-        assert_equal 9, User.where(@created_at >= d).count
+        assert_equal 10, User.where(@created_at >= d).count
       end
 
       def test_date_duration
@@ -768,6 +770,26 @@ module ArelExtensions
         end
       end
 
+      def test_if_present
+        assert_nil t(@myung, @comments.if_present)
+        assert_equal 0, t(@myung, @comments.if_present.count)
+        assert_equal 20.16, t(@myung, @score.if_present)
+        assert_equal '2016-05-23', t(@myung, @created_at.if_present.format('%Y-%m-%d'))
+        assert_nil t(@laure, @comments.if_present)
+
+        assert_nil t(@nilly, @duration.if_present.format('%Y-%m-%d'))
+
+        # NOTE: here we're testing the capacity to format a nil value,
+        # however, @comments is a text field, and not a date/datetime field,
+        # so Postgres will rightfully complain when we format the text:
+        # we need to cast it first.
+        if @env_db == 'postgresql'
+          assert_nil t(@laure, @comments.cast(:date).if_present.format('%Y-%m-%d'))
+        else
+          assert_nil t(@laure, @comments.if_present.format('%Y-%m-%d'))
+        end
+      end
+
       def test_is_null
         # puts User.where(@age.is_null).select(@name).to_sql
         # puts @age.is_null
@@ -803,7 +825,7 @@ module ArelExtensions
       def test_math_minus
         d = Date.new(2016, 5, 20)
         # Datediff
-        assert_equal 9, User.where((@created_at - @created_at).eq(0)).count
+        assert_equal 10, User.where((@created_at - @created_at).eq(0)).count
         assert_equal 3, @laure.select((@created_at - d).as('res')).first.res.abs.to_i
         # Substraction
         assert_equal 0, User.where((@age - 10).eq(50)).count
@@ -923,8 +945,8 @@ module ArelExtensions
 
       def test_subquery_with_order
         skip if ['mssql'].include?(@env_db) && Arel::VERSION.to_i < 10
-        assert_equal 9, User.where(name: User.select(:name).order(:name)).count
-        assert_equal 9, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count
+        assert_equal 10, User.where(name: User.select(:name).order(:name)).count
+        assert_equal 10, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count
         if !['mysql'].include?(@env_db) # MySql can't have limit in IN subquery
           assert_equal 2, User.where(name: User.select(:name).order(:name).limit(2)).count
           # assert_equal 6, User.where(name: User.select(:name).order(:name).offset(2)).count

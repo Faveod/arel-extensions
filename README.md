@@ -538,7 +538,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <th class="tg-72dn" rowspan="12"><div>Comparators functions</div></th>
+    <th class="tg-72dn" rowspan="13"><div>Comparators functions</div></th>
     <td class="tg-yw4l">BLANK<br>column.blank<br></td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -558,6 +558,15 @@ User.connection.execute(insert_manager.to_sql)
   </tr>
   <tr>
     <td class="tg-yw4l">COALESCE_BLANK<br>column.coalesce_blank(var)</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">IF_PRESENT</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
