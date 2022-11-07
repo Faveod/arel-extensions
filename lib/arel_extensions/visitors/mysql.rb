@@ -252,7 +252,18 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
-        case o.col_type
+        # One use case we met is
+        # `case…when…then(valid_date).else(Arel.null).format(…)`.
+        #
+        # In this case, `o.col_type` is `nil` but we have a legitimate type in
+        # the expression to be formatted.  The following is a best effort to
+        # infer the proper type.
+        type =
+          o.col_type.nil? && !o.expressions[0].return_type.nil? \
+          ? o.expressions[0].return_type \
+          : o.col_type
+
+        case type
         when :date, :datetime, :time
           fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
           collector << 'DATE_FORMAT('
