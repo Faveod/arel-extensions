@@ -3,6 +3,12 @@ require 'arel_extensions/nodes/is_null'
 
 module ArelExtensions
   module NullFunctions
+
+    # if_present returns nil if the the value is nil or blank
+    def if_present
+      Arel.when(self.cast(:string).present).then(self)
+    end
+
     # ISNULL function lets you return an alternative value when an expression is NULL.
     def is_null
       ArelExtensions::Nodes::IsNull.new [self]
