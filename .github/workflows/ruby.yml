@@ -13,6 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         versions: [
+          {ruby: 3.2,       rails: 7,   arelx: 2},
+          {ruby: 3.2,       rails: 6_1, arelx: 2},
           {ruby: 3.1,       rails: 7,   arelx: 2},
           {ruby: 3.1,       rails: 6_1, arelx: 2},
           {ruby: 3.0,       rails: 7,   arelx: 2},
@@ -66,6 +68,8 @@ jobs:
       fail-fast: false
       matrix:
         versions: [
+          {ruby: 3.2,       rails: 7,   arelx: 2},
+          {ruby: 3.2,       rails: 6_1, arelx: 2},
           {ruby: 3.1,       rails: 7,   arelx: 2},
           {ruby: 3.1,       rails: 6_1, arelx: 2},
           {ruby: 3.0,       rails: 7,   arelx: 2},
@@ -120,6 +124,8 @@ jobs:
       fail-fast: false
       matrix:
         versions: [
+          {ruby: 3.2,       rails: 7,   arelx: 2},
+          {ruby: 3.2,       rails: 6_1, arelx: 2},
           {ruby: 3.1,       rails: 7,   arelx: 2},
           {ruby: 3.1,       rails: 6_1, arelx: 2},
           {ruby: 3.0,       rails: 7,   arelx: 2},
@@ -199,6 +205,8 @@ jobs:
       fail-fast: false
       matrix:
         versions: [
+          {ruby: 3.2,       rails: 7,   arelx: 2},
+          {ruby: 3.2,       rails: 6_1, arelx: 2},
           {ruby: 3.1,       rails: 7,   arelx: 2},
           {ruby: 3.1,       rails: 6_1, arelx: 2},
           {ruby: 3.0,       rails: 7,   arelx: 2},
@@ -273,6 +281,8 @@ jobs:
       fail-fast: false
       matrix:
         versions: [
+          # {ruby: 3.2,         rails: 7,   arelx: 2},
+          {ruby: 3.2,         rails: 6_1, arelx: 2},
           # {ruby: 3.1,         rails: 7,   arelx: 2},
           {ruby: 3.1,         rails: 6_1, arelx: 2},
           # {ruby: 3.0,         rails: 7,   arelx: 2},
