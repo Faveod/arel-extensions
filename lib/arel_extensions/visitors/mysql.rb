@@ -259,8 +259,8 @@ module ArelExtensions
         # the expression to be formatted.  The following is a best effort to
         # infer the proper type.
         type =
-          o.col_type.nil? && !o.expressions[0].return_type.nil? \
-          ? o.expressions[0].return_type \
+          o.col_type.nil? && !o.expressions[0]&.return_type.nil? \
+          ? o.expressions[0]&.return_type \
           : o.col_type
 
         case type
