@@ -36,7 +36,8 @@ It will add common SQL features in your DB to align ti with current routines. Te
 
 ## Examples
 
-t is an Arel::Table for table my_table
+In the following examples
+`t` is an `Arel::Table` for table `my_table` (i.e., `t = Arel::Table.new('my_table')`).
 
 ## Comparators
 
@@ -50,7 +51,7 @@ t is an Arel::Table for table my_table
 # => my_table.nb > 42
 ```
 
-Other operators : <, >=, <=, =~
+Other operators: <, >=, <=, =~
 
 
 ## Maths
@@ -73,7 +74,7 @@ With Arel Extensions:
 # => SUM(my_table.nb) + 42
 ```
 
-Other functions : ABS, RAND, ROUND, FLOOR, CEIL, FORMAT
+Other functions: ABS, RAND, ROUND, FLOOR, CEIL, FORMAT
 
 For Example:
 ```ruby
@@ -94,14 +95,29 @@ t[:price].format_number("%07.2f €","fr_FR")
 # => TRIM(TRIM(TRIM(COALESCE(my_table.name, '')), '\t'), '\n') = ''
 
 (t[:name] =~ /\A[a-d_]+/).to_sql
-# => my_table.name REGEXP '\^[a-d_]+'
+# => my_table.name REGEXP '^[a-d_]+'
 ```
 
-Other functions : SOUNDEX, LENGTH, REPLACE, LOCATE, SUBSTRING, TRIM
+The `replace` function supports string and regex patterns.
+For instance
+
+```ruby
+t[:email].replace('@', ' at ').replace('.', ' dot ').to_sql
+# => REPLACE(REPLACE(`my_table`.`email`, '@', ' at '), '.', ' dot ')
+```
+
+Captures are supported when using regex patterns.  The replace string may then reference the capture groups using `\1`, `\2`, etc.  For instance
+
+```ruby
+t[:email].replace(/^(.*)@(.*)$/, 'user: \1, host: \2').to_sql
+# => REGEXP_REPLACE(`my_table`.`email`, '(?-mix:^(.*)@(.*)$)', 'user: \\1, host: \\2')
+```
+
+Other functions: SOUNDEX, LENGTH, REPLACE, LOCATE, SUBSTRING, TRIM
 
 ### String Array operations
 
-```t[:list]``` is a classical varchar containing a comma separated list ("1,2,3,4")
+`t[:list]` is a classical varchar containing a comma separated list (`"1,2,3,4"`).
 
 ```ruby
 (t[:list] & 3).to_sql
@@ -228,15 +244,15 @@ t[:id].cast('char').to_sql
 ## Stored Procedures and User-defined functions
 
 To optimize queries, some classical functions are defined in databases missing any alternative native functions.
-Examples :
-- FIND_IN_SET
+Examples:
+- `FIND_IN_SET`
 
 ## BULK INSERT / UPSERT
 
 Arel Extensions improves InsertManager by adding bulk_insert method, which allows to insert multiple rows in one insert.
 
 
-```
+```ruby
 @cols = ['id', 'name', 'comments', 'created_at']
 @data = [
    	[23, 'name1', "sdfdsfdsfsdf", '2016-01-01'],
@@ -430,6 +446,15 @@ User.connection.execute(insert_manager.to_sql)
   </tr>
   <tr>
     <td class="tg-yw4l">REPLACE<br>column.replace("s","X")</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">REPLACE<br>column.replace(/re/,"X")</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
