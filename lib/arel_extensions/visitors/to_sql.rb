@@ -289,6 +289,26 @@ module ArelExtensions
         collector
       end
 
+      def visit_ArelExtensions_Nodes_FormattedDate o, collector
+        case o.col_type
+        when :date, :datetime, :time
+          collector << 'STRFTIME('
+          collector = visit o.right, collector
+          collector << COMMA
+          collector = visit o.left, collector
+          collector << ')'
+        when :integer, :float, :decimal
+          collector << 'FORMAT('
+          collector = visit o.left, collector
+          collector << COMMA
+          collector = visit o.right, collector
+          collector << ')'
+        else
+          collector = visit o.left, collector
+        end
+        collector
+      end
+
       # comparators
 
       def visit_ArelExtensions_Nodes_Cast o, collector

@@ -437,123 +437,134 @@ module ArelExtensions
       end
 
       def test_format
-        assert_equal '2016-05-23', t(@lucas, @created_at.format('%Y-%m-%d'))
-        assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S'))
-        assert_equal '12:42%', t(@lucas, @updated_at.format('%R%%'))
+        %i[format format_date].each do |method|
+          assert_equal '2016-05-23', t(@lucas, @created_at.send(method, '%Y-%m-%d'))
+          assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S'))
+          assert_equal '12:42%', t(@lucas, @updated_at.send(method, '%R%%'))
 
-        # The following tests will ensure proper conversion of timestamps to
-        # requested timezones.
-        #
-        # The names of the timezones is highly dependant on the underlying
-        # operating system, and this is why we need to handle each database
-        # separately: the images we're using to test these databases are
-        # different. So don't rely on the provided examples. Your setup is your
-        # reference.
-        #
-        # One could always have portable code if s/he uses standard
-        # abbreviations, like:
-        #
-        # 1. CET  => Central European Time
-        # 2. CEST => Central European Summer Time
-        #
-        # Which implies that the caller should handle daylight saving detection.
-        # In fact, CET will handle daylight saving in MySQL but not Postgres.
-        #
-        # It looks like the posix convention is supported by mysql and
-        # postgresql, e.g.:
-        #
-        # posix/Europe/Paris
-        # posix/America/Nipigon
-        #
-        # so it looks like a more reliably portable way of specifying it.
-        time_zones = {
-          'mssql'       => {
-                            'utc'       => 'UTC',
-                            'sao_paulo' => 'Argentina Standard Time',
-                            'tahiti'    => 'Hawaiian Standard Time',
-                            'paris'     => 'Central European Standard Time'
-                           },
-          'posix'       => {
-                            'utc'       => 'UTC',
-                            'sao_paulo' => 'America/Sao_Paulo',
-                            'tahiti'    => 'Pacific/Tahiti',
-                            'paris'     => 'Europe/Paris'
-                           }
-        }
+          # The following tests will ensure proper conversion of timestamps to
+          # requested timezones.
+          #
+          # The names of the timezones is highly dependant on the underlying
+          # operating system, and this is why we need to handle each database
+          # separately: the images we're using to test these databases are
+          # different. So don't rely on the provided examples. Your setup is your
+          # reference.
+          #
+          # One could always have portable code if s/he uses standard
+          # abbreviations, like:
+          #
+          # 1. CET  => Central European Time
+          # 2. CEST => Central European Summer Time
+          #
+          # Which implies that the caller should handle daylight saving detection.
+          # In fact, CET will handle daylight saving in MySQL but not Postgres.
+          #
+          # It looks like the posix convention is supported by mysql and
+          # postgresql, e.g.:
+          #
+          # posix/Europe/Paris
+          # posix/America/Nipigon
+          #
+          # so it looks like a more reliably portable way of specifying it.
+          time_zones = {
+            'mssql'       => {
+              'utc'       => 'UTC',
+              'sao_paulo' => 'Argentina Standard Time',
+              'tahiti'    => 'Hawaiian Standard Time',
+              'paris'     => 'Central European Standard Time'
+            },
+            'posix'       => {
+              'utc'       => 'UTC',
+              'sao_paulo' => 'America/Sao_Paulo',
+              'tahiti'    => 'Pacific/Tahiti',
+              'paris'     => 'Europe/Paris'
+            }
+          }
 
-        skip "Unsupported timezone conversion for DB=#{ENV['DB']}" if !%w[mssql mysql oracle postgresql].include?(ENV['DB'])
-        # TODO: Standarize timezone conversion across all databases.
-        #       This test case will be refactored and should work the same across all vendors.
-        if ENV['DB'] == 'mssql' && /Microsoft SQL Server (\d+)/.match(ActiveRecord::Base.connection.select_value('SELECT @@version'))[1].to_i < 2016
-          skip "SQL Server < 2016 is not currently supported"
-        end
+          skip "Unsupported timezone conversion for DB=#{ENV['DB']}" if !%w[mssql mysql oracle postgresql].include?(ENV['DB'])
+          # TODO: Standarize timezone conversion across all databases.
+          #       This test case will be refactored and should work the same across all vendors.
+          if ENV['DB'] == 'mssql' && /Microsoft SQL Server (\d+)/.match(ActiveRecord::Base.connection.select_value('SELECT @@version'))[1].to_i < 2016
+            skip "SQL Server < 2016 is not currently supported"
+          end
 
-        tz = ENV['DB'] == 'mssql' ? time_zones['mssql'] : time_zones['posix']
+          tz = ENV['DB'] == 'mssql' ? time_zones['mssql'] : time_zones['posix']
 
-        assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['utc']))
-        assert_equal '2014/03/03 09:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['sao_paulo']}))
-        assert_equal '2014/03/03 02:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['tahiti']}))
+          assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', tz['utc']))
+          assert_equal '2014/03/03 09:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['sao_paulo']}))
+          assert_equal '2014/03/03 02:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['tahiti']}))
 
-        # Skipping conversion from UTC to the desired timezones fails in SQL
-        # Server and Postgres. This is mainly due to the fact that timezone
-        # information is not preserved in the column itself.
-        #
-        # MySQL is happy to consider that times by default are in UTC.
-        assert_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
-        refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.format('%Y/%m/%d %H:%M:%S', tz['paris'])) if !['mysql'].include?(ENV['DB'])
+          # Skipping conversion from UTC to the desired timezones fails in SQL
+          # Server and Postgres. This is mainly due to the fact that timezone
+          # information is not preserved in the column itself.
+          #
+          # MySQL is happy to consider that times by default are in UTC.
+          assert_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
+          refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', tz['paris'])) if !['mysql'].include?(ENV['DB'])
 
-        # Winter/Summer time
-        assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
-        if ENV['DB'] == 'mssql'
-          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
-          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
-        else
-          assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
-          assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).format('%Y/%m/%d %H:%M:%S', tz['paris']))
+          # Winter/Summer time
+          assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
+          if ENV['DB'] == 'mssql'
+            assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
+            assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
+          else
+            assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).send(method, '%Y/%m/%d %H:%M:%S', tz['paris']))
+            assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).send(method, '%Y/%m/%d %H:%M:%S', tz['paris']))
+          end
         end
       end
 
       def test_format_iso_week
-        skip "Unsupported ISO week number for DB=#{ENV['DB']}" if ['sqlite'].include?(ENV['DB'])
-        assert_equal '10', t(@lucas, @updated_at.format('%V'))
-        {
-          '2024-01-01 10:42:00' => '01', # Monday
-          '2030-01-01 10:42:00' => '01', # Tuesday
-          '2025-01-01 10:42:00' => '01', # Wednesday
-          '2026-01-01 10:42:00' => '01', # Thursday
-          '2027-01-01 10:42:00' => '53', # Friday
-          '2028-01-01 10:42:00' => '52', # Saturday
-          '2034-01-01 10:42:00' => '52', # Sunday
-        }.each do |date, exp|
-          assert_equal exp, t(@lucas, Arel.quoted(date).cast(:datetime).format('%V'))
+        %i[format format_date].each do |method|
+          skip "Unsupported ISO week number for DB=#{ENV['DB']}" if ['sqlite'].include?(ENV['DB'])
+          assert_equal '10', t(@lucas, @updated_at.send(method, '%V'))
+          {
+            '2024-01-01 10:42:00' => '01', # Monday
+            '2030-01-01 10:42:00' => '01', # Tuesday
+            '2025-01-01 10:42:00' => '01', # Wednesday
+            '2026-01-01 10:42:00' => '01', # Thursday
+            '2027-01-01 10:42:00' => '53', # Friday
+            '2028-01-01 10:42:00' => '52', # Saturday
+            '2034-01-01 10:42:00' => '52', # Sunday
+          }.each do |date, exp|
+            assert_equal exp, t(@lucas, Arel.quoted(date).cast(:datetime).send(method, '%V'))
+          end
         end
       end
 
       def test_format_iso_year_of_week
         skip "Unsupported ISO year of week for DB=#{ENV['DB']}" if %w[mssql sqlite].include?(ENV['DB'])
-        assert_equal '2014', t(@lucas, @updated_at.format('%G'))
+        %i[format format_date].each do |method|
+          assert_equal '2014', t(@lucas, @updated_at.send(method, '%G'))
 
-        {
-          '2024-01-01 10:42:00' => '2024', # Monday
-          '2030-01-01 10:42:00' => '2030', # Tuesday
-          '2025-01-01 10:42:00' => '2025', # Wednesday
-          '2026-01-01 10:42:00' => '2026', # Thursday
-          '2027-01-01 10:42:00' => '2026', # Friday
-          '2028-01-01 10:42:00' => '2027', # Saturday
-          '2034-01-01 10:42:00' => '2033', # Sunday
-        }.each do |date, exp|
-          assert_equal exp, t(@lucas, Arel.quoted(date).cast(:datetime).format('%G'))
+          {
+            '2024-01-01 10:42:00' => '2024', # Monday
+            '2030-01-01 10:42:00' => '2030', # Tuesday
+            '2025-01-01 10:42:00' => '2025', # Wednesday
+            '2026-01-01 10:42:00' => '2026', # Thursday
+            '2027-01-01 10:42:00' => '2026', # Friday
+            '2028-01-01 10:42:00' => '2027', # Saturday
+            '2034-01-01 10:42:00' => '2033', # Sunday
+          }.each do |date, exp|
+            assert_equal exp, t(@lucas, Arel.quoted(date).cast(:datetime).send(method, '%G'))
+          end
         end
       end
 
       def test_format_date_with_names
         skip "#{ENV['DB']} does not support a variety of word-based formatting for month and day names" if %w[mssql sqlite].include?(ENV['DB'])
-        assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
-        assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
+        %i[format format_date].each do |method|
+          assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
+          assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
+        end
 
         skip "#{ENV['DB']} does not support ALLCAPS month and day names" if ['mysql'].include?(ENV['DB'])
-        assert_equal 'Mon, 03 MAR 14', t(@lucas, @updated_at.format('%a, %d %^b %y'))
-        assert_equal 'Monday, 03 MARCH 14', t(@lucas, @updated_at.format('%A, %d %^B %y'))
+        %i[format format_date].each do |method|
+
+          assert_equal 'Mon, 03 MAR 14', t(@lucas, @updated_at.send(method, '%a, %d %^b %y'))
+          assert_equal 'Monday, 03 MARCH 14', t(@lucas, @updated_at.send(method, '%A, %d %^B %y'))
+        end
       end
 
       def switch_to_lang(lang)
@@ -580,28 +591,30 @@ module ArelExtensions
         #
         # Tests should assert one single thing in principle, but until we
         # refactor this whole thing, we'll have to do tricks of this sort.
-        begin
-          switch_to_lang(:en)
-          case ENV['DB']
-          when 'mysql', 'postgresql'
-            assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
-            assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
-          when 'mssql'
-            assert_equal 'Monday, 03 March 2014', t(@lucas, @updated_at.format('%A, %d %B %y'))
+        %i[format format_date].each do |method|
+          begin
+            switch_to_lang(:en)
+            case ENV['DB']
+            when 'mysql', 'postgresql'
+              assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
+              assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
+            when 'mssql'
+              assert_equal 'Monday, 03 March 2014', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
+            end
+            switch_to_lang(:fr)
+            case ENV['DB']
+            when 'mysql'
+              assert_equal 'lun, 03 mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
+              assert_equal 'lundi, 03 mars 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
+            when 'postgresql'
+              assert_equal 'Lun., 03 Mars 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
+              assert_equal 'Lundi, 03 Mars 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
+            when 'mssql'
+              assert_equal 'lundi, 03 mars 2014', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
+            end
+          ensure
+            switch_to_lang(:en)
           end
-          switch_to_lang(:fr)
-          case ENV['DB']
-          when 'mysql'
-            assert_equal 'lun, 03 mar 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
-            assert_equal 'lundi, 03 mars 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
-          when 'postgresql'
-            assert_equal 'Lun., 03 Mars 14', t(@lucas, @updated_at.format('%a, %d %b %y'))
-            assert_equal 'Lundi, 03 Mars 14', t(@lucas, @updated_at.format('%A, %d %B %y'))
-          when 'mssql'
-            assert_equal 'lundi, 03 mars 2014', t(@lucas, @updated_at.format('%A, %d %B %y'))
-          end
-        ensure
-          switch_to_lang(:en)
         end
       end
 
@@ -632,6 +645,7 @@ module ArelExtensions
         assert_equal 'Myung', t(@myung, @comments.coalesce_blank('', ' ', '   ').coalesce_blank('Myung'))
         assert_equal 'Myung', t(@myung, @comments.coalesce_blank('', ' ', '   ', 'Myung'))
         assert_equal '2016-05-23', t(@myung, @created_at.coalesce_blank(Date.new(2022, 1, 1)).format('%Y-%m-%d'))
+        assert_equal '2016-05-23', t(@myung, @created_at.coalesce_blank(Date.new(2022, 1, 1)).format_date('%Y-%m-%d'))
         assert_equal 'Laure', t(@laure, @comments.coalesce_blank('Laure'))
         assert_equal 100, t(@test, @age.coalesce_blank(100))
         assert_equal 20, t(@test, @age.coalesce_blank(20))
@@ -734,8 +748,10 @@ module ArelExtensions
                         t(@lucas, (@updated_at + Arel.duration('mn', (@updated_at.hour * 60 + @updated_at.minute))))
 
         assert_includes ['2024-03-03'], t(@lucas, (@updated_at + durPos).format('%Y-%m-%d'))
+        assert_includes ['2024-03-03'], t(@lucas, (@updated_at + durPos).format_date('%Y-%m-%d'))
         # puts (@updated_at - durPos).to_sql
         assert_includes ['2004-03-03'], t(@lucas, (@updated_at - durPos).format('%Y-%m-%d'))
+        assert_includes ['2004-03-03'], t(@lucas, (@updated_at - durPos).format_date('%Y-%m-%d'))
 
 
         # we test with the ruby object or the string because some adapters don't return an object Date
@@ -775,9 +791,11 @@ module ArelExtensions
         assert_equal 0, t(@myung, @comments.if_present.count)
         assert_equal 20.16, t(@myung, @score.if_present)
         assert_equal '2016-05-23', t(@myung, @created_at.if_present.format('%Y-%m-%d'))
+        assert_equal '2016-05-23', t(@myung, @created_at.if_present.format_date('%Y-%m-%d'))
         assert_nil t(@laure, @comments.if_present)
 
         assert_nil t(@nilly, @duration.if_present.format('%Y-%m-%d'))
+        assert_nil t(@nilly, @duration.if_present.format_date('%Y-%m-%d'))
 
         # NOTE: here we're testing the capacity to format a nil value,
         # however, @comments is a text field, and not a date/datetime field,
@@ -785,8 +803,10 @@ module ArelExtensions
         # we need to cast it first.
         if @env_db == 'postgresql'
           assert_nil t(@laure, @comments.cast(:date).if_present.format('%Y-%m-%d'))
+          assert_nil t(@laure, @comments.cast(:date).if_present.format_date('%Y-%m-%d'))
         else
           assert_nil t(@laure, @comments.if_present.format('%Y-%m-%d'))
+          assert_nil t(@laure, @comments.if_present.format_date('%Y-%m-%d'))
         end
       end
 

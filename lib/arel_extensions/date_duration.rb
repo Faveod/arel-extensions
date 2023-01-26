@@ -1,4 +1,5 @@
 require 'arel_extensions/nodes/format'
+require 'arel_extensions/nodes/formatted_date'
 require 'arel_extensions/nodes/duration'
 require 'arel_extensions/nodes/wday'
 
@@ -42,6 +43,10 @@ module ArelExtensions
 
     def format(tpl, time_zone = nil)
       ArelExtensions::Nodes::Format.new [self, tpl, time_zone]
+    end
+
+    def format_date(tpl, time_zone = nil)
+      ArelExtensions::Nodes::FormattedDate.new [self, tpl, time_zone]
     end
   end
 end

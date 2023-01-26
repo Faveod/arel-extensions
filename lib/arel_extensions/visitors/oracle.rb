@@ -451,6 +451,10 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
+        visit_ArelExtensions_Nodes_FormattedDate o, collector
+      end
+
+      def visit_ArelExtensions_Nodes_FormattedDate o, collector
         fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
         collector << 'TO_CHAR('
         collector << 'CAST(' if o.time_zone

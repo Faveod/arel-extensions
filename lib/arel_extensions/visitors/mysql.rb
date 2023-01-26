@@ -267,26 +267,7 @@ module ArelExtensions
 
         case type
         when :date, :datetime, :time
-          fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
-          collector << 'DATE_FORMAT('
-          collector << 'CONVERT_TZ(' if o.time_zone
-          collector = visit o.left, collector
-          case o.time_zone
-          when Hash
-            src_tz, dst_tz = o.time_zone.first
-            collector << COMMA
-            collector = visit Arel.quoted(src_tz), collector
-            collector << COMMA
-            collector = visit Arel.quoted(dst_tz), collector
-            collector << ')'
-          when String
-            collector << COMMA << "'UTC'" << COMMA
-            collector = visit Arel.quoted(o.time_zone), collector
-            collector << ')'
-          end
-          collector << COMMA
-          collector = visit Arel.quoted(fmt), collector
-          collector << ')'
+          visit_ArelExtensions_Nodes_FormattedDate o, collector
         when :integer, :float, :decimal
           collector << 'FORMAT('
           collector = visit o.left, collector
@@ -299,6 +280,29 @@ module ArelExtensions
           collector = visit o.left, collector
         end
         collector
+      end
+
+      def visit_ArelExtensions_Nodes_FormattedDate o, collector
+        fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
+        collector << 'DATE_FORMAT('
+        collector << 'CONVERT_TZ(' if o.time_zone
+        collector = visit o.left, collector
+        case o.time_zone
+        when Hash
+          src_tz, dst_tz = o.time_zone.first
+          collector << COMMA
+          collector = visit Arel.quoted(src_tz), collector
+          collector << COMMA
+          collector = visit Arel.quoted(dst_tz), collector
+          collector << ')'
+        when String
+          collector << COMMA << "'UTC'" << COMMA
+          collector = visit Arel.quoted(o.time_zone), collector
+          collector << ')'
+        end
+        collector << COMMA
+        collector = visit Arel.quoted(fmt), collector
+        collector << ')'
       end
 
       def visit_ArelExtensions_Nodes_DateDiff o, collector
