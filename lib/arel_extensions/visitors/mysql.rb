@@ -258,9 +258,11 @@ module ArelExtensions
         # In this case, `o.col_type` is `nil` but we have a legitimate type in
         # the expression to be formatted.  The following is a best effort to
         # infer the proper type.
+        first = o.expressions[0]
         type =
-          o.col_type.nil? && !o.expressions[0]&.return_type.nil? \
-          ? o.expressions[0]&.return_type \
+          o.col_type.nil? \
+            && (first.respond_to?(:return_type) && !first&.return_type.nil?) \
+          ? first&.return_type \
           : o.col_type
 
         case type
