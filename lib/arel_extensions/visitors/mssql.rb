@@ -355,6 +355,10 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Format o, collector
+        visit_ArelExtensions_Nodes_FormattedDate o, collector
+      end
+
+      def visit_ArelExtensions_Nodes_FormattedDate o, collector
         f = ArelExtensions::Visitors::strftime_to_format(o.iso_format, LOADED_VISITOR::DATE_FORMAT_DIRECTIVES)
         if fmt = LOADED_VISITOR::DATE_CONVERT_FORMATS[f]
           collector << "CONVERT(VARCHAR(#{f.length})"
