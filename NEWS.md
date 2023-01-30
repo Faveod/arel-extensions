@@ -2,6 +2,15 @@
 
 ## Current Release
 
+### Changes
+
+- `regexp` and `not_regexp` no longer try to change the regexes.
+  MariaDB, MySQL and PostgreSQL perfectly support PRCE, hence we
+  no longer try to rewrite the regexes.
+  Note that `regexp_replace` did not perform any of these rewritings.
+
+## Release v2.1.7/v1.3.7
+
 ### New Features
 
 - `o.format_date` as an alternative to `o.format`
