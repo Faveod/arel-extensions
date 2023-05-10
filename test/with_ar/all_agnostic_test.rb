@@ -680,10 +680,10 @@ module ArelExtensions
         assert_equal 0, User.where(@created_at.year.eq('2012')).count
         # Month
         assert_equal 5, t(@camille, @created_at.month).to_i
-        assert_equal 9, User.where(@created_at.month.eq('05')).count
+        assert_equal 10, User.where(@created_at.month.eq('05')).count
         # Week
         assert_equal(@env_db == 'mssql' ? 22 : 21, t(@arthur, @created_at.week).to_i)
-        assert_equal 9, User.where(@created_at.month.eq('05')).count
+        assert_equal 10, User.where(@created_at.month.eq('05')).count
         # Day
         assert_equal 23, t(@laure, @created_at.day).to_i
         assert_equal 0, User.where(@created_at.day.eq('05')).count
