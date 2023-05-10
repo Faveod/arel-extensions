@@ -9,7 +9,13 @@ module ArelExtensions
         Arel.quoted('"') \
         + expr
             .coalesce('')
-            .replace('\\', '\\\\').replace('"', '\"').replace("\n", '\n') \
+            .replace('\\', '\\\\')
+            .replace('"', '\"')
+            .replace("\b", '\b')
+            .replace("\f", '\f')
+            .replace("\n", '\n')
+            .replace("\r", '\r')
+            .replace("\t", '\t') \
         + '"'
       end
 
