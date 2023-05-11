@@ -12,10 +12,6 @@ end
 
 YELLOW = '33'
 
-def warn(msg)
-  $stderr.puts(colored(YELLOW, msg))
-end
-
 # Load gems specific to databases
 # NOTE:
 #     It's strongly advised to test each database on its own. Loading multiple
