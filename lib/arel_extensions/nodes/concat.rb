@@ -16,7 +16,7 @@ module ArelExtensions::Nodes
         if b.is_a?(Arel::Nodes::Quoted) && b.expr == ''
           res
         elsif res.last && res.last.is_a?(Arel::Nodes::Quoted) && b.is_a?(Arel::Nodes::Quoted)
-          res[-1] = Arel.quoted(res.last.expr + b.expr)
+          res[-1] = Arel.quoted(res.last.expr.to_s + b.expr.to_s)
         else
           res << b
         end
