@@ -18,8 +18,12 @@ module ArelExtensions
         JsonSet.new(self, key, value)
       end
 
-      def group as_array = true, orders = nil
-        JsonGroup.new(self, as_array, orders)
+      def group as_array = true, orders = nil, distinct: false
+        if distinct
+          JsonGroup.new(Arel::Nodes::NamedFunction.new('DISTINCT', [self]), as_array, orders)
+        else
+          JsonGroup.new(self, as_array, orders)
+        end
       end
 
       def hash
