@@ -771,3 +771,15 @@ bundle exec rake test:to_sql
 
 Refer to the [Version Compatibility](#version-compatibility) section to correctly
 set your gemfile.
+
+### MariaDB and Postgres
+
+We provide a `docker compose` to set up some databases for testing:
+
+```bash
+docker-compose -f dev/compose.yaml up
+```
+
+⚠️ Note: localization tests will fail for postgresql because the image is made
+for `en_US.UTF`. We should fix it later, but for the time being the CI works
+correctly for these tests, so you can safely ignore them for the time being.
