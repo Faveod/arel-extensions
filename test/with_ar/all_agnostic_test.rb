@@ -675,15 +675,22 @@ module ArelExtensions
       end
 
       def test_date_duration
+        # When user `nilly` is created, with an explicit `created_at: nil`,
+        # activerecord will give it the current date.
+        #
+        # So depending on the month when we run this test, we will get different
+        # results for `User.where(@created_at.month.eq('05'))`.
+        count_for_may = Time.now.month == 5 ? 10 : 9
+
         # Year
         assert_equal 2016, t(@lucas, @created_at.year).to_i
         assert_equal 0, User.where(@created_at.year.eq('2012')).count
         # Month
         assert_equal 5, t(@camille, @created_at.month).to_i
-        assert_equal 10, User.where(@created_at.month.eq('05')).count
+        assert_equal count_for_may, User.where(@created_at.month.eq('05')).count
         # Week
         assert_equal(@env_db == 'mssql' ? 22 : 21, t(@arthur, @created_at.week).to_i)
-        assert_equal 10, User.where(@created_at.month.eq('05')).count
+        assert_equal count_for_may, User.where(@created_at.month.eq('05')).count
         # Day
         assert_equal 23, t(@laure, @created_at.day).to_i
         assert_equal 0, User.where(@created_at.day.eq('05')).count
