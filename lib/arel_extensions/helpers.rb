@@ -34,10 +34,14 @@ module ArelExtensions
       column_of_via_arel_table(table_name, column_name)
     else
       if pool.respond_to?(:pool_config)
-        pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
-      elsif pool.respond_to?(:schema_cache)
+        if pool.pool_config.respond_to?(:schema_reflection) # activerecord >= 7.1
+          pool.pool_config.schema_reflection.columns_hash(ActiveRecord::Base.connection, table_name)[column_name]
+        else # activerecord < 7.1
+          pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
+        end
+      elsif pool.respond_to?(:schema_cache) # activerecord < 6.1
         pool.schema_cache.columns_hash(table_name)[column_name]
-      else
+      else # activerecord < 5.0
         column_of_via_arel_table(table_name, column_name)
       end
     end
