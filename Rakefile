@@ -48,3 +48,10 @@ end
   # Make sure the adapter test evaluates the env setting task
   task "test_#{adapter}" => ["#{adapter}:env", "test:#{adapter}"]
 end
+
+# Useful shorthands.
+namespace :test do
+  task :sql => :to_sql
+  task :pg => :postgresql
+  task :postgres => :postgresql
+end
