@@ -256,6 +256,13 @@ end
 
 class Arel::Table
   alias_method(:old_alias, :alias) rescue nil
+
+  # activerecord 7.1 removed the alias. We might need to remove our dependency
+  # on the alias if it proves problematic.
+  if !self.respond_to?(:table_name)
+    alias :table_name :name
+  end
+
   def alias(name = "#{self.name}_2")
     if name.present?
       Arel::Nodes::TableAlias.new(self, name)
