@@ -20,7 +20,8 @@ module ArelExtensions
   rescue NoMethodError
     nil
   rescue => e
-    warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of_via_arel_table`\n#{e.class}: #{e}")
+    warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of_via_arel_table`\n#{e.class}")
+    warn(e.backtrace)
     nil
   end
 
@@ -45,7 +46,8 @@ module ArelExtensions
   rescue ActiveRecord::StatementInvalid
     nil
   rescue => e
-    warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of`\n#{e.class}: #{e}")
+    warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of`\n#{e.class}")
+    warn(e.backtrace)
     nil
   end
 end
