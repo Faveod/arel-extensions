@@ -34,9 +34,10 @@ jdbc-postgresql:
   port: 5432
 oracle:
   adapter: oracle_enhanced
-  database: xe
-  username: ruby
-  password: oci8
+  database: FREE
+  username: SYSTEM
+  password: oraclepass
+  port: 1521
 jdbc-oracle:
   adapter: oracle_enhanced
   database: xe
