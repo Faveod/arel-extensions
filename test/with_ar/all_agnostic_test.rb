@@ -501,7 +501,7 @@ module ArelExtensions
           #
           # MySQL is happy to consider that times by default are in UTC.
           assert_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
-          refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', tz['paris'])) if !['mysql'].include?(ENV['DB'])
+          refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', tz['paris'])) if !%w[mysql postgresql].include?(ENV['DB'])
 
           # Winter/Summer time
           assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))

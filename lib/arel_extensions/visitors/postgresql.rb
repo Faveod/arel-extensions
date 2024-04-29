@@ -190,7 +190,7 @@ module ArelExtensions
           collector << ' AT TIME ZONE '
           collector = visit Arel.quoted(dst_tz), collector
         when String
-          collector << ') AT TIME ZONE '
+          collector << ") AT TIME ZONE 'UTC' AT TIME ZONE "
           collector = visit Arel.quoted(o.time_zone), collector
         end
         collector << COMMA

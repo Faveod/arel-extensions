@@ -173,9 +173,9 @@ The second form accepts 2 kinds of values:
 
 ```ruby
 t[:birthdate].format('%Y/%m/%d %H:%M:%S', 'posix/Pacific/Tahiti')
-# => DATE_FORMAT(CONVERT_TZ(CAST(my_table.birthdate AS datetime), 'UTC', 'posix/Pacific/Tahiti'), '%Y/%m/%d %H:%i:%S')          ## MySQL
-# => TO_CHAR(CAST(my_table.birthdate AS timestamp with time zone) AT TIME ZONE 'posix/Pacific/Tahiti', 'YYYY/MM/DD HH24:MI:SS') ## PostgreSQL
-# => CONVERT(datetime, my_table.birthdate) AT TIME ZONE 'UTC' AT TIME ZONE N'posix/Pacific/Tahiti'                              ## SQL Server (& truncated for clarity)
+# => DATE_FORMAT(CONVERT_TZ(CAST(my_table.birthdate AS datetime), 'UTC', 'posix/Pacific/Tahiti'), '%Y/%m/%d %H:%i:%S')                             ## MySQL
+# => TO_CHAR(CAST(my_table.birthdate AS timestamp with time zone) AT TIME ZONE 'UTC' AT TIME ZONE 'posix/Pacific/Tahiti', 'YYYY/MM/DD HH24:MI:SS') ## PostgreSQL
+# => CONVERT(datetime, my_table.birthdate) AT TIME ZONE 'UTC' AT TIME ZONE N'posix/Pacific/Tahiti'                                                 ## SQL Server (& truncated for clarity)
 #                                                                            ^^^^^^^^^^^^^^^^^^^^ 🚨 Invalid timezone for SQL Server. Explanation below.
 ```
 
