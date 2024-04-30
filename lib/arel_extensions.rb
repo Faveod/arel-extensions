@@ -121,6 +121,26 @@ module Arel
     )
   end
 
+  def self.json_true
+    res = Arel.grouping(Arel.quoted('true'))
+    res.instance_eval {
+      def return_type
+        :boolean
+      end
+    }
+    res
+  end
+
+  def self.json_false
+    res = Arel.grouping(Arel.quoted('false'))
+    res.instance_eval {
+      def return_type
+        :boolean
+      end
+    }
+    res
+  end
+
   # The NULL literal.
   def self.null
     Arel.quoted(nil)
