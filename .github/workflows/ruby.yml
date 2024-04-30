@@ -49,9 +49,6 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
-      - name: Update system-wide gems
-        if: ${{ !contains(fromJson('["2.5", "jruby-9.2"]'), matrix.versions.ruby) }}
-        run: gem update --system --no-document
       - name: Setup Gemfile for arelx 2.x
         if: ${{ matrix.versions.arelx == 2 }}
         run: |
@@ -109,9 +106,6 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
-      - name: Update system-wide gems
-        if: ${{ !contains(fromJson('["2.5", "jruby-9.2"]'), matrix.versions.ruby) }}
-        run: gem update --system --no-document
       - name: Setup Gemfile
         if: ${{ matrix.versions.arelx == 2 }}
         run: |
@@ -191,9 +185,6 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
-      - name: Update system-wide gems
-        if: ${{ !contains(fromJson('["2.5", "jruby-9.2"]'), matrix.versions.ruby) }}
-        run: gem update --system --no-document
       - name: Setup Gemfile
         if: ${{ matrix.versions.arelx == 2 }}
         run: |
@@ -268,9 +259,6 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
-      - name: Update system-wide gems
-        if: ${{ !contains(fromJson('["2.5", "jruby-9.2"]'), matrix.versions.ruby) }}
-        run: gem update --system --no-document
       - name: Setup Gemfile
         if: ${{ matrix.versions.arelx == 2 }}
         run: |
@@ -337,9 +325,6 @@ jobs:
           version: ${{ matrix.mssql }}
           install: sqlengine, sqlclient, sqlpackage, localdb
           sa-password: Password12!
-      - name: Update system-wide gems
-        if: ${{ !contains(fromJson('["2.5", "jruby-9.2"]'), matrix.versions.ruby) }}
-        run: gem update --system --no-document
       - name: Setup Gemfile
         if: ${{ matrix.versions.arelx == 2 }}
         run: |
