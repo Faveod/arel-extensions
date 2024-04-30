@@ -392,7 +392,7 @@ module ArelExtensions
           when :number, :decimal, :float
             'numeric'
           when :datetime
-            'timestamp with time zone'
+            'timestamp without time zone'
           when :date
             'date'
           when :binary
