@@ -1,0 +1,8 @@
+#! /usr/bin/env sh
+set -e
+
+find . -name "arel_extensions*.gem" | while read packaged_gem ; do
+  echo "Publishing $packaged_gem"
+  gem push "$packaged_gem"
+done
+
