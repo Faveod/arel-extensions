@@ -1,6 +1,6 @@
 # News
 
-## Current Release
+## Release v2.1.9/v1.3.9
 
 ### Bug Fixes
 
