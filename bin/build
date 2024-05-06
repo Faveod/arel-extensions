@@ -1,0 +1,15 @@
+#! /usr/bin/env sh
+set -e
+
+# VERSION ~> 1
+echo "Packaging v1"
+cp ./version_v1.rb lib/arel_extensions/version.rb
+cp ./gemspecs/arel_extensions-v1.gemspec ./arel_extensions.gemspec
+gem build ./arel_extensions.gemspec
+
+# VERSION ~> 2
+echo "Packaging v2"
+cp ./version_v2.rb lib/arel_extensions/version.rb
+cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
+gem build ./arel_extensions.gemspec
+

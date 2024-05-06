@@ -1,0 +1,30 @@
+name: Release
+on:
+  workflow_run:
+    workflows: ["Build and Test"]
+    branches: [master]
+    types:
+      - completed
+
+jobs:
+  build_gems:
+    name: Build Gemfiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup ruby 3.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+      - name: build gems
+        run: |
+          bin/build
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}-${{ steps.vars.outputs.sha_short }}
+          draft: true
+          files: |
+            ./arel_extensions-*.gem
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
