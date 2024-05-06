@@ -14,9 +14,9 @@ jobs:
         with:
           ruby-version: 3.2
       - name: Fetch Github Release Asset
-        uses: dsaltares/fetch-gh-release-asset@1.1.0
+        uses: dsaltares/fetch-gh-release-asset@master
         with:
-          file: "arel_extensions-*.gem"
+          file: "arel_extensions*.gem"
           regex: true
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: List gems
