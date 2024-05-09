@@ -158,10 +158,10 @@ module ArelExtensions
         collector = visit o.expressions.first, collector
         collector <<
           if o.ai
-            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci'}"
+            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : "#{charset}_unicode_ci"}"
           # doesn't work in latin1
           elsif o.ci
-            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : 'utf8_unicode_ci'}"
+            " COLLATE #{charset == 'latin1' ? 'latin1_general_ci' : "#{charset}_unicode_ci"}"
           else
             " COLLATE #{charset}_bin"
           end
