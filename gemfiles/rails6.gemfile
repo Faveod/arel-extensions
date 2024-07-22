@@ -20,11 +20,12 @@ group :development, :test do
   gem 'activerecord-oracle_enhanced-adapter', '~> 6.0.0' if ENV.has_key? 'ORACLE_HOME'
 
   # for JRuby
-  gem 'activerecord-jdbc-adapter', github: 'jruby/activerecord-jdbc-adapter', tag: 'v60.4', platforms: :jruby
-  gem 'jdbc-sqlite3', platforms: :jruby
-  gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
+  gem 'activerecord-jdbc-alt-adapter', '~> 60.0', platform: :jruby, require: true
   gem 'activerecord-jdbcmysql-adapter', platforms: :jruby
   gem 'activerecord-jdbcpostgresql-adapter', platforms: :jruby
+  gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
+  gem 'jdbc-mssql', platforms: :jruby, require: true
+  gem 'jdbc-sqlite3', platforms: :jruby
 end
 
 gemspec path: Dir.pwd

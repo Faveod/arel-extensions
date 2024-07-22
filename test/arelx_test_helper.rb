@@ -12,7 +12,8 @@ end
 
 YELLOW = '33'
 
-# Load gems specific to databases
+# Load gems specific to databases.
+#
 # NOTE:
 #     It's strongly advised to test each database on its own. Loading multiple
 #     backend gems leads to undefined behavior according to tests; the backend
@@ -22,26 +23,32 @@ YELLOW = '33'
 #     The issue also seems to be related to arel version: at some point, arel
 #     dropped its wide support for DBs and kept Postgres, MySQL and SQLite.
 #     Here, we're just trying to load the correct ones.
+#
+# NOTE:
+#     As of jruby 9.4 (and maybe 9.3, but I couldn't test it given the state of
+#     the alt-adapter), we need to load jdbc/mssql manually.
 db_and_gem =
-  if RUBY_ENGINE == 'jruby'
+  if RUBY_PLATFORM == 'java'
     {
-      'oracle'     => 'activerecord-oracle_enhanced-adapter',
-      'mssql'      => 'activerecord-jdbcsqlserver-adapter'
+      'oracle'     => ['activerecord-oracle_enhanced-adapter'],
+      'mssql'      => ['jdbc/mssql', 'activerecord-jdbcsqlserver-adapter'],
     }
   else
     {
-      'oracle'     => 'activerecord-oracle_enhanced-adapter',
-      'mssql'      => 'activerecord-sqlserver-adapter'
+      'oracle'     => ['activerecord-oracle_enhanced-adapter'],
+      'mssql'      => ['activerecord-sqlserver-adapter'],
     }
   end
 
-def load_lib(gem)
-  if gem && (RUBY_ENGINE == 'jruby' || Arel::VERSION.to_i > 9)
-    begin
-      Gem::Specification.find_by_name(gem)
-      require gem
-    rescue Gem::MissingSpecError
-      warn "Warning: failed to load gem #{gem}. Are you sure it's installed?"
+def load_lib(gems)
+  if gems && (RUBY_PLATFORM == 'java' || Arel::VERSION.to_i > 9)
+    gems.each do |gem|
+      begin
+        require gem
+      rescue Exception => e
+        warn "Warning: failed to load gem #{gem}. Are you sure it's installed?"
+        warn e.message
+      end
     end
   end
 end

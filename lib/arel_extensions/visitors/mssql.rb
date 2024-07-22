@@ -57,9 +57,10 @@ module ArelExtensions
       # It didn't handle numbers correctly: `quote(1, nil)` translated into
       # `N'1'` which we don't want.
       #
-      # The following is adapted from activerecord/lib/active_record/connection_adapters/abstract/quoting.rb
+      # The following is adapted from
+      # https://github.com/rails/rails/blob/main/activerecord/lib/active_record/connection_adapters/abstract/quoting.rb
       #
-      if RUBY_PLATFORM == 'java' && ActiveRecord::VERSION::MAJOR < 5
+      if RUBY_PLATFORM == 'java'
         def quote_string(s)
           s.gsub('\\', '\&\&').gsub("'", "''") # ' (for ruby-mode)
         end
@@ -69,22 +70,21 @@ module ArelExtensions
         end
 
         def quoted_date(value)
-          format_str = '%Y-%m-%d'
           if value.acts_like?(:time)
-            if ActiveRecord::Base.default_timezone == :utc
+            if (ActiveRecord.respond_to?(:default_timezone) && ActiveRecord.default_timezone == :utc) || ActiveRecord::Base.default_timezone == :utc
               value = value.getutc if value.respond_to?(:getutc) && !value.utc?
             else
               value = value.getlocal if value.respond_to?(:getlocal)
             end
-            format_str = '%Y-%m-%dT%H:%M:%S.%L'
           end
-          result = value.strftime(format_str)
+          # new versions of AR use `to_fs`, but we want max compatibility, and we're
+          # not going to write it over and over, so it's fine like that.
+          result = value.to_formatted_s(:db)
           if value.respond_to?(:usec) && value.usec > 0
             result << '.' << sprintf('%06d', value.usec)
           else
             result
           end
-          "CAST('#{result}' AS #{value.acts_like?(:time) ? "datetime" : "date"})"
         end
 
         def quoted_true
@@ -106,19 +106,21 @@ module ArelExtensions
             value
           when String, Symbol, ActiveSupport::Multibyte::Chars
             "'#{quote_string(value.to_s)}'"
-          when true      
+          when true
             quoted_true
-          when false     
+          when false
             quoted_false
-          when nil       
+          when nil
             'NULL'
           # BigDecimals need to be put in a non-normalized form and quoted.
           when BigDecimal
             value.to_s('F')
           when Numeric, ActiveSupport::Duration
             value.to_s
+          when Arel::VERSION.to_i > 6 && ActiveRecord::Type::Time::Value
+            "'#{quoted_time(value)}'"
           when Date, Time
-            quoted_date(value)
+            "'#{quoted_date(value)}'"
           when Class
             "'#{value}'"
           else
