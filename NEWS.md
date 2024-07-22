@@ -1,5 +1,7 @@
 # News
 
+- MS SQL: add support for jruby 9.4 via [activerecord-jdbc-alt-adapter](https://rubygems.org/gems/activerecord-jdbc-alt-adapter/)
+
 ## Release v2.1.9/v1.3.9
 
 ### Bug Fixes
