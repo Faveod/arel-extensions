@@ -83,7 +83,7 @@ module ArelExtensions
           else
             result
           end
-          "CAST('#{result}' AS #{value.acts_like(:time) ? "datetime" : "date"})"
+          "CAST('#{result}' AS #{value.acts_like?(:time) ? "datetime" : "date"})"
         end
 
         def quoted_true
