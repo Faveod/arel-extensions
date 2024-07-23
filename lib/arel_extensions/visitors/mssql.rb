@@ -69,7 +69,7 @@ module ArelExtensions
         end
 
         def quoted_date(value)
-          format_str = '%Y:%m:%d'
+          format_str = '%Y-%m-%d'
           if value.acts_like?(:time)
             if ActiveRecord::Base.default_timezone == :utc
               value = value.getutc if value.respond_to?(:getutc) && !value.utc?
