@@ -40,6 +40,7 @@ def setup_db
       t.column :created_at, :date
       t.column :updated_at, :date
       t.column :score, :decimal
+      t.column :updated_at, :datetime
   end
 end
 
@@ -53,11 +54,12 @@ end
 class ListTest < Minitest::Test
   def setup
     d = Date.new(2016, 05, 23)
+    dt = Time.new(2016, 05, 23, 12, 34, 56)
     setup_db
     User.create age: 5, name: 'Lucas', created_at: d, score: 20.16
     User.create age: 15, name: 'Sophie', created_at: d, score: 20.16
     User.create age: 20, name: 'Camille', created_at: d, score: 20.16
-    User.create age: 21, name: 'Arthur', created_at: d, score: 65.62
+    User.create age: 21, name: 'Arthur', created_at: d, score: 65.62, updated_at: dt
     u = User.create age: 23, name: 'Myung', created_at: d, score: 20.16
     @myung = User.where(id: u.id)
     User.create age: 25, name: 'Laure', created_at: d, score: 20.16
@@ -100,12 +102,15 @@ class ListTest < Minitest::Test
   end
 
   def test_date_date_comparator
-    d = Date.new(2016, 05, 24)
+    d = Date.new(2016, 05, 24) #after created_at in db
     assert_equal 8, User.where(User.arel_table[:age] < d).count
     assert_equal 0, User.where(User.arel_table[:age] > d).count
     assert_equal 0, User.where(User.arel_table[:age] == d).count
     d = Date.new(2016, 05, 23)
     assert_equal 8, User.where(User.arel_table[:age] == d).count
+    dt = Time.new(2016, 05, 23, 12, 35, 00) #after updated_at in db
+    assert_equal 1, User.where(User.arel_table[:update_at] < dt).count
+    assert_equal 0, User.where(User.arel_table[:update_at] > dt).count
   end
 
   def test_date_duration
