@@ -91,12 +91,21 @@ class ListTest < Minitest::Test
     end
   end
 
-  def test_Comparator
+  def test_comparator
     assert_equal 2, User.where(User.arel_table[:age] < 6).count
     assert_equal 2, User.where(User.arel_table[:age] <= 10).count
     assert_equal 3, User.where(User.arel_table[:age] > 20).count
     assert_equal 4, User.where(User.arel_table[:age] >= 20).count
     assert_equal 1, User.where(User.arel_table[:age] > 5).where(User.arel_table[:age] < 20).count
+  end
+
+  def test_date_date_comparator
+    d = Date.new(2016, 05, 24)
+    assert_equal 8, User.where(User.arel_table[:age] < d).count
+    assert_equal 0, User.where(User.arel_table[:age] > d).count
+    assert_equal 0, User.where(User.arel_table[:age] == d).count
+    d = Date.new(2016, 05, 23)
+    assert_equal 8, User.where(User.arel_table[:age] == d).count
   end
 
   def test_date_duration
