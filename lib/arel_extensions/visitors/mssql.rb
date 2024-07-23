@@ -118,7 +118,7 @@ module ArelExtensions
           when Numeric, ActiveSupport::Duration
             value.to_s
           when Date, Time
-            "#{quoted_date(value)}"
+            quoted_date(value)
           when Class
             "'#{value}'"
           else
