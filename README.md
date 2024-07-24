@@ -772,7 +772,7 @@ bundle exec rake test:to_sql
 Refer to the [Version Compatibility](#version-compatibility) section to correctly
 set your gemfile.
 
-### MariaDB and Postgres
+### Testing databases locally
 
 We provide a `docker compose` to set up some databases for testing:
 
