@@ -2,52 +2,68 @@ module ArelExtensions
   module Visitors
     module MSSQL
 
-      mssql_class = Arel::Visitors.constants.select { |c|
-        Arel::Visitors.const_get(c).is_a?(Class) && %i[MSSQL SQLServer].include?(c)
-      }.first
+      MSSQL_CLASS_NAMES = %i[MSSQL SQLServer].freeze
 
-      LOADED_VISITOR = Arel::Visitors.const_get(mssql_class) || Arel::Visitors.const_get('MSSQL')
+      mssql_class =
+        Arel::Visitors
+          .constants
+          .select { |c| Arel::Visitors.const_get(c).is_a?(Class)  }
+          .find { |c| MSSQL_CLASS_NAMES.include?(c) }
 
-      LOADED_VISITOR::DATE_MAPPING = {
-        'd' => 'day', 'm' => 'month', 'y' => 'year', 'wd' => 'weekday', 'w' => 'week', 'h' => 'hour', 'mn' => 'minute', 's' => 'second'
-      }.freeze
+      # This guard is necessary because:
+      #
+      # 1. const_get(mssql_class) will fail when mssql_class is nil.
+      # 2. mssql_class could be nil under certain conditions:
+      #   1. especially on ruby 2.5 (and surprisingly not jruby 9.2) and 3.0+.
+      #   2. when not working with mssql itself.
+      if mssql_class
+        LOADED_VISITOR = Arel::Visitors.const_get(mssql_class)
 
-      LOADED_VISITOR::DATE_FORMAT_DIRECTIVES = {
-        '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' => 'month', '%^B' => '', '%b' => '', '%^b' => '', # year, month
-        '%V' => 'iso_week', '%G' => '',                                                                                # ISO week number and year of week
-        '%d' => 'DD', '%e' => ''  , '%j' => ''  , '%w' => 'dw', %'a' => '', '%A' => 'weekday',                         # day, weekday
-        '%H' => 'hh', '%k' => ''  , '%I' => ''  , '%l' => ''  , '%P' => '', '%p' => '',                                # hours
-        '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
-      }.freeze
+        LOADED_VISITOR::DATE_MAPPING = {
+          'd' => 'day', 'm' => 'month', 'y' => 'year',
+          'wd' => 'weekday', 'w' => 'week',
+          'h' => 'hour', 'mn' => 'minute', 's' => 'second'
+        }.freeze
 
-      LOADED_VISITOR::DATE_FORMAT_FORMAT = {
-        'YY' => '0#', 'MM' => '0#', 'DD' => '0#', 'hh' => '0#', 'mi' => '0#', 'ss' => '0#', 'iso_week' => '0#'
-      }
+        LOADED_VISITOR::DATE_FORMAT_DIRECTIVES = {
+          '%Y' => 'YYYY', '%C' => '', '%y' => 'YY', '%m' => 'MM', '%B' => 'month', '%^B' => '', '%b' => '', '%^b' => '', # year, month
+          '%V' => 'iso_week', '%G' => '',                                                                                # ISO week number and year of week
+          '%d' => 'DD', '%e' => ''  , '%j' => ''  , '%w' => 'dw', %'a' => '', '%A' => 'weekday',                         # day, weekday
+          '%H' => 'hh', '%k' => ''  , '%I' => ''  , '%l' => ''  , '%P' => '', '%p' => '',                                # hours
+          '%M' => 'mi', '%S' => 'ss', '%L' => 'ms', '%N' => 'ns', '%z' => 'tz'
+        }.freeze
 
-      LOADED_VISITOR::DATE_NAME = [
-        '%B', '%A'
-      ]
+        LOADED_VISITOR::DATE_FORMAT_FORMAT = {
+          'YY' => '0#', 'MM' => '0#', 'DD' => '0#',
+          'hh' => '0#', 'mi' => '0#', 'ss' => '0#',
+          'iso_week' => '0#'
+        }
 
-      LOADED_VISITOR::DATE_FORMAT_REGEX =
-        Regexp.new(
-          LOADED_VISITOR::DATE_FORMAT_DIRECTIVES
-            .keys
-            .map{|k| Regexp.escape(k)}
-            .join('|')
-        ).freeze
+        LOADED_VISITOR::DATE_NAME = [
+          '%B', '%A'
+        ]
 
-      # TODO; all others... http://www.sql-server-helper.com/tips/date-formats.aspx
-      LOADED_VISITOR::DATE_CONVERT_FORMATS = {
-        'YYYY-MM-DD' => 120,
-        'YY-MM-DD' => 120,
-        'MM/DD/YYYY' => 101,
-        'MM-DD-YYYY' => 110,
-        'YYYY/MM/DD' => 111,
-        'DD-MM-YYYY' => 105,
-        'DD-MM-YY'   => 5,
-        'DD.MM.YYYY' => 104,
-        'YYYY-MM-DDTHH:MM:SS:MMM' => 126
-      }.freeze
+        LOADED_VISITOR::DATE_FORMAT_REGEX =
+          Regexp.new(
+            LOADED_VISITOR::DATE_FORMAT_DIRECTIVES
+              .keys
+              .map{|k| Regexp.escape(k)}
+              .join('|')
+          ).freeze
+
+        # TODO; all others... http://www.sql-server-helper.com/tips/date-formats.aspx
+        LOADED_VISITOR::DATE_CONVERT_FORMATS = {
+          'YYYY-MM-DD' => 120,
+          'YY-MM-DD' => 120,
+          'MM/DD/YYYY' => 101,
+          'MM-DD-YYYY' => 110,
+          'YYYY/MM/DD' => 111,
+          'DD-MM-YYYY' => 105,
+          'DD-MM-YY'   => 5,
+          'DD.MM.YYYY' => 104,
+          'YYYY-MM-DDTHH:MM:SS:MMM' => 126
+        }.freeze
+      end
 
       # Quoting in JRuby + AR < 5 requires special handling for MSSQL.
       #
@@ -127,6 +143,15 @@ module ArelExtensions
             raise TypeError, "can't quote #{value.class.name}"
           end
         end
+      end
+
+      alias_method(:old_primary_Key_From_Table, :primary_Key_From_Table) rescue nil
+      def primary_Key_From_Table t
+        return unless t
+
+        column_name = @connection.schema_cache.primary_keys(t.name) ||
+                      @connection.schema_cache.columns_hash(t.name).first.try(:second).try(:name)
+        column_name ? t[column_name] : nil
       end
 
       # Math Functions
@@ -547,14 +572,21 @@ module ArelExtensions
           collector = visit o.left, collector
         end
         collector << ' AS '
-
-        # sometimes these values are already quoted, if they are, don't double quote it
-        quote = o.right.is_a?(Arel::Nodes::SqlLiteral) && o.right[0] != '"' && o.right[-1] != '"'
-
-        collector << '"' if quote
+        # Sometimes these values are already quoted, if they are, don't double quote it
+        lft, rgt =
+          if o.right.is_a?(Arel::Nodes::SqlLiteral)
+            if Arel::VERSION.to_i >= 6 && o.right[0] != '[' && o.right[-1] != ']'
+              # This is a lie, it's not about arel version, but SQL Server's (>= 2000).
+              ['[', ']']
+            elsif o.right[0] != '"' && o.right[-1] != '"'
+              ['"', '"']
+            else
+              []
+            end
+          end
+        collector << lft if lft
         collector = visit o.right, collector
-        collector << '"' if quote
-
+        collector << rgt if rgt
         collector
       end
 
