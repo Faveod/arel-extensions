@@ -1,5 +1,7 @@
 # News
 
+- MS SQL: turn on warnings on requires only when necessary.
+
 ## Release v2.1.10/v1.3.10
 
 - MS SQL: add support for jruby 9.4 via [activerecord-jdbc-alt-adapter](https://rubygems.org/gems/activerecord-jdbc-alt-adapter/)
