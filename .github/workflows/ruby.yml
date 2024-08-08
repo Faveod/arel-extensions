@@ -3,7 +3,13 @@ name: Build and Test
 # Ruby + Rails Compatibility Matrix from here:
 # https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   job_test_to_sql:
