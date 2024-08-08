@@ -4,7 +4,10 @@
 # 1. putting it inside the visitor or anywhere else will not
 #    guarantee its actual loading.
 # 2. it needs to load before arel_extensions/visitors.
-if RUBY_PLATFORM == 'java' && Gem::Specification.find { |g| g.name == 'jdbc-mssql' }
+if RUBY_PLATFORM == 'java' \
+  && RUBY_ENGINE == 'jruby' \
+  && (version = JRUBY_VERSION.split('.').map(&:to_i)) && version[0] == 9 && version[1] >= 4 \
+  && Gem::Specification.find { |g| g.name == 'jdbc-mssql' }
   begin
     require 'arel/visitors/sqlserver'
   rescue LoadError
