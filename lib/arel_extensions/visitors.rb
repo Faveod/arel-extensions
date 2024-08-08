@@ -13,6 +13,12 @@ if RUBY_PLATFORM == 'java' \
   rescue LoadError
     warn 'arel/visitors/sqlserver not found: MSSQL might not work correctly.'
   end
+elsif RUBY_PLATFORM != 'java' && Arel::VERSION.to_i < 10
+  begin
+    require 'arel_sqlserver'
+  rescue LoadError
+    warn 'arel_sqlserver not found: SQLServer Visitor might not work correctly.'
+  end
 end
 
 require 'arel_extensions/visitors/convert_format'
@@ -38,15 +44,6 @@ if defined?(Arel::Visitors::DepthFirst)
     def visit_Arel_SelectManager o
         visit o.ast
     end
-  end
-end
-
-# Especially required here, not inside the next if, for Arel < 6.
-if RUBY_PLATFORM != 'java'
-  begin
-    require 'arel_sqlserver'
-  rescue LoadError
-    warn 'gem arel_sqlserver not found: SQLServer Visitor might not work correctly.'
   end
 end
 
