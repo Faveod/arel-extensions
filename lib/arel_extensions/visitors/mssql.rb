@@ -76,7 +76,7 @@ module ArelExtensions
       # The following is adapted from
       # https://github.com/rails/rails/blob/main/activerecord/lib/active_record/connection_adapters/abstract/quoting.rb
       #
-      if RUBY_PLATFORM == 'java'
+      if RUBY_PLATFORM == 'java' && Arel::VERSION.to_i <= 6
         def quote_string(s)
           s.gsub('\\', '\&\&').gsub("'", "''") # ' (for ruby-mode)
         end
