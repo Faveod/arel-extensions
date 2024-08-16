@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+IFS=$'\n\t'
+set -euo pipefail
+
+docker compose -f dev/compose.yaml up --exit-code-from arelx
