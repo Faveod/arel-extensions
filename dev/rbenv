@@ -1,0 +1,189 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'colorize'
+require 'etc'
+require 'open3'
+require 'pathname'
+require 'stringio'
+require 'toml-rb'
+require 'psych'
+
+workflow = Pathname('.github/workflows/ruby.yml').read.gsub!(/rails: (\d(_\d)?)/, 'rails: "\1"')
+jobs = Psych.load(workflow, symbolize_names: true)[:jobs]
+data = {}
+jobs.each do |name, details|
+  details[:strategy][:matrix][:versions].each do |entry|
+    db = name.to_s.gsub(/\Ajob_test_/, '').to_sym
+    ruby = entry[:ruby]
+    rails = entry[:rails]
+    arelx = entry[:arelx]
+    gemspec = :"arel_extensions-v#{arelx}"
+    gemfile = :"rails#{rails}"
+
+    data[db] ||= {}
+    data[db][gemspec] ||= {}
+    data[db][gemspec][gemfile] ||= []
+    data[db][gemspec][gemfile] << ruby
+    data[db][gemspec][gemfile].sort!
+  end
+end
+
+MATRIX = data.freeze
+
+def sh(command, exit_on_fail: true, stealth: false)
+  cmd, args = command.split(' ', 2)
+  puts "#{'$'.green.bold} #{cmd.blue} #{args&.yellow}"
+  Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
+    stdin.close
+    out, err =
+      if stealth
+        [StringIO.new, StringIO.new]
+      else
+        [$stdout, $stderr]
+      end
+    th_out = Thread.new do
+      stdout.each_line { |line| out.puts line }
+    end
+    th_err = Thread.new do
+      stderr.each_line { |line| err.puts line }
+    end
+
+    th_out.join
+    th_err.join
+    wait_thr.join
+    exit_status = wait_thr.value.exitstatus
+    if exit_status.nonzero?
+      warn "'#{command}' failed with exit status #{exit_status}. Aborting …".red
+      warn stderr if !stealth
+      exit exit_status if exit_on_fail
+    end
+
+    if stealth
+      [out.string, err.string, (exit_status if !exit_on_fail)].compact
+    end
+  end
+end
+
+module RBEnv
+  RBENV_ROOT =
+    if (root = ENV['RBENV_ROOT']) && root && !root.strip.empty?
+      Pathname(root)
+    else
+      Pathname(Dir.home).join('.rbenv')
+    end.freeze
+  RBENV_BUILD = RBENV_ROOT.join('plugins').join('ruby-build').freeze
+  SHELL = Pathname(Etc.getpwuid.shell).basename.to_s.downcase.to_sym
+
+  def self.available_versions
+    out, _ = sh "rbenv versions --bare", stealth: true
+    res = out.lines.map(&:strip)
+    warn res
+    res
+  end
+
+  def self.ensure(ruby_version)
+    version = RBEnv.resolve_to_latest(ruby_version)
+    if self.installed?(version)
+      puts "#{version.yellow} already installed. Skipping …"
+    else
+      puts "Installing #{version.yellow}"
+      sh "rbenv install #{version}"
+    end
+    version
+  end
+
+  def self.install
+    if RBENV_ROOT.exist?
+      puts "#{RBENV_ROOT} exists. Skipping …"
+    else
+      sh "git clone --depth 1 https://github.com/rbenv/rbenv.git #{RBENV_ROOT}"
+      puts "Setup your shell to recognize rbenv. Check github.com/rbenv/rbenv."
+    end
+
+    if RBENV_BUILD.exist?
+      puts "#{RBENV_BUILD} exists. Skipping …"
+    else
+      sh "git clone --depth 1 https://github.com/rbenv/ruby-build.git #{RBENV_BUILD}"
+    end
+  end
+
+  def self.installed?(version)
+    installed = available_versions
+    puts "installed? = #{installed}"
+    installed && !installed.empty? && installed.include?(version)
+  end
+
+  def self.resolve_to_latest(version)
+    out, _ = sh "rbenv install --list-all", stealth: true
+    out
+      .lines
+      .map(&:strip)
+      .select { |v| v.match(/^#{Regexp.escape(version)}\.\d+/) }
+      .max_by { |v| v.split('.').map(&:to_i) }
+  end
+
+  def self.set(version)
+    sh "rbenv local #{version}"
+  end
+end
+
+module CI
+  def self.help(*_args)
+    puts "Usage:"
+    puts "    #{$0} [#{CI.singleton_class.instance_methods(false).sort.join(' | ')}]"
+    puts
+    puts "You can ask for many commands."
+  end
+
+  def self.install(*_args)
+    RBEnv.install
+    MATRIX
+      .flat_map { |_, db|
+        db.flat_map { |_, arelx|
+          arelx.flat_map { |rails, rubies|
+            rails.start_with?("rails") ? rubies : []
+          }
+        }
+      }
+      .uniq
+      .sort
+      .each do |version|
+        RBEnv.ensure(version)
+      end
+  end
+
+  # @param args [Array<String>] a list of databases to test
+  def self.test(*args)
+    puts "Requested DBs: #{args.inspect}"
+    MATRIX.each do |db, arelx|
+      puts "db = #{db}; #{!args.empty? && args.include?(db)}"
+      if args.empty? || args.include?(db)
+        puts "Testing #{db}"
+      else
+        puts "Skipping #{db}"
+        next
+      end
+      arelx.each do |arelx_version, rails|
+        sh "cp ./gemspecs/#{arelx_version}.gemspec ./arel_extensions.gemspec"
+        rails.each do |rails_version, ruby|
+          sh "cp ./gemfiles/#{rails_version}.gemfile ./Gemfile"
+          ruby.each do |ruby_version|
+            full_version = RBEnv.ensure(ruby_version)
+            RBEnv.set(full_version)
+            sh "ruby --version"
+            sh "which ruby"
+            sh "rm -rf Gemfile.lock vendor"
+            sh "bundle config set --local path vendor"
+            sh "bundle install"
+            sh "bundle exec rake test:#{db}"
+          end
+        end
+      end
+    end
+  end
+end
+
+# main
+command = ARGV.size.nonzero? ? ARGV : %w[help]
+CI.send(command[0], *command[1..])

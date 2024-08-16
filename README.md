@@ -777,9 +777,12 @@ set your gemfile.
 We provide a `docker compose` to set up some databases for testing:
 
 ```bash
-docker-compose -f dev/compose.yaml up
+docker compose -f dev/compose.yaml up --exit-code-from arelx
 ```
 
-⚠️ Note: localization tests will fail for postgresql because the image is made
-for `en_US.UTF`. We should fix it later, but for the time being the CI works
-correctly for these tests, so you can safely ignore them for the time being.
+Or simply call `bin/compose`.
+
+The databases, versions of arelx, and versions of ruby are all read from the
+matrixes defined in `.github/workflow/ruby.yml`. To test a specific
+configuration, all you have to do is comment the versions you're not
+insterested in.

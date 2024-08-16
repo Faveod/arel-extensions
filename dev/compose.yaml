@@ -1,5 +1,21 @@
-name: arelx-dbs
+name: arelx
 services:
+  arelx:
+    container_name: arelx-build
+    build:
+      context: ..
+      dockerfile: dev/arelx.dockerfile
+    volumes:
+      - ../:/app
+    entrypoint: ["/usr/bin/ruby", "dev/rbenv", "test"]
+    network_mode: "host"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mssql:
+        condition: service_healthy
   mariadb:
     image: mariadb:11.0
     container_name: mariadb
@@ -8,13 +24,16 @@ services:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
     ports:
       - "3306:3306"
+    network_mode: "host"
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
       timeout: 5s
       retries: 3
   postgres:
-    image: postgres:15
+    build:
+      context: ..
+      dockerfile: dev/postgres.dockerfile
     container_name: postgres
     environment:
       POSTGRES_USER: postgres
@@ -22,6 +41,7 @@ services:
       POSTGRES_DB: arelx_test
     ports:
       - "5432:5432"
+    network_mode: "host"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 10s
@@ -35,3 +55,17 @@ services:
       ACCEPT_EULA: Y
     ports:
       - "1433:1433"
+    network_mode: "host"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $${MSSQL_SA_PASSWORD} -Q 'SELECT 1'",
+        ]
+      interval: 30s
+      retries: 5
+      timeout: 10s
+
+networks:
+  default:
+    name: arelx-network
