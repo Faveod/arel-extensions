@@ -4,7 +4,6 @@ require 'date'
 module ArelExtensions
   module WithAr
     class ListTest < Minitest::Test
-      require 'minitest/pride'
       def connect_db
         ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
         if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx') || (RUBY_PLATFORM == 'java')) # not supported
