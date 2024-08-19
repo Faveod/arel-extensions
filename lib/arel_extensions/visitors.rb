@@ -13,7 +13,9 @@ if RUBY_PLATFORM == 'java' \
   rescue LoadError
     warn 'arel/visitors/sqlserver not found: MSSQL might not work correctly.'
   end
-elsif RUBY_PLATFORM != 'java' && Arel::VERSION.to_i < 10
+elsif RUBY_PLATFORM != 'java' \
+  && Arel::VERSION.to_i < 10 \
+  && Gem::Specification.find { |g| g.name == 'activerecord-sqlserver-adapter' }
   begin
     require 'arel_sqlserver'
   rescue LoadError
