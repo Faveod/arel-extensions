@@ -35,7 +35,11 @@ module ArelExtensions
     else
       if pool.respond_to?(:pool_config)
         if pool.pool_config.respond_to?(:schema_reflection) # activerecord >= 7.1
-          pool.pool_config.schema_reflection.columns_hash(ActiveRecord::Base.connection, table_name)[column_name]
+          if ActiveRecord.version >= Gem::Version.create('7.2')
+            pool.pool_config.schema_reflection.columns_hash(pool, table_name)[column_name]
+          else
+            pool.pool_config.schema_reflection.columns_hash(ActiveRecord::Base.connection, table_name)[column_name]
+          end
         else # activerecord < 7.1
           pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
         end
@@ -50,7 +54,8 @@ module ArelExtensions
   rescue ActiveRecord::StatementInvalid
     nil
   rescue => e
-    warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of`\n#{e.class}")
+    warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of`")
+    warn(e)
     warn(e.backtrace)
     nil
   end
