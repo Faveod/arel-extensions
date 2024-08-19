@@ -1,0 +1,30 @@
+source 'https://rubygems.org'
+
+gem 'rails', '~> 7.2'
+
+group :development, :test do
+  gem 'activesupport', '~> 7.2'
+  gem 'activemodel', '~> 7.2'
+  gem 'activerecord', '~> 7.2'
+
+  gem 'sqlite3', '~> 1.6', platforms: [:mri]
+  gem 'mysql2', '~>0.5', platforms: [:mri]
+  gem 'pg', '~> 1.5', platforms: [:mri]
+
+  gem 'tiny_tds', platforms: %i[mri mingw x64_mingw mswin]
+  gem 'activerecord-sqlserver-adapter', '~> 7.2', platforms: %i[mri mingw x64_mingw mswin]
+  gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw]
+
+  gem 'ruby-oci8', platforms: %i[mri mswin mingw] if ENV.has_key? 'ORACLE_HOME'
+  gem 'activerecord-oracle_enhanced-adapter', '~> 7.0.0' if ENV.has_key? 'ORACLE_HOME'
+
+  # for JRuby
+  gem 'jdbc-mssql', platforms: :jruby, require: true
+  gem 'jdbc-sqlite3', platform: :jruby
+  # gem 'activerecord-jdbc-alt-adapter', '~> 71.0.0.alpha1', platform: :jruby, require: true
+  gem 'activerecord-jdbcmysql-adapter', platforms: :jruby
+  gem 'activerecord-jdbcpostgresql-adapter', platforms: :jruby
+  gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
+end
+
+gemspec path: Dir.pwd
