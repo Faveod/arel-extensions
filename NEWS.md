@@ -1,6 +1,7 @@
 # News
 
 - MS SQL: restrict date-quoting to Arel <= 6 (Rails 4.2)
+- MS SQL: turn on warnings on requires only when gem is found
 
 ## Release v2.1.11/v1.3.11
 
