@@ -64,11 +64,10 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
-      - name: Setup Gemfile for arelx 2.x
-        if: ${{ matrix.versions.arelx == 2 }}
+      - name: Setup Gemfile
         run: |
-          cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
-          cp ./version_v2.rb lib/arel_extensions/version.rb
+          cp ./gemspecs/arel_extensions-v${{ matrix.versions.arelx }}.gemspec ./arel_extensions.gemspec
+          cp ./version_v${{ matrix.versions.arelx }}.rb lib/arel_extensions/version.rb
           cp ./gemfiles/rails${{ matrix.versions.rails }}.gemfile ./Gemfile
       - name: bundle install
         run: |
@@ -131,10 +130,9 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
       - name: Setup Gemfile
-        if: ${{ matrix.versions.arelx == 2 }}
         run: |
-          cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
-          cp ./version_v2.rb lib/arel_extensions/version.rb
+          cp ./gemspecs/arel_extensions-v${{ matrix.versions.arelx }}.gemspec ./arel_extensions.gemspec
+          cp ./version_v${{ matrix.versions.arelx }}.rb lib/arel_extensions/version.rb
           cp ./gemfiles/rails${{ matrix.versions.rails }}.gemfile ./Gemfile
       - name: bundle install
         run: |
@@ -218,10 +216,9 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
       - name: Setup Gemfile
-        if: ${{ matrix.versions.arelx == 2 }}
         run: |
-          cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
-          cp ./version_v2.rb lib/arel_extensions/version.rb
+          cp ./gemspecs/arel_extensions-v${{ matrix.versions.arelx }}.gemspec ./arel_extensions.gemspec
+          cp ./version_v${{ matrix.versions.arelx }}.rb lib/arel_extensions/version.rb
           cp ./gemfiles/rails${{ matrix.versions.rails }}.gemfile ./Gemfile
       - name: bundle install
         run: |
@@ -300,10 +297,9 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y freetds-dev
       - name: Setup Gemfile
-        if: ${{ matrix.versions.arelx == 2 }}
         run: |
-          cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
-          cp ./version_v2.rb lib/arel_extensions/version.rb
+          cp ./gemspecs/arel_extensions-v${{ matrix.versions.arelx }}.gemspec ./arel_extensions.gemspec
+          cp ./version_v${{ matrix.versions.arelx }}.rb lib/arel_extensions/version.rb
           cp ./gemfiles/rails${{ matrix.versions.rails }}.gemfile ./Gemfile
       - name: bundle install
         run: |
@@ -385,10 +381,9 @@ jobs:
           install: sqlengine, sqlclient, sqlpackage, localdb
           sa-password: Password12!
       - name: Setup Gemfile
-        if: ${{ matrix.versions.arelx == 2 }}
         run: |
-          cp ./gemspecs/arel_extensions-v2.gemspec ./arel_extensions.gemspec
-          cp ./version_v2.rb lib/arel_extensions/version.rb
+          cp ./gemspecs/arel_extensions-v${{ matrix.versions.arelx }}.gemspec ./arel_extensions.gemspec
+          cp ./version_v${{ matrix.versions.arelx }}.rb lib/arel_extensions/version.rb
           cp ./gemfiles/rails${{ matrix.versions.rails }}.gemfile ./Gemfile
       - name: bundle install
         run: |
