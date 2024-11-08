@@ -679,7 +679,8 @@ module ArelExtensions
         #
         # So depending on the month when we run this test, we will get different
         # results for `User.where(@created_at.month.eq('05'))`.
-        count_for_may = Time.now.month == 5 ? 10 : 9
+        count_for_may = Date.today.month == 5 ? 10 : 9
+        count_for_day = Date.today.day == 5 ? 1 : 0
 
         # Year
         assert_equal 2016, t(@lucas, @created_at.year).to_i
@@ -692,7 +693,8 @@ module ArelExtensions
         assert_equal count_for_may, User.where(@created_at.month.eq('05')).count
         # Day
         assert_equal 23, t(@laure, @created_at.day).to_i
-        assert_equal 0, User.where(@created_at.day.eq('05')).count
+        # Make sure we get the correct count on the date we run the test.
+        assert_equal count_for_day, User.where(@created_at.day.eq('05')).count
 
         # skip "manage DATE" if @env_db == 'oracle'
         # Hour
