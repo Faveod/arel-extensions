@@ -18,21 +18,16 @@ module ArelExtensions
     include ArelExtensions::StringFunctions
     include ArelExtensions::Predications
 
-    @@warn_eqeq = true
-    @@warn_noteq = true
-
     def ==(other)
-      if Gem::Version.create(ArelExtensions::VERSION) >= Gem::Version.create('2.2') && @@warn_eqeq
+      if Gem::Version.create(ArelExtensions::VERSION) >= Gem::Version.create('2.2')
         warn("#{caller(1..1).first} arel_extensions: `==` is now deprecated and will be removed soon. Use `.eq` instead.")
-        @@warn_eqeq = false
       end
       Arel::Nodes::Equality.new self, Arel.quoted(other, self)
     end
 
     def !=(other)
-      if Gem::Version.create(ArelExtensions::VERSION) >= Gem::Version.create('2.2') && @@warn_noteq
+      if Gem::Version.create(ArelExtensions::VERSION) >= Gem::Version.create('2.2')
         warn("#{caller(1..1).first} arel_extensions: `!=` is now deprecated and will be removed soon. Use `.not_eq` instead.")
-        @@warn_noteq = false
       end
       Arel::Nodes::NotEqual.new self, Arel.quoted(other, self)
     end
