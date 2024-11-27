@@ -46,11 +46,11 @@ module ArelExtensions
       describe 'primitive methods' do
         it 'should be able to recognize equal nodes' do
           c = @table[:id]
-          _(c == 1).must_be :eql?, (c == 1)
-          _((c == 1).right.hash).must_equal (c == 1).right.hash
-          _((c == 1).hash).must_equal (c == 1).hash
+          _(c.eq 1).must_be :eql?, (c.eq 1)
+          _((c.eq 1).right.hash).must_equal (c.eq 1).right.hash
+          _((c.eq 1).hash).must_equal (c.eq 1).hash
 
-          _([c == 1, c == 1].uniq).must_equal [c == 1]
+          _([c.eq(1), c.eq(1)].uniq).must_equal [c.eq(1)]
         end
       end
 
@@ -144,9 +144,9 @@ module ArelExtensions
       # Comparators
 
       it 'should accept comparators on integers' do
-        _(compile(@table[:id] == 42)).must_match %{"users"."id" = 42}
-        _(compile(@table[:id] == @table[:id])).must_be_like %{"users"."id" = "users"."id"}
-        _(compile(@table[:id] != 42)).must_match %{"users"."id" != 42}
+        _(compile(@table[:id].eq 42)).must_match %{"users"."id" = 42}
+        _(compile(@table[:id].eq @table[:id])).must_be_like %{"users"."id" = "users"."id"}
+        _(compile(@table[:id].not_eq 42)).must_match %{"users"."id" != 42}
         _(compile(@table[:id] > 42)).must_match %{"users"."id" > 42}
         _(compile(@table[:id] >= 42)).must_match %{"users"."id" >= 42}
         _(compile(@table[:id] >= @table[:id])).must_be_like %{"users"."id" >= "users"."id"}
@@ -169,8 +169,8 @@ module ArelExtensions
 
       it 'should accept comparators on strings' do
         c = @table[:name]
-        _(compile(c == 'test')).must_be_like %{"users"."name" = 'test'}
-        _(compile(c != 'test')).must_be_like %{"users"."name" != 'test'}
+        _(compile(c.eq 'test')).must_be_like %{"users"."name" = 'test'}
+        _(compile(c.not_eq 'test')).must_be_like %{"users"."name" != 'test'}
         _(compile(c > 'test')).must_be_like %{"users"."name" > 'test'}
         _(compile((c >= 'test').as('new_name'))).must_be_like %{("users"."name" >= 'test') AS new_name}
         _(compile(c <= @table[:comments])).must_be_like %{"users"."name" <= "users"."comments"}
@@ -228,9 +228,9 @@ module ArelExtensions
       # Maths on sums
       it 'should accept math operators on anything' do
         c = @table[:name]
-        _((c == 'test').to_sql)
+        _((c.eq 'test').to_sql)
           .must_be_like %{"users"."name" = 'test'}
-        _((c != 'test').to_sql)
+        _((c.not_eq 'test').to_sql)
           .must_be_like %{"users"."name" != 'test'}
         _((c > 'test').to_sql)
           .must_be_like %{"users"."name" > 'test'}
@@ -291,7 +291,7 @@ module ArelExtensions
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 'cool' WHEN 'doe' THEN 'fine' ELSE 'uncool' END}
         _(@table[:name].when('smith').then(1).when('doe').then(2).else(0).to_sql)
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}
-        _(Arel.when(@table[:name] == 'smith').then(1).when(@table[:name] == 'doe').then(2).else(0).to_sql)
+        _(Arel.when(@table[:name].eq 'smith').then(1).when(@table[:name].eq 'doe').then(2).else(0).to_sql)
           .must_be_like %{CASE WHEN "users"."name" = 'smith' THEN 1 WHEN "users"."name" = 'doe' THEN 2 ELSE 0 END}
         _(ArelExtensions::Nodes::Case.new(@table[:name]).when('smith').then(1).when('doe').then(2).else(0).to_sql)
           .must_be_like %{CASE "users"."name" WHEN 'smith' THEN 1 WHEN 'doe' THEN 2 ELSE 0 END}
@@ -505,73 +505,73 @@ module ArelExtensions
 
           _(compile(Arel::Nodes::And.new))
             .must_be_like %{1 = 1}
-          _(compile(Arel::Nodes::And.new(c == 1)))
+          _(compile(Arel::Nodes::And.new(c.eq 1)))
             .must_be_like %{"users"."id" = 1}
-          _(compile(Arel::Nodes::And.new(c == 1, c == 2)))
+          _(compile(Arel::Nodes::And.new(c.eq(1), c.eq(2))))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2)}
-          _(compile(Arel::Nodes::And.new [c == 1, c == 2, c == 3]))
+          _(compile(Arel::Nodes::And.new [c.eq(1), c.eq(2), c.eq(3)]))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
 
 
           _(compile(Arel::Nodes::Or.new))
             .must_be_like %{1 = 0}
-          _(compile(Arel::Nodes::Or.new(c == 1)))
+          _(compile(Arel::Nodes::Or.new(c.eq(1))))
             .must_be_like %{"users"."id" = 1}
-          _(compile(Arel::Nodes::Or.new(c == 1, c == 2)))
+          _(compile(Arel::Nodes::Or.new(c.eq(1), c.eq(2))))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2)}
-          _(compile(Arel::Nodes::Or.new(c == 1, c == 2, c == 3)))
+          _(compile(Arel::Nodes::Or.new(c.eq(1), c.eq(2), c.eq(3))))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
-          _(compile(Arel::Nodes::Or.new [c == 1, c == 2, c == 3]))
+          _(compile(Arel::Nodes::Or.new [c.eq(1), c.eq(2), c.eq(3)]))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
         end
 
         it 'should know trivial identities' do
           skip 'For future optimization'
           c = @table[:id]
-          _(compile(Arel::Nodes::And.new(Arel.true, c == 1)))
+          _(compile(Arel::Nodes::And.new(Arel.true, c.eq(1))))
             .must_be_like %{"users"."id" = 1}
-          _(compile(Arel::Nodes::And.new(Arel.false, c == 1)))
+          _(compile(Arel::Nodes::And.new(Arel.false, c.eq(1))))
             .must_be_like %{1 = 0}
-          _(compile(Arel::Nodes::And.new(c == 1, c == 1)))
+          _(compile(Arel::Nodes::And.new(c.eq(1), c.eq(1))))
             .must_be_like %{"users"."id" = 1}
 
-          _(compile(Arel::Nodes::Or.new(Arel.true, c == 1)))
+          _(compile(Arel::Nodes::Or.new(Arel.true, c.eq(1))))
             .must_be_like %{1 = 1}
-          _(compile(Arel::Nodes::Or.new(Arel.false, c == 1)))
+          _(compile(Arel::Nodes::Or.new(Arel.false, c.eq(1))))
             .must_be_like %{"users"."id" = 1}
-          _(compile(Arel::Nodes::Or.new(c == 1, c == 1)))
+          _(compile(Arel::Nodes::Or.new(c.eq(1), c.eq(1))))
             .must_be_like %{"users"."id" = 1}
         end
 
         it 'should be possible to have multiple arguments on an OR or an AND node' do
           c = @table[:id]
-          _(compile((c == 1).and))
+          _(compile((c.eq 1).and))
             .must_be_like %{"users"."id" = 1}
 
-          _(compile((c == 1).and(c == 2, c == 3)))
+          _(compile((c.eq 1).and(c.eq(2), c.eq(3))))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
-          _(compile((c == 1).and([c == 2, c == 3])))
+          _(compile((c.eq 1).and([c.eq(2), c.eq(3)])))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3)}
 
-          _(compile((c == 1).or))
+          _(compile((c.eq 1).or))
             .must_be_like %{"users"."id" = 1}
 
-          _(compile((c == 1).or(c == 2, c == 3)))
+          _(compile((c.eq 1).or(c.eq(2), c.eq(3))))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
-          _(compile((c == 1).or([c == 2, c == 3])))
+          _(compile((c.eq 1).or([c.eq(2), c.eq(3)])))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3)}
         end
 
         it 'should avoid useless nesting' do
           c = @table[:id]
-          _(compile(((c == 1).and(c == 2)).and ((c == 3).and(c == 4))))
+          _(compile(((c.eq 1).and(c.eq 2)).and ((c.eq 3).and(c.eq 4))))
             .must_be_like %{("users"."id" = 1) AND ("users"."id" = 2) AND ("users"."id" = 3) AND ("users"."id" = 4)}
-          _(compile(((c == 1).or(c == 2)).or ((c == 3).or(c == 4))))
+          _(compile(((c.eq 1).or(c.eq 2)).or ((c.eq 3).or(c.eq 4))))
             .must_be_like %{("users"."id" = 1) OR ("users"."id" = 2) OR ("users"."id" = 3) OR ("users"."id" = 4)}
 
-          _(compile(((c == 1).or(c == 2)).and ((c == 3).or(c == 4))))
+          _(compile(((c.eq 1).or(c.eq 2)).and ((c.eq 3).or(c.eq 4))))
             .must_be_like %{(("users"."id" = 1) OR ("users"."id" = 2)) AND (("users"."id" = 3) OR ("users"."id" = 4))}
-          _(compile(((c == 1).and(c == 2)).or ((c == 3).and(c == 4))))
+          _(compile(((c.eq 1).and(c.eq 2)).or ((c.eq 3).and(c.eq 4))))
             .must_be_like %{(("users"."id" = 1) AND ("users"."id" = 2)) OR (("users"."id" = 3) AND ("users"."id" = 4))}
         end
       end
