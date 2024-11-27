@@ -2,6 +2,11 @@
 
 ## [unreleased]
 
+## Release v2.2.2/v1.4.2 (27-11-2024)
+
+- Fix deprecartion warnings for `==` and `!=`, showing the true location.
+- Always emit deprecartion warnings for `==` and `!=`.
+
 ## Release v2.2.1/v1.4.1 (08-11-2024)
 
 - Improved deprecartion warnings for `==` and `!=`, showing the location where they're called.
