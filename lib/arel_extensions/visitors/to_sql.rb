@@ -112,7 +112,8 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << 'GROUP_CONCAT('
         collector = visit o.left, collector
-        if o.separator && o.separator != 'NULL'
+        sep = o.separator.is_a?(Arel::Nodes::Quoted) ? o.separator.expr : o.separator
+        if 'NULL' != sep
           collector << COMMA
           collector = visit o.separator, collector
         end
