@@ -608,13 +608,13 @@ module ArelExtensions
         grouping_array_or_grouping_element o, collector
       end
 
-      # TODO;
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
         collector << '(STRING_AGG('
         collector = visit o.left, collector
         collector << Arel::Visitors::Oracle::COMMA
+        sep = o.separator.is_a?(Arel::Nodes::Quoted) ? o.separator.expr : o.separator
         collector =
-          if o.separator && o.separator != 'NULL'
+          if 'NULL' != sep
             visit o.separator, collector
           else
             visit Arel.quoted(','), collector
