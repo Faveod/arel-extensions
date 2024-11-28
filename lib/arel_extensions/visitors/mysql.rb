@@ -55,7 +55,7 @@ module ArelExtensions
           collect_nodes_for o.windows, collector, " WINDOW "
 
           if o.respond_to?(:comment)
-            maybe_visit o.comment, collector 
+            maybe_visit o.comment, collector
           else
             collector
           end
@@ -199,7 +199,8 @@ module ArelExtensions
             collector = visit order, collector
           end
         end
-        if o.separator && o.separator != 'NULL'
+        sep = o.separator.is_a?(Arel::Nodes::Quoted) ? o.separator.expr : o.separator
+        if 'NULL' != sep
           collector << ' SEPARATOR '
           collector = visit o.separator, collector
         end
