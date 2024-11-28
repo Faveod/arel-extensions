@@ -6,6 +6,7 @@ group :development, :test do
   gem 'ruby-lsp', platforms: %i[mri]
   gem 'debug', platforms: %i[mri]
   gem 'rubocop'
+  gem 'rubocop-performance'
 
   gem 'activesupport', '~> 7.2'
   gem 'activemodel', '~> 7.2'

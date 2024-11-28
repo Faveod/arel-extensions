@@ -4,6 +4,7 @@ gem 'arel', '~> 6.0'
 
 group :development, :test do
   gem 'rubocop'
+  gem 'rubocop-performance'
 
   # We need to explicitly include bigdecimal for ruby 2.7 .
   # See https://github.com/ruby/bigdecimal for details.
