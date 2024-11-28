@@ -257,6 +257,7 @@ class Arel::SelectManager
   include ArelExtensions::SetFunctions
   include ArelExtensions::Nodes
 
+  remove_method(:as) if method_defined?(:as)
   def as table_name
     Arel::Nodes::TableAlias.new(self, table_name)
   end
