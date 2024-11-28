@@ -5,6 +5,7 @@ gem 'rails', '~> 6.1.0'
 group :development, :test do
   gem 'ruby-lsp', platforms: %i[mri]
   gem 'debug', platforms: %i[mri]
+  gem 'rubocop'
 
   gem 'activesupport', '~> 6.1.0'
   gem 'activemodel', '~> 6.1.0'
