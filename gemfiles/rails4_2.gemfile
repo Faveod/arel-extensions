@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 gem 'arel', '~> 6.0'
 
 group :development, :test do
+  gem 'rubocop'
+
   # We need to explicitly include bigdecimal for ruby 2.7 .
   # See https://github.com/ruby/bigdecimal for details.
   rb_version = Gem::Version.new(RUBY_VERSION)
