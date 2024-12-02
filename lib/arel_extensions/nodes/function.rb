@@ -1,5 +1,11 @@
 require 'arel_extensions/predications'
 
+# This is required for rails 6.1
+# See https://github.com/thoughtbot/shoulda-matchers/issues/335
+if !Array.respond_to?(:wrap)
+  require 'active_support/core_ext/array/wrap'
+end
+
 module ArelExtensions
   module Nodes
     class Function < Arel::Nodes::Function
