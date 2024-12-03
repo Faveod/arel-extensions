@@ -42,6 +42,22 @@ db_and_gem =
     }
   end
 
+module Warning
+  ARELX_IGNORED = [
+    'PG::Coder.new(hash)',
+    'rb_check_safe_obj',       # ruby 3.0
+    'rb_tainted_str_new',      # ruby 3.0
+    'Using the last argument', # ruby < 3.0
+  ].freeze
+
+  def self.warn(message)
+    return if ARELX_IGNORED.any? { |msg| message.include?(msg) }
+
+    super
+  end
+end
+
+
 def load_lib(gems)
   if gems && (RUBY_PLATFORM == 'java' || Arel::VERSION.to_i > 9)
     gems.each do |gem|
