@@ -3,7 +3,7 @@
 
 begin
   Arel::Nodes.const_get('RollUp')
-rescue NameError => e
+rescue NameError => _
   module Arel
     module Nodes
       class RollUp < Arel::Nodes::Unary
