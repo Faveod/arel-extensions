@@ -16,7 +16,7 @@ module ArelExtensions
 
       # This helper method did not exist in rails < 5.2
       if !Arel::Visitors::MySQL.method_defined?(:collect_nodes_for)
-        def collect_nodes_for(nodes, collector, spacer, connector = ", ")
+        def collect_nodes_for(nodes, collector, spacer, connector = ', ')
           if nodes&.any?
             collector << spacer
             inject_join nodes, collector, connector
@@ -24,42 +24,45 @@ module ArelExtensions
         end
       end
 
-        # The whole purpose of this override is to fix the behavior of RollUp.
-        # All other databases treat RollUp sanely, execpt MySQL which requires
-        # that it figures as the last element of a GROUP BY.
-        def visit_Arel_Nodes_SelectCore(o, collector)
-          collector << "SELECT"
+      if private_method_defined?(:visit_Arel_Nodes_SelectCore) || method_defined?(:visit_Arel_Nodes_SelectCore)
+        alias_method(:old_visit_Arel_Nodes_SelectCore, :visit_Arel_Nodes_SelectCore)
+      end
+      # The whole purpose of this override is to fix the behavior of RollUp.
+      # All other databases treat RollUp sanely, execpt MySQL which requires
+      # that it figures as the last element of a GROUP BY.
+      def visit_Arel_Nodes_SelectCore(o, collector)
+        collector << 'SELECT'
 
-          collector = collect_optimizer_hints(o, collector) if self.respond_to?(:collect_optimizer_hinsts)
-          collector = maybe_visit o.set_quantifier, collector
+        collector = collect_optimizer_hints(o, collector) if self.respond_to?(:collect_optimizer_hinsts)
+        collector = maybe_visit o.set_quantifier, collector
 
-          collect_nodes_for o.projections, collector, " "
+        collect_nodes_for o.projections, collector, ' '
 
-          if o.source && !o.source.empty?
-            collector << " FROM "
-            collector = visit o.source, collector
-          end
-
-          # The actual work
-          groups = o.groups
-          rollup = groups.select { |g| g.expr.class == Arel::Nodes::RollUp }.map { |r| r.expr.value }
-          if rollup && !rollup.empty?
-            groups = o.groups.reject { |g| g.expr.class == Arel::Nodes::RollUp }
-            groups << Arel::Nodes::RollUp.new(rollup)
-          end
-          # FIN
-
-          collect_nodes_for o.wheres, collector, " WHERE ", " AND "
-          collect_nodes_for groups, collector, " GROUP BY "            # Look ma, I'm viring a group
-          collect_nodes_for o.havings, collector, " HAVING ", " AND "
-          collect_nodes_for o.windows, collector, " WINDOW "
-
-          if o.respond_to?(:comment)
-            maybe_visit o.comment, collector 
-          else
-            collector
-          end
+        if o.source && !o.source.empty?
+          collector << ' FROM '
+          collector = visit o.source, collector
         end
+
+        # The actual work
+        groups = o.groups
+        rollup = groups.select { |g| g.expr.class == Arel::Nodes::RollUp }.map { |r| r.expr.value }
+        if rollup && !rollup.empty?
+          groups = o.groups.reject { |g| g.expr.class == Arel::Nodes::RollUp }
+          groups << Arel::Nodes::RollUp.new(rollup)
+        end
+        # FIN
+
+        collect_nodes_for o.wheres, collector, ' WHERE ', ' AND '
+        collect_nodes_for groups, collector, ' GROUP BY '
+        collect_nodes_for o.havings, collector, ' HAVING ', ' AND '
+        collect_nodes_for o.windows, collector, ' WINDOW '
+
+        if o.respond_to?(:comment)
+          maybe_visit o.comment, collector
+        else
+          collector
+        end
+      end
 
       # Math functions
       def visit_ArelExtensions_Nodes_Log10 o, collector
@@ -199,7 +202,8 @@ module ArelExtensions
             collector = visit order, collector
           end
         end
-        if o.separator && o.separator != 'NULL'
+        sep = o.separator.is_a?(Arel::Nodes::Quoted) ? o.separator.expr : o.separator
+        if 'NULL' != sep
           collector << ' SEPARATOR '
           collector = visit o.separator, collector
         end

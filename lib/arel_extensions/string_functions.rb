@@ -144,7 +144,7 @@ module ArelExtensions
     # concat elements of a group, separated by sep and ordered by a list of Ascending or Descending
     def group_concat(sep = nil, *orders, group: nil, order: nil)
       if orders.present?
-        warn("Warning: ArelExtensions: group_concat: you should now use the kwarg 'order' to specify an order in the group_concat.")
+        warn("#{caller(1..1).first} arel_extensions: group_concat: you should now use the kwarg 'order' to specify an order in the group_concat.")
       end
       order_tabs = [orders].flatten.map{ |o|
         if o.is_a?(Arel::Nodes::Ascending) || o.is_a?(Arel::Nodes::Descending)

@@ -22,12 +22,21 @@ group :development, :test do
   gem 'activerecord-oracle_enhanced-adapter', '~> 7.0.0' if ENV.has_key? 'ORACLE_HOME'
 
   # for JRuby
+  gem 'jar-dependencies', '0.4.1', platforms: :jruby
   gem 'jdbc-mssql', platforms: :jruby, require: true
   gem 'jdbc-sqlite3', platform: :jruby
   gem 'activerecord-jdbc-alt-adapter', '~> 71.0.0.alpha1', platform: :jruby, require: true
   gem 'activerecord-jdbcmysql-adapter', platforms: :jruby
   gem 'activerecord-jdbcpostgresql-adapter', platforms: :jruby
   gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
+
+  # Ruby 3.4+ removes the following gems from the standard distribution.
+  # Warnings are emitted from 3.3 .
+  if Gem::Version.create(RUBY_VERSION) >= Gem::Version.create('3.3.0')
+    gem 'base64'
+    gem 'bigdecimal'
+    gem 'mutex_m'
+  end
 end
 
 gemspec path: Dir.pwd

@@ -242,10 +242,10 @@ module ArelExtensions
         assert_equal 'Lucas,Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat)
 
         skip 'No order in group_concat in SqlLite' if $sqlite
-        assert_equal 'Arthur,Lucas,Sophie', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', @name.asc))
-        assert_equal 'Sophie,Lucas,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', @name.desc))
-        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', [@score.asc, @name.asc]))
-        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', @score.asc, @name.asc))
+        assert_equal 'Arthur,Lucas,Sophie', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: @name.asc))
+        assert_equal 'Sophie,Lucas,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: @name.desc))
+        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: [@score.asc, @name.asc]))
+        assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: [@score.asc, @name.asc]))
         assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: [@score.asc, @name.asc]))
       end
 

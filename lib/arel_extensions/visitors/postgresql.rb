@@ -136,8 +136,9 @@ module ArelExtensions
         o.order = nil
         visit_Aggregate_For_AggregateFunction o, collector
         collector << COMMA
+        sep = o.separator.is_a?(Arel::Nodes::Quoted) ? o.separator.expr : o.separator
         collector =
-          if o.separator && o.separator != 'NULL'
+          if 'NULL' != sep
             visit o.separator, collector
           else
             visit Arel.quoted(','), collector

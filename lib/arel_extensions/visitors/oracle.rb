@@ -135,8 +135,9 @@ module ArelExtensions
         collector << '(LISTAGG('
         collector = visit o.left, collector
         collector << COMMA
+        sep = o.separator.is_a?(Arel::Nodes::Quoted) ? o.separator.expr : o.separator
         collector =
-          if o.separator && o.separator != 'NULL'
+          if 'NULL' != sep
             visit o.separator, collector
           else
             visit Arel.quoted(','), collector

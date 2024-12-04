@@ -28,6 +28,14 @@ group :development, :test do
   gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
   gem 'jdbc-mssql', platforms: :jruby, require: true
   gem 'jdbc-sqlite3', platforms: :jruby
+
+  # Ruby 3.4+ removes the following gems from the standard distribution.
+  # Warnings are emitted from 3.3 .
+  if Gem::Version.create(RUBY_VERSION) >= Gem::Version.create('3.3.0')
+    gem 'base64'
+    gem 'bigdecimal'
+    gem 'mutex_m'
+  end
 end
 
 gemspec path: Dir.pwd

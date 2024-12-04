@@ -256,6 +256,7 @@ class Arel::SelectManager
   include ArelExtensions::SetFunctions
   include ArelExtensions::Nodes
 
+  remove_method(:as) if method_defined?(:as)
   def as table_name
     Arel::Nodes::TableAlias.new(self, table_name)
   end
@@ -319,27 +320,5 @@ end
 class Arel::Nodes::Node
   def rollup
     Arel::Nodes::RollUp.new([self])
-  end
-end
-
-require 'active_record'
-if ActiveRecord.version >= Gem::Version.create('7.2')
-  class ActiveRecord::Relation::WhereClause
-    def except_predicates(columns)
-      attrs = columns.extract! { |node| node.is_a?(Arel::Attribute) }
-      non_attrs = columns.extract! { |node| node.is_a?(Arel::Predications) }
-
-      predicates.reject do |node|
-        if !non_attrs.empty? && node.equality? && node.left.is_a?(Arel::Predications)
-          non_attrs.include?(node.left)
-        end || Arel.fetch_attribute(node) do |attr|
-          attrs.find { |v| v.eql? attr } || columns.include?(attr.name.to_s) # 👈 replces
-          # attrs.include?(attr) || columns.include?(attr.name.to_s)         # 👈 this
-          #
-          # And that's because our attributes override `==`, so `attrs.include?(attr)` always
-          # passes because it returns an equality node.
-        end
-      end
-    end
   end
 end
