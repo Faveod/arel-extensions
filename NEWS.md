@@ -4,7 +4,7 @@
 
 ## Release v2.2.3/v1.4.3 (18-12-2024)
 
-- Use Ruby's Warning categories for Ruby > 2 for deprecations warnings.
+- Use ActiveSupport's deprecation machinery instead of Ruby's Warning module.
 - Fix a bug with group concat that didn't correctly check for the separator value.
 
 ## Release v2.2.2/v1.4.2 (27-11-2024)
