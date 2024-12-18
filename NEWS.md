@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## Release v2.2.3/v1.4.3 (18-12-2024)
+
 - Use Ruby's Warning categories for Ruby > 2 for deprecations warnings.
 - Fix a bug with group concat that didn't correctly check for the separator value.
 
