@@ -52,6 +52,7 @@ if Gem::Version.new(Arel::VERSION) >= Gem::Version.new('7.1.0')
   end
 end
 
+require 'arel_extensions/warning'
 require 'arel_extensions/helpers'
 require 'arel_extensions/version'
 require 'arel_extensions/aliases'

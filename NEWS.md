@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+- Use Ruby's Warning categories for Ruby > 2 for deprecations warnings.
+
 ## Release v2.2.2/v1.4.2 (27-11-2024)
 
 - Fix deprecartion warnings for `==` and `!=`, showing the true location.
