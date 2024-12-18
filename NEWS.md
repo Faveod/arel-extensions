@@ -2,17 +2,19 @@
 
 ## [unreleased]
 
+## Release v2.3.0/v1.5.0 (19-12-2024)
+
 - Use ActiveSupport's deprecation machinery instead of Ruby's Warning module.
 - Fix a bug with group concat that didn't correctly check for the separator value.
 
 ## Release v2.2.2/v1.4.2 (27-11-2024)
 
-- Fix deprecartion warnings for `==` and `!=`, showing the true location.
-- Always emit deprecartion warnings for `==` and `!=`.
+- Fix deprecation warnings for `==` and `!=`, showing the true location.
+- Always emit deprecation warnings for `==` and `!=`.
 
 ## Release v2.2.1/v1.4.1 (08-11-2024)
 
-- Improved deprecartion warnings for `==` and `!=`, showing the location where they're called.
+- Improved deprecation warnings for `==` and `!=`, showing the location where they're called.
 
 ## Release v2.2.0/v1.4.0
 
