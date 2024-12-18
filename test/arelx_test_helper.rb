@@ -6,6 +6,8 @@ require 'active_record'
 
 require 'support/fake_record'
 
+ENV['AREL_EXTENSIONS_IN_TEST'] = '1' # Useful for deprecation warnings.
+
 def colored(color, msg)
   /^xterm|-256color$/.match?(ENV['TERM']) ? "\x1b[#{color}m#{msg}\x1b[89m\x1b[0m" : "#{msg}"
 end
