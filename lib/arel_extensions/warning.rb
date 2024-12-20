@@ -1,6 +1,10 @@
 module ArelExtensions
   def self.deprecator
-    @deprecator ||= ActiveSupport::Deprecation.new(ArelExtensions::VERSION, "arel_extensions")
+    return @deprecator if @deprecator
+
+    version = Gem::Version.create(ArelExtensions::VERSION).segments
+    version = "#{version[0]}.#{version[1]}"
+    @deprecator = ActiveSupport::Deprecation.new(version, 'arel_extensions')
   end
 
   module Warning
