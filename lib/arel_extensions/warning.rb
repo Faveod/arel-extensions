@@ -1,10 +1,26 @@
 module ArelExtensions
-  def self.deprecator
-    return @deprecator if @deprecator
+  if RUBY_VERSION.split('.')[0].to_i < 3
+    class RubyDeprecator
+      def warn msg
+        Kernel.warn(msg)
+      end
+    end
+  else
+    class RubyDeprecator
+      def warn msg
+        Kernel.warn(msg, category: :deprecated)
+      end
+    end
+  end
 
-    version = Gem::Version.create(ArelExtensions::VERSION).segments
-    version = "#{version[0]}.#{version[1]}"
-    @deprecator = ActiveSupport::Deprecation.new(version, 'arel_extensions')
+  def self.deprecator
+    @deprecator ||=
+      if defined?(ActiveSupport::Deprecation)
+        major, minor = Gem::Version.create(ArelExtensions::VERSION).segments
+        ActiveSupport::Deprecation.new("#{major}.#{minor}", 'arel_extensions')
+      else
+        RubyDeprecator::new
+      end
   end
 
   module Warning
