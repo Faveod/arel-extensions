@@ -1,18 +1,25 @@
 module ArelExtensions
-  if RUBY_VERSION.split('.')[0].to_i < 3
-    class RubyDeprecator
+  class RubyDeprecator
+    if RUBY_VERSION.split('.')[0].to_i < 3
       def warn msg
         Kernel.warn(msg)
       end
-    end
-  else
-    class RubyDeprecator
+    else
       def warn msg
         Kernel.warn(msg, category: :deprecated)
       end
     end
   end
 
+  # To configure deprecations in a Rails application, you can do something
+  # like this:
+  #
+  # ```ruby
+  #   ArelExtensions.deprecator.behavior =
+  #     (Rails.application.config.active_support.deprecation || :stderr)
+  # ```
+  #
+  # See ActiveSupport's deprecation documentation for more details.
   def self.deprecator
     @deprecator ||=
       if defined?(ActiveSupport::Deprecation)

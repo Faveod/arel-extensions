@@ -2,6 +2,11 @@
 
 ## [unreleased]
 
+## Release v2.3.1/v1.5.1 (20-12-2024)
+
+- Fallback to Ruby's Warning module if ActiveSupport doesn't exist. Relevant for old Rails versions.
+- Added documentation on how to _"properly"_ configure the deprecator in a Rails application.
+
 ## Release v2.3.0/v1.5.0 (19-12-2024)
 
 - Use ActiveSupport's deprecation machinery instead of Ruby's Warning module.
