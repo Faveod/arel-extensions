@@ -47,14 +47,28 @@ module ArelExtensions
       ArelExtensions::Nodes::Substring.new [self, start, len]
     end
 
+    # Return a [ArelExtensions::Nodes::Substring] if `start` is a [Range] or an
+    # [Integer].
+    #
+    # Return the result to `self.send(start)` if it's a [String|Symbol]. The
+    # assumption is that you're trying to reach an [Arel::Table]'s
+    # [Arel::Attribute].
+    #
+    # @note `ind` should be an [Integer|NilClass] if `start` is an [Integer].
+    #   It's ignored in all other cases.
     def [](start, ind = nil)
       start += 1 if start.is_a?(Integer)
-      if start.is_a?(Range)
+
+      if start.is_a?(String) || start.is_a?(Symbol)
+        self.send(start)
+      elsif start.is_a?(Range)
         ArelExtensions::Nodes::Substring.new [self, start.begin + 1, start.end - start.begin + 1]
       elsif start.is_a?(Integer) && !ind
         ArelExtensions::Nodes::Substring.new [self, start, 1]
-      else
+      elsif start.is_a?(Integer)
         ArelExtensions::Nodes::Substring.new [self, start, ind - start + 1]
+      else
+        raise ArgumentError, 'unrecognized argument types; can accept integers, ranges, or strings.'
       end
     end
 
