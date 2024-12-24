@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+- Fix a subtle bug on table access as in `table[:col]` in certain situations.
+
 ## Release v2.3.1/v1.5.1 (20-12-2024)
 
 - Fallback to Ruby's Warning module if ActiveSupport doesn't exist. Relevant for old Rails versions.
