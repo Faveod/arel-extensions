@@ -3,6 +3,7 @@
 ## [unreleased]
 
 - Fix a subtle bug on table access as in `table[:col]` in certain situations.
+- `==` and `!=` deprecation warnings can stem from `arel` itself, so now we don't emit them because they're plain wrong.
 
 ## Release v2.3.1/v1.5.1 (20-12-2024)
 
