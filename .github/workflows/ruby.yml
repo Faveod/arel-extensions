@@ -2,6 +2,10 @@ name: Build and Test
 
 # Ruby + Rails Compatibility Matrix from here:
 # https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
+#
+# Images are fixed to ubuntu 22.04 because jruby-9.2 is unavailable in
+# ubuntu-24.04 (ubuntu-latest when I tested). Also, for rails < 6, sqlite3
+# will not build because libsqlite3-dev is missing.
 
 on:
   push:
@@ -14,7 +18,7 @@ on:
 jobs:
   job_test_to_sql:
     name: test to_sql
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -78,7 +82,7 @@ jobs:
 
   job_test_sqlite:
     name: test sqlite
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -143,7 +147,7 @@ jobs:
 
   job_test_postgres:
     name: test postgres
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -232,7 +236,7 @@ jobs:
 
   job_test_mysql:
     name: test mysql
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -316,7 +320,7 @@ jobs:
 
   job_test_mssql:
     name: test mssql on linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
