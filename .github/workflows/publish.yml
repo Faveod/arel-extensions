@@ -1,7 +1,8 @@
-name: "Publish Gems"
+name: rubygems.org
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   publish_gems:
