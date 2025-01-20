@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+- Fix the `&` operator which does `find_in_set` for mysql and postgres, accepting strings and integers.
+
 ## Release v2.3.2/v1.5.2 (02-01-2025)
 
 - Fix a subtle bug on table access as in `table[:col]` in certain situations.

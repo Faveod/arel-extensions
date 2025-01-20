@@ -21,7 +21,10 @@ module ArelExtensions
   module StringFunctions
     # *FindInSet function .......
     def &(other)
-      ArelExtensions::Nodes::FindInSet.new [other, self]
+      ArelExtensions::Nodes::FindInSet.new [
+        Arel.quoted(other.is_a?(Integer) ? other.to_s : other),
+        self,
+      ]
     end
 
     # LENGTH function returns the length (bytewise) of the value in a text field.

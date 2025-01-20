@@ -1,18 +1,17 @@
-CREATE OR REPLACE FUNCTION public.find_in_set(n INTEGER, s TEXT)
+CREATE OR REPLACE FUNCTION public.find_in_set(n TEXT, s TEXT)
  RETURNS INT4
  LANGUAGE sql
 AS $function$
     SELECT * FROM (
       select int4(z.row_number) from (
         select row_number() over(), y.x
-        from (select unnest(('{' || $2 || '}')::int[]) as x) as y
+        from (select unnest(regexp_split_to_array($2, ',')) as x) as y -- use string_to_array if on pg 14+.
       ) as z
       where z.x = $1
     UNION ALL
       SELECT 0) z
     LIMIT 1
-$function$
-;
+$function$;
 
 CREATE OR REPLACE FUNCTION public.levenshtein_distance(s text, t text)
 RETURNS integer AS $$

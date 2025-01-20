@@ -115,7 +115,7 @@ module ArelExtensions
         # puts (c.length.round + 42).inspect
         _(compile(c.length.round + 42)).must_be_like %{(ROUND(LENGTH("users"."name")) + 42)}
         _(compile(c.locate('test'))).must_be_like %{LOCATE('test', "users"."name")}
-        _(compile(c & 42)).must_be_like %{FIND_IN_SET(42, "users"."name")}
+        _(compile(c & 42)).must_be_like %{FIND_IN_SET('42', "users"."name")}
 
         _(compile((c >= 'test').as('new_name'))).must_be_like %{("users"."name" >= 'test') AS new_name}
         _(compile(c <= @table[:comments])).must_be_like %{"users"."name" <= "users"."comments"}
