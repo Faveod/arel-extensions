@@ -68,7 +68,7 @@ module ArelExtensions
         @laure = User.where(id: u.id)
         u = User.create age: nil, name: 'Test', created_at: d, score: 1.62, other: 'toto'
         @test = User.where(id: u.id)
-        u = User.create age: -42, name: 'Negatif', comments: '1,22,3,42,2', created_at: d, updated_at: d.to_time, score: 0.17
+        u = User.create age: -42, name: 'Negatif', comments: '1,22,3,42,2', created_at: d, updated_at: d.to_time, score: 0.17, other: '2'
         @neg = User.where(id: u.id)
         u = User.create age: 15, name: 'Justin', created_at: d, score: 11.0
         @justin = User.where(id: u.id)
@@ -297,6 +297,9 @@ module ArelExtensions
         skip 'SQL Server does not know about FIND_IN_SET' if @env_db == 'mssql'
         assert_equal 5, t(@neg, @comments & 2)
         assert_equal 0, t(@neg, @comments & 6) # not found
+        assert_equal 5, t(@neg, @comments & '2')
+        assert_equal 0, t(@neg, @comments & '6') # not found
+        assert_equal 5, t(@neg, @comments & @other)
       end
 
       def test_string_comparators
