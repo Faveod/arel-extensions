@@ -141,7 +141,7 @@ module ArelExtensions
       end
 
       def visit_Arel_Nodes_RollUp(o, collector)
-        collector << "ROLLUP"
+        collector << 'ROLLUP'
         grouping_array_or_grouping_element o, collector
       end
 
@@ -210,7 +210,7 @@ module ArelExtensions
           collector = visit o.right, collector
           collector << ')' if rc
           collector << ')'
-          if (o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time)
+          if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
             collector << ' * (CASE WHEN (TRUNC('
             collector << 'TO_DATE(' if lc
             collector = visit o.left, collector
@@ -734,9 +734,9 @@ module ArelExtensions
       # handle grouping aggregation semantics
       def grouping_array_or_grouping_element(o, collector)
         if o.expr.is_a? Array
-          collector << "( "
+          collector << '( '
           visit o.expr, collector
-          collector << " )"
+          collector << ' )'
         else
           visit o.expr, collector
         end

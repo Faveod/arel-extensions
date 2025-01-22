@@ -97,7 +97,7 @@ module ArelExtensions
           Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
         else
           arg = col.type
-          if (arg == :date || arg == :datetime)
+          if arg == :date || arg == :datetime
             case other
             when Arel::Attributes::Attribute
               col2 =
