@@ -10,7 +10,7 @@ group :development, :test do
   # See https://github.com/ruby/bigdecimal for details.
   rb_version = Gem::Version.new(RUBY_VERSION)
   if Gem::Version.new('2.7') <= rb_version && rb_version < Gem::Version.new('2.8')
-     gem 'bigdecimal', '~> 1.3.5', platforms: %i[mri mingw x64_mingw mswin]
+    gem 'bigdecimal', '~> 1.3.5', platforms: %i[mri mingw x64_mingw mswin]
   end
 
   gem 'activesupport', '~> 4.0'

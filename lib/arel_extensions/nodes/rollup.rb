@@ -18,16 +18,16 @@ rescue NameError => _
         # handle grouping aggregation semantics
         def grouping_array_or_grouping_element(o, collector)
           if o.expr.is_a? Array
-            collector << "( "
+            collector << '( '
             visit o.expr, collector
-            collector << " )"
+            collector << ' )'
           else
             visit o.expr, collector
           end
         end
 
         def visit_Arel_Nodes_RollUp(o, collector)
-          collector << "ROLLUP"
+          collector << 'ROLLUP'
           grouping_array_or_grouping_element o, collector
         end
       end

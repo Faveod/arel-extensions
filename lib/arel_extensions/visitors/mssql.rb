@@ -7,7 +7,7 @@ module ArelExtensions
       mssql_class =
         Arel::Visitors
           .constants
-          .select { |c| Arel::Visitors.const_get(c).is_a?(Class)  }
+          .select { |c| Arel::Visitors.const_get(c).is_a?(Class) }
           .find { |c| MSSQL_CLASS_NAMES.include?(c) }
 
       # This guard is necessary because:
@@ -113,7 +113,7 @@ module ArelExtensions
 
         def quoted_time(value) # :nodoc:
           value = value.change(year: 2000, month: 1, day: 1)
-          quoted_date(value).sub(/\A\d{4}-\d{2}-\d{2} /, "")
+          quoted_date(value).sub(/\A\d{4}-\d{2}-\d{2} /, '')
         end
 
         def quote value, column = nil
@@ -334,9 +334,9 @@ module ArelExtensions
           collector = visit o.right, collector
           collector << ')'
         else
-          collector << "LTRIM(RTRIM("
+          collector << 'LTRIM(RTRIM('
           collector = visit o.left, collector
-          collector << "))"
+          collector << '))'
         end
         collector
       end
@@ -604,7 +604,7 @@ module ArelExtensions
       end
 
       def visit_Arel_Nodes_RollUp(o, collector)
-        collector << "ROLLUP"
+        collector << 'ROLLUP'
         grouping_array_or_grouping_element o, collector
       end
 
@@ -773,9 +773,9 @@ module ArelExtensions
       # handle grouping aggregation semantics
       def grouping_array_or_grouping_element(o, collector)
         if o.expr.is_a? Array
-          collector << "( "
+          collector << '( '
           visit o.expr, collector
-          collector << " )"
+          collector << ' )'
         else
           visit o.expr, collector
         end

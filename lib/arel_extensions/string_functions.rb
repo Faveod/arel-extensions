@@ -169,7 +169,7 @@ module ArelExtensions
           o.asc
         end
       }.compact
-      ArelExtensions::Nodes::GroupConcat.new(self, sep, group: group, order: (order || order_tabs))
+      ArelExtensions::Nodes::GroupConcat.new(self, sep, group: group, order: order || order_tabs)
     end
 
     # Function returns a string after removing left, right or the both prefixes or suffixes int argument

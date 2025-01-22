@@ -165,13 +165,13 @@ module ArelExtensions
           skip 'SQL Server forces order?' # TODO
           assert_equal 83, User.select((@age.sum + 1).as('res'), User.arel_table[:id].sum).take(50).reorder(@age).first.res
           assert_equal 164, User.reorder(nil).select((@age.sum + @age.sum).as('res'), User.arel_table[:id].sum).take(50).first.res
-          assert_equal 246, User.reorder(nil).select(((@age * 3).sum).as('res'), User.arel_table[:id].sum).take(50).first.res
-          assert_equal 4234, User.reorder(nil).select(((@age * @age).sum).as('res'), User.arel_table[:id].sum).take(50).first.res
+          assert_equal 246, User.reorder(nil).select((@age * 3).sum.as('res'), User.arel_table[:id].sum).take(50).first.res
+          assert_equal 4234, User.reorder(nil).select((@age * @age).sum.as('res'), User.arel_table[:id].sum).take(50).first.res
         else
           assert_equal 83, User.select((@age.sum + 1).as('res')).take(50).first.res
           assert_equal 164, User.select((@age.sum + @age.sum).as('res')).take(50).first.res
           assert_equal 246, User.select((@age * 3).sum.as('res')).take(50).first.res
-          assert_equal 4234, User.select(((@age * @age).sum).as('res')).take(50).first.res
+          assert_equal 4234, User.select((@age * @age).sum.as('res')).take(50).first.res
         end
       end
 
@@ -188,7 +188,7 @@ module ArelExtensions
       end
 
       def test_rollup
-        skip "sqlite not supported" if $sqlite
+        skip 'sqlite not supported' if $sqlite
         at = User.arel_table
         # single
         q = User.select(at[:name], at[:age].sum).group(Arel::Nodes::RollUp.new([at[:name]]))
@@ -488,7 +488,7 @@ module ArelExtensions
           # TODO: Standarize timezone conversion across all databases.
           #       This test case will be refactored and should work the same across all vendors.
           if ENV['DB'] == 'mssql' && /Microsoft SQL Server (\d+)/.match(ActiveRecord::Base.connection.select_value('SELECT @@version'))[1].to_i < 2016
-            skip "SQL Server < 2016 is not currently supported"
+            skip 'SQL Server < 2016 is not currently supported'
           end
 
           tz = ENV['DB'] == 'mssql' ? time_zones['mssql'] : time_zones['posix']
@@ -887,9 +887,9 @@ module ArelExtensions
 
         assert_equal 3, User.find_by_sql(@ut.project(@age).where(@age.gt(22)).union_all(@ut.project(@age).where(@age.lt(0))).to_sql).length
         assert_equal 3, User.find_by_sql(@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(20))).union_all(@ut.project(@age).where(@age.eq(21))).to_sql).length
-        assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.gt(22)).union_all(@ut.project(@age).where(@age.lt(0)))).as('my_union')).length
-        assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(23))).union_all(@ut.project(@age).where(@age.eq(21)))).as('my_union')).length
-        assert_equal 3, User.select('*').from((@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(20))).union_all(@ut.project(@age).where(@age.eq(21)))).as('my_union')).length
+        assert_equal 3, User.select('*').from(@ut.project(@age).where(@age.gt(22)).union_all(@ut.project(@age).where(@age.lt(0))).as('my_union')).length
+        assert_equal 3, User.select('*').from(@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(23))).union_all(@ut.project(@age).where(@age.eq(21))).as('my_union')).length
+        assert_equal 3, User.select('*').from(@ut.project(@age).where(@age.eq(20)).union_all(@ut.project(@age).where(@age.eq(20))).union_all(@ut.project(@age).where(@age.eq(21))).as('my_union')).length
 
         assert (@ut.project(@age) + @ut.project(@age)).as('toto').table_name # as on union should answer to table_name (TableAlias)
       end

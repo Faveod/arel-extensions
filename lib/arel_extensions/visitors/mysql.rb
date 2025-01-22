@@ -189,7 +189,7 @@ module ArelExtensions
 
       def visit_Arel_Nodes_RollUp(o, collector)
         visit o.expr, collector
-        collector << " WITH ROLLUP"
+        collector << ' WITH ROLLUP'
       end
 
       def visit_ArelExtensions_Nodes_GroupConcat o, collector
