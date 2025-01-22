@@ -1,18 +1,18 @@
-all: test
+all: clean install
 
 clean:
-	rm -rf .vendor .bundle Gemfile.lock vendor
+	rm -rf .bundle Gemfile.lock vendor
 
 install:
 	bundle install
 
 lint:
-	bundle exec rubocop --config .rubocop.yml
+	bundle exec rubocop --config .rubocop.yml --require rubocop-performance
+
+lint-fix:
+	bundle exec rubocop --config .rubocop.yml -A
 
 publish:
 	./bin/publish
 
-test:
-	bundle exec rake test
-
-.PHONY: all test install lint publish clean
+.PHONY: all clean install lint publish
