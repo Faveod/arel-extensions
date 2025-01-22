@@ -44,7 +44,7 @@ end
 if defined?(Arel::Visitors::DepthFirst)
   class Arel::Visitors::DepthFirst
     def visit_Arel_SelectManager o
-        visit o.ast
+      visit o.ast
     end
   end
 end
