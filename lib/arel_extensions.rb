@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'arel'
 require 'arel_extensions/constants'
 require 'base64'
@@ -20,7 +22,7 @@ class Arel::Nodes::Casted
   # They forget to define hash.
   if ArelExtensions::AREL_VERSION < ArelExtensions::V10
     def hash
-      [self.class, self.val, self.attribute].hash
+      [self.class, val, attribute].hash
     end
   end
 end
@@ -36,8 +38,8 @@ class Arel::Nodes::Grouping
 end
 
 class Arel::Nodes::Ordering
-  def eql? other
-    self.hash.eql? other.hash
+  def eql?(other)
+    hash.eql? other.hash
   end
 end
 
@@ -88,7 +90,7 @@ require 'arel_extensions/nodes/select'
 # adapter behave differently. It doesn't always proc, so we added this for
 # coverage.
 if defined?(Arel::Visitors::SQLServer)
-  Arel::Visitors.const_set('MSSQL', Arel::Visitors::SQLServer)
+  Arel::Visitors.const_set(:MSSQL, Arel::Visitors::SQLServer)
   require 'arel_extensions/visitors/mssql'
   class Arel::Visitors::SQLServer
     include ArelExtensions::Visitors::MSSQL
@@ -96,11 +98,11 @@ if defined?(Arel::Visitors::SQLServer)
 end
 
 module Arel
-  def self.column_of table_name, column_name
+  def self.column_of(table_name, column_name)
     ArelExtensions.column_of(table_name, column_name)
   end
 
-  def self.duration s, expr
+  def self.duration(s, expr)
     ArelExtensions::Nodes::Duration.new("#{s}i", expr)
   end
 
@@ -160,7 +162,7 @@ module Arel
     Arel::Nodes::RollUp.new(args)
   end
 
-  def self.shorten s
+  def self.shorten(s)
     Base64.urlsafe_encode64(Digest::MD5.new.digest(s)).tr('=', '').tr('-', '_')
   end
 
@@ -171,7 +173,7 @@ module Arel
 
   def self.tuple *v
     tmp = Arel.grouping(nil)
-    Arel.grouping v.map{|e| tmp.convert_to_node(e)}
+    Arel.grouping(v.map { |e| tmp.convert_to_node(e) })
   end
 
   # For instance
@@ -179,7 +181,7 @@ module Arel
   # ```
   # Arel.when(at[field].is_null).then(0).else(1)
   # ```
-  def self.when condition
+  def self.when(condition)
     ArelExtensions::Nodes::Case.new.when(condition)
   end
 end
@@ -210,9 +212,9 @@ class Arel::Nodes::Function
     end
   end
 
-  alias_method(:old_as, :as) rescue nil
-  def as other
-    res = Arel::Nodes::As.new(self.clone, Arel.sql(other))
+  alias old_as as rescue nil
+  def as(other)
+    res = Arel::Nodes::As.new(clone, Arel.sql(other))
     self.alias = Arel.sql(other)
     res
   end
@@ -234,7 +236,7 @@ class Arel::Nodes::Unary
   include ArelExtensions::MathFunctions
   include ArelExtensions::Comparators
   include ArelExtensions::Predications
-  def eql? other
+  def eql?(other)
     hash == other.hash
   end
 end
@@ -246,7 +248,7 @@ class Arel::Nodes::Binary
   include ArelExtensions::Comparators
   include ArelExtensions::BooleanFunctions
   include ArelExtensions::Predications
-  def eql? other
+  def eql?(other)
     hash == other.hash
   end
 end
@@ -267,12 +269,12 @@ class Arel::SelectManager
   include ArelExtensions::Nodes
 
   remove_method(:as) if method_defined?(:as)
-  def as table_name
+  def as(table_name)
     Arel::Nodes::TableAlias.new(self, table_name)
   end
 
   # Install an alias, if present.
-  def xas table_name
+  def xas(table_name)
     if table_name.present?
       as table_name
     else
@@ -286,12 +288,12 @@ class Arel::Nodes::As
 end
 
 class Arel::Table
-  alias_method(:old_alias, :alias) rescue nil
+  alias old_alias alias rescue nil
 
   # activerecord 7.1 removed the alias. We might need to remove our dependency
   # on the alias if it proves problematic.
-  if !self.respond_to?(:table_name)
-    alias :table_name :name
+  if !respond_to?(:table_name)
+    alias table_name name
   end
 
   def alias(name = "#{self.name}_2")
@@ -306,14 +308,17 @@ end
 class Arel::Nodes::TableAlias
   def method_missing(*args)
     met = args.shift.to_sym
-    if self.relation.respond_to?(met)
-      self.relation.send(met, args)
+    if relation.respond_to?(met)
+      relation.send(met, args)
     else
       super(met, *args)
     end
   end
-end
 
+  def respond_to_missing?(method_name, include_private = false)
+    relation.respond_to?(method_name) || super
+  end
+end
 
 class Arel::Attributes::Attribute
   def to_sql(engine = Arel::Table.engine)
