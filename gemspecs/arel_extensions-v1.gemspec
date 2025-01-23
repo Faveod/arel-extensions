@@ -1,4 +1,6 @@
-$:.push File.expand_path('../lib', __FILE__)
+# frozen_string_literal: true
+
+$LOAD_PATH.push File.expand_path('lib', __dir__)
 require 'arel_extensions/version'
 
 Gem::Specification.new do |s|
@@ -17,11 +19,7 @@ Gem::Specification.new do |s|
 
   # Manifest
   s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ['lib']
 
   s.add_dependency('arel', '>= 6.0')
-
-  s.add_development_dependency('minitest', '~> 5.9')
-  s.add_development_dependency('rake', '~> 12.3.3')
 end

@@ -1,7 +1,17 @@
 AllCops:
-  DisabledByDefault: true
+  NewCops: enable
+  TargetRubyVersion: 2.5
+  SuggestExtensions: false
   Exclude:
   - "vendor/**/*"
+
+# TODO: enable.
+Gemspec/RequireMFA:
+  Enabled: false
+
+# TODO: enable.
+Gemspec/RequiredRubyVersion:
+  Enabled: false
 
 Layout/EndOfLine:
   Enabled: true
@@ -28,14 +38,58 @@ Layout/SpaceInsideHashLiteralBraces:
   Enabled: true
   EnforcedStyle: no_space
 
+Lint/BinaryOperatorWithIdenticalOperands:
+  Enabled: true
+  Exclude:
+    - test/with_ar/all_agnostic_test.rb
+
+# TODO: should we enable it? It's complaining about things like (1*2+3)
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+
 Layout/TrailingEmptyLines:
   Enabled: true
 
 Metrics/BlockLength:
   Enabled: false
 
+# TODO: enable.
+Metrics/AbcSize:
+  Enabled: false
+
+# TODO: enable.
+Metrics/MethodLength:
+  Enabled: false
+
+# TODO: enable.
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+# TODO: enable.
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Naming/AsciiIdentifiers:
+  Enabled: true
+  Exclude:
+    - lib/arel_extensions/boolean_functions.rb
+
+Naming/MethodName:
+  Exclude:
+    - lib/arel_extensions/boolean_functions.rb
+
 Naming/FileName:
   Enabled: true
+
+Style/BlockDelimiters:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# TODO: enable.
+Style/Documentation:
+  Enabled: false
 
 Style/CollectionMethods:
   Enabled: true
@@ -55,6 +109,13 @@ Style/EmptyElse:
 Style/Encoding:
   Enabled: true
 
+# TODO: enable.
+Style/GuardClause:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
 Style/HashSyntax:
   Enabled: true
   EnforcedStyle: ruby19
@@ -64,6 +125,11 @@ Style/MethodCallWithArgsParentheses:
 
 Style/MethodCallWithoutArgsParentheses:
   Enabled: true
+
+Style/MultipleComparison:
+  Enabled: true
+  Exclude:
+    - lib/arel_extensions/boolean_functions.rb
 
 Style/NegatedIf:
   Enabled: false
@@ -80,10 +146,19 @@ Style/RedundantRegexpCharacterClass:
 Style/RedundantReturn:
   Enabled: true
 
+# TODO: enable.
+# We have some `... rescue nil` going on, let's keep it this way for now.
+Style/RescueModifier:
+  Enabled: false
+
 # Even when conservative, this is unsafe.
-#Style/StringConcatenation:
-#  Enabled: true
-#  Mode: 'conservative'
+# Style/StringConcatenation:
+#   Enabled: true
+#   Mode: 'conservative'
+
+# This detects User.at[:id] + '1' as string concatenation, so never enable.
+Style/StringConcatenation:
+  Enabled: false
 
 Style/StringLiterals:
   Enabled: true
@@ -93,6 +168,9 @@ Style/SymbolArray:
 
 Style/WordArray:
   Enabled: true
+
+Style/YodaCondition:
+  Enabled: false
 
 # Performance cops have been transferred to rubocop-performance gem.
 require: rubocop-performance
