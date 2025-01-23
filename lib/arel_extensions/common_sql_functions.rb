@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ArelExtensions
   class CommonSqlFunctions
     def initialize(cnx)
@@ -9,7 +11,7 @@ module ArelExtensions
           db.load_extension('/usr/lib/sqlite3/pcre.so')
           db.load_extension('/usr/lib/sqlite3/extension-functions.so')
           db.enable_load_extension(0)
-        rescue => e
+        rescue StandardError => e
           $load_extension_disabled = true
           puts "cannot load extensions #{e.inspect}"
         end
@@ -42,14 +44,14 @@ module ArelExtensions
       if /sqlite/i.match?(env_db)
         begin
           add_sqlite_functions
-        rescue => e
+        rescue StandardError => e
           puts "cannot add sqlite functions #{e.inspect}"
         end
       end
       if File.exist?("init/#{env_db}.sql")
         sql = File.read("init/#{env_db}.sql")
         if env_db == 'mssql'
-          sql.split(/^GO\s*$/).each {|str|
+          sql.split(/^GO\s*$/).each { |str|
             @cnx.execute(str.strip) unless str.blank?
           }
         elsif env_db == 'mysql'
