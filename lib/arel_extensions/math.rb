@@ -59,7 +59,7 @@ module ArelExtensions
           elsif %i[string text].include?(arg)
             concat(other)
           end
-        else # if the column doesn't exist in the database
+        else
           Arel.grouping(Arel::Nodes::Addition.new(self, Arel.quoted(other)))
         end
       end
@@ -113,7 +113,7 @@ module ArelExtensions
                 else
                   ArelExtensions::Nodes::DateSub.new [self, other]
                 end
-              else # if the column doesn't exist in the database
+              else
                 ArelExtensions::Nodes::DateSub.new [self, other]
               end
             when Arel::Nodes::Node, DateTime, Time, String, Date
@@ -133,7 +133,7 @@ module ArelExtensions
               Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
             end
           end
-        else # if the column doesn't exist in the database
+        else
           Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
         end
       end
