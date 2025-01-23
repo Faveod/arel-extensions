@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ArelExtensions
   module Comparators
     def >(other)
@@ -19,8 +21,8 @@ module ArelExtensions
     # REGEXP function
     # Pattern matching using regular expressions
     def =~(other)
-        #      arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
-        #      if arg == :string || arg == :text
+      #      arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
+      #      if arg == :string || arg == :text
       Arel::Nodes::Regexp.new self, convert_regexp(other)
       #      end
     end
@@ -28,8 +30,8 @@ module ArelExtensions
     # NOT_REGEXP function
     # Negation of Regexp
     def !~(other)
-        #      arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
-        #      if arg == :string || arg == :text
+      #      arg = self.relation.engine.connection.schema_cache.columns_hash(self.relation.table_name)[self.name.to_s].type
+      #      if arg == :string || arg == :text
       Arel::Nodes::NotRegexp.new self, convert_regexp(other)
       #      end
     end

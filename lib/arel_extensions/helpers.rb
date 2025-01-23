@@ -1,5 +1,6 @@
-module ArelExtensions
+# frozen_string_literal: true
 
+module ArelExtensions
   #
   # column_of
   #
@@ -19,7 +20,7 @@ module ArelExtensions
     Arel::Table.engine.connection.schema_cache.columns_hash(table_name)[column_name]
   rescue NoMethodError
     nil
-  rescue => e
+  rescue StandardError => e
     warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of_via_arel_table`\n#{e.class}")
     warn(e.backtrace)
     nil
@@ -27,33 +28,31 @@ module ArelExtensions
 
   def self.column_of(table_name, column_name)
     pool = ActiveRecord::Base.connection.pool
-    use_arel_table = !ActiveRecord::Base.connected? || \
-      (pool.respond_to?(:schema_cache) && pool.schema_cache.nil?)
+    use_arel_table = !ActiveRecord::Base.connected? \
+      || (pool.respond_to?(:schema_cache) && pool.schema_cache.nil?)
 
     if use_arel_table
       column_of_via_arel_table(table_name, column_name)
-    else
-      if pool.respond_to?(:pool_config)
-        if pool.pool_config.respond_to?(:schema_reflection) # activerecord >= 7.1
-          if ActiveRecord.version >= Gem::Version.create('7.2')
-            pool.pool_config.schema_reflection.columns_hash(pool, table_name)[column_name]
-          else
-            pool.pool_config.schema_reflection.columns_hash(ActiveRecord::Base.connection, table_name)[column_name]
-          end
-        else # activerecord < 7.1
-          pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
+    elsif pool.respond_to?(:pool_config)
+      if pool.pool_config.respond_to?(:schema_reflection) # activerecord >= 7.1
+        if ActiveRecord.version >= Gem::Version.create('7.2')
+          pool.pool_config.schema_reflection.columns_hash(pool, table_name)[column_name]
+        else
+          pool.pool_config.schema_reflection.columns_hash(ActiveRecord::Base.connection, table_name)[column_name]
         end
-      elsif pool.respond_to?(:schema_cache) # activerecord < 6.1
-        pool.schema_cache.columns_hash(table_name)[column_name]
-      else # activerecord < 5.0
-        column_of_via_arel_table(table_name, column_name)
+      else # activerecord < 7.1
+        pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
       end
+    elsif pool.respond_to?(:schema_cache) # activerecord < 6.1
+      pool.schema_cache.columns_hash(table_name)[column_name]
+    else # activerecord < 5.0
+      column_of_via_arel_table(table_name, column_name)
     end
   rescue ActiveRecord::ConnectionNotEstablished
     column_of_via_arel_table(table_name, column_name)
   rescue ActiveRecord::StatementInvalid
     nil
-  rescue => e
+  rescue StandardError => e
     warn("Warning: Unexpected exception caught while fetching column name for #{table_name}.#{column_name} in `column_of`")
     warn(e)
     warn(e.backtrace)
