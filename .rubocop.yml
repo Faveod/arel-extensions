@@ -53,15 +53,19 @@ Lint/AmbiguousOperatorPrecedence:
 Layout/TrailingEmptyLines:
   Enabled: true
 
-Metrics/BlockLength:
-  Enabled: false
-
 # TODO: enable.
 Metrics/AbcSize:
   Enabled: false
 
 # TODO: enable.
+Metrics/BlockLength:
+  Enabled: false
+
+# TODO: enable.
 Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
   Enabled: false
 
 # TODO: enable.
