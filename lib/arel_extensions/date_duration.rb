@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'arel_extensions/nodes/format'
 require 'arel_extensions/nodes/formatted_date'
 require 'arel_extensions/nodes/duration'

@@ -117,6 +117,10 @@ Style/Encoding:
   Enabled: true
 
 # TODO: enable.
+Style/GlobalVars:
+  Enabled: false
+
+# TODO: enable.
 Style/GuardClause:
   Enabled: false
 
