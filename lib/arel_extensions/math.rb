@@ -28,8 +28,6 @@ module ArelExtensions
         end
       when ArelExtensions::Nodes::Function, ArelExtensions::Nodes::Case
         case return_type
-        when :string, :text
-          concat(other)
         when :integer, :decimal, :float, :number, :int
           Arel.grouping(Arel::Nodes::Addition.new(self, other))
         when :date, :datetime
@@ -77,10 +75,6 @@ module ArelExtensions
         end
       when ArelExtensions::Nodes::Function, ArelExtensions::Nodes::Case
         case return_type
-        when :string, :text # ???
-          Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other))) # ??
-        when :integer, :decimal, :float, :number
-          Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
         when :date, :datetime
           ArelExtensions::Nodes::DateSub.new [self, Arel.quoted(other)]
         else
