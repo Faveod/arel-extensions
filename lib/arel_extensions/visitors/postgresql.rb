@@ -22,7 +22,7 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << 'RANDOM('
-        if (o.left != nil && o.right != nil)
+        if o.left != nil && o.right != nil
           collector = visit o.left, collector
           collector << COMMA
           collector = isit o.right, collector
@@ -295,7 +295,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Duration o, collector
         if o.with_interval
           interval = case o.left
-            when  'd', 'm', 'y'
+            when 'd', 'm', 'y'
               'DAY'
             when 'h', 'mn', 's'
               'SECOND'

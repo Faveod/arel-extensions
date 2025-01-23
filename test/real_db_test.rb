@@ -72,24 +72,24 @@ class ListTest < Minitest::Test
   end
 
   def test_abs
-    assert_equal 0, User.where(User.arel_table[:name].eq('Negatif')).select((User.arel_table[:age].abs).as('res')).first.res
-    assert_equal 14, User.where(User.arel_table[:name].eq('Laure')).select(((User.arel_table[:age] - 39).abs).as('res')).first.res
+    assert_equal 0, User.where(User.arel_table[:name].eq('Negatif')).select(User.arel_table[:age].abs.as('res')).first.res
+    assert_equal 14, User.where(User.arel_table[:name].eq('Laure')).select((User.arel_table[:age] - 39).abs.as('res')).first.res
   end
 
   def test_ceil
     if !$sqlite || !$load_extension_disabled
-      assert_equal 1, User.where(User.arel_table[:name].eq('Negatif')).select((User.arel_table[:score].ceil).as('res')).first.res
-      assert_equal 66, User.where(User.arel_table[:name].eq('Arthur')).select((User.arel_table[:score].ceil).as('res')).first.res
+      assert_equal 1, User.where(User.arel_table[:name].eq('Negatif')).select(User.arel_table[:score].ceil.as('res')).first.res
+      assert_equal 66, User.where(User.arel_table[:name].eq('Arthur')).select(User.arel_table[:score].ceil.as('res')).first.res
     end
   end
 
   def test_coalesce
     if /pgsql/i.match?(@cnx.adapter_name)
-      assert_equal 100, User.where(User.arel_table[:name].eq('Test')).select((User.arel_table[:age].coalesce(100)).as('res')).first.res
-        assert_equal 'Camille', User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].coalesce('Null', 'default')).as('res')).first.res
+      assert_equal 100, User.where(User.arel_table[:name].eq('Test')).select(User.arel_table[:age].coalesce(100).as('res')).first.res
+        assert_equal 'Camille', User.where(User.arel_table[:name].eq('Camille')).select(User.arel_table[:name].coalesce('Null', 'default').as('res')).first.res
     else
-      assert_equal 'Camille', User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].coalesce('Null', 20)).as('res')).first.res
-      assert_equal 20, User.where(User.arel_table[:name].eq('Test')).select((User.arel_table[:age].coalesce(nil, 20)).as('res')).first.res
+      assert_equal 'Camille', User.where(User.arel_table[:name].eq('Camille')).select(User.arel_table[:name].coalesce('Null', 20).as('res')).first.res
+      assert_equal 20, User.where(User.arel_table[:name].eq('Test')).select(User.arel_table[:age].coalesce(nil, 20).as('res')).first.res
     end
   end
 
@@ -115,45 +115,45 @@ class ListTest < Minitest::Test
 
   def test_date_duration
     # Year
-    assert_equal 2016, User.where(User.arel_table[:name].eq('Lucas')).select((User.arel_table[:created_at].year).as('res')).first.res.to_i
+    assert_equal 2016, User.where(User.arel_table[:name].eq('Lucas')).select(User.arel_table[:created_at].year.as('res')).first.res.to_i
     assert_equal 0, User.where(User.arel_table[:created_at].year.eq('2012')).count
     # Month
-    assert_equal 5, User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:created_at].month).as('res')).first.res.to_i
+    assert_equal 5, User.where(User.arel_table[:name].eq('Camille')).select(User.arel_table[:created_at].month.as('res')).first.res.to_i
     assert_equal 8, User.where(User.arel_table[:created_at].month.eq('05')).count
     # Week
-    assert_equal 21, User.where(User.arel_table[:name].eq('Arthur')).select((User.arel_table[:created_at].week).as('res')).first.res.to_i
+    assert_equal 21, User.where(User.arel_table[:name].eq('Arthur')).select(User.arel_table[:created_at].week.as('res')).first.res.to_i
     assert_equal 8, User.where(User.arel_table[:created_at].month.eq('05')).count
     # Day
-    assert_equal 23, User.where(User.arel_table[:name].eq('Laure')).select((User.arel_table[:created_at].day).as('res')).first.res.to_i
+    assert_equal 23, User.where(User.arel_table[:name].eq('Laure')).select(User.arel_table[:created_at].day.as('res')).first.res.to_i
     assert_equal 0, User.where(User.arel_table[:created_at].day.eq('05')).count
   end
 
   def test_length
-    assert_equal 7, User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].length).as('res')).first.res
-    assert_equal 5, User.where(User.arel_table[:name].eq('Laure')).select((User.arel_table[:name].length).as('res')).first.res
+    assert_equal 7, User.where(User.arel_table[:name].eq('Camille')).select(User.arel_table[:name].length.as('res')).first.res
+    assert_equal 5, User.where(User.arel_table[:name].eq('Laure')).select(User.arel_table[:name].length.as('res')).first.res
   end
 
   def test_locate
     if !$sqlite || !$load_extension_disabled
-      assert_equal 1, User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].locate('C')).as('res')).first.res
-      assert_equal 0, User.where(User.arel_table[:name].eq('Lucas')).select((User.arel_table[:name].locate('z')).as('res')).first.res
-      assert_equal 5, User.where(User.arel_table[:name].eq('Lucas')).select((User.arel_table[:name].locate('s')).as('res')).first.res
+      assert_equal 1, User.where(User.arel_table[:name].eq('Camille')).select(User.arel_table[:name].locate('C').as('res')).first.res
+      assert_equal 0, User.where(User.arel_table[:name].eq('Lucas')).select(User.arel_table[:name].locate('z').as('res')).first.res
+      assert_equal 5, User.where(User.arel_table[:name].eq('Lucas')).select(User.arel_table[:name].locate('s').as('res')).first.res
     end
   end
 
   def test_isnull
     if /pgsql/i.match?(ActiveRecord::Base.connection.adapter_name)
-      assert_equal 100, User.where(User.arel_table[:name].eq('Test')).select((User.arel_table[:age].isnull(100)).as('res')).first.res
+      assert_equal 100, User.where(User.arel_table[:name].eq('Test')).select(User.arel_table[:age].isnull(100).as('res')).first.res
     else
-      assert_equal 'default', User.where(User.arel_table[:name].eq('Test')).select((User.arel_table[:age].isnull('default')).as('res')).first.res
-      assert_equal 'Test', User.where((User.arel_table[:age].isnull('default')).eq('default')).select(User.arel_table[:name]).first.name.to_s
+      assert_equal 'default', User.where(User.arel_table[:name].eq('Test')).select(User.arel_table[:age].isnull('default').as('res')).first.res
+      assert_equal 'Test', User.where(User.arel_table[:age].isnull('default').eq('default')).select(User.arel_table[:name]).first.name.to_s
     end
   end
 
   def test_floor
     if !$sqlite || !$load_extension_disabled
-      assert_equal 0, User.where(User.arel_table[:name].eq('Negatif')).select((User.arel_table[:score].floor).as('res')).first.res
-      assert_equal 65, User.where(User.arel_table[:name].eq('Arthur')).select((User.arel_table[:score].floor).as('res')).first.res
+      assert_equal 0, User.where(User.arel_table[:name].eq('Negatif')).select(User.arel_table[:score].floor.as('res')).first.res
+      assert_equal 65, User.where(User.arel_table[:name].eq('Arthur')).select(User.arel_table[:score].floor.as('res')).first.res
     end
   end
 
@@ -210,19 +210,19 @@ class ListTest < Minitest::Test
   end
 
   def test_replace
-    assert_equal 'LucaX', User.where(User.arel_table[:name].eq('Lucas')).select((User.arel_table[:name].replace('s', 'X')).as('res')).first.res
-    assert_equal 'replace', User.where(User.arel_table[:name].eq('Lucas')).select((User.arel_table[:name].replace(User.arel_table[:name], 'replace')).as('res')).first.res
+    assert_equal 'LucaX', User.where(User.arel_table[:name].eq('Lucas')).select(User.arel_table[:name].replace('s', 'X').as('res')).first.res
+    assert_equal 'replace', User.where(User.arel_table[:name].eq('Lucas')).select(User.arel_table[:name].replace(User.arel_table[:name], 'replace').as('res')).first.res
   end
 
   def test_round
-    assert_equal 1, User.where(((User.arel_table[:age]).round(0)).eq(5.0)).count
-    assert_equal 0, User.where(((User.arel_table[:age]).round(-1)).eq(6.0)).count
+    assert_equal 1, User.where(User.arel_table[:age].round(0).eq(5.0)).count
+    assert_equal 0, User.where(User.arel_table[:age].round(-1).eq(6.0)).count
   end
 
   def test_Soundex
     if !$sqlite || !$load_extension_disabled
-      assert_equal 'C540', User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].soundex).as('res')).first.res.to_s
-      assert_equal 8, User.where((User.arel_table[:name].soundex).eq(User.arel_table[:name].soundex)).count
+      assert_equal 'C540', User.where(User.arel_table[:name].eq('Camille')).select(User.arel_table[:name].soundex.as('res')).first.res.to_s
+      assert_equal 8, User.where(User.arel_table[:name].soundex.eq(User.arel_table[:name].soundex)).count
     end
   end
 
@@ -230,8 +230,8 @@ class ListTest < Minitest::Test
     # .take(50) because of limit by ORDER BY
     assert_equal 110, User.select((User.arel_table[:age].sum + 1).as('res')).take(50).first.res
     assert_equal 218, User.select((User.arel_table[:age].sum + User.arel_table[:age].sum).as('res')).take(50).first.res
-    assert_equal 327, User.select(((User.arel_table[:age] * 3).sum).as('res')).take(50).first.res
-    assert_equal 2245, User.select(((User.arel_table[:age] * User.arel_table[:age]).sum).as('res')).take(50).first.res
+    assert_equal 327, User.select((User.arel_table[:age] * 3).sum.as('res')).take(50).first.res
+    assert_equal 2245, User.select((User.arel_table[:age] * User.arel_table[:age]).sum.as('res')).take(50).first.res
   end
 
   def test_trim
@@ -244,7 +244,7 @@ class ListTest < Minitest::Test
 
   def test_wday
     d = Date.new(2016, 06, 26)
-      assert_equal 1, User.where(User.arel_table[:name].eq('Myung')).select((User.arel_table[:created_at].wday).as('res')).first.res.to_i
+      assert_equal 1, User.where(User.arel_table[:name].eq('Myung')).select(User.arel_table[:created_at].wday.as('res')).first.res.to_i
       assert_equal 0, User.select(d.wday).as('res').first.to_i
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'arel_extensions/aliases'
 require 'arel_extensions/math'
 require 'arel_extensions/comparators'

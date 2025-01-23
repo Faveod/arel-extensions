@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bundler'
 Bundler::GemHelper.install_tasks name: 'arel_extensions'
 
@@ -51,7 +53,7 @@ end
 
 # Useful shorthands.
 namespace :test do
-  task :sql => :to_sql
-  task :pg => :postgresql
-  task :postgres => :postgresql
+  task sql: :to_sql
+  task pg: :postgresql
+  task postgres: :postgresql
 end
