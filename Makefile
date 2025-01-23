@@ -18,7 +18,7 @@ lint:
 	bundle exec rubocop --config .rubocop.yml --require rubocop-performance
 
 lint-fix:
-	bundle exec rubocop --config .rubocop.yml -A
+	bundle exec rubocop --config .rubocop.yml -a
 
 local-%:
 	@version="$*"; \

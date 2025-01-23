@@ -3,19 +3,19 @@ source 'https://rubygems.org'
 gem 'rails', '~> 8.1'
 
 group :development, :test do
-  gem 'ruby-lsp', platforms: %i[mri]
   gem 'debug', platforms: %i[mri]
+  gem 'ruby-lsp', platforms: %i[mri]
 
-  gem 'activesupport', '~> 8.1'
   gem 'activemodel', '~> 8.1'
   gem 'activerecord', '~> 8.1'
+  gem 'activesupport', '~> 8.1'
 
-  gem 'sqlite3', '~> 2.1', platforms: [:mri]
   gem 'mysql2', '~>0.5', platforms: [:mri]
   gem 'pg', '~> 1.5', platforms: [:mri]
+  gem 'sqlite3', '~> 2.1', platforms: [:mri]
 
-  gem 'tiny_tds', platforms: %i[mri mingw x64_mingw mswin]
   gem 'activerecord-sqlserver-adapter', '~> 8.1', platforms: %i[mri mingw x64_mingw mswin]
+  gem 'tiny_tds', platforms: %i[mri mingw x64_mingw mswin]
   gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw]
 
   gem 'ruby-oci8', platforms: %i[mri mswin mingw] if ENV.has_key? 'ORACLE_HOME'
