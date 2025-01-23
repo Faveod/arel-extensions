@@ -2,8 +2,11 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.5
   SuggestExtensions: false
+  # TODO: enable for tests.
   Exclude:
-  - "vendor/**/*"
+  - vendor/**/*
+  - dev/**/*
+  - test/**/*
 
 # TODO: enable.
 Gemspec/RequireMFA:
@@ -77,6 +80,10 @@ Naming/AsciiIdentifiers:
 Naming/MethodName:
   Exclude:
     - lib/arel_extensions/boolean_functions.rb
+
+# TODO: enable.
+Naming/MethodParameterName:
+  Enabled: false
 
 Naming/FileName:
   Enabled: true
