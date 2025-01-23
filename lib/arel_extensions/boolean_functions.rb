@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'arel_extensions/nodes/then'
 
 module ArelExtensions
@@ -52,7 +54,7 @@ class Arel::Nodes::Or
       children.flatten.map { |c|
         c.is_a?(self) ? c.children : c
       }.flatten
-    super(*children)
+    super
   end
 
   def initialize *children
@@ -80,5 +82,5 @@ class Arel::Nodes::Or
     self.class == other.class &&
       children == other.children
   end
-  alias :== :eql?
+  alias == eql?
 end
