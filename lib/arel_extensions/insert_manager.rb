@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 require 'arel'
 
 module ArelExtensions
   module InsertManager
     def bulk_insert(cols, data)
       raise ArgumentError, 'cols must be present' if cols.blank?
+
       columns =
         case cols.first
         when Array
@@ -11,7 +14,7 @@ module ArelExtensions
           when Arel::Attributes::Attribute
             cols
           when String, Symbol
-            cols.map {|c| [@ast.relation[c.first]] }
+            cols.map { |c| [@ast.relation[c.first]] }
           else
             raise ArgumentError, "cols has an invalid type: #{cols.first.first.class}"
           end
@@ -28,6 +31,7 @@ module ArelExtensions
       attr_accessor :left, :cols
 
       def initialize(cols, values)
+        super
         @left = values
         @cols = cols
       end
