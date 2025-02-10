@@ -25,6 +25,8 @@ module ArelExtensions
       #      end
     end
 
+    alias regex_matches =~
+
     # NOT_REGEXP function
     # Negation of Regexp
     def !~(other)
