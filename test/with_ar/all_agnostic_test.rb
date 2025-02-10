@@ -346,6 +346,13 @@ module ArelExtensions
         assert_equal 8, User.where(@name !~ /^L/).count
       end
 
+      def test_regex_matches
+        skip "Sqlite version can't load extension for regexp" if $sqlite && $load_extension_disabled
+        skip 'SQL Server does not know about REGEXP without extensions' if @env_db == 'mssql'
+        assert_equal 1, User.where(@name.regex_matches '^M').count
+        assert_equal 1, User.where(@name.regex_matches /^M/).count
+      end
+
       def test_imatches
         # puts User.where(@name.imatches('m%')).to_sql
         assert_equal 1, User.where(@name.imatches('m%')).count
