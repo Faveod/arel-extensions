@@ -356,8 +356,8 @@ jobs:
             # {ruby: jruby-9.3,   rails: 6_1, arelx: 2},
             # {ruby: jruby-9.3,   rails: 6,   arelx: 2},
             # {ruby: jruby-9.3,   rails: 5_2, arelx: 1},
-            { ruby: jruby-9.4, rails: 7_1, arelx: 2 },
-            { ruby: jruby-9.4, rails: 7, arelx: 2 },
+            { ruby: jruby-9.4.10, rails: 7_1, arelx: 2 }, # The reason we pin to the patch level is https://github.com/ruby/psych/issues/700
+            { ruby: jruby-9.4.10, rails: 7, arelx: 2 },
             #
             # 6 and 6.1 don't work because of a bug in the alt adapter
             # https://github.com/JesseChavez/activerecord-jdbc-adapter/issues/16
