@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## Release v2.3.3/v1.5.3 (11-02-2025)
+
 - Fix the `&` operator which does `find_in_set` for mysql and postgres, accepting strings and integers.
 - Add `regex_matches`, an alias for `=~`.
 
