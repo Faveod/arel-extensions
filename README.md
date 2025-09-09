@@ -31,7 +31,7 @@ Most of the features will work just by adding the gem to your Gemfiles. To make 
 ArelExtensions::CommonSqlFunctions.new(ActiveRecord::Base.connection).add_sql_functions()
 ```
 
-It will add common SQL features in your DB to align ti with current routines. Technically, it will execute SQL scripts from init folder.
+It will add common SQL features in your DB to align it with current routines. Technically, it will execute SQL scripts from init folder.
 
 
 ## Examples
