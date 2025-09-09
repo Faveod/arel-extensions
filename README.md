@@ -195,7 +195,7 @@ by the RDBMS.
 Warning:
 
 - ⚠️ Time Zone names are specific to each RDBMS. While `PostgreSQL` and `MySQL`
-  have overlaping names (the ones prefixed with `posix`), you should always
+  have overlapping names (the ones prefixed with `posix`), you should always
   read your vendor's documentation. `SQL Server` is a black sheep and has its
   own conventions.
 - ⚠️ Daylight saving is managed by the RDBMS vendor. Choose the approptiate time
