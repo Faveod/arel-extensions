@@ -373,7 +373,25 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">LENGTH<br>column.length</td>
+    <td class="tg-yw4l">LENGTH<br>column.char_length</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">✔</td>
+    <td class="ok">not implemented</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">LENGTH (aka octet_length)<br>column.byte_size</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">✔</td>
+    <td class="ok">not implemented</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">LENGTH<br>column.length<br>⚠️ not portable, prefer char_length or byte_size</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>

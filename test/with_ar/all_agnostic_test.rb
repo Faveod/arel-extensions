@@ -74,6 +74,12 @@ module ArelExtensions
         @justin = User.where(id: u.id)
         u = User.create age: nil, name: 'nilly', created_at: nil, score: nil
         @nilly = User.where(id: u.id)
+        u = User.create age: nil, name: 'esmé', created_at: nil, score: nil
+        @esme = User.where(id: u.id)
+        u = User.create age: nil, name: 'esmé ', created_at: nil, score: nil
+        @esme2 = User.where(id: u.id)
+        u = User.create age: nil, name: nil, created_at: nil, score: nil
+        @all_nil = User.where(id: u.id)
 
         @age = User.arel_table[:age]
         @name = User.arel_table[:name]
@@ -96,7 +102,9 @@ module ArelExtensions
       end
 
       def t(scope, node)
-        scope.select(node.as('res')).to_a.first.res
+        res = scope.select(node.as('res'))
+        # puts res.to_sql
+        res.to_a.first.res
       end
 
       # manage the difference between adapters that handle or not json type
@@ -150,7 +158,7 @@ module ArelExtensions
       def test_rand
         assert 42 != User.select(Arel.rand.as('res')).first.res
         assert 0 <= User.select(Arel.rand.abs.as('res')).first.res
-        assert_equal 10, User.order(Arel.rand).limit(50).count
+        assert_equal 13, User.order(Arel.rand).limit(50).count
       end
 
       def test_round
@@ -253,6 +261,20 @@ module ArelExtensions
         assert_equal 7, t(@camille, @name.length)
         assert_equal 7, t(@camille, @name.length.round.abs)
         assert_equal 42, t(@laure, @name.length + 37)
+
+        if @env_db == 'mssql'
+          # By default it's UTF-16, and configuring the CI to be UTF-8 is a bit of a hassle.
+          assert_equal 4, t(@esme, @name.byte_size)
+          assert_equal 5, t(@esme2, @name.byte_size)
+        else
+          assert_equal 5, t(@esme, @name.byte_size)
+          assert_equal 6, t(@esme2, @name.byte_size)
+        end
+        assert_equal 0, t(@all_nil, @name.byte_size)
+
+        assert_equal 4, t(@esme, @name.char_length)
+        assert_equal 5, t(@esme2, @name.char_length)
+        assert_equal 0, t(@all_nil, @name.char_length)
       end
 
       def test_md5
@@ -341,9 +363,9 @@ module ArelExtensions
         skip "Sqlite version can't load extension for regexp" if $sqlite && $load_extension_disabled
         skip 'SQL Server does not know about REGEXP without extensions' if @env_db == 'mssql'
         assert_equal 1, User.where(@name =~ '^M').count
-        assert_equal 8, User.where(@name !~ '^L').count
+        assert_equal 10, User.where(@name !~ '^L').count
         assert_equal 1, User.where(@name =~ /^M/).count
-        assert_equal 8, User.where(@name !~ /^L/).count
+        assert_equal 10, User.where(@name !~ /^L/).count
       end
 
       def test_regex_matches
@@ -356,8 +378,12 @@ module ArelExtensions
       def test_imatches
         # puts User.where(@name.imatches('m%')).to_sql
         assert_equal 1, User.where(@name.imatches('m%')).count
-        assert_equal 4, User.where(@name.imatches_any(['L%', '%e'])).count
-        assert_equal 8, User.where(@name.idoes_not_match('L%')).count
+        if @env_db == 'mysql'
+          assert_equal 5, User.where(@name.imatches_any(['L%', '%e'])).count
+        else
+          assert_equal 4, User.where(@name.imatches_any(['L%', '%e'])).count
+        end
+        assert_equal 10, User.where(@name.idoes_not_match('L%')).count
       end
 
       def test_replace
@@ -382,8 +408,8 @@ module ArelExtensions
         skip "Sqlite version can't load extension for soundex" if $sqlite && $load_extension_disabled
         skip "PostgreSql version can't load extension for soundex" if @env_db == 'postgresql'
         assert_equal 'C540', t(@camille, @name.soundex)
-        assert_equal 10, User.where(@name.soundex.eq(@name.soundex)).count
-        assert_equal 10, User.where(@name.soundex == @name.soundex).count
+        assert_equal 12, User.where(@name.soundex.eq(@name.soundex)).count
+        assert_equal 12, User.where(@name.soundex == @name.soundex).count
       end
 
       def test_change_case
@@ -680,7 +706,7 @@ module ArelExtensions
       def test_date_comparator
         d = Date.new(2016, 5, 23)
         assert_equal 0, User.where(@created_at < d).count
-        assert_equal 10, User.where(@created_at >= d).count
+        assert_equal 13, User.where(@created_at >= d).count
       end
 
       def test_date_duration
@@ -863,7 +889,7 @@ module ArelExtensions
       def test_math_minus
         d = Date.new(2016, 5, 20)
         # Datediff
-        assert_equal 10, User.where((@created_at - @created_at).eq(0)).count
+        assert_equal 13, User.where((@created_at - @created_at).eq(0)).count
         assert_equal 3, @laure.select((@created_at - d).as('res')).first.res.abs.to_i
         # Substraction
         assert_equal 0, User.where((@age - 10).eq(50)).count
@@ -982,10 +1008,15 @@ module ArelExtensions
       end
 
       def test_subquery_with_order
-        skip if ['mssql'].include?(@env_db) && Arel::VERSION.to_i < 10
-        assert_equal 10, User.where(name: User.select(:name).order(:name)).count
-        assert_equal 10, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count
-        if !['mysql'].include?(@env_db) # MySql can't have limit in IN subquery
+        skip if @env_db == 'mssql' && Arel::VERSION.to_i < 10
+        assert_equal 12, User.where(name: User.select(:name).order(:name)).count
+        assert_equal 12, User.where(@ut[:name].in(@ut.project(@ut[:name]).order(@ut[:name]))).count
+
+        if %w[mssql sqlite].include? @env_db
+          # Sqlite and mssql are sensistive to the nil value in name, defined by @all_nil
+          assert_equal 1, User.where(name: User.select(:name).order(:name).limit(2)).count
+        elsif @env_db != 'mysql'
+          # MySql can't have limit in IN subquery
           assert_equal 2, User.where(name: User.select(:name).order(:name).limit(2)).count
           # assert_equal 6, User.where(name: User.select(:name).order(:name).offset(2)).count
         end

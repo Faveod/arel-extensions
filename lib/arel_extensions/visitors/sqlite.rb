@@ -18,6 +18,22 @@ module ArelExtensions
       }.freeze
 
       # String functions
+      def visit_ArelExtensions_Nodes_ByteSize o, collector
+        # sqlite 3.43.0 (2023-08-24) introduced `octet_length`, but we still support older versions.
+        # https://sqlite.org/changes.html
+        collector << 'length(CAST('
+        collector = visit o.expr.coalesce(''), collector
+        collector << ' AS BLOB))'
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_CharLength o, collector
+        collector << 'length('
+        collector = visit o.expr.coalesce(''), collector
+        collector << ')'
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
         collector = visit o.left.ci_collate, collector
         collector << ' LIKE '

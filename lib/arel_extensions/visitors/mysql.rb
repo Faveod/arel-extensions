@@ -86,6 +86,20 @@ module ArelExtensions
       end
 
       # String functions
+      def visit_ArelExtensions_Nodes_ByteSize o, collector
+        collector << 'LENGTH('
+        collector = visit o.expr.coalesce(''), collector
+        collector << ')'
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_CharLength o, collector
+        collector << 'CHAR_LENGTH('
+        collector = visit o.expr.coalesce(''), collector
+        collector << ')'
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
         collector << 'LOWER('
         collector = visit o.left, collector
