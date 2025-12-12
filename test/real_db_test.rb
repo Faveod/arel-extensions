@@ -6,7 +6,7 @@ $:.unshift "#{File.dirname(__FILE__)}../../lib"
 require 'arel_extensions'
 
 def setup_db
-  ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
+  ActiveRecord::Base.configurations = ConfigLoader.load('test/database.yml')
   ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
   if ActiveRecord::VERSION::MAJOR >= 7
     ActiveRecord.default_timezone = :utc

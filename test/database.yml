@@ -1,3 +1,4 @@
+# Updated to use ENV vars mapped in compose.yml
 sqlite:
   adapter: sqlite3
   database: ":memory:"
@@ -10,7 +11,7 @@ mysql:
   adapter: mysql2
   database: arelx_test
   username: root
-  host: 127.0.0.1
+  host: <%= ENV.fetch('MYSQL_HOST', '127.0.0.1') %>
   port: 3306
   encoding: utf8
 jdbc-mysql:
@@ -18,19 +19,20 @@ jdbc-mysql:
   database: arelx_test
   username: root
   encoding: utf8
+  host: <%= ENV.fetch('MYSQL_HOST', '127.0.0.1') %>
 postgresql:
   adapter: postgresql
   database: arelx_test
   username: postgres
   password: secret
-  host: 127.0.0.1
+  host: <%= ENV.fetch('POSTGRES_HOST', '127.0.0.1') %>
   port: 5432
 jdbc-postgresql:
   adapter: jdbcpostgresql
   database: arelx_test
   username: postgres
   password: secret
-  host: 127.0.0.1
+  host: <%= ENV.fetch('POSTGRES_HOST', '127.0.0.1') %>
   port: 5432
 oracle:
   adapter: oracle_enhanced
@@ -48,7 +50,7 @@ ibm_db:
   database: arelx_test
 mssql:
   adapter: sqlserver
-  host: localhost
+  host: <%= ENV.fetch('MSSQL_HOST', 'localhost') %>
   database: master
   username: sa
   password: Password12!
