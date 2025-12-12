@@ -20,6 +20,20 @@ module ArelExtensions
         'en_US' => '.,', 'fr_FR' => ',', 'sv_SE' => ', '
       }.freeze
 
+      def visit_ArelExtensions_Nodes_ByteSize o, collector
+        collector << 'octet_length('
+        collector = visit o.expr.coalesce(''), collector
+        collector << ')'
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_CharLength o, collector
+        collector << 'length('
+        collector = visit o.expr.coalesce(''), collector
+        collector << ')'
+        collector
+      end
+
       def visit_ArelExtensions_Nodes_Rand o, collector
         collector << 'RANDOM('
         if (o.left != nil && o.right != nil)

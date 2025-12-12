@@ -1,3 +1,5 @@
+require 'arel_extensions/nodes/byte_size'
+require 'arel_extensions/nodes/char_length'
 require 'arel_extensions/nodes/concat' # if Arel::VERSION.to_i < 7
 require 'arel_extensions/nodes/length'
 require 'arel_extensions/nodes/locate'
@@ -19,6 +21,8 @@ require 'arel_extensions/nodes/md5'
 
 module ArelExtensions
   module StringFunctions
+    include ArelExtensions::Warning
+
     # *FindInSet function .......
     def &(other)
       ArelExtensions::Nodes::FindInSet.new [
@@ -29,15 +33,21 @@ module ArelExtensions
 
     # LENGTH function returns the length (bytewise) of the value in a text field.
     def length
+      deprecated "Use `byte_size` or `char_length` instead. `length` relies on the vendor's `LEN/LENGTH` implementation and it's not portable"
       ArelExtensions::Nodes::Length.new self, true
     end
 
     def byte_length
+      deprecated "Use `byte_size` instead. `byte_length` relies on the vendor's `LEN/LENGTH` implementation and it's not portable"
       ArelExtensions::Nodes::Length.new self, true
     end
 
+    def byte_size
+      ArelExtensions::Nodes::ByteSize.new self
+    end
+
     def char_length
-      ArelExtensions::Nodes::Length.new self, false
+      ArelExtensions::Nodes::CharLength.new self
     end
 
     # LOCATE function returns the first starting position of a string in another string.

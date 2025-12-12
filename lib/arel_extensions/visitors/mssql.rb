@@ -216,8 +216,6 @@ module ArelExtensions
         collector
       end
 
-
-
       def visit_ArelExtensions_Nodes_DateDiff o, collector
         case o.right_node_type
         when :ruby_date, :ruby_time, :date, :datetime, :time
@@ -271,6 +269,23 @@ module ArelExtensions
           collector << ')' if conv
           collector << ')'
         end
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_ByteSize o, collector
+        collector << 'DATALENGTH(CAST('
+        collector = visit o.expr.coalesce(''), collector
+        collector << ' AS VARCHAR(MAX)))'
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_CharLength o, collector
+        # According to the docs https://learn.microsoft.com/en-us/sql/t-sql/functions/len-transact-sql?view=sql-server-ver17
+        # LEN doesn't take into account the trailing white space, and that's why
+        # we need to do acrobatics.
+        collector << 'LEN('
+        collector = visit o.expr.coalesce(''), collector
+        collector << " + 'x') - 1"
         collector
       end
 

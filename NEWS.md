@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+- Add `byte_size` and `char_length`. They should replace all uses of `length` because it's inconsistent across vendors; it can surprise you and give you byte size when you expect string length.
+
 ## Release v2.3.3/v1.5.3 (11-02-2025)
 
 - Fix the `&` operator which does `find_in_set` for mysql and postgres, accepting strings and integers.
