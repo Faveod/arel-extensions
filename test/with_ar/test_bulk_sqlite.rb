@@ -4,7 +4,7 @@ module ArelExtensions
   module WithAr
     describe 'the sqlite visitor' do
       before do
-        ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
+        ActiveRecord::Base.configurations = ConfigLoader.load('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
         if ActiveRecord::VERSION::MAJOR >= 7
           ActiveRecord.default_timezone = :utc

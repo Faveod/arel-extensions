@@ -5,7 +5,7 @@ module ArelExtensions
   module WithAr
     describe 'the mysql visitor can do string operations' do
       before do
-        ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
+        ActiveRecord::Base.configurations = ConfigLoader.load('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-mysql" : :mysql))
         if ActiveRecord::VERSION::MAJOR >= 7
           ActiveRecord.default_timezone = :utc

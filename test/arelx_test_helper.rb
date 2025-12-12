@@ -1,10 +1,11 @@
-require 'rubygems'
-require 'minitest/autorun'
-require 'fileutils'
-require 'arel'
 require 'active_record'
-
+require 'arel'
+require 'fileutils'
+require 'minitest/autorun'
+require 'rubygems'
 require 'support/fake_record'
+
+require_relative './config_loader'
 
 ENV['AREL_EXTENSIONS_IN_TEST'] = '1' # Useful for deprecation warnings.
 
