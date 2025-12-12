@@ -276,22 +276,49 @@ jobs:
             { ruby: jruby-9.3, rails: 6, arelx: 2 },
             { ruby: jruby-9.3, rails: 5_2, arelx: 1 },
           ]
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_USERNAME: root
-          MYSQL_DATABASE: arelx_test
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+    # TODO: restore the service. it's far simpler, but since we're testing old
+    # mysql, and we want utf-8 by default, we're currently forced to avoid the
+    # service, and do it as a step. Maybe there's a better solution, who knows?
+    #
+    # services:
+    #   mysql:
+    #     image: mysql:5.7
+    #     env:
+    #       MYSQL_ALLOW_EMPTY_PASSWORD: true
+    #       MYSQL_USERNAME: root
+    #       MYSQL_DATABASE: arelx_test
+    #     ports:
+    #       - 3306:3306
+    #     options: >-
+    #       --health-cmd="mysqladmin ping"
+    #       --health-interval=10s
+    #       --health-timeout=5s
+    #       --health-retries=3
+    #
     steps:
       - uses: actions/checkout@v2
+
+      - name: Start MySQL with UTF-8
+        run: |
+          docker run -d \
+            --name mysql \
+            -e MYSQL_ALLOW_EMPTY_PASSWORD=true \
+            -e MYSQL_DATABASE=arelx_test \
+            -p 3306:3306 \
+            --health-cmd="mysqladmin ping" \
+            --health-interval=10s \
+            --health-timeout=5s \
+            --health-retries=3 \
+            mysql:5.7 \
+            --character-set-server=utf8mb4
+
+      - name: Wait for MySQL
+        run: |
+          until docker exec mysql mysqladmin ping --silent; do
+            echo 'Waiting for MySQL...'
+            sleep 2
+          done
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
