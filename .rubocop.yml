@@ -1,7 +1,10 @@
+plugins:
+  - rubocop-performance
+
 AllCops:
   DisabledByDefault: true
   Exclude:
-  - "vendor/**/*"
+    - "vendor/**/*"
 
 Layout/EndOfLine:
   Enabled: true
@@ -93,9 +96,6 @@ Style/SymbolArray:
 
 Style/WordArray:
   Enabled: true
-
-# Performance cops have been transferred to rubocop-performance gem.
-require: rubocop-performance
 
 Performance/DoubleStartEndWith:
   Enabled: true
