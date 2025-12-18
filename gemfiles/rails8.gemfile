@@ -1,0 +1,40 @@
+source 'https://rubygems.org'
+
+gem 'rails', '~> 8.0'
+
+group :development, :test do
+  gem 'ruby-lsp', platforms: %i[mri]
+  gem 'debug', platforms: %i[mri]
+
+  gem 'activesupport', '~> 8.0'
+  gem 'activemodel', '~> 8.0'
+  gem 'activerecord', '~> 8.0'
+
+  gem 'sqlite3', '~> 2.1', platforms: [:mri]
+  gem 'mysql2', '~>0.5', platforms: [:mri]
+  gem 'pg', '~> 1.5', platforms: [:mri]
+
+  gem 'tiny_tds', platforms: %i[mri mingw x64_mingw mswin]
+  gem 'activerecord-sqlserver-adapter', '~> 8.0', platforms: %i[mri mingw x64_mingw mswin]
+  gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw]
+
+  gem 'ruby-oci8', platforms: %i[mri mswin mingw] if ENV.has_key? 'ORACLE_HOME'
+  gem 'activerecord-oracle_enhanced-adapter', '~> 8.0' if ENV.has_key? 'ORACLE_HOME'
+
+  # for JRuby
+  gem 'jdbc-mssql', platforms: :jruby, require: true
+  gem 'jdbc-sqlite3', platform: :jruby
+  gem 'activerecord-jdbcmysql-adapter', platforms: :jruby
+  gem 'activerecord-jdbcpostgresql-adapter', platforms: :jruby
+  gem 'activerecord-jdbcsqlite3-adapter', platforms: :jruby
+
+  # Ruby 3.4+ removes the following gems from the standard distribution.
+  # Warnings are emitted from 3.3.
+  if Gem::Version.create(RUBY_VERSION) >= Gem::Version.create('3.3.0')
+    gem 'base64'
+    gem 'bigdecimal'
+    gem 'mutex_m'
+  end
+end
+
+gemspec path: Dir.pwd
