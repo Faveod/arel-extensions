@@ -1,6 +1,6 @@
 module ArelExtensions
   module Nodes
-    if Gem::Version.new(Arel::VERSION) < Gem::Version.new('7.1.0')
+    if AREL_VERSION < V7_1
       class Case < Arel::Nodes::Node
         include Arel::Expressions
         include Arel::Math

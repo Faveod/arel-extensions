@@ -1,5 +1,6 @@
 require 'active_record'
 require 'arel'
+require 'arel_extensions/constants'
 require 'fileutils'
 require 'minitest/autorun'
 require 'rubygems'
@@ -60,7 +61,7 @@ end
 
 
 def load_lib(gems)
-  if gems && (RUBY_PLATFORM == 'java' || Arel::VERSION.to_i > 9)
+  if gems && (RUBY_PLATFORM == 'java' || ArelExtensions::AREL_VERSION > ArelExtensions::V9_0)
     gems.each do |gem|
       begin
         require gem

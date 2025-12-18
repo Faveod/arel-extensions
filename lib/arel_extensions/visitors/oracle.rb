@@ -503,7 +503,7 @@ module ArelExtensions
       end
 
       # add primary_key if not present, avoid zip
-      if Arel::VERSION.to_i < 7
+      if AREL_VERSION < V7
         def visit_ArelExtensions_InsertManager_BulkValues o, collector
           collector << '('
           o.left.each_with_index do |row, idx| # values

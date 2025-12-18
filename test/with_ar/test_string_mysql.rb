@@ -7,7 +7,7 @@ module ArelExtensions
       before do
         ActiveRecord::Base.configurations = ConfigLoader.load('test/database.yml')
         ActiveRecord::Base.establish_connection(ENV['DB'] || (RUBY_PLATFORM == 'java' ? :"jdbc-mysql" : :mysql))
-        if ActiveRecord::VERSION::MAJOR >= 7
+        if ACTIVE_RECORD_VERSION >= V7_0
           ActiveRecord.default_timezone = :utc
         else
           ActiveRecord::Base.default_timezone = :utc

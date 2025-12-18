@@ -29,7 +29,7 @@ module ArelExtensions
           @env_db = ENV['DB']
         end
         ActiveRecord::Base.establish_connection(@env_db.try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
-        if ActiveRecord::VERSION::MAJOR >= 7
+        if ACTIVE_RECORD_VERSION >= V7_0
           ActiveRecord.default_timezone = :utc
         else
           ActiveRecord::Base.default_timezone = :utc
