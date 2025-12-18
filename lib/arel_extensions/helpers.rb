@@ -1,5 +1,8 @@
 module ArelExtensions
 
+  ACTIVE_RECORD_VERSION = Gem::Version.new(ActiveRecord::VERSION::STRING).freeze
+  V8_1 = Gem::Version.new('8.1').freeze
+
   #
   # column_of
   #

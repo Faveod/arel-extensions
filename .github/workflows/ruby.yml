@@ -24,16 +24,19 @@ jobs:
       matrix:
         versions:
           [
+            { ruby: "3.4", rails: 8_1, arelx: 2 },
             { ruby: "3.4", rails: 8, arelx: 2 },
             { ruby: "3.4", rails: 7_2, arelx: 2 },
             { ruby: "3.4", rails: 7_1, arelx: 2 },
             { ruby: "3.4", rails: 7, arelx: 2 },
             { ruby: "3.4", rails: 6_1, arelx: 2 },
+            { ruby: "3.3", rails: 8_1, arelx: 2 },
             { ruby: "3.3", rails: 8, arelx: 2 },
             { ruby: "3.3", rails: 7_2, arelx: 2 },
             { ruby: "3.3", rails: 7_1, arelx: 2 },
             { ruby: "3.3", rails: 7, arelx: 2 },
             { ruby: "3.3", rails: 6_1, arelx: 2 },
+            { ruby: "3.2", rails: 8_1, arelx: 2 },
             { ruby: "3.2", rails: 8, arelx: 2 },
             { ruby: "3.2", rails: 7_2, arelx: 2 },
             { ruby: "3.2", rails: 7_1, arelx: 2 },
@@ -91,16 +94,19 @@ jobs:
       matrix:
         versions:
           [
+            { ruby: "3.4", rails: 8_1, arelx: 2 },
             { ruby: "3.4", rails: 8, arelx: 2 },
             { ruby: "3.4", rails: 7_2, arelx: 2 },
             { ruby: "3.4", rails: 7_1, arelx: 2 },
             { ruby: "3.4", rails: 7, arelx: 2 },
             { ruby: "3.4", rails: 6_1, arelx: 2 },
+            { ruby: "3.3", rails: 8_1, arelx: 2 },
             { ruby: "3.3", rails: 8, arelx: 2 },
             { ruby: "3.3", rails: 7_2, arelx: 2 },
             { ruby: "3.3", rails: 7_1, arelx: 2 },
             { ruby: "3.3", rails: 7, arelx: 2 },
             { ruby: "3.3", rails: 6_1, arelx: 2 },
+            { ruby: "3.2", rails: 8_1, arelx: 2 },
             { ruby: "3.2", rails: 8, arelx: 2 },
             { ruby: "3.2", rails: 7_2, arelx: 2 },
             { ruby: "3.2", rails: 7_1, arelx: 2 },
@@ -158,16 +164,19 @@ jobs:
       fail-fast: false
       matrix:
         versions: [
+            { ruby: "3.4", rails: 8_1, arelx: 2 },
             { ruby: "3.4", rails: 8, arelx: 2 },
             { ruby: "3.4", rails: 7_2, arelx: 2 },
             { ruby: "3.4", rails: 7_1, arelx: 2 },
             { ruby: "3.4", rails: 7, arelx: 2 },
             { ruby: "3.4", rails: 6_1, arelx: 2 },
+            { ruby: "3.3", rails: 8_1, arelx: 2 },
             { ruby: "3.3", rails: 8, arelx: 2 },
             { ruby: "3.3", rails: 7_2, arelx: 2 },
             { ruby: "3.3", rails: 7_1, arelx: 2 },
             { ruby: "3.3", rails: 7, arelx: 2 },
             { ruby: "3.3", rails: 6_1, arelx: 2 },
+            { ruby: "3.2", rails: 8_1, arelx: 2 },
             { ruby: "3.2", rails: 8, arelx: 2 },
             { ruby: "3.2", rails: 7_2, arelx: 2 },
             { ruby: "3.2", rails: 7_1, arelx: 2 },
@@ -250,16 +259,19 @@ jobs:
       fail-fast: false
       matrix:
         versions: [
+            { ruby: "3.4", rails: 8_1, arelx: 2 },
             { ruby: "3.4", rails: 8, arelx: 2 },
             { ruby: "3.4", rails: 7_2, arelx: 2 },
             { ruby: "3.4", rails: 7_1, arelx: 2 },
             { ruby: "3.4", rails: 7, arelx: 2 },
             { ruby: "3.4", rails: 6_1, arelx: 2 },
+            { ruby: "3.3", rails: 8_1, arelx: 2 },
             { ruby: "3.3", rails: 8, arelx: 2 },
             { ruby: "3.3", rails: 7_2, arelx: 2 },
             { ruby: "3.3", rails: 7_1, arelx: 2 },
             { ruby: "3.3", rails: 7, arelx: 2 },
             { ruby: "3.3", rails: 6_1, arelx: 2 },
+            { ruby: "3.2", rails: 8_1, arelx: 2 },
             { ruby: "3.2", rails: 8, arelx: 2 },
             { ruby: "3.2", rails: 7_2, arelx: 2 },
             { ruby: "3.2", rails: 7_1, arelx: 2 },
@@ -364,17 +376,20 @@ jobs:
       fail-fast: false
       matrix:
         versions: [
+            { ruby: "3.4", rails: 8_1, arelx: 2 },
             { ruby: "3.4", rails: 8, arelx: 2 },
             { ruby: "3.4", rails: 7_2, arelx: 2 },
             { ruby: "3.4", rails: 7_1, arelx: 2 },
             { ruby: "3.4", rails: 7, arelx: 2 },
             { ruby: "3.4", rails: 6_1, arelx: 2 },
+            { ruby: "3.3", rails: 8_1, arelx: 2 },
             { ruby: "3.3", rails: 8, arelx: 2 },
             { ruby: "3.3", rails: 7_2, arelx: 2 },
             { ruby: "3.3", rails: 7_1, arelx: 2 },
             { ruby: "3.3", rails: 7, arelx: 2 },
             { ruby: "3.3", rails: 6_1, arelx: 2 },
             { ruby: "3.3", rails: 6, arelx: 2 },
+            { ruby: "3.2", rails: 8_1, arelx: 2 },
             { ruby: "3.2", rails: 8, arelx: 2 },
             { ruby: "3.2", rails: 7_1, arelx: 2 },
             { ruby: "3.2", rails: 7, arelx: 2 },

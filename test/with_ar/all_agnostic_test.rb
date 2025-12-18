@@ -1,6 +1,22 @@
 require 'arelx_test_helper'
 require 'date'
 
+# class ActiveRecord::ConnectionAdapters::SQLServerAdapter
+#   # We use *args to avoid breaking signature changes between versions.
+#   # internal_exec_sql_query(sql, name = "SQL", binds = [], prepare: false)
+#   def internal_exec_sql_query(*args)
+#     sql = args.first
+#     puts "[DEBUG] MSSQL Query: #{sql}\n"
+
+#     # Call original implementation (defined in the DatabaseStatements module included in this class)
+#     super
+#   rescue => e
+#     # Catch the crash to print the specific query that caused it one last time
+#     puts "[CRASH]: #{args.first}\n"
+#     raise e
+#   end
+# end
+
 module ArelExtensions
   module WithAr
     class ListTest < Minitest::Test
@@ -81,6 +97,7 @@ module ArelExtensions
         u = User.create age: nil, name: nil, created_at: nil, score: nil
         @all_nil = User.where(id: u.id)
 
+        @id = User.arel_table[:id]
         @age = User.arel_table[:age]
         @name = User.arel_table[:name]
         @score = User.arel_table[:score]
@@ -103,7 +120,7 @@ module ArelExtensions
 
       def t(scope, node)
         res = scope.select(node.as('res'))
-        # puts res.to_sql
+        # puts "[scope] #{res.to_sql}"
         res.to_a.first.res
       end
 

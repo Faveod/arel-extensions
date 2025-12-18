@@ -592,9 +592,9 @@ module ArelExtensions
           if o.right.is_a?(Arel::Nodes::SqlLiteral)
             if Arel::VERSION.to_i >= 6 && o.right[0] != '[' && o.right[-1] != ']'
               # This is a lie, it's not about arel version, but SQL Server's (>= 2000).
-              ['[', ']']
-            elsif o.right[0] != '"' && o.right[-1] != '"'
-              ['"', '"']
+              %w([ ])
+            elsif ACTIVE_RECORD_VERSION < V8_1 && o.right[0] != '"' && o.right[-1] != '"'
+              %w(" ")
             else
               []
             end
