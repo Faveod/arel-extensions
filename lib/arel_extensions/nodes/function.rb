@@ -28,8 +28,7 @@ module ArelExtensions
 
       def as other
         res = Arel::Nodes::As.new(self.clone, Arel.sql(other))
-        if Gem::Version.new(Arel::VERSION) >= Gem::Version.new('9.0.0') \
-          && respond_to?(:alias=)
+        if AREL_VERSION >= V9_0 && respond_to?(:alias=)
           self.alias = Arel.sql(other)
         end
         res

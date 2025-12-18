@@ -1,4 +1,5 @@
 require 'arel'
+require 'arel_extensions/constants'
 require 'base64'
 
 require 'arel_extensions/railtie' if defined?(Rails::Railtie)
@@ -17,7 +18,7 @@ class Arel::Nodes::Casted
   include Arel::AliasPredication
 
   # They forget to define hash.
-  if Gem::Version.new(Arel::VERSION) < Gem::Version.new('10.0.0')
+  if ArelExtensions::AREL_VERSION < ArelExtensions::V10
     def hash
       [self.class, self.val, self.attribute].hash
     end
@@ -45,7 +46,7 @@ class Arel::Nodes::Function
   include Arel::Expressions
 end
 
-if Gem::Version.new(Arel::VERSION) >= Gem::Version.new('7.1.0')
+if ArelExtensions::AREL_VERSION >= ArelExtensions::V7_1
   class Arel::Nodes::Case
     include Arel::Math
     include Arel::Expressions
@@ -202,7 +203,7 @@ class Arel::Nodes::Function
   alias_method(:old_as, :as) rescue nil
   def as other
     res = Arel::Nodes::As.new(self.clone, Arel.sql(other))
-    if Gem::Version.new(Arel::VERSION) >= Gem::Version.new('9.0.0') \
+    if ArelExtensions::AREL_VERSION >= ArelExtensions::V9_0 \
       && respond_to?(:alias=)
       self.alias = Arel.sql(other)
     end
@@ -326,7 +327,7 @@ class Arel::Nodes::Node
 end
 
 require 'active_record'
-if ActiveRecord.version >= Gem::Version.create('7.2')
+if ArelExtensions::ACTIVE_RECORD_VERSION >= ArelExtensions::V7_2
   class ActiveRecord::Relation::WhereClause
     def except_predicates(columns)
       attrs = columns.extract! { |node| node.is_a?(Arel::Attribute) }

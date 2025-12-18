@@ -5,7 +5,7 @@ module ArelExtensions
     end
 
     def matches(other, escape = nil, case_sensitive = nil)
-      if Arel::VERSION.to_i < 7
+      if AREL_VERSION < V7
         Arel::Nodes::Matches.new(self, Arel.quoted(other), escape)
       else
         Arel::Nodes::Matches.new(self, Arel.quoted(other), escape, case_sensitive)

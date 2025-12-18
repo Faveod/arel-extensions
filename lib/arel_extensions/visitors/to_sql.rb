@@ -462,7 +462,7 @@ module ArelExtensions
         collector
       end
 
-      if Arel::VERSION.to_i < 7
+      if AREL_VERSION < V7
         def visit_ArelExtensions_InsertManager_BulkValues o, collector
           collector << 'VALUES '
           row_nb = o.left.length

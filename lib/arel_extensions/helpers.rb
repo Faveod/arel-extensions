@@ -1,8 +1,4 @@
 module ArelExtensions
-
-  ACTIVE_RECORD_VERSION = Gem::Version.new(ActiveRecord::VERSION::STRING).freeze
-  V8_1 = Gem::Version.new('8.1').freeze
-
   #
   # column_of
   #
@@ -37,13 +33,13 @@ module ArelExtensions
       column_of_via_arel_table(table_name, column_name)
     else
       if pool.respond_to?(:pool_config)
-        if pool.pool_config.respond_to?(:schema_reflection) # activerecord >= 7.1
-          if ActiveRecord.version >= Gem::Version.create('7.2')
+        if pool.pool_config.respond_to?(:schema_reflection)
+          if ACTIVE_RECORD_VERSION >= V7_2
             pool.pool_config.schema_reflection.columns_hash(pool, table_name)[column_name]
           else
             pool.pool_config.schema_reflection.columns_hash(ActiveRecord::Base.connection, table_name)[column_name]
           end
-        else # activerecord < 7.1
+        else
           pool.pool_config.schema_cache.columns_hash(table_name)[column_name]
         end
       elsif pool.respond_to?(:schema_cache) # activerecord < 6.1

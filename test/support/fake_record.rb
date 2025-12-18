@@ -1,3 +1,5 @@
+require 'arel_extensions/constants'
+
 module FakeRecord
   class Column < Struct.new(:name, :type)
   end
@@ -146,7 +148,7 @@ module FakeRecord
       connection_pool.connection
     end
 
-    if ActiveRecord.version >= Gem::Version.create('7.2')
+    if ArelExtensions::ACTIVE_RECORD_VERSION >= ArelExtensions::V7_2
       def with_connection(*args, **kwargs, &block)
         connection_pool.with_connection(*args, **kwargs, &block)
       end

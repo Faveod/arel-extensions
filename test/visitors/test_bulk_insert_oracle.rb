@@ -15,7 +15,7 @@ module ArelExtensions
       end
 
       def compile node
-        if Arel::VERSION.to_i > 5
+        if AREL_VERSION > V5
           @visitor.accept(node, Arel::Collectors::SQLString.new).value
         else
           @visitor.accept(node)
@@ -23,7 +23,7 @@ module ArelExtensions
       end
 
       it 'should import large set of data in Oracle' do
-        insert_manager = Arel::VERSION.to_i > 6 ? Arel::InsertManager.new.into(@table) : Arel::InsertManager.new(@conn).into(@table)
+        insert_manager = AREL_VERSION > V6 ? Arel::InsertManager.new.into(@table) : Arel::InsertManager.new(@conn).into(@table)
         insert_manager.bulk_insert(@cols, @data)
         _(compile(insert_manager.ast))
           .must_be_like %Q[INSERT INTO "users" ("name", "comments", "created_at")

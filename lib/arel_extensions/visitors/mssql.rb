@@ -76,7 +76,7 @@ module ArelExtensions
       # The following is adapted from
       # https://github.com/rails/rails/blob/main/activerecord/lib/active_record/connection_adapters/abstract/quoting.rb
       #
-      if RUBY_PLATFORM == 'java' && Arel::VERSION.to_i <= 6
+      if RUBY_PLATFORM == 'java' && AREL_VERSION <= V6
         def quote_string(s)
           s.gsub('\\', '\&\&').gsub("'", "''") # ' (for ruby-mode)
         end
@@ -133,7 +133,7 @@ module ArelExtensions
             value.to_s('F')
           when Numeric, ActiveSupport::Duration
             value.to_s
-          when Arel::VERSION.to_i > 6 && ActiveRecord::Type::Time::Value
+          when AREL_VERSION > V6 && ActiveRecord::Type::Time::Value
             "'#{quoted_time(value)}'"
           when Date, Time
             "'#{quoted_date(value)}'"
@@ -590,7 +590,7 @@ module ArelExtensions
         # Sometimes these values are already quoted, if they are, don't double quote it
         lft, rgt =
           if o.right.is_a?(Arel::Nodes::SqlLiteral)
-            if Arel::VERSION.to_i >= 6 && o.right[0] != '[' && o.right[-1] != ']'
+            if AREL_VERSION >= V6 && o.right[0] != '[' && o.right[-1] != ']'
               # This is a lie, it's not about arel version, but SQL Server's (>= 2000).
               %w([ ])
             elsif ACTIVE_RECORD_VERSION < V8_1 && o.right[0] != '"' && o.right[-1] != '"'

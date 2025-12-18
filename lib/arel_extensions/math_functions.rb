@@ -71,7 +71,7 @@ module ArelExtensions
     end
 
     def sum opts = {unbiased: true}
-      if Gem::Version.new(Arel::VERSION) >= Gem::Version.new('9.0.0')
+      if AREL_VERSION >= V9_0
         Arel::Nodes::Sum.new [self]
       else
         ArelExtensions::Nodes::Sum.new self, **opts

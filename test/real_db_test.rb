@@ -8,7 +8,7 @@ require 'arel_extensions'
 def setup_db
   ActiveRecord::Base.configurations = ConfigLoader.load('test/database.yml')
   ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
-  if ActiveRecord::VERSION::MAJOR >= 7
+  if ACTIVE_RECORD_VERSION >= V7_0
     ActiveRecord.default_timezone = :utc
   else
     ActiveRecord::Base.default_timezone = :utc
