@@ -136,6 +136,10 @@ module ArelExtensions
         @cnx.drop_table(:product_tests)
       end
 
+      def skip(message = nil)
+        super("#{@env_db}: #{message}")
+      end
+
       def t(scope, node)
         res = scope.select(node.as('res'))
         # puts "[scope] #{res.to_sql}"
@@ -203,7 +207,7 @@ module ArelExtensions
 
       def test_sum
         if mssql?
-          skip 'SQL Server forces order?' # TODO
+          skip "forces order?" # TODO
           assert_equal 83, User.select((@age.sum + 1).as('res'), User.arel_table[:id].sum).take(50).reorder(@age).first.res
           assert_equal 164, User.reorder(nil).select((@age.sum + @age.sum).as('res'), User.arel_table[:id].sum).take(50).first.res
           assert_equal 246, User.reorder(nil).select(((@age * 3).sum).as('res'), User.arel_table[:id].sum).take(50).first.res
@@ -229,7 +233,7 @@ module ArelExtensions
       end
 
       def test_rollup
-        skip "sqlite not supported" if sqlite?
+        skip "does not support rollup" if sqlite?
         at = User.arel_table
         # single
         q = User.select(at[:name], at[:age].sum).group(Arel::Nodes::RollUp.new([at[:name]]))
@@ -277,12 +281,12 @@ module ArelExtensions
         assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
         assert_equal 'Test Laure', t(@laure, Arel.quoted('Test ') + @name)
 
-        skip 'No group_concat in SqlServer before 2017' if mssql?
+        skip "does not support group_concat before version 2017" if mssql?
         assert_equal 'Lucas Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat(' '))
         assert_equal 'Lucas,Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat(','))
         assert_equal 'Lucas,Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat)
 
-        skip 'No order in group_concat in SqlLite' if sqlite?
+        skip "does not support order in group_concat" if sqlite?
         assert_equal 'Arthur,Lucas,Sophie', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: @name.asc))
         assert_equal 'Sophie,Lucas,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: @name.desc))
         assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: [@score.asc, @name.asc]))
@@ -311,13 +315,13 @@ module ArelExtensions
       end
 
       def test_md5
-        skip "Sqlite can't do md5" if sqlite?
+        skip "does not support md5" if sqlite?
         assert_equal 'e2cf99ca82a7e829d2a4ac85c48154d0', t(@camille, @name.md5)
         assert_equal 'c3d41bf5efb468a1bcce53bd53726c85', t(@lucas, @name.md5)
       end
 
       def test_locate
-        skip "Sqlite version can't load extension for locate" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
+        skip "does not support locate without extensions" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
         assert_equal 1, t(@camille, @name.locate('C'))
         assert_equal 0, t(@lucas, @name.locate('z'))
         assert_equal 5, t(@lucas, @name.locate('s'))
@@ -348,8 +352,8 @@ module ArelExtensions
       end
 
       def test_find_in_set
-        skip "Sqlite version can't load extension for find_in_set" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
-        skip 'SQL Server does not know about FIND_IN_SET' if mssql?
+        skip "does not support find_in_set without extensions" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
+        skip "does not support FIND_IN_SET" if mssql?
         assert_equal 5, t(@neg, @comments & 2)
         assert_equal 0, t(@neg, @comments & 6) # not found
         assert_equal 5, t(@neg, @comments & '2')
@@ -358,8 +362,7 @@ module ArelExtensions
       end
 
       def test_string_comparators
-        # skip "Oracle can't use math operators to compare strings" if oracle? # use GREATEST ?
-        skip "SQL Server can't use math operators to compare strings" if mssql? # use GREATEST ?
+        skip "does not support math operators to compare strings" if mssql? # use GREATEST ?
         if postgres? # may return real boolean
           assert t(@neg, @name >= 'Mest') == true || t(@neg, @name >= 'Mest') == 't' # depends of ar version
           assert t(@neg, @name <= (@name + 'Z')) == true || t(@neg, @name <= (@name + 'Z')) == 't'
@@ -377,7 +380,7 @@ module ArelExtensions
       end
 
       def test_compare_on_date_time_types
-        skip " can't compare time" if oracle? || sqlite?
+        skip "does not support time comparison" if oracle? || sqlite?
         # @created_at == 2016-05-23
         assert_includes [true, 't', 1], t(@laure, Arel.when(@created_at >= '2014-01-01').then(1).else(0))
         assert_includes [false, 'f', 0], t(@laure, Arel.when(@created_at >= '2018-01-01').then(1).else(0))
@@ -392,8 +395,8 @@ module ArelExtensions
       end
 
       def test_regexp_not_regexp
-        skip "Sqlite version can't load extension for regexp" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
-        skip 'SQL Server does not know about REGEXP without extensions' if mssql?
+        skip "does not support REGEXP without extensions" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
+        skip "does not support REGEXP" if mssql?
         assert_equal 1, User.where(@name =~ '^M').count
         assert_equal 10, User.where(@name !~ '^L').count
         assert_equal 1, User.where(@name =~ /^M/).count
@@ -401,8 +404,8 @@ module ArelExtensions
       end
 
       def test_regex_matches
-        skip "Sqlite version can't load extension for regexp" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
-        skip 'SQL Server does not know about REGEXP without extensions' if mssql?
+        skip "does not support REGEXP without extensions" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
+        skip "does not support REGEXP" if mssql?
         assert_equal 1, User.where(@name.regex_matches '^M').count
         assert_equal 1, User.where(@name.regex_matches /^M/).count
       end
@@ -422,9 +425,9 @@ module ArelExtensions
         assert_equal 'LucaX', t(@lucas, @name.replace('s', 'X'))
         assert_equal 'replace', t(@lucas, @name.replace(@name, 'replace'))
 
-        skip 'Sqlite does not seem to support regexp_replace' if sqlite?
-        skip 'SQL Server does not know about REGEXP without extensions' if mssql?
-        skip 'Travis mysql version does not support REGEXP_REPLACE' if mysql?
+        skip "does not support REGEXP_REPLACE" if sqlite?
+        skip "does not support REGEXP_REPLACE without extensions" if mssql?
+        skip "does not support REGEXP_REPLACE" if mysql?
         assert_equal 'LXcXs', t(@lucas, @name.replace(/[ua]/, 'X'))
         assert_equal 'LXcXs', t(@lucas, @name.regexp_replace(/[ua]/, 'X'))
         assert_equal 'LXcXs', t(@lucas, @name.regexp_replace('[ua]', 'X'))
@@ -436,8 +439,8 @@ module ArelExtensions
       end
 
       def test_soundex
-        skip "Sqlite version can't load extension for soundex" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
-        skip "PostgreSql version can't load extension for soundex" if postgres?
+        skip "does not support soundex without extensions" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
+        skip "does not support soundex" if postgres?
         assert_equal 'C540', t(@camille, @name.soundex)
         assert_equal 12, User.where(@name.soundex.eq(@name.soundex)).count
         assert_equal 12, User.where(@name.soundex == @name.soundex).count
@@ -455,7 +458,7 @@ module ArelExtensions
         assert_equal 'Myun', t(@myung, @name.rtrim('g'))
         assert_equal 'yung', t(@myung, @name.ltrim('M'))
         assert_equal 'yung', t(@myung, (@name + 'M').trim('M'))
-        skip 'Oracle does not accept multi char trim' if oracle?
+        skip "does not support multi-character trim" if oracle?
         assert_equal '', t(@myung, @name.rtrim(@name))
       end
 
@@ -548,11 +551,11 @@ module ArelExtensions
             }
           }
 
-          skip "Unsupported timezone conversion for DB=#{@env_db}" if !%w[mssql mysql oracle postgresql].include?(@env_db)
+          skip "Unsupported timezone conversion" if !%w[mssql mysql oracle postgresql].include?(@env_db)
           # TODO: Standarize timezone conversion across all databases.
           #       This test case will be refactored and should work the same across all vendors.
           if mssql? && /Microsoft SQL Server (\d+)/.match(ActiveRecord::Base.connection.select_value('SELECT @@version'))[1].to_i < 2016
-            skip "SQL Server < 2016 is not currently supported"
+            skip "versions below 2016 are not supported"
           end
 
           tz = mssql? ? time_zones['mssql'] : time_zones['posix']
@@ -583,7 +586,7 @@ module ArelExtensions
 
       def test_format_iso_week
         %i[format format_date].each do |method|
-          skip "Unsupported ISO week number for DB=#{@env_db}" if sqlite?
+          skip "does not support ISO week number" if sqlite?
           assert_equal '10', t(@lucas, @updated_at.send(method, '%V'))
           {
             '2024-01-01 10:42:00' => '01', # Monday
@@ -600,7 +603,7 @@ module ArelExtensions
       end
 
       def test_format_iso_year_of_week
-        skip "Unsupported ISO year of week for DB=#{@env_db}" if mssql? || sqlite?
+        skip "does not support ISO year of week" if mssql? || sqlite?
         %i[format format_date].each do |method|
           assert_equal '2014', t(@lucas, @updated_at.send(method, '%G'))
 
@@ -619,13 +622,13 @@ module ArelExtensions
       end
 
       def test_format_date_with_names
-        skip "#{@env_db} does not support a variety of word-based formatting for month and day names" if mssql? || sqlite?
+        skip "does not support word-based formatting for month and day names" if mssql? || sqlite?
         %i[format format_date].each do |method|
           assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
           assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
         end
 
-        skip "#{@env_db} does not support ALLCAPS month and day names" if mysql?
+        skip "does not support uppercase month and day names" if mysql?
         %i[format format_date].each do |method|
 
           assert_equal 'Mon, 03 MAR 14', t(@lucas, @updated_at.send(method, '%a, %d %^b %y'))
@@ -653,7 +656,7 @@ module ArelExtensions
       end
 
       def test_format_date_with_names_and_lang_switch
-        skip "#{@env_db} does not support word-based formatting for month and day names" if sqlite?
+        skip "does not support word-based formatting for month and day names" if sqlite?
 
         # the begin-rescue block is here to make sure we set the db back to en_US
         # if we fail, so that other tests don't get contaminated.
@@ -721,7 +724,7 @@ module ArelExtensions
         assert_equal 20, t(@test, @age.coalesce_blank(10) + 10)
         assert_equal 'Laure10', t(@laure, @comments.coalesce_blank('Laure') + 10)
 
-        skip 'mssql does not support null in case results' if mssql?
+        skip "does not support null in case results" if mssql?
 
         assert_equal 'Camille concat', t(@camille, @name.coalesce_blank(Arel.null, 'default') + ' concat')
         assert_equal 'Myung', t(@myung, @comments.coalesce_blank(Arel.null, 'Myung'))
@@ -793,8 +796,7 @@ module ArelExtensions
           end
         end
 
-
-        skip 'not yet implemented' if sqlite?
+        skip "support not yet implemented" if sqlite?
 
         date1 = Date.new(2016, 5, 23)
         durPos = 10.years
@@ -839,7 +841,7 @@ module ArelExtensions
       # TODO; cast types
       def test_cast_types
         assert_equal '5', t(@lucas, @age.cast(:string))
-        skip 'jdbc adapters does not work properly here (v52 works fine)' if RUBY_PLATFORM.match?(/java/i)
+        skip "JDBC adapters do not work properly here (v52 works fine)" if RUBY_PLATFORM.match?(/java/i)
         if mysql? || postgres? || oracle? || mssql?
           assert_equal 1, t(@laure, Arel.when(@duration.cast(:time).cast(:string).eq('12:42:21')).then(1).else(0)) unless oracle? || mssql?
           assert_equal 1, t(@laure, Arel.when(@duration.cast(:time).eq('12:42:21')).then(1).else(0)) unless oracle?
@@ -974,7 +976,7 @@ module ArelExtensions
 
       def test_format_numbers
         # score of Arthur = 65.62
-        skip 'Works with SQLite if the version used knows printf' if sqlite?
+        skip "support requires printf function" if sqlite?
 
         assert_equal 'Wrong Format', t(@arthur, @score.format_number('$ %...234.6F €', 'fr_FR'))
         assert_equal 'AZERTY65,62', t(@arthur, @score.format_number('AZERTY%.2f', 'fr_FR'))
@@ -1000,8 +1002,8 @@ module ArelExtensions
       end
 
       def test_accent_insensitive
-        skip 'SQLite is natively Case Insensitive and Accent Sensitive' if sqlite?
-        skip 'Not finished' if mysql?
+        skip "is natively case insensitive and accent sensitive" if sqlite?
+        skip "support not yet finished" if mysql?
         # actual comments value: "arrêté"
         # AI & CI
         if !postgres? # Extension unaccent required on PG
@@ -1118,7 +1120,7 @@ module ArelExtensions
       end
 
       def test_in_on_grouping
-        skip 'We should modify the visitor of IN to make it work' if mssql? || sqlite?
+        skip "requires visitor modification for IN to work with tuples" if mssql? || sqlite?
         assert_equal 2, User.where(Arel.tuple(@name, @age).in(Arel.tuple('Myung', 23), Arel.tuple('Arthur', 21))).count
         assert_equal 1, User.where(Arel.tuple(@name, @age).in(Arel.tuple('Myung', 23))).count
         assert_equal 0, User.where(Arel.tuple(@name, @age).in([])).count
@@ -1136,7 +1138,7 @@ module ArelExtensions
       end
 
       def test_stat_functions
-        skip "SQLite doesn't work for most on this functions" if sqlite?
+        skip "does not support most statistical functions" if sqlite?
         # puts t(User.where(nil), @score.average)
         # puts t(User.where(nil), @score.variance(unbiased: true))
         # puts t(User.where(nil), @score.variance(unbiased: false))
@@ -1148,7 +1150,7 @@ module ArelExtensions
         assert (479.82048 - t(User.where(nil), @score.variance(unbiased: false))).abs < 0.01
         assert ( 23.23355 - t(User.where(nil), @score.std)).abs < 0.01
         assert ( 21.90480 - t(User.where(nil), @score.std(unbiased: false))).abs < 0.01
-        skip 'Not Yet Implemented' # if !['postgresql'].include?(@env_db)
+        skip 'Group-based statistical functions not yet implemented' # if !['postgresql'].include?(@env_db)
         assert_equal 2, User.select(@score.std(group: Arel.when(@name > 'M').then(0).else(1)).as('res')).map{|e| e['res']}.uniq.length
         assert_equal 2, User.select(@score.variance(group: Arel.when(@name > 'M').then(0).else(1)).as('res')).map{|e| e['res']}.uniq.length
         assert_equal 2, User.select(@score.sum(group: Arel.when(@name > 'M').then(0).else(1)).as('res')).map{|e| e['res']}.uniq.length
@@ -1156,7 +1158,7 @@ module ArelExtensions
       end
 
       def test_levenshtein_distance
-        skip 'Not Yet Implemented' if sqlite?
+        skip "does not support levenshtein distance" if sqlite?
         assert_equal 0,  t(@arthur, @name.levenshtein_distance('Arthur'))
         assert_equal 2,  t(@arthur, @name.levenshtein_distance('Artoor'))
         assert_equal 1,  t(@arthur, @name.levenshtein_distance('Artehur'))
@@ -1182,7 +1184,7 @@ module ArelExtensions
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_sql
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_a
 
-        skip 'Not Yet Implemented' if mysql? || sqlite? || oracle?
+        skip "does not support JSON get/set/merge operations" if mysql? || sqlite? || oracle?
         # get
         h1 = Arel.json({@name => @name + @name, @name + '2' => 1})
         assert_equal 'ArthurArthur', parse_json(t(@arthur, h1.get(@name)))
