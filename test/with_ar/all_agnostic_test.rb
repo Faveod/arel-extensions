@@ -176,8 +176,8 @@ module ArelExtensions
       def test_ceil
         #        skip "Sqlite version can't load extension for ceil" if $sqlite && $load_extension_disabled
         assert_equal 2, t(@test, @score.ceil) # 1.62
-        assert_equal(-20, t(@camille, @score.ceil)) # -20.16
-        assert_equal(-20, t(@camille, (@score - 0.5).ceil)) # -20.16
+        assert_equal -20, t(@camille, @score.ceil) # -20.16
+        assert_equal -20, t(@camille, (@score - 0.5).ceil) # -20.16
         assert_equal 63, t(@arthur, @age.ceil + 42)
         assert_equal 11, t(@justin, @score.ceil) # 11.0
       end
@@ -186,10 +186,10 @@ module ArelExtensions
         #        skip "Sqlite version can't load extension for floor" if $sqlite && $load_extension_disabled
         assert_equal 0, t(@neg, @score.floor)
         assert_equal 1, t(@test, @score.floor) # 1.62
-        assert_equal(-9, t(@test, (@score - 10).floor)) # 1.62
+        assert_equal -9, t(@test, (@score - 10).floor) # 1.62
         assert_equal 42, t(@arthur, @score.floor - 23)
         assert_equal 11, t(@justin, @score.floor) # 11.0
-        assert_equal(-21, t(@camille, @score.floor)) #  # -20.16
+        assert_equal -21, t(@camille, @score.floor) #  # -20.16
       end
 
       def test_rand
@@ -330,18 +330,18 @@ module ArelExtensions
       def test_substring
         assert_equal 'C', t(@camille, @name.substring(1, 1))
         if oracle?
-          assert_nil(t(@lucas, @name.substring(42)))
+          assert_nil t(@lucas, @name.substring(42))
         else
-          assert_equal('', t(@lucas, @name.substring(42)))
+          assert_equal '', t(@lucas, @name.substring(42))
         end
         assert_equal 'Lu', t(@lucas, @name.substring(1, 2))
 
         assert_equal 'C', t(@camille, @name[0, 1])
         assert_equal 'C', t(@camille, @name[0])
         if oracle?
-          assert_nil(t(@lucas, @name[42]))
+          assert_nil t(@lucas, @name[42])
         else
-          assert_equal('', t(@lucas, @name[42]))
+          assert_equal '', t(@lucas, @name[42])
         end
         assert_equal 'Lu', t(@lucas, @name[0, 2])
         assert_equal 'Lu', t(@lucas, @name[0..1])
@@ -704,7 +704,7 @@ module ArelExtensions
           assert_nil t(@laure, @comments.coalesce(''))
           assert_nil t(@camille, @other.coalesce(''))
         else
-          assert_equal('', t(@laure, @comments.coalesce('')))
+          assert_equal '', t(@laure, @comments.coalesce(''))
           assert_equal '', t(@camille, @other.coalesce(''))
         end
         assert_equal 100, t(@test, @age.coalesce(100))
@@ -765,7 +765,7 @@ module ArelExtensions
         assert_equal 5, t(@camille, @created_at.month).to_i
         assert_equal count_for_may, User.where(@created_at.month.eq('05')).count
         # Week
-        assert_equal(mssql? ? 22 : 21, t(@arthur, @created_at.week).to_i)
+        assert_equal mssql? ? 22 : 21, t(@arthur, @created_at.week).to_i
         assert_equal count_for_may, User.where(@created_at.month.eq('05')).count
         # Day
         assert_equal 23, t(@laure, @created_at.day).to_i
@@ -788,10 +788,10 @@ module ArelExtensions
         assert_equal 0, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 42)).to_i
         if oracle? && Arel::VERSION.to_i > 6 # in rails 5, result is multiplied by 24*60*60 = 86400...
           assert_equal 42 * 86_400, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
-          assert_equal(-3600 * 86_400, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
+          assert_equal -3600 * 86_400, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i
         else
           assert_equal 42, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 12, 41, 18)).to_i
-          assert_equal(-3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i)
+          assert_equal -3600, t(@lucas, @updated_at - Time.utc(2014, 3, 3, 13, 42)).to_i
           if mssql? || oracle? # can't select booleans
             assert_equal 0, @lucas.where((@updated_at - Time.utc(2014, 3, 3, 12, 41, 18)) < -1).count
           else
@@ -940,7 +940,7 @@ module ArelExtensions
 
       def test_wday
         # d = Date.new(2016, 6, 26)
-        assert_equal(oracle? || mssql? ? 2 : 1, t(@myung, @created_at.wday).to_i) # monday
+        assert_equal oracle? || mssql? ? 2 : 1, t(@myung, @created_at.wday).to_i # monday
       end
 
       # Boolean functions
