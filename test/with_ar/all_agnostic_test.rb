@@ -39,8 +39,16 @@ module ArelExtensions
         csf.add_sql_functions(@env_db)
       end
 
+      def db_name
+        mysql? ? 'mysql' : @env_db
+      end
+
       def mysql?
         %w[mysql trilogy].include?(@env_db)
+      end
+
+      def mssql?
+        @env_db == 'mssql'
       end
 
       def postgres?
@@ -49,10 +57,6 @@ module ArelExtensions
 
       def oracle?
         @env_db == 'oracle'
-      end
-
-      def mssql?
-        @env_db == 'mssql'
       end
 
       def sqlite?
@@ -551,7 +555,7 @@ module ArelExtensions
             }
           }
 
-          skip "Unsupported timezone conversion" if !%w[mssql mysql oracle postgresql].include?(@env_db)
+          skip "Unsupported timezone conversion" if sqlite?
           # TODO: Standarize timezone conversion across all databases.
           #       This test case will be refactored and should work the same across all vendors.
           if mssql? && /Microsoft SQL Server (\d+)/.match(ActiveRecord::Base.connection.select_value('SELECT @@version'))[1].to_i < 2016
@@ -570,7 +574,7 @@ module ArelExtensions
           #
           # MySQL is happy to consider that times by default are in UTC.
           assert_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
-          refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', tz['paris'])) if !%w[mysql postgresql].include?(@env_db)
+          refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', tz['paris'])) if !(mysql? || postgres?)
 
           # Winter/Summer time
           assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
@@ -641,18 +645,15 @@ module ArelExtensions
           'mssql'      => {en: 'English',    fr: 'French'},
           'mysql'      => {en: 'en_US',      fr: 'fr_FR'},
           'postgresql' => {en: 'en_US.utf8', fr: 'fr_FR.utf8'},
-          'trilogy'    => {en: 'en_US',      fr: 'fr_FR'},
         }
 
         sql = {
           'mssql'      => ->(l) { "SET LANGUAGE #{l};"          },
           'mysql'      => ->(l) { "SET lc_time_names = '#{l}';" },
           'postgresql' => ->(l) { "SET lc_time to '#{l}';"      },
-          'trilogy'    => ->(l) { "SET lc_time_names = '#{l}';" },
         }
 
-        db_key = @env_db
-        User.connection.execute(sql[db_key][languages[db_key][lang]])
+        User.connection.execute(sql[db_name][languages[db_name][lang]])
       end
 
       def test_format_date_with_names_and_lang_switch
@@ -666,26 +667,25 @@ module ArelExtensions
         %i[format format_date].each do |method|
           begin
             switch_to_lang(:en)
-            case @env_db
-            when 'mysql', 'postgresql', 'trilogy'
+            case
+            when mysql?, postgres?
               assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
               assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
-            when 'mssql'
+            when mssql?
               assert_equal 'Monday, 03 March 2014', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
             end
+
             switch_to_lang(:fr)
-            case @env_db
-            when 'mysql', 'trilogy'
+            case
+            when mysql?
               assert_equal 'lun, 03 mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
               assert_equal 'lundi, 03 mars 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
-            when 'postgresql'
+            when postgres?
               assert_equal 'Lun., 03 Mars 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
               assert_equal 'Lundi, 03 Mars 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
-            when 'mssql'
+            when mssql?
               assert_equal 'lundi, 03 mars 2014', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
             end
-          ensure
-            switch_to_lang(:en)
           end
         end
       end
@@ -1018,7 +1018,7 @@ module ArelExtensions
           assert_equal '1', t(@arthur, Arel.when(@comments.ai_matches('arrete')).then('1').else('0'))
           assert_equal '1', t(@arthur, Arel.when(@comments.ai_matches('àrrétè')).then('1').else('0'))
           assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('arretez')).then('1').else('0'))
-          if !%w[mysql oracle postgresql trilogy].include?(@env_db) # AI => CI
+          if sqlite? || mssql?
             assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('Arrete')).then('1').else('0'))
             assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('Arrêté')).then('1').else('0'))
           end
@@ -1150,7 +1150,7 @@ module ArelExtensions
         assert (479.82048 - t(User.where(nil), @score.variance(unbiased: false))).abs < 0.01
         assert ( 23.23355 - t(User.where(nil), @score.std)).abs < 0.01
         assert ( 21.90480 - t(User.where(nil), @score.std(unbiased: false))).abs < 0.01
-        skip 'Group-based statistical functions not yet implemented' # if !['postgresql'].include?(@env_db)
+        skip 'Group-based statistical functions not yet implemented'
         assert_equal 2, User.select(@score.std(group: Arel.when(@name > 'M').then(0).else(1)).as('res')).map{|e| e['res']}.uniq.length
         assert_equal 2, User.select(@score.variance(group: Arel.when(@name > 'M').then(0).else(1)).as('res')).map{|e| e['res']}.uniq.length
         assert_equal 2, User.select(@score.sum(group: Arel.when(@name > 'M').then(0).else(1)).as('res')).map{|e| e['res']}.uniq.length
