@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+- Drop supoprt for Ruby < 2.7.
+- Add support for Rails 8 and 8.1.
 - Add `byte_size` and `char_length`. They should replace all uses of `length` because it's inconsistent across vendors; it can surprise you and give you byte size when you expect string length.
 
 ## Release v2.3.3/v1.5.3 (11-02-2025)
