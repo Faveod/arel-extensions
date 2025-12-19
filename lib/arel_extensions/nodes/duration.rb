@@ -10,11 +10,7 @@ module ArelExtensions
         tab << left
         tab << right
         @with_interval = left.end_with?('i')
-        if respond_to?(:alias=)
-          super(tab, aliaz)
-        else
-          super(tab)
-        end
+        super(tab, aliaz)
       end
 
       def left
