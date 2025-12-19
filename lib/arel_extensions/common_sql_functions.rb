@@ -1,16 +1,23 @@
 module ArelExtensions
   class CommonSqlFunctions
+    @@sqlite_extensions = nil
+
+    def self.sqlite_extensions?
+      @@sqlite_extensions == true
+    end
+
     def initialize(cnx)
       @cnx = cnx
-      if cnx && cnx.adapter_name =~ /sqlite/i && !$load_extension_disabled
+      if cnx && cnx.adapter_name =~ /sqlite/i && @@sqlite_extensions.nil?
         begin
           db = cnx.raw_connection
           db.enable_load_extension(1)
           db.load_extension('/usr/lib/sqlite3/pcre.so')
           db.load_extension('/usr/lib/sqlite3/extension-functions.so')
           db.enable_load_extension(0)
+          @@sqlite_extensions = true
         rescue => e
-          $load_extension_disabled = true
+          @@sqlite_extensions = false
           puts "cannot load extensions #{e.inspect}"
         end
       end

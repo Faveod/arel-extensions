@@ -35,7 +35,6 @@ module ArelExtensions
           ActiveRecord::Base.default_timezone = :utc
         end
         @cnx = ActiveRecord::Base.connection
-        $load_extension_disabled ||= false
         csf = CommonSqlFunctions.new(@cnx)
         csf.add_sql_functions(@env_db)
       end
@@ -173,7 +172,6 @@ module ArelExtensions
       end
 
       def test_ceil
-        # skip "Sqlite version can't load extension for ceil" if sqlite? && $load_extension_disabled
         assert_equal 2, t(@test, @score.ceil) # 1.62
         assert_equal -20, t(@camille, @score.ceil) # -20.16
         assert_equal -20, t(@camille, (@score - 0.5).ceil) # -20.16
@@ -182,7 +180,6 @@ module ArelExtensions
       end
 
       def test_floor
-        # skip "Sqlite version can't load extension for floor" if sqlite? && $load_extension_disabled
         assert_equal 0, t(@neg, @score.floor)
         assert_equal 1, t(@test, @score.floor) # 1.62
         assert_equal -9, t(@test, (@score - 10).floor) # 1.62
@@ -320,7 +317,7 @@ module ArelExtensions
       end
 
       def test_locate
-        skip "Sqlite version can't load extension for locate" if sqlite? && $load_extension_disabled
+        skip "Sqlite version can't load extension for locate" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
         assert_equal 1, t(@camille, @name.locate('C'))
         assert_equal 0, t(@lucas, @name.locate('z'))
         assert_equal 5, t(@lucas, @name.locate('s'))
@@ -351,7 +348,7 @@ module ArelExtensions
       end
 
       def test_find_in_set
-        skip "Sqlite version can't load extension for find_in_set" if sqlite? && $load_extension_disabled
+        skip "Sqlite version can't load extension for find_in_set" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
         skip 'SQL Server does not know about FIND_IN_SET' if mssql?
         assert_equal 5, t(@neg, @comments & 2)
         assert_equal 0, t(@neg, @comments & 6) # not found
@@ -395,7 +392,7 @@ module ArelExtensions
       end
 
       def test_regexp_not_regexp
-        skip "Sqlite version can't load extension for regexp" if sqlite? && $load_extension_disabled
+        skip "Sqlite version can't load extension for regexp" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
         skip 'SQL Server does not know about REGEXP without extensions' if mssql?
         assert_equal 1, User.where(@name =~ '^M').count
         assert_equal 10, User.where(@name !~ '^L').count
@@ -404,7 +401,7 @@ module ArelExtensions
       end
 
       def test_regex_matches
-        skip "Sqlite version can't load extension for regexp" if sqlite? && $load_extension_disabled
+        skip "Sqlite version can't load extension for regexp" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
         skip 'SQL Server does not know about REGEXP without extensions' if mssql?
         assert_equal 1, User.where(@name.regex_matches '^M').count
         assert_equal 1, User.where(@name.regex_matches /^M/).count
@@ -435,12 +432,11 @@ module ArelExtensions
 
       def test_replace_once
         skip 'TODO'
-        # skip "Sqlite version can't load extension for locate" if sqlite? && $load_extension_disabled
         assert_equal 'LuCas', t(@lucas, @name.substring(1, @name.locate('c') - 1) + 'C' + @name.substring(@name.locate('c') + 1, @name.length))
       end
 
       def test_soundex
-        skip "Sqlite version can't load extension for soundex" if sqlite? && $load_extension_disabled
+        skip "Sqlite version can't load extension for soundex" if sqlite? && !CommonSqlFunctions.sqlite_extensions?
         skip "PostgreSql version can't load extension for soundex" if postgres?
         assert_equal 'C540', t(@camille, @name.soundex)
         assert_equal 12, User.where(@name.soundex.eq(@name.soundex)).count
