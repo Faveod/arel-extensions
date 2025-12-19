@@ -326,7 +326,7 @@ jobs:
             --health-interval=10s \
             --health-timeout=5s \
             --health-retries=3 \
-            mysql:5.7 \
+            mysql:8 \
             --character-set-server=utf8mb4
 
       - name: Wait for MySQL
