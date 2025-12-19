@@ -13,6 +13,7 @@ group :development, :test do
   gem 'sqlite3', '~> 1.6', platforms: [:mri]
   gem 'mysql2', '~>0.5', platforms: [:mri]
   gem 'pg', '~> 1.5', platforms: [:mri]
+  gem 'trilogy', platforms: [:mri]
 
   gem 'tiny_tds', platforms: %i[mri mingw x64_mingw mswin]
   gem 'activerecord-sqlserver-adapter', '~> 7.2', platforms: %i[mri mingw x64_mingw mswin]

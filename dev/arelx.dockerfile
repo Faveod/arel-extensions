@@ -9,7 +9,7 @@ RUN mkdir -p $APP_HOME
 RUN apt-get update -q && apt-get install -y \
   curl bundler build-essential git gnupg locales \
   libbz2-dev libffi-dev liblzma-dev lsb-release libsqlite3-dev libyaml-dev \
-  make neovim ncurses-term openjdk-17-jdk-headless tzdata zlib1g-dev \
+  make neovim ncurses-term pkg-config openjdk-17-jdk-headless tzdata zlib1g-dev \
   && ln -fs /usr/share/zoneinfo/UTC /etc/localtime \
   && dpkg-reconfigure --frontend noninteractive tzdata
 
@@ -39,3 +39,6 @@ ENV PATH="/mise/shims:$PATH"
 
 RUN curl https://mise.run | sh
 RUN mise install ruby
+
+# Install atuin for better history
+RUN curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
