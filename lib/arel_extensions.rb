@@ -200,13 +200,20 @@ class Arel::Nodes::Function
   include ArelExtensions::NullFunctions
   include ArelExtensions::Predications
 
+  if ArelExtensions::ACTIVE_RECORD_VERSION >= ArelExtensions::V8_1
+    attr_accessor :alias
+    alias_method :old_initialize, :initialize
+
+    def initialize(expr, aliaz = nil)
+      old_initialize(expr)
+      self.alias = aliaz
+    end
+  end
+
   alias_method(:old_as, :as) rescue nil
   def as other
     res = Arel::Nodes::As.new(self.clone, Arel.sql(other))
-    if ArelExtensions::AREL_VERSION >= ArelExtensions::V9_0 \
-      && respond_to?(:alias=)
-      self.alias = Arel.sql(other)
-    end
+    self.alias = Arel.sql(other)
     res
   end
 end
