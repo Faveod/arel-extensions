@@ -395,7 +395,7 @@ module ArelExtensions
       def test_imatches
         # puts User.where(@name.imatches('m%')).to_sql
         assert_equal 1, User.where(@name.imatches('m%')).count
-        if @env_db == 'mysql'
+        if %w[mysql trilogy].include?(@env_db)
           assert_equal 5, User.where(@name.imatches_any(['L%', '%e'])).count
         else
           assert_equal 4, User.where(@name.imatches_any(['L%', '%e'])).count
@@ -611,7 +611,7 @@ module ArelExtensions
           assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
         end
 
-        skip "#{ENV['DB']} does not support ALLCAPS month and day names" if ['mysql'].include?(ENV['DB'])
+        skip "#{ENV['DB']} does not support ALLCAPS month and day names" if %w[mysql trilogy].include?(ENV['DB'])
         %i[format format_date].each do |method|
 
           assert_equal 'Mon, 03 MAR 14', t(@lucas, @updated_at.send(method, '%a, %d %^b %y'))
@@ -623,13 +623,15 @@ module ArelExtensions
         languages = {
           'mssql'      => {en: 'English',    fr: 'French'},
           'mysql'      => {en: 'en_US',      fr: 'fr_FR'},
-          'postgresql' => {en: 'en_US.utf8', fr: 'fr_FR.utf8'}
+          'postgresql' => {en: 'en_US.utf8', fr: 'fr_FR.utf8'},
+          'trilogy'    => {en: 'en_US',      fr: 'fr_FR'},
         }
 
         sql = {
           'mssql'      => ->(l) { "SET LANGUAGE #{l};"          },
           'mysql'      => ->(l) { "SET lc_time_names = '#{l}';" },
-          'postgresql' => ->(l) { "SET lc_time to '#{l}';"      }
+          'postgresql' => ->(l) { "SET lc_time to '#{l}';"      },
+          'trilogy'    => ->(l) { "SET lc_time_names = '#{l}';" },
         }
 
         User.connection.execute(sql[ENV['DB']][languages[ENV['DB']][lang]])
@@ -647,7 +649,7 @@ module ArelExtensions
           begin
             switch_to_lang(:en)
             case ENV['DB']
-            when 'mysql', 'postgresql'
+            when 'mysql', 'postgresql', 'trilogy'
               assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
               assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
             when 'mssql'
@@ -655,7 +657,7 @@ module ArelExtensions
             end
             switch_to_lang(:fr)
             case ENV['DB']
-            when 'mysql'
+            when 'mysql', 'trilogy'
               assert_equal 'lun, 03 mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
               assert_equal 'lundi, 03 mars 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
             when 'postgresql'
@@ -984,7 +986,7 @@ module ArelExtensions
 
       def test_accent_insensitive
         skip 'SQLite is natively Case Insensitive and Accent Sensitive' if $sqlite
-        skip 'Not finished' if @env_db == 'mysql'
+        skip 'Not finished' if %w[mysql trilogy].include?(@env_db)
         # actual comments value: "arrêté"
         # AI & CI
         if !['postgresql'].include?(@env_db) # Extension unaccent required on PG
@@ -999,19 +1001,19 @@ module ArelExtensions
           assert_equal '1', t(@arthur, Arel.when(@comments.ai_matches('arrete')).then('1').else('0'))
           assert_equal '1', t(@arthur, Arel.when(@comments.ai_matches('àrrétè')).then('1').else('0'))
           assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('arretez')).then('1').else('0'))
-          if !%w[oracle postgresql mysql].include?(@env_db) # AI => CI
+          if !%w[mysql oracle postgresql trilogy].include?(@env_db) # AI => CI
             assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('Arrete')).then('1').else('0'))
             assert_equal '0', t(@arthur, Arel.when(@comments.ai_matches('Arrêté')).then('1').else('0'))
           end
         end
         # AS & CI
         assert_equal '1', t(@arthur, Arel.when(@comments.imatches('arrêté')).then('1').else('0'))
-        if !['mysql'].include?(@env_db) # CI => AI in utf8 (AI not possible in latin1)
+        if !%w[mysql trilogy].include?(@env_db) # CI => AI in utf8 (AI not possible in latin1)
           assert_equal '0', t(@arthur, Arel.when(@comments.imatches('arrete')).then('1').else('0'))
           assert_equal '0', t(@arthur, Arel.when(@comments.imatches('àrrétè')).then('1').else('0'))
         end
         assert_equal '0', t(@arthur, Arel.when(@comments.imatches('arretez')).then('1').else('0'))
-        if !['mysql'].include?(@env_db) # CI => AI in utf8 (AI not possible in latin1)
+        if !%w[mysql trilogy].include?(@env_db) # CI => AI in utf8 (AI not possible in latin1)
           assert_equal '0', t(@arthur, Arel.when(@comments.imatches('Arrete')).then('1').else('0'))
         end
         assert_equal '1', t(@arthur, Arel.when(@comments.imatches('Arrêté')).then('1').else('0'))
@@ -1032,7 +1034,7 @@ module ArelExtensions
         if %w[mssql sqlite].include? @env_db
           # Sqlite and mssql are sensistive to the nil value in name, defined by @all_nil
           assert_equal 1, User.where(name: User.select(:name).order(:name).limit(2)).count
-        elsif @env_db != 'mysql'
+        elsif !%w[mysql trilogy].include? @env_db
           # MySql can't have limit in IN subquery
           assert_equal 2, User.where(name: User.select(:name).order(:name).limit(2)).count
           # assert_equal 6, User.where(name: User.select(:name).order(:name).offset(2)).count

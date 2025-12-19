@@ -360,7 +360,19 @@ jobs:
           DB_PORT: 3306
           DB_DATABASE: arelx_test
           DB_USERNAME: root
-        run: bundle exec rake test:mysql
+        run: |
+          # TODO: fix function loading, we have to run mysql first always for now.
+          TASKS=$(ruby -e "
+            rails_ver = '${{ matrix.versions.rails }}'.to_s.gsub('_', '.')
+            is_jruby = (RUBY_ENGINE == 'jruby')
+            tasks = ['test:mysql']
+            if Gem::Version.new(rails_ver) >= Gem::Version.new('7.1') && !is_jruby
+              tasks << 'test:trilogy'
+            end
+            puts tasks.join(' ')
+          ")
+          echo "runnin $TASKS"
+          bundle exec rake $TASKS
 
   job_test_mssql:
     name: test mssql on linux

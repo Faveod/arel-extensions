@@ -38,7 +38,7 @@ module ArelExtensions
 
     def add_sql_functions(env_db = nil)
       env_db ||= @cnx.adapter_name
-      env_db = 'mysql' if /mysql/i.match?(env_db)
+      env_db = 'mysql' if /(mysql|trilogy)/i.match?(env_db)
       if /sqlite/i.match?(env_db)
         begin
           add_sqlite_functions
@@ -46,8 +46,9 @@ module ArelExtensions
           puts "cannot add sqlite functions #{e.inspect}"
         end
       end
-      if File.exist?("init/#{env_db}.sql")
-        sql = File.read("init/#{env_db}.sql")
+      init = "init/#{env_db}.sql"
+      if File.exist?(init)
+        sql = File.read(init)
         if env_db == 'mssql'
           sql.split(/^GO\s*$/).each {|str|
             @cnx.execute(str.strip) unless str.blank?
