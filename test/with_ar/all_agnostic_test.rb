@@ -24,7 +24,7 @@ module ArelExtensions
         ActiveRecord::Base.configurations = ConfigLoader.load('test/database.yml')
         if ENV['DB'] == 'oracle' && ((defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx') || (RUBY_PLATFORM == 'java')) # not supported
           @env_db = (RUBY_PLATFORM == 'java' ? 'jdbc-sqlite' : 'sqlite')
-          skip "Platform not supported (DB: #{ENV['DB']}, RUBY_ENGINE: #{RUBY_ENGINE}, RUBY_PLATFORM: #{RUBY_PLATFORM})"
+          skip "Platform not supported (DB: #{@env_db}, RUBY_ENGINE: #{RUBY_ENGINE}, RUBY_PLATFORM: #{RUBY_PLATFORM})"
         else
           @env_db = ENV['DB']
         end
@@ -534,14 +534,14 @@ module ArelExtensions
             }
           }
 
-          skip "Unsupported timezone conversion for DB=#{ENV['DB']}" if !%w[mssql mysql oracle postgresql].include?(ENV['DB'])
+          skip "Unsupported timezone conversion for DB=#{@env_db}" if !%w[mssql mysql oracle postgresql].include?(@env_db)
           # TODO: Standarize timezone conversion across all databases.
           #       This test case will be refactored and should work the same across all vendors.
-          if ENV['DB'] == 'mssql' && /Microsoft SQL Server (\d+)/.match(ActiveRecord::Base.connection.select_value('SELECT @@version'))[1].to_i < 2016
+          if @env_db == 'mssql' && /Microsoft SQL Server (\d+)/.match(ActiveRecord::Base.connection.select_value('SELECT @@version'))[1].to_i < 2016
             skip "SQL Server < 2016 is not currently supported"
           end
 
-          tz = ENV['DB'] == 'mssql' ? time_zones['mssql'] : time_zones['posix']
+          tz = @env_db == 'mssql' ? time_zones['mssql'] : time_zones['posix']
 
           assert_equal '2014/03/03 12:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', tz['utc']))
           assert_equal '2014/03/03 09:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['sao_paulo']}))
@@ -553,11 +553,11 @@ module ArelExtensions
           #
           # MySQL is happy to consider that times by default are in UTC.
           assert_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
-          refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', tz['paris'])) if !%w[mysql postgresql].include?(ENV['DB'])
+          refute_equal '2014/03/03 13:42:00', t(@lucas, @updated_at.send(method, '%Y/%m/%d %H:%M:%S', tz['paris'])) if !%w[mysql postgresql].include?(@env_db)
 
           # Winter/Summer time
           assert_equal '2014/08/03 14:42:00', t(@lucas, (@updated_at + 5.months).send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
-          if ENV['DB'] == 'mssql'
+          if @env_db == 'mssql'
             assert_equal '2022/02/01 11:42:00', t(@lucas, Arel.quoted('2022-02-01 10:42:00').cast(:datetime).send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
             assert_equal '2022/08/01 12:42:00', t(@lucas, Arel.quoted('2022-08-01 10:42:00').cast(:datetime).send(method, '%Y/%m/%d %H:%M:%S', {tz['utc'] => tz['paris']}))
           else
@@ -569,7 +569,7 @@ module ArelExtensions
 
       def test_format_iso_week
         %i[format format_date].each do |method|
-          skip "Unsupported ISO week number for DB=#{ENV['DB']}" if ['sqlite'].include?(ENV['DB'])
+          skip "Unsupported ISO week number for DB=#{@env_db}" if ['sqlite'].include?(@env_db)
           assert_equal '10', t(@lucas, @updated_at.send(method, '%V'))
           {
             '2024-01-01 10:42:00' => '01', # Monday
@@ -586,7 +586,7 @@ module ArelExtensions
       end
 
       def test_format_iso_year_of_week
-        skip "Unsupported ISO year of week for DB=#{ENV['DB']}" if %w[mssql sqlite].include?(ENV['DB'])
+        skip "Unsupported ISO year of week for DB=#{@env_db}" if %w[mssql sqlite].include?(@env_db)
         %i[format format_date].each do |method|
           assert_equal '2014', t(@lucas, @updated_at.send(method, '%G'))
 
@@ -605,13 +605,13 @@ module ArelExtensions
       end
 
       def test_format_date_with_names
-        skip "#{ENV['DB']} does not support a variety of word-based formatting for month and day names" if %w[mssql sqlite].include?(ENV['DB'])
+        skip "#{@env_db} does not support a variety of word-based formatting for month and day names" if %w[mssql sqlite].include?(@env_db)
         %i[format format_date].each do |method|
           assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
           assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
         end
 
-        skip "#{ENV['DB']} does not support ALLCAPS month and day names" if %w[mysql trilogy].include?(ENV['DB'])
+        skip "#{@env_db} does not support ALLCAPS month and day names" if %w[mysql trilogy].include?(@env_db)
         %i[format format_date].each do |method|
 
           assert_equal 'Mon, 03 MAR 14', t(@lucas, @updated_at.send(method, '%a, %d %^b %y'))
@@ -634,11 +634,11 @@ module ArelExtensions
           'trilogy'    => ->(l) { "SET lc_time_names = '#{l}';" },
         }
 
-        User.connection.execute(sql[ENV['DB']][languages[ENV['DB']][lang]])
+        User.connection.execute(sql[@env_db][languages[@env_db][lang]])
       end
 
       def test_format_date_with_names_and_lang_switch
-        skip "#{ENV['DB']} does not support word-based formatting for month and day names" if ['sqlite'].include?(ENV['DB'])
+        skip "#{@env_db} does not support word-based formatting for month and day names" if ['sqlite'].include?(@env_db)
 
         # the begin-rescue block is here to make sure we set the db back to en_US
         # if we fail, so that other tests don't get contaminated.
@@ -648,7 +648,7 @@ module ArelExtensions
         %i[format format_date].each do |method|
           begin
             switch_to_lang(:en)
-            case ENV['DB']
+            case @env_db
             when 'mysql', 'postgresql', 'trilogy'
               assert_equal 'Mon, 03 Mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
               assert_equal 'Monday, 03 March 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
@@ -656,7 +656,7 @@ module ArelExtensions
               assert_equal 'Monday, 03 March 2014', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
             end
             switch_to_lang(:fr)
-            case ENV['DB']
+            case @env_db
             when 'mysql', 'trilogy'
               assert_equal 'lun, 03 mar 14', t(@lucas, @updated_at.send(method, '%a, %d %b %y'))
               assert_equal 'lundi, 03 mars 14', t(@lucas, @updated_at.send(method, '%A, %d %B %y'))
