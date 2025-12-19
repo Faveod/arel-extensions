@@ -35,7 +35,6 @@ module ArelExtensions
           ActiveRecord::Base.default_timezone = :utc
         end
         @cnx = ActiveRecord::Base.connection
-        $sqlite = @cnx.adapter_name =~ /sqlite/i
         $load_extension_disabled ||= false
         csf = CommonSqlFunctions.new(@cnx)
         csf.add_sql_functions(@env_db)
@@ -174,7 +173,7 @@ module ArelExtensions
       end
 
       def test_ceil
-        #        skip "Sqlite version can't load extension for ceil" if $sqlite && $load_extension_disabled
+        # skip "Sqlite version can't load extension for ceil" if sqlite? && $load_extension_disabled
         assert_equal 2, t(@test, @score.ceil) # 1.62
         assert_equal -20, t(@camille, @score.ceil) # -20.16
         assert_equal -20, t(@camille, (@score - 0.5).ceil) # -20.16
@@ -183,7 +182,7 @@ module ArelExtensions
       end
 
       def test_floor
-        #        skip "Sqlite version can't load extension for floor" if $sqlite && $load_extension_disabled
+        # skip "Sqlite version can't load extension for floor" if sqlite? && $load_extension_disabled
         assert_equal 0, t(@neg, @score.floor)
         assert_equal 1, t(@test, @score.floor) # 1.62
         assert_equal -9, t(@test, (@score - 10).floor) # 1.62
@@ -233,7 +232,7 @@ module ArelExtensions
       end
 
       def test_rollup
-        skip "sqlite not supported" if $sqlite
+        skip "sqlite not supported" if sqlite?
         at = User.arel_table
         # single
         q = User.select(at[:name], at[:age].sum).group(Arel::Nodes::RollUp.new([at[:name]]))
@@ -286,7 +285,7 @@ module ArelExtensions
         assert_equal 'Lucas,Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat(','))
         assert_equal 'Lucas,Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat)
 
-        skip 'No order in group_concat in SqlLite' if $sqlite
+        skip 'No order in group_concat in SqlLite' if sqlite?
         assert_equal 'Arthur,Lucas,Sophie', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: @name.asc))
         assert_equal 'Sophie,Lucas,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: @name.desc))
         assert_equal 'Lucas,Sophie,Arthur', t(User.where(name: %w[Lucas Sophie Arthur]), @name.group_concat(',', order: [@score.asc, @name.asc]))
@@ -315,13 +314,13 @@ module ArelExtensions
       end
 
       def test_md5
-        skip "Sqlite can't do md5" if $sqlite
+        skip "Sqlite can't do md5" if sqlite?
         assert_equal 'e2cf99ca82a7e829d2a4ac85c48154d0', t(@camille, @name.md5)
         assert_equal 'c3d41bf5efb468a1bcce53bd53726c85', t(@lucas, @name.md5)
       end
 
       def test_locate
-        skip "Sqlite version can't load extension for locate" if $sqlite && $load_extension_disabled
+        skip "Sqlite version can't load extension for locate" if sqlite? && $load_extension_disabled
         assert_equal 1, t(@camille, @name.locate('C'))
         assert_equal 0, t(@lucas, @name.locate('z'))
         assert_equal 5, t(@lucas, @name.locate('s'))
@@ -352,7 +351,7 @@ module ArelExtensions
       end
 
       def test_find_in_set
-        skip "Sqlite version can't load extension for find_in_set" if $sqlite && $load_extension_disabled
+        skip "Sqlite version can't load extension for find_in_set" if sqlite? && $load_extension_disabled
         skip 'SQL Server does not know about FIND_IN_SET' if mssql?
         assert_equal 5, t(@neg, @comments & 2)
         assert_equal 0, t(@neg, @comments & 6) # not found
@@ -381,8 +380,7 @@ module ArelExtensions
       end
 
       def test_compare_on_date_time_types
-        skip "Sqlite can't compare time" if $sqlite
-        skip "Oracle can't compare time" if oracle?
+        skip " can't compare time" if oracle? || sqlite?
         # @created_at == 2016-05-23
         assert_includes [true, 't', 1], t(@laure, Arel.when(@created_at >= '2014-01-01').then(1).else(0))
         assert_includes [false, 'f', 0], t(@laure, Arel.when(@created_at >= '2018-01-01').then(1).else(0))
@@ -397,7 +395,7 @@ module ArelExtensions
       end
 
       def test_regexp_not_regexp
-        skip "Sqlite version can't load extension for regexp" if $sqlite && $load_extension_disabled
+        skip "Sqlite version can't load extension for regexp" if sqlite? && $load_extension_disabled
         skip 'SQL Server does not know about REGEXP without extensions' if mssql?
         assert_equal 1, User.where(@name =~ '^M').count
         assert_equal 10, User.where(@name !~ '^L').count
@@ -406,7 +404,7 @@ module ArelExtensions
       end
 
       def test_regex_matches
-        skip "Sqlite version can't load extension for regexp" if $sqlite && $load_extension_disabled
+        skip "Sqlite version can't load extension for regexp" if sqlite? && $load_extension_disabled
         skip 'SQL Server does not know about REGEXP without extensions' if mssql?
         assert_equal 1, User.where(@name.regex_matches '^M').count
         assert_equal 1, User.where(@name.regex_matches /^M/).count
@@ -427,7 +425,7 @@ module ArelExtensions
         assert_equal 'LucaX', t(@lucas, @name.replace('s', 'X'))
         assert_equal 'replace', t(@lucas, @name.replace(@name, 'replace'))
 
-        skip 'Sqlite does not seem to support regexp_replace' if $sqlite
+        skip 'Sqlite does not seem to support regexp_replace' if sqlite?
         skip 'SQL Server does not know about REGEXP without extensions' if mssql?
         skip 'Travis mysql version does not support REGEXP_REPLACE' if mysql?
         assert_equal 'LXcXs', t(@lucas, @name.replace(/[ua]/, 'X'))
@@ -437,12 +435,12 @@ module ArelExtensions
 
       def test_replace_once
         skip 'TODO'
-        # skip "Sqlite version can't load extension for locate" if $sqlite && $load_extension_disabled
+        # skip "Sqlite version can't load extension for locate" if sqlite? && $load_extension_disabled
         assert_equal 'LuCas', t(@lucas, @name.substring(1, @name.locate('c') - 1) + 'C' + @name.substring(@name.locate('c') + 1, @name.length))
       end
 
       def test_soundex
-        skip "Sqlite version can't load extension for soundex" if $sqlite && $load_extension_disabled
+        skip "Sqlite version can't load extension for soundex" if sqlite? && $load_extension_disabled
         skip "PostgreSql version can't load extension for soundex" if postgres?
         assert_equal 'C540', t(@camille, @name.soundex)
         assert_equal 12, User.where(@name.soundex.eq(@name.soundex)).count
@@ -800,7 +798,7 @@ module ArelExtensions
         end
 
 
-        skip 'not yet implemented' if $sqlite
+        skip 'not yet implemented' if sqlite?
 
         date1 = Date.new(2016, 5, 23)
         durPos = 10.years
@@ -980,7 +978,7 @@ module ArelExtensions
 
       def test_format_numbers
         # score of Arthur = 65.62
-        skip ' Works with SQLite if the version used knows printf' if $sqlite
+        skip 'Works with SQLite if the version used knows printf' if sqlite?
 
         assert_equal 'Wrong Format', t(@arthur, @score.format_number('$ %...234.6F €', 'fr_FR'))
         assert_equal 'AZERTY65,62', t(@arthur, @score.format_number('AZERTY%.2f', 'fr_FR'))
@@ -1006,7 +1004,7 @@ module ArelExtensions
       end
 
       def test_accent_insensitive
-        skip 'SQLite is natively Case Insensitive and Accent Sensitive' if $sqlite
+        skip 'SQLite is natively Case Insensitive and Accent Sensitive' if sqlite?
         skip 'Not finished' if mysql?
         # actual comments value: "arrêté"
         # AI & CI
@@ -1124,7 +1122,7 @@ module ArelExtensions
       end
 
       def test_in_on_grouping
-        skip 'We should modify the visitor of IN to make it work' if $sqlite || mssql?
+        skip 'We should modify the visitor of IN to make it work' if mssql? || sqlite?
         assert_equal 2, User.where(Arel.tuple(@name, @age).in(Arel.tuple('Myung', 23), Arel.tuple('Arthur', 21))).count
         assert_equal 1, User.where(Arel.tuple(@name, @age).in(Arel.tuple('Myung', 23))).count
         assert_equal 0, User.where(Arel.tuple(@name, @age).in([])).count
@@ -1142,7 +1140,7 @@ module ArelExtensions
       end
 
       def test_stat_functions
-        skip "SQLite doesn't work for most on this functions" if $sqlite
+        skip "SQLite doesn't work for most on this functions" if sqlite?
         # puts t(User.where(nil), @score.average)
         # puts t(User.where(nil), @score.variance(unbiased: true))
         # puts t(User.where(nil), @score.variance(unbiased: false))
@@ -1162,7 +1160,7 @@ module ArelExtensions
       end
 
       def test_levenshtein_distance
-        skip 'Not Yet Implemented' if $sqlite
+        skip 'Not Yet Implemented' if sqlite?
         assert_equal 0,  t(@arthur, @name.levenshtein_distance('Arthur'))
         assert_equal 2,  t(@arthur, @name.levenshtein_distance('Artoor'))
         assert_equal 1,  t(@arthur, @name.levenshtein_distance('Artehur'))
@@ -1188,7 +1186,7 @@ module ArelExtensions
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_sql
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_a
 
-        skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
+        skip 'Not Yet Implemented' if mysql? || sqlite? || oracle?
         # get
         h1 = Arel.json({@name => @name + @name, @name + '2' => 1})
         assert_equal 'ArthurArthur', parse_json(t(@arthur, h1.get(@name)))
