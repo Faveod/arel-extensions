@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## Release v2.4.0/v1.6.0 (23-12-2025)
+
 - Drop supoprt for Ruby < 2.7.
 - Drop support for Rails < 5.2.
 - Add support for Rails 8 and 8.1.
