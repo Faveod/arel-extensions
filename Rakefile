@@ -25,7 +25,7 @@ namespace :test do
   }
 end
 
-%w[mysql postgresql sqlite ibm_db oracle mssql].each do |adapter|
+%w[ibm_db mssql mysql oracle postgresql sqlite trilogy].each do |adapter|
   namespace :test do
     Rake::TestTask.new(adapter => "#{adapter}:env") { |t|
       t.libs << 'lib'

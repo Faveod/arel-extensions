@@ -14,6 +14,13 @@ mysql:
   host: <%= ENV.fetch('MYSQL_HOST', '127.0.0.1') %>
   port: 3306
   encoding: utf8mb4
+trilogy:
+  adapter: trilogy
+  database: arelx_test
+  username: root
+  host: <%= ENV.fetch('MYSQL_HOST', '127.0.0.1') %>
+  port: 3306
+  encoding: utf8mb4
 jdbc-mysql:
   adapter: jdbcmysql
   database: arelx_test
