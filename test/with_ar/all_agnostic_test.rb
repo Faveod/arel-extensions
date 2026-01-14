@@ -1146,13 +1146,18 @@ module ArelExtensions
       end
 
       def test_json
-        skip "Can't be tested on travis"
+        skip "Can't be tested on postgresql" if @env_db == 'postgresql'
         # creation
         assert_equal 'Arthur', t(@arthur, Arel.json(@name))
-        assert_equal %w[Arthur Arthur], parse_json(t(@arthur, Arel.json(@name, @name)))
-        assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 'ArthurArthur'}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => @name + @name})))
-        assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 1}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => 1})))
-        assert_equal [{'age' => 21}, {'name' => 'Arthur', 'score' => 65.62}], parse_json(t(@arthur, Arel.json([{age: @age}, {name: @name, score: @score}])))
+        assert_equal ['Arthur', 'Arthur'],  parse_json(t(@arthur, Arel.json(@name, @name)))
+        assert_equal ['Arthur', nil],       parse_json(t(@arthur, Arel.json(@name, nil)))
+        assert_equal ['comment', 'arrêté'], parse_json(t(@arthur, Arel.json('comment', @comments)))
+        assert_equal ['comment', nil],      parse_json(t(@lucas,  Arel.json('comment', @comments)))
+
+        assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 'ArthurArthur'}), parse_json(t(@arthur,Arel.json({@name => @name,@name+'2' => @name+@name})))
+        assert_equal ({'Arthur' => 'Arthur','Arthur2' => 1}), parse_json(t(@arthur,Arel.json({@name => @name,@name+'2' => 1})))
+        assert_equal ({'Arthur' => nil}), parse_json(t(@arthur, Arel.json({@name => nil})))
+        assert_equal ([{'age' => 21},{'name' => 'Arthur','score' => 65.62}]), parse_json(t(@arthur,Arel.json([{age: @age},{name: @name,score: @score}])))
 
         # aggregate
         assert_equal ({'5' => 'Lucas', '15' => 'Sophie', '23' => 'Myung', '25' => 'Laure'}),
