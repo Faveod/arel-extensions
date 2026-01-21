@@ -75,26 +75,5 @@ module ArelExtensions
         Arel::Nodes::NotIn.new(self, quoted_node(other))
       end
     end
-
-    def convert_to_node(object)
-      case object
-      when Arel::Attributes::Attribute, Arel::Nodes::Node, Integer
-        object
-      when DateTime
-        Arel.quoted(object, self)
-      when Time
-        Arel.quoted(object.strftime('%H:%M:%S'), self)
-      when String
-        Arel.quoted(object)
-      when Date
-        Arel.quoted(object.to_s, self)
-      when NilClass
-        Arel.sql('NULL')
-      when ActiveSupport::Duration
-        object.to_i
-      else
-        raise(ArgumentError, "#{object.class} cannot be converted to CONCAT arg")
-      end
-    end
   end
 end
