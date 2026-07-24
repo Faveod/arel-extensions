@@ -33,7 +33,7 @@ module ArelExtensions
       def visit_Arel_Nodes_SelectCore(o, collector)
         collector << 'SELECT'
 
-        collector = collect_optimizer_hints(o, collector) if self.respond_to?(:collect_optimizer_hinsts)
+        collector = collect_optimizer_hints(o, collector) if self.respond_to?(:collect_optimizer_hints, true)
         collector = maybe_visit o.set_quantifier, collector
 
         collect_nodes_for o.projections, collector, ' '
