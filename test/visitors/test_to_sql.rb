@@ -255,6 +255,13 @@ module ArelExtensions
           .must_be_like %{SELECT GROUP_CONCAT("users"."first_name", '++') FROM "users" GROUP BY "users"."last_name"}
       end
 
+      it 'should accept groups on left and right of + and act as concat' do
+        _((Arel::Nodes::Grouping.new(@table.take(1)) + Arel::Nodes.build_quoted('-')).to_sql)
+          .must_be_like %{CONCAT(((SELECT FROM \"users\" LIMIT 1)), '-')}
+        _((Arel::Nodes.build_quoted('-') + Arel::Nodes::Grouping.new(@table.take(1))).to_sql)
+          .must_be_like %{CONCAT('-', ((SELECT FROM \"users\" LIMIT 1)))}
+      end
+
       # Unions
       it 'should accept union operators on queries and union nodes' do
         c = @table.project(@table[:name])
