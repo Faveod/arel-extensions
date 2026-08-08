@@ -20,12 +20,8 @@ module ArelExtensions
         end
         @cnx = ActiveRecord::Base.connection
         Arel::Table.engine = ActiveRecord::Base
-        if File.exist?("init/#{@env_db}.sql")
-          sql = File.read("init/#{@env_db}.sql")
-          unless sql.blank?
-            @cnx.execute(sql) rescue $stderr << "can't create functions\n"
-          end
-        end
+        csf = CommonSqlFunctions.new(@cnx)
+        csf.add_sql_functions(@env_db)
       end
 
       def setup_db

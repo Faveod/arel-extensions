@@ -5,6 +5,10 @@ require 'active_record'
 $:.unshift "#{File.dirname(__FILE__)}../../lib"
 require 'arel_extensions'
 
+def sqlite?
+  /sqlite/i.match?(ActiveRecord::Base.connection.adapter_name)
+end
+
 def setup_db
   ActiveRecord::Base.configurations = ConfigLoader.load('test/database.yml')
   ActiveRecord::Base.establish_connection(ENV['DB'].try(:to_sym) || (RUBY_PLATFORM == 'java' ? :"jdbc-sqlite" : :sqlite))
@@ -14,20 +18,9 @@ def setup_db
     ActiveRecord::Base.default_timezone = :utc
   end
   @cnx = ActiveRecord::Base.connection
-  if /sqlite/i.match?(ActiveRecord::Base.connection.adapter_name)
-    $sqlite = true
+  if sqlite?
     db = @cnx.raw_connection
-    if !$load_extension_disabled
-      begin
-        db.enable_load_extension(1)
-        db.load_extension('/usr/lib/sqlite3/pcre.so')
-        db.load_extension('/usr/lib/sqlite3/extension-functions.so')
-        db.enable_load_extension(0)
-      rescue => e
-        $load_extension_disabled = true
-        $stderr << "cannot load extensions #{e.inspect}\n"
-      end
-    end
+    ArelExtensions::CommonSqlFunctions.new(@cnx)
     # function find_in_set
     db.create_function('find_in_set', 1) do |func, value1, value2|
       func.result = value1.index(value2)
@@ -77,7 +70,7 @@ class ListTest < Minitest::Test
   end
 
   def test_ceil
-    if !$sqlite || !$load_extension_disabled
+    if !sqlite? || !ArelExtensions::CommonSqlFunctions.sqlite_extensions?
       assert_equal 1, User.where(User.arel_table[:name].eq('Negatif')).select((User.arel_table[:score].ceil).as('res')).first.res
       assert_equal 66, User.where(User.arel_table[:name].eq('Arthur')).select((User.arel_table[:score].ceil).as('res')).first.res
     end
@@ -134,7 +127,7 @@ class ListTest < Minitest::Test
   end
 
   def test_locate
-    if !$sqlite || !$load_extension_disabled
+    if !sqlite? || !ArelExtensions::CommonSqlFunctions.sqlite_extensions?
       assert_equal 1, User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].locate('C')).as('res')).first.res
       assert_equal 0, User.where(User.arel_table[:name].eq('Lucas')).select((User.arel_table[:name].locate('z')).as('res')).first.res
       assert_equal 5, User.where(User.arel_table[:name].eq('Lucas')).select((User.arel_table[:name].locate('s')).as('res')).first.res
@@ -151,7 +144,7 @@ class ListTest < Minitest::Test
   end
 
   def test_floor
-    if !$sqlite || !$load_extension_disabled
+    if !sqlite? || !ArelExtensions::CommonSqlFunctions.sqlite_extensions?
       assert_equal 0, User.where(User.arel_table[:name].eq('Negatif')).select((User.arel_table[:score].floor).as('res')).first.res
       assert_equal 65, User.where(User.arel_table[:name].eq('Arthur')).select((User.arel_table[:score].floor).as('res')).first.res
     end
@@ -203,7 +196,7 @@ class ListTest < Minitest::Test
   end
 
   def test_regexp_not_regex
-    if !$sqlite || !$load_extension_disabled
+    if !sqlite? || !ArelExtensions::CommonSqlFunctions.sqlite_extensions?
       assert_equal 1, User.where(User.arel_table[:name] =~ '^M').count
       assert_equal 6, User.where(User.arel_table[:name] != '^L').count
     end
@@ -220,7 +213,7 @@ class ListTest < Minitest::Test
   end
 
   def test_Soundex
-    if !$sqlite || !$load_extension_disabled
+    if !sqlite? || !ArelExtensions::CommonSqlFunctions.sqlite_extensions?
       assert_equal 'C540', User.where(User.arel_table[:name].eq('Camille')).select((User.arel_table[:name].soundex).as('res')).first.res.to_s
       assert_equal 8, User.where((User.arel_table[:name].soundex).eq(User.arel_table[:name].soundex)).count
     end
