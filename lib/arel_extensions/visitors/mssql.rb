@@ -58,7 +58,7 @@ module ArelExtensions
           'MM-DD-YYYY' => 110,
           'YYYY/MM/DD' => 111,
           'DD-MM-YYYY' => 105,
-          'DD-MM-YY'   => 5,
+          'DD-MM-YY' => 5,
           'DD.MM.YYYY' => 104,
           'YYYY-MM-DDTHH:MM:SS:MMM' => 126
         }.freeze
