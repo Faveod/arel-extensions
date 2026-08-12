@@ -1,8 +1,8 @@
 module ArelExtensions
   module Nodes
     class Wday < Function
-      def initialize other, aliaz = nil
-        tab = Array.new
+      def initialize(other, aliaz = nil)
+        tab = []
         tab << other
         super(tab, aliaz)
       end

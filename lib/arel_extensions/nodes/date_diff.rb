@@ -3,8 +3,7 @@ require 'date'
 module ArelExtensions
   module Nodes
     class DateDiff < Function # difference entre colonne date et date string/date
-      attr_accessor :left_node_type
-      attr_accessor :right_node_type
+      attr_accessor :left_node_type, :right_node_type
 
       RETURN_TYPE = :integer # by default...
 
@@ -29,7 +28,7 @@ module ArelExtensions
           @right_node_type = :ruby_time
         end
         res << (%i[date ruby_date].include?(@left_node_type) ? convert_to_date_node(expr[1]) : convert_to_datetime_node(expr[1]))
-        super res
+        super(res)
       end
     end
 
@@ -37,7 +36,7 @@ module ArelExtensions
       RETURN_TYPE = :date
       attr_accessor :date_type
 
-      def initialize expr
+      def initialize(expr)
         col = expr.first
         @date_type = type_of_attribute(col)
         tab = expr.map do |arg|
@@ -47,8 +46,8 @@ module ArelExtensions
       end
 
       def sqlite_value
-        v = self.expressions.last
-        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+        v = expressions.last
+        if defined?(ActiveSupport::Duration) && v.is_a?(ActiveSupport::Duration)
           if @date_type == :date
             Arel.quoted((v.value >= 0 ? '+' : '-') + v.inspect)
           elsif @date_type == :datetime
@@ -60,60 +59,54 @@ module ArelExtensions
       end
 
       def mysql_value(v = nil)
-        v ||= self.expressions.last
-        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+        v ||= expressions.last
+        if defined?(ActiveSupport::Duration) && v.is_a?(ActiveSupport::Duration)
           if @date_type == :date || @date_type == :datetime
             Arel.sql('INTERVAL %s' % v.inspect.sub(/s\Z/, ''))
           end
+        elsif v.is_a?(ArelExtensions::Nodes::Duration)
+          v.with_interval = true
+          v
         else
-          if ArelExtensions::Nodes::Duration === v
-            v.with_interval = true
-            v
-          else
-            v
-          end
+          v
         end
       end
 
       def postgresql_value(v = nil)
-        v ||= self.expressions.last
-        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+        v ||= expressions.last
+        if defined?(ActiveSupport::Duration) && v.is_a?(ActiveSupport::Duration)
           if @date_type == :date
             Arel.sql("INTERVAL '%s'" % v.inspect.sub(/s\Z/, '').upcase)
           elsif @date_type == :datetime
             Arel.sql("INTERVAL '%s'" % v.inspect.sub(/s\Z/, '').upcase)
           end
+        elsif v.is_a?(ArelExtensions::Nodes::Duration)
+          v.with_interval = true
+          v
         else
-          if ArelExtensions::Nodes::Duration === v
-            v.with_interval = true
-            v
-          else
-            v
-          end
+          v
         end
       end
 
       def oracle_value(v = nil)
-        v ||= self.expressions.last
-        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+        v ||= expressions.last
+        if defined?(ActiveSupport::Duration) && v.is_a?(ActiveSupport::Duration)
           if @date_type == :ruby_date
             Arel.sql("(INTERVAL '1' DAY) * %s" % v.inspect.to_i)
           else
             Arel.sql("(INTERVAL '1' SECOND) * %s" % v.to_i)
           end
+        elsif v.is_a?(ArelExtensions::Nodes::Duration)
+          v.with_interval = true
+          v
         else
-          if ArelExtensions::Nodes::Duration === v
-            v.with_interval = true
-            v
-          else
-            v
-          end
+          v
         end
       end
 
       def mssql_value(v = nil)
-        v ||= self.expressions.last
-        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+        v ||= expressions.last
+        if defined?(ActiveSupport::Duration) && v.is_a?(ActiveSupport::Duration)
           if @date_type == :date
             v.to_i / (24 * 3600)
           elsif @date_type == :datetime
@@ -134,8 +127,8 @@ module ArelExtensions
       end
 
       def mssql_datepart(v = nil)
-        v ||= self.expressions.last
-        if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === v
+        v ||= expressions.last
+        if defined?(ActiveSupport::Duration) && v.is_a?(ActiveSupport::Duration)
           if @date_type == :date
             Arel.sql('day')
           elsif @date_type == :datetime
@@ -151,19 +144,17 @@ module ArelExtensions
                   end
             Arel.sql(res)
           end
-        else
-          if ArelExtensions::Nodes::Duration === v
-            v.with_interval = true
-            case v.left
-            when 'd', 'm', 'y'
-              Arel.sql('day')
-            when 'h', 'mn', 's'
-              Arel.sql('second')
-            when /i\z/
-              Arel.sql(ArelExtensions::Visitors::MSSQL::LOADED_VISITOR::DATE_MAPPING[v.left[0..-2]])
-            else
-              Arel.sql(ArelExtensions::Visitors::MSSQL::LOADED_VISITOR::DATE_MAPPING[v.left])
-            end
+        elsif v.is_a?(ArelExtensions::Nodes::Duration)
+          v.with_interval = true
+          case v.left
+          when 'd', 'm', 'y'
+            Arel.sql('day')
+          when 'h', 'mn', 's'
+            Arel.sql('second')
+          when /i\z/
+            Arel.sql(ArelExtensions::Visitors::MSSQL::LOADED_VISITOR::DATE_MAPPING[v.left[0..-2]])
+          else
+            Arel.sql(ArelExtensions::Visitors::MSSQL::LOADED_VISITOR::DATE_MAPPING[v.left])
           end
         end
       end
@@ -190,7 +181,7 @@ module ArelExtensions
       RETURN_TYPE = :integer
 
       def initialize(expr)
-        super [expr.first, convert_number(expr[1])]
+        super([expr.first, convert_number(expr[1])])
       end
 
       def convert_number(object)
@@ -200,7 +191,7 @@ module ArelExtensions
         when String
           object.to_i
         else
-          if defined?(ActiveSupport::Duration) && ActiveSupport::Duration === object
+          if defined?(ActiveSupport::Duration) && object.is_a?(ActiveSupport::Duration)
             object.to_i
           else
             raise(ArgumentError, "#{object.class} cannot be converted to Number")

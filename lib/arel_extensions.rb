@@ -111,11 +111,11 @@ module Arel
     Arel::Nodes::Equality.new(1, 0)
   end
 
-  def self.grouping *v
+  def self.grouping(*v)
     Arel::Nodes::Grouping.new(*v)
   end
 
-  def self.json *expr
+  def self.json(*expr)
     ArelExtensions::Nodes::Json.new(
       if expr.length == 1
         expr.first
@@ -150,7 +150,7 @@ module Arel
     Arel.quoted(nil)
   end
 
-  def self.quoted *args
+  def self.quoted(*args)
     Arel::Nodes.build_quoted(*args)
   end
 
@@ -171,7 +171,7 @@ module Arel
     Arel::Nodes::Equality.new(1, 1)
   end
 
-  def self.tuple *v
+  def self.tuple(*v)
     tmp = Arel.grouping(nil)
     Arel.grouping(v.map { |e| tmp.convert_to_node(e) })
   end
@@ -204,7 +204,7 @@ class Arel::Nodes::Function
 
   if ArelExtensions::ACTIVE_RECORD_VERSION >= ArelExtensions::V8_1
     attr_accessor :alias
-    alias_method :old_initialize, :initialize
+    alias old_initialize initialize
 
     def initialize(expr, aliaz = nil)
       old_initialize(expr)
@@ -236,6 +236,7 @@ class Arel::Nodes::Unary
   include ArelExtensions::MathFunctions
   include ArelExtensions::Comparators
   include ArelExtensions::Predications
+
   def eql?(other)
     hash == other.hash
   end
@@ -248,6 +249,7 @@ class Arel::Nodes::Binary
   include ArelExtensions::Comparators
   include ArelExtensions::BooleanFunctions
   include ArelExtensions::Predications
+
   def eql?(other)
     hash == other.hash
   end

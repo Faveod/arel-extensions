@@ -7,12 +7,12 @@ module ArelExtensions
 
       attr_accessor :col_type, :iso_format, :time_zone
 
-      def initialize expr
+      def initialize(expr)
         col = expr[0]
         @iso_format = convert_format(expr[1])
         @time_zone  = expr[2]
         @col_type = type_of_attribute(col)
-        super [col, convert_to_string_node(@iso_format)]
+        super([col, convert_to_string_node(@iso_format)])
       end
 
       private

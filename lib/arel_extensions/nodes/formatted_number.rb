@@ -5,7 +5,7 @@ module ArelExtensions
 
       attr_accessor :locale, :prefix, :suffix, :flags, :scientific_notation, :width, :precision, :type, :original_string
 
-      def initialize expr
+      def initialize(expr)
         # expr[1] = {locale: 'fr_FR', type: "e"/"f"/"d", prefix: "$ ", suffix: " %", flags: " +-#0", width: 5, precision: 6}
         col = expr.first
         @locale = expr[1][:locale]
@@ -17,7 +17,7 @@ module ArelExtensions
         @flags = expr[1][:flags]
         @scientific_notation = /[eE]/.match(expr[1][:type]) || false
         @original_string = expr[1][:original_string]
-        super [col]
+        super([col])
       end
     end
   end

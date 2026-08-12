@@ -1,6 +1,6 @@
 module ArelExtensions
   module Predications
-    def when right, expression = nil
+    def when(right, expression = nil)
       ArelExtensions::Nodes::Case.new(self).when(right, expression)
     end
 
@@ -16,7 +16,7 @@ module ArelExtensions
       ArelExtensions::Nodes::IMatches.new(self, other, escape)
     end
 
-    def cast right
+    def cast(right)
       ArelExtensions::Nodes::Cast.new([self, right])
     end
 
@@ -24,23 +24,24 @@ module ArelExtensions
       other = other.first if other.length <= 1
       case other
       when Range
-        self.between(other)
+        between(other)
       when Arel::Nodes::Grouping, ArelExtensions::Nodes::Union, ArelExtensions::Nodes::UnionAll
         Arel::Nodes::In.new(self, quoted_node(other))
       when Enumerable
-        nils, values   = other.partition{ |v| v.nil? }
-        ranges, values = values.partition{ |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager)}
+        nils, values   = other.partition { |v| v.nil? }
+        ranges, values = values.partition { |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager) }
         # In order of (imagined) decreasing efficiency: nil, values, and then more complex.
         clauses =
           nils.uniq.map { |r| self.in(r) } \
           + (case values.uniq.size
-              when 0 then []
-              when 1 then [values[0].is_a?(Arel::Nodes::Grouping) ? self.in(values[0]) : self.eq(values[0])]
-              else [Arel::Nodes::In.new(self, quoted_array(values))] end) \
+             when 0 then []
+             when 1 then [values[0].is_a?(Arel::Nodes::Grouping) ? self.in(values[0]) : eq(values[0])]
+             else [Arel::Nodes::In.new(self, quoted_array(values))]
+             end) \
           + ranges.uniq.map { |r| self.in(r) }
         clauses.empty? ? Arel.false : clauses.reduce(&:or)
       when nil
-        self.is_null
+        is_null
       when Arel::SelectManager
         Arel::Nodes::In.new(self, other.ast)
       else
@@ -52,23 +53,24 @@ module ArelExtensions
       other = other.first if other.length <= 1
       case other
       when Range
-        Arel::Nodes::Not.new(self.between(other))
+        Arel::Nodes::Not.new(between(other))
       when Arel::Nodes::Grouping, ArelExtensions::Nodes::Union, ArelExtensions::Nodes::UnionAll
         Arel::Nodes::NotIn.new(self, quoted_node(other))
       when Enumerable
-        nils, values   = other.partition{ |v| v.nil? }
-        ranges, values = values.partition{ |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager)}
+        nils, values   = other.partition { |v| v.nil? }
+        ranges, values = values.partition { |v| v.is_a?(Range) || v.is_a?(Arel::SelectManager) }
         # In order of (imagined) decreasing efficiency: nil, values, and then more complex.
         clauses =
-          nils.uniq.map { |r| self.not_in(r) } \
+          nils.uniq.map { |r| not_in(r) } \
           + (case values.uniq.size
-              when 0 then []
-              when 1 then [values[0].is_a?(Arel::Nodes::Grouping) ? self.not_in(values[0]) : self.not_eq(values[0])]
-              else [Arel::Nodes::NotIn.new(self, quoted_array(values))] end) \
-          + ranges.uniq.map { |r| self.not_in(r) }
+             when 0 then []
+             when 1 then [values[0].is_a?(Arel::Nodes::Grouping) ? not_in(values[0]) : not_eq(values[0])]
+             else [Arel::Nodes::NotIn.new(self, quoted_array(values))]
+             end) \
+          + ranges.uniq.map { |r| not_in(r) }
         Arel::Nodes::And.new clauses
       when nil
-        self.is_not_null
+        is_not_null
       when Arel::SelectManager
         Arel::Nodes::NotIn.new(self, other.ast)
       else

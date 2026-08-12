@@ -1,8 +1,8 @@
 module ArelExtensions
   module Nodes
     class Union < Arel::Nodes::Union
-      def initialize left, right
-        super(left, right)
+      def initialize(left, right)
+        super
       end
 
       def +(other)
@@ -13,7 +13,7 @@ module ArelExtensions
         ArelExtensions::Nodes::UnionAll.new(self, other)
       end
 
-      def as other
+      def as(other)
         Arel::Nodes::TableAlias.new Arel.grouping(self), Arel::Nodes::SqlLiteral.new(other.to_s)
       end
     end

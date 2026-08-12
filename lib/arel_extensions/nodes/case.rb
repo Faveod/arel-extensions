@@ -6,9 +6,10 @@ module ArelExtensions
         include Arel::Math
         include Arel::Predications
         include Arel::OrderPredications
+
         attr_accessor :case, :conditions, :default
 
-        def initialize expression = nil, default = nil
+        def initialize(expression = nil, default = nil)
           @case = expression
           @conditions = []
           @default = default
@@ -24,6 +25,7 @@ module ArelExtensions
       class Case < Arel::Nodes::Case
         class When < Arel::Nodes::When # :nodoc:
         end
+
         class Else < Arel::Nodes::Else # :nodoc:
         end
       end
@@ -65,22 +67,22 @@ module ArelExtensions
         end
       end
 
-      def when condition, expression = nil
+      def when(condition, expression = nil)
         @conditions << Case::When.new(condition, expression)
         self
       end
 
-      def then expression
+      def then(expression)
         @conditions.last.right = expression
         self
       end
 
-      def else expression
+      def else(expression)
         @default = Case::Else.new expression
         self
       end
 
-      def initialize_copy other
+      def initialize_copy(other)
         super
         @case = @case.clone if @case
         @conditions = @conditions.map { |x| x.clone }
@@ -91,15 +93,15 @@ module ArelExtensions
         [@case, @conditions, @default].hash
       end
 
-      def eql? other
+      def eql?(other)
         self.class == other.class &&
           self.case == other.case &&
-          self.conditions == other.conditions &&
-          self.default == other.default
+          conditions == other.conditions &&
+          default == other.default
       end
-      alias :== :eql?
+      alias == eql?
 
-      def as other
+      def as(other)
         Arel::Nodes::As.new self, Arel.sql(other)
       end
     end

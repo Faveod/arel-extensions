@@ -5,9 +5,9 @@ module ArelExtensions
 
       def initialize(seed = nil)
         if seed && seed.length == 1
-          super seed
+          super
         else
-          super []
+          super([])
         end
       end
     end

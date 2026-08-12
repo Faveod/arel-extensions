@@ -1,14 +1,14 @@
 module ArelExtensions
   module Visitors
     class Arel::Visitors::IBM_DB
-      def visit_ArelExtensions_Nodes_Ceil o, collector
+      def visit_ArelExtensions_Nodes_Ceil(o, collector)
         collector << 'CEILING('
         collector = visit o.expr, collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Trim o, collector
+      def visit_ArelExtensions_Nodes_Trim(o, collector)
         collector << 'LTRIM(RTRIM('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -18,7 +18,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_DateDiff o, collector
+      def visit_ArelExtensions_Nodes_DateDiff(o, collector)
         collector << 'DAY('
         collector = visit o.left, collector
         collector << ','
@@ -31,7 +31,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Duration o, collector
+      def visit_ArelExtensions_Nodes_Duration(o, collector)
         # visit left for period
         if o.left == 'd'
           collector << 'DAY('
@@ -52,7 +52,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IsNull o, collector
+      def visit_ArelExtensions_Nodes_IsNull(o, collector)
         collector << 'COALESCE('
         collector = visit o.left, collector
         collector << ','

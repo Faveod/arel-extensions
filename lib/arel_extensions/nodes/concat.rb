@@ -2,7 +2,7 @@ module ArelExtensions::Nodes
   class Concat < Function
     RETURN_TYPE = :string
 
-    def initialize expr
+    def initialize(expr)
       tab = expr.map { |arg|
         # flatten nested concats.
         node = convert_to_node(arg)
@@ -25,8 +25,8 @@ module ArelExtensions::Nodes
       super(tab)
     end
 
-    def self.new expr
-      o = super(expr)
+    def self.new(expr)
+      o = super
       if o.expressions.length == 1
         o.expressions[0]
       else
@@ -35,7 +35,7 @@ module ArelExtensions::Nodes
     end
 
     def concat(other)
-      Concat.new(self.expressions + [other])
+      Concat.new(expressions + [other])
     end
   end
 
@@ -44,9 +44,9 @@ module ArelExtensions::Nodes
 
     attr_accessor :separator
 
-    def initialize node, separator = ', ', **opts
+    def initialize(node, separator = ', ', **opts)
       @separator = convert_to_node(separator)
-      super node, **opts
+      super(node, **opts)
     end
   end
 end

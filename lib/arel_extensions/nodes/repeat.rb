@@ -3,7 +3,7 @@ module ArelExtensions
     class Repeat < Function
       RETURN_TYPE = :string
 
-      def initialize expr
+      def initialize(expr)
         tab = expr.map { |arg|
           convert_to_node(arg)
         }
@@ -11,7 +11,7 @@ module ArelExtensions
       end
 
       def +(other)
-        ArelExtensions::Nodes::Concat.new(self.expressions + [other])
+        ArelExtensions::Nodes::Concat.new(expressions + [other])
       end
     end
   end
