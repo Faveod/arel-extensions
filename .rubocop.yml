@@ -19,6 +19,9 @@ Gemspec/RequireMFA:
 Gemspec/RequiredRubyVersion:
   Enabled: false
 
+Layout/ArgumentAlignment:
+  Enabled: false
+
 Layout/EndOfLine:
   Enabled: true
 
@@ -32,7 +35,7 @@ Layout/LineLength:
   Enabled: false
 
 Layout/MultilineMethodCallIndentation:
-  Enabled: false
+  EnforcedStyle: indented
 
 Layout/SpaceAfterComma:
   Enabled: true
@@ -162,6 +165,15 @@ Style/MultipleComparison:
     - lib/arel_extensions/boolean_functions.rb
 
 Style/NegatedIf:
+  Enabled: false
+
+Style/NegatedIfElseCondition:
+  Enabled: false
+
+Style/NegatedWhile:
+  Enabled: false
+
+Style/NestedTernary:
   Enabled: false
 
 Style/NumericLiterals:
