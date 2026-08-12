@@ -69,16 +69,14 @@ module ArelExtensions
       def visit_Arel_Nodes_Regexp(o, collector)
         collector = visit o.left, collector
         collector << ' ~ '
-        collector = visit o.right, collector
-        collector
+        visit o.right, collector
       end
 
       remove_method(:visit_Arel_Nodes_NotRegexp) rescue nil
       def visit_Arel_Nodes_NotRegexp(o, collector)
         collector = visit o.left, collector
         collector << ' !~ '
-        collector = visit o.right, collector
-        collector
+        visit o.right, collector
       end
 
       def visit_ArelExtensions_Nodes_Concat(o, collector)
@@ -275,8 +273,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_DateAdd(o, collector)
         collector = visit o.left, collector
         collector << ' + ' # (o.right.value >= 0 ? ' + ' : ' - ')
-        collector = visit o.postgresql_value(o.right), collector
-        collector
+        visit o.postgresql_value(o.right), collector
       end
 
       def visit_ArelExtensions_Nodes_DateDiff(o, collector)
@@ -307,7 +304,8 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_Duration(o, collector)
         if o.with_interval
-          interval = case o.left
+          interval =
+            case o.left
             when 'd', 'm', 'y'
               'DAY'
             when 'h', 'mn', 's'
@@ -575,8 +573,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_JsonGet(o, collector)
         collector = visit o.dict, collector
         collector << ' ->> '
-        collector = visit o.key, collector
-        collector
+        visit o.key, collector
       end
 
       def visit_ArelExtensions_Nodes_JsonSet(o, collector)

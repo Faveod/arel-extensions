@@ -46,8 +46,9 @@ module ArelExtensions
       include ArelExtensions::StringFunctions
 
       def return_type
-        obj = if @conditions.length > 0
-                @conditions.last.right
+        obj =
+          if @conditions.length > 0
+            @conditions.last.right
           elsif @default
             @default.expr
           end

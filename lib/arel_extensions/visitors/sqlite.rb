@@ -197,15 +197,13 @@ module ArelExtensions
       def visit_Arel_Nodes_Regexp(o, collector)
         collector = visit o.left, collector
         collector << ' REGEXP'
-        collector = visit o.right, collector
-        collector
+        visit o.right, collector
       end
 
       def visit_Arel_Nodes_NotRegexp(o, collector)
         collector = visit o.left, collector
         collector << ' NOT REGEXP '
-        collector = visit o.right, collector
-        collector
+        visit o.right, collector
       end
 
       def visit_ArelExtensions_Nodes_Wday(o, collector)
@@ -313,13 +311,11 @@ module ArelExtensions
             visit o.left, collector
           end
         collector << ' UNION '
-        collector =
-          if o.right.is_a?(Arel::SelectManager)
-            visit o.right.ast, collector
-          else
-            visit o.right, collector
-          end
-        collector
+        if o.right.is_a?(Arel::SelectManager)
+          visit o.right.ast, collector
+        else
+          visit o.right, collector
+        end
       end
 
       def visit_ArelExtensions_Nodes_UnionAll(o, collector)
@@ -330,13 +326,11 @@ module ArelExtensions
             visit o.left, collector
           end
         collector << ' UNION ALL '
-        collector =
-          if o.right.is_a?(Arel::SelectManager)
-            visit o.right.ast, collector
-          else
-            visit o.right, collector
-          end
-        collector
+        if o.right.is_a?(Arel::SelectManager)
+          visit o.right.ast, collector
+        else
+          visit o.right, collector
+        end
       end
 
       def get_time_converted(element)
@@ -358,32 +352,28 @@ module ArelExtensions
       def visit_Arel_Nodes_GreaterThanOrEqual(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' >= '
-        collector = visit get_time_converted(o.right), collector
-        collector
+        visit get_time_converted(o.right), collector
       end
 
       remove_method(:visit_Arel_Nodes_GreaterThan) rescue nil
       def visit_Arel_Nodes_GreaterThan(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' > '
-        collector = visit get_time_converted(o.right), collector
-        collector
+        visit get_time_converted(o.right), collector
       end
 
       remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil
       def visit_Arel_Nodes_LessThanOrEqual(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' <= '
-        collector = visit get_time_converted(o.right), collector
-        collector
+        visit get_time_converted(o.right), collector
       end
 
       remove_method(:visit_Arel_Nodes_LessThan) rescue nil
       def visit_Arel_Nodes_LessThan(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' < '
-        collector = visit get_time_converted(o.right), collector
-        collector
+        visit get_time_converted(o.right), collector
       end
 
       alias old_visit_Arel_Nodes_As visit_Arel_Nodes_As rescue nil

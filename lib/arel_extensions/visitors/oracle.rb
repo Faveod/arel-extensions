@@ -244,23 +244,24 @@ module ArelExtensions
           collector << COMMA
           collector = visit Arel.quoted(DATE_MAPPING[o.left]), collector
         else
-          right = case o.left
-          when  'd', 'm', 'y'
-            interval = 'DAY'
-            o.right.cast(:date)
-          when 'h', 'mn', 's'
-            interval = 'SECOND'
-            o.right.cast(:datetime)
-          when /i\z/
-            interval = DATE_MAPPING[o.left[0..-2]]
-            collector << '('
-            collector = visit o.right, collector
-            collector << ") * (INTERVAL '1' #{interval})"
-            return collector
-          else
-            interval = nil
-            o.right
-          end
+          right =
+            case o.left
+            when 'd', 'm', 'y'
+              interval = 'DAY'
+              o.right.cast(:date)
+            when 'h', 'mn', 's'
+              interval = 'SECOND'
+              o.right.cast(:datetime)
+            when /i\z/
+              interval = DATE_MAPPING[o.left[0..-2]]
+              collector << '('
+              collector = visit o.right, collector
+              collector << ") * (INTERVAL '1' #{interval})"
+              return collector
+            else
+              interval = nil
+              o.right
+            end
           collector << "EXTRACT(#{DATE_MAPPING[o.left]} FROM "
           collector = visit right, collector
         end
@@ -575,24 +576,21 @@ module ArelExtensions
       def visit_Arel_Nodes_GreaterThan(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' > '
-        collector = visit get_time_converted(o.right), collector
-        collector
+        visit get_time_converted(o.right), collector
       end
 
       remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil
       def visit_Arel_Nodes_LessThanOrEqual(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' <= '
-        collector = visit get_time_converted(o.right), collector
-        collector
+        visit get_time_converted(o.right), collector
       end
 
       remove_method(:visit_Arel_Nodes_LessThan) rescue nil
       def visit_Arel_Nodes_LessThan(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' < '
-        collector = visit get_time_converted(o.right), collector
-        collector
+        visit get_time_converted(o.right), collector
       end
 
       alias old_visit_Arel_Nodes_SelectStatement visit_Arel_Nodes_SelectStatement rescue nil

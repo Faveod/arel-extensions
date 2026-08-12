@@ -386,24 +386,21 @@ module ArelExtensions
           collector = visit o.left, collector
         end
         collector << ' AS '
-        collector = visit o.right, collector
-        collector
+        visit o.right, collector
       end
 
       remove_method(:visit_Arel_Nodes_Regexp) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_Regexp)
       def visit_Arel_Nodes_Regexp(o, collector)
         collector = visit o.left, collector
         collector << ' REGEXP '
-        collector = visit o.right, collector
-        collector
+        visit o.right, collector
       end
 
       remove_method(:visit_Arel_Nodes_NotRegexp) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_NotRegexp)
       def visit_Arel_Nodes_NotRegexp(o, collector)
         collector = visit o.left, collector
         collector << ' NOT REGEXP '
-        collector = visit o.right, collector
-        collector
+        visit o.right, collector
       end
 
       def visit_ArelExtensions_Nodes_IMatches(o, collector)
@@ -509,15 +506,13 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Union(o, collector)
         collector = visit o.left, collector
         collector << ' UNION '
-        collector = visit o.right, collector
-        collector
+        visit o.right, collector
       end
 
       def visit_ArelExtensions_Nodes_UnionAll(o, collector)
         collector = visit o.left, collector
         collector << ' UNION ALL '
-        collector = visit o.right, collector
-        collector
+        visit o.right, collector
       end
 
       def visit_ArelExtensions_Nodes_Case(o, collector)

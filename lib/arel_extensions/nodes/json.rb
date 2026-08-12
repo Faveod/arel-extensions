@@ -39,8 +39,8 @@ module ArelExtensions
             e.is_a?(Array) || e.is_a?(Hash) ? Json.new(e) : convert_to_json_node(e)
           }
         when Hash
-          n.reduce({}){|acc, v|
-            acc[convert_to_json_node(v[0])] = (v[1].is_a?(Array) || v[1].is_a?(Hash)) ? Json.new(v[1]) : convert_to_json_node(v[1])
+          n.reduce({}) { |acc, v|
+            acc[convert_to_json_node(v[0])] = v[1].is_a?(Array) || v[1].is_a?(Hash) ? Json.new(v[1]) : convert_to_json_node(v[1])
             acc
           }
         when String, Numeric, TrueClass, FalseClass
