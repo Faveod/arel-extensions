@@ -18,7 +18,6 @@ require 'arel_extensions/nodes/collate'
 require 'arel_extensions/nodes/levenshtein_distance'
 require 'arel_extensions/nodes/md5'
 
-
 module ArelExtensions
   module StringFunctions
     include ArelExtensions::Warning
@@ -27,7 +26,7 @@ module ArelExtensions
     def &(other)
       ArelExtensions::Nodes::FindInSet.new [
         Arel.quoted(other.is_a?(Integer) ? other.to_s : other),
-        self,
+        self
       ]
     end
 
@@ -52,11 +51,11 @@ module ArelExtensions
 
     # LOCATE function returns the first starting position of a string in another string.
     # If string1 or string2 is NULL then it returns NULL. If string1 not found in string2 then it returns 0.
-    def locate val
+    def locate(val)
       ArelExtensions::Nodes::Locate.new [self, val]
     end
 
-    def substring start, len = nil
+    def substring(start, len = nil)
       ArelExtensions::Nodes::Substring.new [self, start, len]
     end
 
@@ -71,7 +70,7 @@ module ArelExtensions
     #   It's ignored in all other cases.
     def [](start, end_ = nil)
       if start.is_a?(String) || start.is_a?(Symbol)
-        self.send(start)
+        send(start)
       elsif start.is_a?(Range)
         ArelExtensions::Nodes::Substring.new [self, start.begin + 1, start.end - start.begin + 1]
       elsif start.is_a?(Integer) && !end_
@@ -89,11 +88,11 @@ module ArelExtensions
       ArelExtensions::Nodes::Soundex.new [self]
     end
 
-    def imatches others, escape = nil
+    def imatches(others, escape = nil)
       ArelExtensions::Nodes::IMatches.new self, others, escape
     end
 
-    def imatches_any others, escape = nil
+    def imatches_any(others, escape = nil)
       grouping_any :imatches, others, escape
     end
 
@@ -110,31 +109,31 @@ module ArelExtensions
     #      res
     #    end
 
-    def imatches_all others, escape = nil
+    def imatches_all(others, escape = nil)
       grouping_all :imatches, others, escape, escape
     end
 
-    def idoes_not_match others, escape = nil
+    def idoes_not_match(others, escape = nil)
       ArelExtensions::Nodes::IDoesNotMatch.new self, others, escape
     end
 
-    def idoes_not_match_any others, escape = nil
+    def idoes_not_match_any(others, escape = nil)
       grouping_any :idoes_not_match, others, escape
     end
 
-    def idoes_not_match_all others, escape = nil
+    def idoes_not_match_all(others, escape = nil)
       grouping_all :idoes_not_match, others, escape
     end
 
-    def ai_matches other # accent insensitive & case sensitive
+    def ai_matches(other) # accent insensitive & case sensitive
       ArelExtensions::Nodes::AiMatches.new(self, other)
     end
 
-    def ai_imatches other # accent insensitive & case insensitive
+    def ai_imatches(other) # accent insensitive & case insensitive
       ArelExtensions::Nodes::AiIMatches.new(self, other)
     end
 
-    def smatches other # accent sensitive & case sensitive
+    def smatches(other) # accent sensitive & case sensitive
       ArelExtensions::Nodes::SMatches.new(self, other)
     end
 
@@ -146,12 +145,12 @@ module ArelExtensions
       ArelExtensions::Nodes::Collate.new(self, nil, false, true)
     end
 
-    def collate ai = false, ci = false, option = nil
+    def collate(ai = false, ci = false, option = nil)
       ArelExtensions::Nodes::Collate.new(self, option, ai, ci)
     end
 
     # REPLACE function replaces a sequence of characters in a string with another set of characters, not case-sensitive.
-    def replace pattern, substitute
+    def replace(pattern, substitute)
       if pattern.is_a? Regexp
         ArelExtensions::Nodes::RegexpReplace.new self, pattern, substitute
       else
@@ -159,11 +158,11 @@ module ArelExtensions
       end
     end
 
-    def regexp_replace pattern, substitute
+    def regexp_replace(pattern, substitute)
       ArelExtensions::Nodes::RegexpReplace.new self, pattern, substitute
     end
 
-    def concat other
+    def concat(other)
       ArelExtensions::Nodes::Concat.new [self, other]
     end
 
@@ -172,7 +171,7 @@ module ArelExtensions
       if orders.present?
         deprecated 'Use the kwarg `order` instead.', what: 'orders'
       end
-      order_tabs = [orders].flatten.map{ |o|
+      order_tabs = [orders].flatten.map { |o|
         if o.is_a?(Arel::Nodes::Ascending) || o.is_a?(Arel::Nodes::Descending)
           o
         elsif o.respond_to?(:asc)
@@ -183,15 +182,15 @@ module ArelExtensions
     end
 
     # Function returns a string after removing left, right or the both prefixes or suffixes int argument
-    def trim other = ' '
+    def trim(other = ' ')
       ArelExtensions::Nodes::Trim.new [self, other]
     end
 
-    def ltrim other = ' '
+    def ltrim(other = ' ')
       ArelExtensions::Nodes::Ltrim.new [self, other]
     end
 
-    def rtrim other = ' '
+    def rtrim(other = ' ')
       ArelExtensions::Nodes::Rtrim.new [self, other]
     end
 
@@ -212,15 +211,15 @@ module ArelExtensions
     end
     alias present not_blank
 
-    def repeat other = 1
+    def repeat(other = 1)
       ArelExtensions::Nodes::Repeat.new [self, other]
     end
 
-    def levenshtein_distance other
+    def levenshtein_distance(other)
       ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
     end
 
-    def edit_distance other
+    def edit_distance(other)
       ArelExtensions::Nodes::LevenshteinDistance.new [self, other]
     end
 

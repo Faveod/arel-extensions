@@ -9,7 +9,7 @@ module ArelExtensions
         @left_node_type || self.class.const_get(:RETURN_TYPE)
       end
 
-      def initialize expr
+      def initialize(expr)
         tab = expr.map { |arg|
           convert_to_node(arg)
         }

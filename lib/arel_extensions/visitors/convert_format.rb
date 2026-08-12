@@ -2,13 +2,13 @@ module ArelExtensions
   module Visitors
     # Convert date format in strftime syntax to whatever the RDBMs
     # wants, based on the table of conversion +mapping+.
-    def self.strftime_to_format format, mapping
+    def self.strftime_to_format(format, mapping)
       @mapping_regexps ||= {}
       @mapping_regexps[mapping] ||=
         Regexp.new(
           mapping
             .keys
-            .map{|k| Regexp.escape(k)}
+            .map { |k| Regexp.escape(k) }
             .join('|')
         )
 

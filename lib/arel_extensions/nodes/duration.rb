@@ -5,8 +5,8 @@ module ArelExtensions
 
       attr_accessor :with_interval
 
-      def initialize left, right, aliaz = nil
-        tab = Array.new
+      def initialize(left, right, aliaz = nil)
+        tab = []
         tab << left
         tab << right
         @with_interval = left.end_with?('i')

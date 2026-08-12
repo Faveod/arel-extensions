@@ -25,7 +25,7 @@ module ArelExtensions
       end
 
       if private_method_defined?(:visit_Arel_Nodes_SelectCore) || method_defined?(:visit_Arel_Nodes_SelectCore)
-        alias_method(:old_visit_Arel_Nodes_SelectCore, :visit_Arel_Nodes_SelectCore)
+        alias old_visit_Arel_Nodes_SelectCore visit_Arel_Nodes_SelectCore
       end
       # The whole purpose of this override is to fix the behavior of RollUp.
       # All other databases treat RollUp sanely, execpt MySQL which requires
@@ -33,7 +33,7 @@ module ArelExtensions
       def visit_Arel_Nodes_SelectCore(o, collector)
         collector << 'SELECT'
 
-        collector = collect_optimizer_hints(o, collector) if self.respond_to?(:collect_optimizer_hints, true)
+        collector = collect_optimizer_hints(o, collector) if respond_to?(:collect_optimizer_hints, true)
         collector = maybe_visit o.set_quantifier, collector
 
         collect_nodes_for o.projections, collector, ' '
@@ -65,7 +65,7 @@ module ArelExtensions
       end
 
       # Math functions
-      def visit_ArelExtensions_Nodes_Log10 o, collector
+      def visit_ArelExtensions_Nodes_Log10(o, collector)
         collector << 'LOG10('
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::ToSql::COMMA if i != 0
@@ -75,7 +75,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Power o, collector
+      def visit_ArelExtensions_Nodes_Power(o, collector)
         collector << 'POW('
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::ToSql::COMMA if i != 0
@@ -86,21 +86,21 @@ module ArelExtensions
       end
 
       # String functions
-      def visit_ArelExtensions_Nodes_ByteSize o, collector
+      def visit_ArelExtensions_Nodes_ByteSize(o, collector)
         collector << 'LENGTH('
         collector = visit o.expr.coalesce(''), collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_CharLength o, collector
+      def visit_ArelExtensions_Nodes_CharLength(o, collector)
         collector << 'CHAR_LENGTH('
         collector = visit o.expr.coalesce(''), collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
+      def visit_ArelExtensions_Nodes_IMatches(o, collector) # insensitive on ASCII
         collector << 'LOWER('
         collector = visit o.left, collector
         collector << ') LIKE LOWER('
@@ -113,7 +113,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_AiMatches o, collector
+      def visit_ArelExtensions_Nodes_AiMatches(o, collector)
         collector = visit o.left.ai_collate, collector
         collector << ' LIKE '
         collector = visit o.right.ai_collate, collector
@@ -124,7 +124,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_AiIMatches o, collector
+      def visit_ArelExtensions_Nodes_AiIMatches(o, collector)
         collector = visit o.left.ai_collate, collector
         collector << ' LIKE '
         collector = visit o.right.ai_collate, collector
@@ -135,7 +135,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_SMatches o, collector
+      def visit_ArelExtensions_Nodes_SMatches(o, collector)
         collector = visit o.left.collate, collector
         collector << ' LIKE '
         collector = visit o.right.collate, collector
@@ -146,7 +146,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
+      def visit_ArelExtensions_Nodes_IDoesNotMatch(o, collector)
         collector << 'LOWER('
         collector = visit o.left, collector
         collector << ') NOT LIKE LOWER('
@@ -159,7 +159,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Collate o, collector
+      def visit_ArelExtensions_Nodes_Collate(o, collector)
         charset =
           case o.expressions.first
           when Arel::Attributes::Attribute
@@ -170,7 +170,7 @@ module ArelExtensions
               Arel::Table.engine.connection.charset || 'utf8'
             end
           else
-            (o.option == 'latin1') ? 'latin1' : 'utf8'
+            o.option == 'latin1' ? 'latin1' : 'utf8'
           end
         collector = visit o.expressions.first, collector
         collector <<
@@ -185,7 +185,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Concat o, collector
+      def visit_ArelExtensions_Nodes_Concat(o, collector)
         collector << 'CONCAT('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -206,7 +206,7 @@ module ArelExtensions
         collector << ' WITH ROLLUP'
       end
 
-      def visit_ArelExtensions_Nodes_GroupConcat o, collector
+      def visit_ArelExtensions_Nodes_GroupConcat(o, collector)
         collector << 'GROUP_CONCAT('
         collector = visit o.left, collector
         if !o.order.blank?
@@ -225,7 +225,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Trim o, collector
+      def visit_ArelExtensions_Nodes_Trim(o, collector)
         collector << 'TRIM(' # BOTH
         collector = visit o.right, collector
         collector << ' FROM '
@@ -234,7 +234,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Ltrim o, collector
+      def visit_ArelExtensions_Nodes_Ltrim(o, collector)
         collector << 'TRIM(LEADING '
         collector = visit o.right, collector
         collector << ' FROM '
@@ -243,7 +243,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Rtrim o, collector
+      def visit_ArelExtensions_Nodes_Rtrim(o, collector)
         collector << 'TRIM(TRAILING '
         collector = visit o.right, collector
         collector << ' FROM '
@@ -252,7 +252,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Repeat o, collector
+      def visit_ArelExtensions_Nodes_Repeat(o, collector)
         collector << 'REPEAT('
         o.expressions.each_with_index { |arg, i|
           collector << Arel::Visitors::ToSql::COMMA if i != 0
@@ -262,14 +262,14 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_RegexpReplace o, collector
+      def visit_ArelExtensions_Nodes_RegexpReplace(o, collector)
         if !regexp_replace_supported?
           warn('Warning: ArelExtensions: REGEXP_REPLACE does not seem to be available in the current version of the DBMS, it might crash')
         end
-        super(o, collector)
+        super
       end
 
-      def visit_ArelExtensions_Nodes_Format o, collector
+      def visit_ArelExtensions_Nodes_Format(o, collector)
         # One use case we met is
         # `case…when…then(valid_date).else(Arel.null).format(…)`.
         #
@@ -278,10 +278,12 @@ module ArelExtensions
         # infer the proper type.
         first = o.expressions[0]
         type =
-          o.col_type.nil? \
-            && (first.respond_to?(:return_type) && !first&.return_type.nil?) \
-          ? first&.return_type \
-          : o.col_type
+          if o.col_type.nil? \
+            && first.respond_to?(:return_type) && !first&.return_type.nil?
+            first&.return_type
+          else
+            o.col_type
+          end
 
         case type
         when :date, :datetime, :time
@@ -300,8 +302,8 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_FormattedDate o, collector
-        fmt = ArelExtensions::Visitors::strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
+      def visit_ArelExtensions_Nodes_FormattedDate(o, collector)
+        fmt = ArelExtensions::Visitors.strftime_to_format(o.iso_format, DATE_FORMAT_DIRECTIVES)
         collector << 'DATE_FORMAT('
         collector << 'CONVERT_TZ(' if o.time_zone
         collector = visit o.left, collector
@@ -323,7 +325,7 @@ module ArelExtensions
         collector << ')'
       end
 
-      def visit_ArelExtensions_Nodes_DateDiff o, collector
+      def visit_ArelExtensions_Nodes_DateDiff(o, collector)
         case o.right_node_type
         when :ruby_date, :ruby_time, :date, :datetime, :time
           collector <<
@@ -353,7 +355,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_DateAdd o, collector
+      def visit_ArelExtensions_Nodes_DateAdd(o, collector)
         collector << 'DATE_ADD('
         collector = visit o.left, collector
         collector << COMMA
@@ -362,7 +364,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Duration o, collector
+      def visit_ArelExtensions_Nodes_Duration(o, collector)
         if o.left == 'wd'
           collector << '(WEEKDAY('
           collector = visit o.right, collector
@@ -388,28 +390,28 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IsNull o, collector
+      def visit_ArelExtensions_Nodes_IsNull(o, collector)
         collector << 'ISNULL('
         collector = visit o.expr, collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IsNotNull o, collector
+      def visit_ArelExtensions_Nodes_IsNotNull(o, collector)
         collector << 'NOT ISNULL('
-          collector = visit o.expr, collector
-          collector << ')'
-          collector
+        collector = visit o.expr, collector
+        collector << ')'
+        collector
       end
 
-      def visit_ArelExtensions_Nodes_Wday o, collector
+      def visit_ArelExtensions_Nodes_Wday(o, collector)
         collector << '(WEEKDAY('
         collector = visit o.date, collector
         collector << ') + 1) % 7'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Cast o, collector
+      def visit_ArelExtensions_Nodes_Cast(o, collector)
         as_attr =
           case o.as_attr
           when :binary           then 'binary'
@@ -430,8 +432,8 @@ module ArelExtensions
         collector
       end
 
-      alias_method(:old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement) rescue nil
-      def visit_Arel_Nodes_SelectStatement o, collector
+      alias old_visit_Arel_Nodes_SelectStatement visit_Arel_Nodes_SelectStatement rescue nil
+      def visit_Arel_Nodes_SelectStatement(o, collector)
         if !(collector.value.blank? || (collector.value.is_a?(Array) && collector.value[0].blank?)) && o.limit.blank? && o.offset.blank?
           o = o.dup
           o.orders = []
@@ -439,8 +441,8 @@ module ArelExtensions
         old_visit_Arel_Nodes_SelectStatement(o, collector)
       end
 
-      alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil
-      def visit_Arel_Nodes_As o, collector
+      alias old_visit_Arel_Nodes_As visit_Arel_Nodes_As rescue nil
+      def visit_Arel_Nodes_As(o, collector)
         if o.left.is_a?(Arel::Nodes::Binary)
           collector << '('
           collector = visit o.left, collector
@@ -460,7 +462,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_FormattedNumber o, collector
+      def visit_ArelExtensions_Nodes_FormattedNumber(o, collector)
         col = o.left.coalesce(0)
         params = o.locale ? [o.precision, Arel.quoted(o.locale)] : [o.precision]
         sign = Arel.when(col < 0).
@@ -510,7 +512,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_Aggregate_For_AggregateFunction o, collector
+      def visit_Aggregate_For_AggregateFunction(o, collector)
         if !window_supported?
           warn('Warning: ArelExtensions: Window Functions are not available in the current version of the DBMS.')
           return collector
@@ -533,7 +535,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Std o, collector
+      def visit_ArelExtensions_Nodes_Std(o, collector)
         collector << (o.unbiased_estimator ? 'STDDEV_SAMP(' : 'STDDEV_POP(')
         visit o.left, collector
         collector << ')'
@@ -541,7 +543,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Variance o, collector
+      def visit_ArelExtensions_Nodes_Variance(o, collector)
         collector << (o.unbiased_estimator ? 'VAR_SAMP(' : 'VAR_POP(')
         visit o.left, collector
         collector << ')'
@@ -564,19 +566,19 @@ module ArelExtensions
 
       def version_supported?(mariadb_v = '10.2.3', mysql_v = '5.7.0')
         conn = Arel::Table.engine.connection
-        conn.send(:mariadb?) && \
-          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mariadb_v || \
-          conn.respond_to?(:version) && conn.send(:version) >= mariadb_v || \
-          conn.instance_variable_get(:"@version") && conn.instance_variable_get(:"@version") >= mariadb_v) || \
-          !conn.send(:mariadb?) && \
-            (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mysql_v || \
-            conn.respond_to?(:version) && conn.send(:version) >= mysql_v || \
-            conn.instance_variable_get(:"@version") && conn.instance_variable_get(:"@version") >= mysql_v)
+        conn.send(:mariadb?) &&
+          (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mariadb_v ||
+          conn.respond_to?(:version) && conn.send(:version) >= mariadb_v ||
+          conn.instance_variable_get(:@version) && conn.instance_variable_get(:@version) >= mariadb_v) ||
+          !conn.send(:mariadb?) &&
+            (conn.respond_to?(:get_database_version) && conn.send(:get_database_version) >= mysql_v ||
+            conn.respond_to?(:version) && conn.send(:version) >= mysql_v ||
+            conn.instance_variable_get(:@version) && conn.instance_variable_get(:@version) >= mysql_v)
         # ideally we should parse the instance_variable @full_version because @version contains only the supposedly
         # corresponding mysql version of the current mariadb version (which is not very helpful most of the time)
       end
 
-      def visit_ArelExtensions_Nodes_Json o, collector
+      def visit_ArelExtensions_Nodes_Json(o, collector)
         return super if !json_supported?
 
         case o.dict
@@ -606,7 +608,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonMerge o, collector
+      def visit_ArelExtensions_Nodes_JsonMerge(o, collector)
         collector << 'JSON_MERGE_PATCH('
         o.expressions.each.with_index do |v, i|
           if i != 0
@@ -618,7 +620,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonGet o, collector
+      def visit_ArelExtensions_Nodes_JsonGet(o, collector)
         collector << 'JSON_EXTRACT('
         collector = visit o.dict, collector
         collector << COMMA
@@ -631,7 +633,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonSet o, collector
+      def visit_ArelExtensions_Nodes_JsonSet(o, collector)
         collector << 'JSON_SET('
         collector = visit o.dict, collector
         collector << COMMA
@@ -646,7 +648,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonGroup o, collector
+      def visit_ArelExtensions_Nodes_JsonGroup(o, collector)
         return super if !json_supported?
 
         if o.as_array

@@ -26,8 +26,8 @@ module ArelExtensions
         self.class.const_get(:RETURN_TYPE)
       end
 
-      def as other
-        res = Arel::Nodes::As.new(self.clone, Arel.sql(other))
+      def as(other)
+        res = Arel::Nodes::As.new(clone, Arel.sql(other))
         self.alias = Arel.sql(other)
         res
       end
@@ -80,7 +80,7 @@ module ArelExtensions
         when ActiveSupport::Duration
           Arel.sql(object.to_i)
         when Array
-          Arel.grouping(object.map{|e| convert_to_node(e)})
+          Arel.grouping(object.map { |e| convert_to_node(e) })
         else
           raise(ArgumentError, "#{object.class} cannot be converted to CONCAT arg")
         end
@@ -93,7 +93,7 @@ module ArelExtensions
         when Integer
           Arel.quoted(object.to_s)
         when Arel::Attributes::Attribute
-          case self.type_of_attribute(object)
+          case type_of_attribute(object)
           when :date
             ArelExtensions::Nodes::Format.new [object, 'yyyy-mm-dd']
           when :time

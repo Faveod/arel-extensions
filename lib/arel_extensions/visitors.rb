@@ -43,7 +43,7 @@ end
 
 if defined?(Arel::Visitors::DepthFirst)
   class Arel::Visitors::DepthFirst
-    def visit_Arel_SelectManager o
+    def visit_Arel_SelectManager(o)
       visit o.ast
     end
   end
@@ -53,8 +53,8 @@ if defined?(Arel::Visitors::MSSQL)
   class Arel::Visitors::MSSQL
     include ArelExtensions::Visitors::MSSQL
 
-    alias_method(:old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement)
-    def visit_Arel_Nodes_SelectStatement o, collector
+    alias old_visit_Arel_Nodes_SelectStatement visit_Arel_Nodes_SelectStatement
+    def visit_Arel_Nodes_SelectStatement(o, collector)
       if !collector.value.blank? && o.limit.blank? && o.offset.blank?
         o = o.dup
         o.orders = []
@@ -90,8 +90,8 @@ if defined?(Arel::Visitors::SQLServer)
     # It might be something different, but this is the first thing we should
     # investigate.
 
-    alias_method(:old_visit_Arel_Nodes_SelectStatement, :visit_Arel_Nodes_SelectStatement) rescue nil
-    def visit_Arel_Nodes_SelectStatement o, collector
+    alias old_visit_Arel_Nodes_SelectStatement visit_Arel_Nodes_SelectStatement rescue nil
+    def visit_Arel_Nodes_SelectStatement(o, collector)
       if !collector.value.blank? && o.limit.blank? && o.offset.blank?
         o = o.dup
         o.orders = []

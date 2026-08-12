@@ -5,7 +5,7 @@ module ArelExtensions
 
       attr_accessor :as_attr
 
-      def initialize expr
+      def initialize(expr)
         @as_attr = expr[1]
         case expr[1]
         when :int, 'bigint', 'int', 'smallint', 'tinyint', 'bit'
@@ -42,13 +42,11 @@ module ArelExtensions
         when :ruby_time
           ArelExtensions::Nodes::DateAdd.new [self, other]
         else
-          Arel.grouping(Arel::Nodes::Addition.new self, other)
+          Arel.grouping(Arel::Nodes::Addition.new(self, other))
         end
       end
 
-      def return_type
-        @return_type
-      end
+      attr_reader :return_type
     end
   end
 end

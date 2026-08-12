@@ -8,7 +8,7 @@ module ArelExtensions
       self.and(other)
     end
 
-    def and *others
+    def and(*others)
       Arel::Nodes::And.new self, others
     end
 
@@ -16,7 +16,7 @@ module ArelExtensions
       self.or(other)
     end
 
-    def or *others
+    def or(*others)
       Arel::Nodes::Or.new self, others
     end
 
@@ -29,7 +29,7 @@ end
 class Arel::Nodes::And
   include ArelExtensions::BooleanFunctions
 
-  def self.new *children
+  def self.new(*children)
     children =
       children.flatten.map { |c|
         c.is_a?(self) ? c.children : c
@@ -49,7 +49,7 @@ class Arel::Nodes::Or
 
   attr_reader :children
 
-  def self.new *children
+  def self.new(*children)
     children =
       children.flatten.map { |c|
         c.is_a?(self) ? c.children : c
@@ -57,7 +57,7 @@ class Arel::Nodes::Or
     super
   end
 
-  def initialize *children
+  def initialize(*children)
     @children = children
   end
 

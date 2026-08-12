@@ -5,7 +5,7 @@ module ArelExtensions
 
       # Escape properly the string expression expr.
       # Take care of escaping.
-      def make_json_string expr
+      def make_json_string(expr)
         Arel.quoted('"') \
         + expr
             .coalesce('')
@@ -24,7 +24,7 @@ module ArelExtensions
       end
 
       # Math Functions
-      def visit_ArelExtensions_Nodes_Abs o, collector
+      def visit_ArelExtensions_Nodes_Abs(o, collector)
         collector << 'ABS('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -34,7 +34,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Ceil o, collector
+      def visit_ArelExtensions_Nodes_Ceil(o, collector)
         collector << 'CEIL('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -44,7 +44,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Floor o, collector
+      def visit_ArelExtensions_Nodes_Floor(o, collector)
         collector << 'FLOOR('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -54,7 +54,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Rand o, collector
+      def visit_ArelExtensions_Nodes_Rand(o, collector)
         collector << 'RAND('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -64,7 +64,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Round o, collector
+      def visit_ArelExtensions_Nodes_Round(o, collector)
         collector << 'ROUND('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -74,14 +74,14 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Log10 o, collector
+      def visit_ArelExtensions_Nodes_Log10(o, collector)
         collector << 'LOG10('
         collector = visit o.left, collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Power o, collector
+      def visit_ArelExtensions_Nodes_Power(o, collector)
         collector << 'POW('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -91,7 +91,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Sum o, collector
+      def visit_ArelExtensions_Nodes_Sum(o, collector)
         collector << 'SUM('
         collector = visit o.expr, collector
         collector << ')'
@@ -99,7 +99,7 @@ module ArelExtensions
       end
 
       # String functions
-      def visit_ArelExtensions_Nodes_Concat o, collector
+      def visit_ArelExtensions_Nodes_Concat(o, collector)
         collector << 'CONCAT('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -109,7 +109,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_GroupConcat o, collector
+      def visit_ArelExtensions_Nodes_GroupConcat(o, collector)
         collector << 'GROUP_CONCAT('
         collector = visit o.left, collector
         sep = o.separator.is_a?(Arel::Nodes::Quoted) ? o.separator.expr : o.separator
@@ -121,7 +121,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_MD5 o, collector
+      def visit_ArelExtensions_Nodes_MD5(o, collector)
         collector << 'MD5('
         collector = visit o.left, collector
         collector << ')'
@@ -135,7 +135,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Locate o, collector
+      def visit_ArelExtensions_Nodes_Locate(o, collector)
         collector << 'LOCATE('
         collector = visit o.right, collector
         collector << COMMA
@@ -144,7 +144,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Substring o, collector
+      def visit_ArelExtensions_Nodes_Substring(o, collector)
         collector << 'SUBSTRING('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -154,7 +154,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Replace o, collector
+      def visit_ArelExtensions_Nodes_Replace(o, collector)
         collector << 'REPLACE('
         visit o.left, collector
         collector << COMMA
@@ -165,7 +165,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_RegexpReplace o, collector
+      def visit_ArelExtensions_Nodes_RegexpReplace(o, collector)
         collector << 'REGEXP_REPLACE('
         visit o.left, collector
         collector << COMMA
@@ -176,7 +176,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Repeat o, collector
+      def visit_ArelExtensions_Nodes_Repeat(o, collector)
         collector << 'REPEAT('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -186,7 +186,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_FindInSet o, collector
+      def visit_ArelExtensions_Nodes_FindInSet(o, collector)
         collector << 'FIND_IN_SET('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -196,7 +196,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Soundex o, collector
+      def visit_ArelExtensions_Nodes_Soundex(o, collector)
         collector << 'SOUNDEX('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -206,7 +206,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Downcase o, collector
+      def visit_ArelExtensions_Nodes_Downcase(o, collector)
         collector << 'LOWER('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -216,7 +216,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Upcase o, collector
+      def visit_ArelExtensions_Nodes_Upcase(o, collector)
         collector << 'UPPER('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -226,7 +226,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Trim o, collector
+      def visit_ArelExtensions_Nodes_Trim(o, collector)
         collector << 'TRIM('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -236,7 +236,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Ltrim o, collector
+      def visit_ArelExtensions_Nodes_Ltrim(o, collector)
         collector << 'LTRIM('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -246,7 +246,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Rtrim o, collector
+      def visit_ArelExtensions_Nodes_Rtrim(o, collector)
         collector << 'RTRIM('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -256,7 +256,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Blank o, collector
+      def visit_ArelExtensions_Nodes_Blank(o, collector)
         # visit o.left.coalesce('').trim.length.eq(0), collector
         collector << 'LENGTH(TRIM(COALESCE('
         collector = visit o.expr, collector
@@ -266,7 +266,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_NotBlank o, collector
+      def visit_ArelExtensions_Nodes_NotBlank(o, collector)
         # visit o.left.coalesce('').trim.length.gt(0), collector
         collector << 'LENGTH(TRIM(COALESCE('
         collector = visit o.expr, collector
@@ -276,7 +276,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Format o, collector
+      def visit_ArelExtensions_Nodes_Format(o, collector)
         case o.col_type
         when :date, :datetime, :time
           collector << 'STRFTIME('
@@ -296,7 +296,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_FormattedDate o, collector
+      def visit_ArelExtensions_Nodes_FormattedDate(o, collector)
         case o.col_type
         when :date, :datetime, :time
           collector << 'STRFTIME('
@@ -318,7 +318,7 @@ module ArelExtensions
 
       # comparators
 
-      def visit_ArelExtensions_Nodes_Cast o, collector
+      def visit_ArelExtensions_Nodes_Cast(o, collector)
         as_attr =
           case o.as_attr
           when :binary                   then 'binary'
@@ -339,7 +339,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Coalesce o, collector
+      def visit_ArelExtensions_Nodes_Coalesce(o, collector)
         collector << 'COALESCE('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -349,9 +349,9 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_DateDiff o, collector
+      def visit_ArelExtensions_Nodes_DateDiff(o, collector)
         collector <<
-          if o.left_node_type == :ruby_time || o.left_node_type == :datetime || o.left_node_type == :time
+          if %i[ruby_time datetime time].include?(o.left_node_type)
             'TIMEDIFF('
           else
             'DATEDIFF('
@@ -363,7 +363,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_DateSub o, collector
+      def visit_ArelExtensions_Nodes_DateSub(o, collector)
         collector << 'DATE_SUB('
         collector = visit o.left, collector
         collector << COMMA
@@ -374,7 +374,7 @@ module ArelExtensions
 
       # override
       remove_method(:visit_Arel_Nodes_As) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_As)
-      def visit_Arel_Nodes_As o, collector
+      def visit_Arel_Nodes_As(o, collector)
         if o.left.respond_to?(:alias)
           o.left.alias = nil
         end
@@ -391,7 +391,7 @@ module ArelExtensions
       end
 
       remove_method(:visit_Arel_Nodes_Regexp) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_Regexp)
-      def visit_Arel_Nodes_Regexp o, collector
+      def visit_Arel_Nodes_Regexp(o, collector)
         collector = visit o.left, collector
         collector << ' REGEXP '
         collector = visit o.right, collector
@@ -399,14 +399,14 @@ module ArelExtensions
       end
 
       remove_method(:visit_Arel_Nodes_NotRegexp) rescue nil # if Arel::Visitors::ToSql.method_defined?(:visit_Arel_Nodes_NotRegexp)
-      def visit_Arel_Nodes_NotRegexp o, collector
+      def visit_Arel_Nodes_NotRegexp(o, collector)
         collector = visit o.left, collector
         collector << ' NOT REGEXP '
         collector = visit o.right, collector
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IMatches o, collector
+      def visit_ArelExtensions_Nodes_IMatches(o, collector)
         collector = infix_value o, collector, ' ILIKE '
         if o.escape
           collector << ' ESCAPE '
@@ -416,7 +416,7 @@ module ArelExtensions
         end
       end
 
-      def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
+      def visit_ArelExtensions_Nodes_IDoesNotMatch(o, collector)
         collector = infix_value o, collector, ' NOT ILIKE '
         if o.escape
           collector << ' ESCAPE '
@@ -425,21 +425,21 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IsNull o, collector
+      def visit_ArelExtensions_Nodes_IsNull(o, collector)
         collector << 'ISNULL('
         collector = visit o.expr, collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IsNotNull o, collector
+      def visit_ArelExtensions_Nodes_IsNotNull(o, collector)
         collector << 'NOT ISNULL('
         collector = visit o.expr, collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Then o, collector
+      def visit_ArelExtensions_Nodes_Then(o, collector)
         collector << 'CASE WHEN ('
         collector = visit o.left, collector
         collector << ') THEN '
@@ -453,7 +453,7 @@ module ArelExtensions
       end
 
       # Date operations
-      def visit_ArelExtensions_Nodes_DateAdd o, collector
+      def visit_ArelExtensions_Nodes_DateAdd(o, collector)
         collector << 'DATE_ADD('
         collector = visit o.left, collector
         collector << COMMA
@@ -463,7 +463,7 @@ module ArelExtensions
       end
 
       if AREL_VERSION < V7
-        def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        def visit_ArelExtensions_InsertManager_BulkValues(o, collector)
           collector << 'VALUES '
           row_nb = o.left.length
           o.left.each_with_index do |row, idx|
@@ -483,7 +483,7 @@ module ArelExtensions
           collector
         end
       else
-        def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        def visit_ArelExtensions_InsertManager_BulkValues(o, collector)
           collector << 'VALUES '
           row_nb = o.left.length
           o.left.each_with_index do |row, idx|
@@ -506,21 +506,21 @@ module ArelExtensions
         end
       end
 
-      def visit_ArelExtensions_Nodes_Union o, collector
+      def visit_ArelExtensions_Nodes_Union(o, collector)
         collector = visit o.left, collector
         collector << ' UNION '
         collector = visit o.right, collector
         collector
       end
 
-      def visit_ArelExtensions_Nodes_UnionAll o, collector
+      def visit_ArelExtensions_Nodes_UnionAll(o, collector)
         collector = visit o.left, collector
         collector << ' UNION ALL '
         collector = visit o.right, collector
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Case o, collector
+      def visit_ArelExtensions_Nodes_Case(o, collector)
         collector << 'CASE '
         if o.case
           visit o.case, collector
@@ -537,44 +537,44 @@ module ArelExtensions
         collector << 'END'
       end
 
-      def visit_ArelExtensions_Nodes_Case_When o, collector
+      def visit_ArelExtensions_Nodes_Case_When(o, collector)
         collector << 'WHEN '
         visit Arel.quoted(o.left), collector
         collector << ' THEN '
         visit Arel.quoted(o.right), collector
       end
 
-      def visit_ArelExtensions_Nodes_Case_Else o, collector
+      def visit_ArelExtensions_Nodes_Case_Else(o, collector)
         collector << 'ELSE '
         visit Arel.quoted(o.expr), collector
       end
 
-      def visit_ArelExtensions_Nodes_FormattedNumber o, collector
+      def visit_ArelExtensions_Nodes_FormattedNumber(o, collector)
         visit o.left, collector
       end
 
       remove_method(:visit_Arel_Nodes_LessThan) rescue nil
-      def visit_Arel_Nodes_LessThan o, collector
+      def visit_Arel_Nodes_LessThan(o, collector)
         collector = visit o.left, collector
         collector << ' < '
         visit o.right, collector
       end
 
-      def visit_ArelExtensions_Nodes_Std o, collector
+      def visit_ArelExtensions_Nodes_Std(o, collector)
         collector << 'STD('
         visit o.left, collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Variance o, collector
+      def visit_ArelExtensions_Nodes_Variance(o, collector)
         collector << 'VARIANCE('
         visit o.left, collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_LevenshteinDistance o, collector
+      def visit_ArelExtensions_Nodes_LevenshteinDistance(o, collector)
         collector << 'LEVENSHTEIN_DISTANCE('
         collector = visit o.left, collector
         collector << COMMA
@@ -585,8 +585,8 @@ module ArelExtensions
 
       # Boolean logic.
 
-      alias_method(:old_visit_Arel_Nodes_And, :visit_Arel_Nodes_And) rescue nil
-      def visit_Arel_Nodes_And o, collector
+      alias old_visit_Arel_Nodes_And visit_Arel_Nodes_And rescue nil
+      def visit_Arel_Nodes_And(o, collector)
         case o.children.length
         when 0
           collector << '1 = 1' # but this should not happen
@@ -605,8 +605,8 @@ module ArelExtensions
         collector
       end
 
-      alias_method(:old_visit_Arel_Nodes_Or, :visit_Arel_Nodes_Or) rescue nil
-      def visit_Arel_Nodes_Or o, collector
+      alias old_visit_Arel_Nodes_Or visit_Arel_Nodes_Or rescue nil
+      def visit_Arel_Nodes_Or(o, collector)
         case o.children.length
         when 0
           collector << '1 = 0' # but this should not happen
@@ -645,7 +645,7 @@ module ArelExtensions
         end
       end
 
-      def visit_ArelExtensions_Nodes_Json o, collector
+      def visit_ArelExtensions_Nodes_Json(o, collector)
         case o.dict
         when Array
           res = Arel.quoted('[')
@@ -674,7 +674,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_JsonGroup o, collector
+      def visit_ArelExtensions_Nodes_JsonGroup(o, collector)
         if o.as_array
           res =
             Arel.quoted('[') \
@@ -686,13 +686,13 @@ module ArelExtensions
           orders = o.orders || o.dict.keys
           o.dict.each.with_index do |(k, v), i|
             if i != 0
-              res = res + ', '
+              res += ', '
             end
             kv = make_json_string(ArelExtensions::Nodes::Cast.new([k, :string])) + ': '
             kv += json_value(o, v)
-            res = res + kv.group_concat(', ', order: Array(orders)).coalesce('')
+            res += kv.group_concat(', ', order: Array(orders)).coalesce('')
           end
-          res = res + '}'
+          res += '}'
           collector = visit res, collector
         end
         collector

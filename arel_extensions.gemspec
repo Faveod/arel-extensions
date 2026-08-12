@@ -1,4 +1,4 @@
-$:.push File.expand_path('../lib', __FILE__)
+$:.push File.expand_path('lib', __dir__)
 require 'arel_extensions/version'
 
 Gem::Specification.new do |s|
@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
 
   # Manifest
   s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ['lib']
 
   s.add_dependency('activerecord', '>= 6.0')

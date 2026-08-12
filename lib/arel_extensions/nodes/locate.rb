@@ -3,7 +3,7 @@ module ArelExtensions
     class Locate < Function
       RETURN_TYPE = :integer
 
-      def initialize expr
+      def initialize(expr)
         tab = expr.map do |arg|
           convert_to_node(arg)
         end

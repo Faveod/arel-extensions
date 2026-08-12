@@ -18,7 +18,7 @@ module ArelExtensions
       }.freeze
 
       # String functions
-      def visit_ArelExtensions_Nodes_ByteSize o, collector
+      def visit_ArelExtensions_Nodes_ByteSize(o, collector)
         # sqlite 3.43.0 (2023-08-24) introduced `octet_length`, but we still support older versions.
         # https://sqlite.org/changes.html
         collector << 'length(CAST('
@@ -27,14 +27,14 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_CharLength o, collector
+      def visit_ArelExtensions_Nodes_CharLength(o, collector)
         collector << 'length('
         collector = visit o.expr.coalesce(''), collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IMatches o, collector # insensitive on ASCII
+      def visit_ArelExtensions_Nodes_IMatches(o, collector) # insensitive on ASCII
         collector = visit o.left.ci_collate, collector
         collector << ' LIKE '
         collector = visit o.right.ci_collate, collector
@@ -46,7 +46,7 @@ module ArelExtensions
         end
       end
 
-      def visit_ArelExtensions_Nodes_AiMatches o, collector
+      def visit_ArelExtensions_Nodes_AiMatches(o, collector)
         collector = visit o.left.ai_collate, collector
         collector << ' LIKE '
         collector = visit o.right.ai_collate, collector
@@ -58,7 +58,7 @@ module ArelExtensions
         end
       end
 
-      def visit_ArelExtensions_Nodes_AiIMatches o, collector
+      def visit_ArelExtensions_Nodes_AiIMatches(o, collector)
         collector = visit o.left.collate(true, true), collector
         collector << ' LIKE '
         collector = visit o.right.collate(true, true), collector
@@ -70,7 +70,7 @@ module ArelExtensions
         end
       end
 
-      def visit_ArelExtensions_Nodes_SMatches o, collector
+      def visit_ArelExtensions_Nodes_SMatches(o, collector)
         collector = visit o.left.collate, collector
         collector << ' LIKE '
         collector = visit o.right.collate, collector
@@ -82,7 +82,7 @@ module ArelExtensions
         end
       end
 
-      def visit_ArelExtensions_Nodes_Collate o, collector
+      def visit_ArelExtensions_Nodes_Collate(o, collector)
         if o.ai
           collector = visit o.expressions.first, collector
           collector << ' COLLATE NOACCENTS'
@@ -96,7 +96,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IDoesNotMatch o, collector
+      def visit_ArelExtensions_Nodes_IDoesNotMatch(o, collector)
         collector = visit o.left.lower, collector
         collector << ' NOT LIKE '
         collector = visit o.right.lower(o.right), collector
@@ -109,7 +109,7 @@ module ArelExtensions
       end
 
       # Date operations
-      def visit_ArelExtensions_Nodes_DateAdd o, collector
+      def visit_ArelExtensions_Nodes_DateAdd(o, collector)
         collector << 'date('
         collector = visit o.expressions.first, collector
         collector << COMMA
@@ -118,7 +118,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_DateDiff o, collector
+      def visit_ArelExtensions_Nodes_DateDiff(o, collector)
         case o.left_node_type
         when :ruby_time, :datetime, :time
           collector << "strftime('%s', "
@@ -135,14 +135,14 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Duration o, collector
+      def visit_ArelExtensions_Nodes_Duration(o, collector)
         collector << "strftime('#{DATE_MAPPING[o.left]}'#{COMMA}"
         collector = visit o.right, collector
         collector << ')'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Locate o, collector
+      def visit_ArelExtensions_Nodes_Locate(o, collector)
         collector << 'instr('
         collector = visit o.expr, collector
         collector << COMMA
@@ -151,7 +151,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Concat o, collector
+      def visit_ArelExtensions_Nodes_Concat(o, collector)
         collector << '('
         o.expressions.each_with_index { |arg, i|
           collector = visit arg, collector
@@ -161,7 +161,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Substring o, collector
+      def visit_ArelExtensions_Nodes_Substring(o, collector)
         collector << 'SUBSTR('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0
@@ -171,21 +171,21 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IsNull o, collector
+      def visit_ArelExtensions_Nodes_IsNull(o, collector)
         collector = visit o.expr, collector
         collector << ' IS NULL'
         collector
       end
 
-      def visit_ArelExtensions_Nodes_IsNotNull o, collector
+      def visit_ArelExtensions_Nodes_IsNotNull(o, collector)
         collector = visit o.expr, collector
-          collector << ' IS NOT NULL'
-          collector
+        collector << ' IS NOT NULL'
+        collector
       end
 
-      def visit_ArelExtensions_Nodes_Rand o, collector
+      def visit_ArelExtensions_Nodes_Rand(o, collector)
         collector << 'RANDOM('
-        if o.left != nil && o.right != nil
+        if !o.left.nil? && !o.right.nil?
           collector = visit o.left, collector
           collector << COMMA
           collector = visit o.right, collector
@@ -194,21 +194,21 @@ module ArelExtensions
         collector
       end
 
-      def visit_Arel_Nodes_Regexp o, collector
+      def visit_Arel_Nodes_Regexp(o, collector)
         collector = visit o.left, collector
         collector << ' REGEXP'
         collector = visit o.right, collector
         collector
       end
 
-      def visit_Arel_Nodes_NotRegexp o, collector
+      def visit_Arel_Nodes_NotRegexp(o, collector)
         collector = visit o.left, collector
         collector << ' NOT REGEXP '
         collector = visit o.right, collector
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Wday o, collector
+      def visit_ArelExtensions_Nodes_Wday(o, collector)
         collector << "STRFTIME('%w',"
         collector = visit o.date, collector
         collector << ')'
@@ -223,7 +223,7 @@ module ArelExtensions
       #   END
       #   AS FLOAT
       # )
-      def visit_ArelExtensions_Nodes_Floor o, collector
+      def visit_ArelExtensions_Nodes_Floor(o, collector)
         collector << 'CAST(CASE WHEN '
         collector = visit o.left, collector
         collector << ' >= 0 THEN CAST('
@@ -240,7 +240,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_Ceil o, collector
+      def visit_ArelExtensions_Nodes_Ceil(o, collector)
         collector << 'CASE WHEN ROUND('
         collector = visit o.left, collector
         collector << ', 1) > ROUND('
@@ -254,7 +254,7 @@ module ArelExtensions
       end
 
       if AREL_VERSION < V7
-        def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        def visit_ArelExtensions_InsertManager_BulkValues(o, collector)
           o.left.each_with_index do |row, idx|
             collector << 'SELECT '
             len = row.length - 1
@@ -269,14 +269,14 @@ module ArelExtensions
                   collector << quote(attr.name)
                 end
               end
-                collector << COMMA unless i == len
+              collector << COMMA unless i == len
             }
             collector << ' UNION ALL ' unless idx == o.left.length - 1
           end
           collector
         end
       else
-        def visit_ArelExtensions_InsertManager_BulkValues o, collector
+        def visit_ArelExtensions_InsertManager_BulkValues(o, collector)
           o.left.each_with_index do |row, idx|
             collector << 'SELECT '
             len = row.length - 1
@@ -297,7 +297,7 @@ module ArelExtensions
                   collector << quote(attr.name)
                 end
               end
-                collector << COMMA unless i == len
+              collector << COMMA unless i == len
             }
             collector << ' UNION ALL ' unless idx == o.left.length - 1
           end
@@ -305,7 +305,7 @@ module ArelExtensions
         end
       end
 
-      def visit_ArelExtensions_Nodes_Union o, collector
+      def visit_ArelExtensions_Nodes_Union(o, collector)
         collector =
           if o.left.is_a?(Arel::SelectManager)
             visit o.left.ast, collector
@@ -322,7 +322,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_UnionAll o, collector
+      def visit_ArelExtensions_Nodes_UnionAll(o, collector)
         collector =
           if o.left.is_a?(Arel::SelectManager)
             visit o.left.ast, collector
@@ -339,7 +339,7 @@ module ArelExtensions
         collector
       end
 
-      def get_time_converted element
+      def get_time_converted(element)
         if element.is_a?(Time)
           Arel::Nodes::NamedFunction.new('STRFTIME', [element, '%H:%M:%S'])
         elsif element.is_a?(Arel::Attributes::Attribute)
@@ -355,7 +355,7 @@ module ArelExtensions
       end
 
       remove_method(:visit_Arel_Nodes_GreaterThanOrEqual) rescue nil
-      def visit_Arel_Nodes_GreaterThanOrEqual o, collector
+      def visit_Arel_Nodes_GreaterThanOrEqual(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' >= '
         collector = visit get_time_converted(o.right), collector
@@ -363,7 +363,7 @@ module ArelExtensions
       end
 
       remove_method(:visit_Arel_Nodes_GreaterThan) rescue nil
-      def visit_Arel_Nodes_GreaterThan o, collector
+      def visit_Arel_Nodes_GreaterThan(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' > '
         collector = visit get_time_converted(o.right), collector
@@ -371,7 +371,7 @@ module ArelExtensions
       end
 
       remove_method(:visit_Arel_Nodes_LessThanOrEqual) rescue nil
-      def visit_Arel_Nodes_LessThanOrEqual o, collector
+      def visit_Arel_Nodes_LessThanOrEqual(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' <= '
         collector = visit get_time_converted(o.right), collector
@@ -379,15 +379,15 @@ module ArelExtensions
       end
 
       remove_method(:visit_Arel_Nodes_LessThan) rescue nil
-      def visit_Arel_Nodes_LessThan o, collector
+      def visit_Arel_Nodes_LessThan(o, collector)
         collector = visit get_time_converted(o.left), collector
         collector << ' < '
         collector = visit get_time_converted(o.right), collector
         collector
       end
 
-      alias_method(:old_visit_Arel_Nodes_As, :visit_Arel_Nodes_As) rescue nil
-      def visit_Arel_Nodes_As o, collector
+      alias old_visit_Arel_Nodes_As visit_Arel_Nodes_As rescue nil
+      def visit_Arel_Nodes_As(o, collector)
         if o.left.is_a?(Arel::Nodes::Binary)
           collector << '('
           collector = visit o.left, collector
@@ -402,7 +402,7 @@ module ArelExtensions
         collector
       end
 
-      def visit_ArelExtensions_Nodes_FormattedNumber o, collector
+      def visit_ArelExtensions_Nodes_FormattedNumber(o, collector)
         format = Arel::Nodes::NamedFunction.new('printf', [Arel.quoted(o.original_string), o.left])
         locale_map = NUMBER_COMMA_MAPPING[o.locale]
         if locale_map
