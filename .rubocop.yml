@@ -31,6 +31,9 @@ Layout/IndentationWidth:
 Layout/LineLength:
   Enabled: false
 
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
+
 Layout/SpaceAfterComma:
   Enabled: true
 
@@ -104,10 +107,6 @@ Style/BlockDelimiters:
 Style/ClassAndModuleChildren:
   Enabled: false
 
-# TODO: enable.
-Style/Documentation:
-  Enabled: false
-
 Style/CollectionMethods:
   Enabled: true
 
@@ -120,11 +119,21 @@ Style/CommentAnnotation:
 Style/ConditionalAssignment:
   Enabled: true
 
+# TODO: enable.
+Style/Documentation:
+  Enabled: false
+
+Style/EachWithObject:
+  Enabled: false
+
 Style/EmptyElse:
   Enabled: true
 
 Style/Encoding:
   Enabled: true
+
+Style/FormatString:
+  Enabled: false
 
 # TODO: enable.
 Style/GlobalVars:
@@ -186,6 +195,12 @@ Style/StringLiterals:
 
 Style/SymbolArray:
   Enabled: true
+
+Style/UnlessElse:
+  Enabled: false
+
+Style/WhileUntilDo:
+  Enabled: false
 
 Style/WordArray:
   Enabled: true
