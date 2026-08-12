@@ -1,7 +1,7 @@
 *.DS_Store
+*.lock
 *.swp
 .bundle
-Gemfile.lock
 config/database.yml
 coverage/*
 debug.log
