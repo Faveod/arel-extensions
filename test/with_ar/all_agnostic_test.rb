@@ -1182,6 +1182,9 @@ module ArelExtensions
         assert_equal ({'age' => 21}), parse_json(t(@arthur, h2.get(0)))
         assert_equal 21, parse_json(t(@arthur, h2.get(0).get('age')))
         assert_nil t(@arthur, h2.get('age'))
+
+        # A member name computed by the server.
+        assert_equal 'ArthurArthur', parse_json(t(@arthur, h1.get(@name.coalesce(''))))
       end
 
       def test_json_set
@@ -1192,6 +1195,44 @@ module ArelExtensions
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.set(@name + '3', 2)))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => nil}), parse_json(t(@arthur, h1.set(@name + '3', nil)))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => {'a' => 2}}), parse_json(t(@arthur, h1.set(@name + '3', {a: 2})))
+      end
+
+      # None of these names is an identifier. Unquoted in a path, MySQL and MSSQL reject them
+      # outright, and MariaDB reads $.a.b as a nested member and returns nothing.
+      NON_IDENTIFIER_MEMBERS = ['floor-number', 'a.b', 'floor number', '2beds', 'he"llo', 'a\\b'].freeze
+
+      def test_json_get_member_name_needs_quoting
+        skip 'Known failure: postgres ->> returns text, not parsed JSON' if @env_db == 'postgresql'
+        skip 'Not Yet Implemented' if $sqlite || @env_db == 'oracle'
+        NON_IDENTIFIER_MEMBERS.each_with_index do |name, i|
+          h = Arel.json({name => @name + i.to_s})
+          got = t(@arthur, h.get(name))
+          # JSON_VALUE returns a bare scalar rather than json.
+          assert_equal "Arthur#{i}", @env_db == 'mssql' ? got : parse_json(got), name
+        end
+      end
+
+      def test_json_set_member_name_needs_quoting
+        skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
+        skip 'Known failure: to_jsonb of a bare string literal has no type on postgres' if @env_db == 'postgresql'
+        NON_IDENTIFIER_MEMBERS.each_with_index do |name, i|
+          h = Arel.json({name => @name})
+          assert_equal ({name => "set#{i}"}), parse_json(t(@arthur, h.set(name, "set#{i}"))), name
+        end
+      end
+
+      def test_json_get_rejects_a_key_that_is_not_a_member
+        skip 'Not Yet Implemented' if $sqlite || @env_db == 'oracle'
+        h = Arel.json({@name => @name})
+        assert_raises(ArgumentError) { h.get(Object.new) }
+        assert_raises(ArgumentError) { h.get(1.5) }
+      end
+
+      def test_json_get_rejects_a_nil_member_name
+        skip 'postgres addresses a member by value, not through a path, so nil is not rejected' if @env_db == 'postgresql'
+        skip 'Not Yet Implemented' if $sqlite || @env_db == 'oracle'
+        h = Arel.json({@name => @name})
+        assert_raises(ArgumentError) { t(@arthur, h.get(nil)) }
       end
 
       def test_json_merge
