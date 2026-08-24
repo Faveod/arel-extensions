@@ -1145,15 +1145,19 @@ module ArelExtensions
         assert_equal 1,  t(@arthur, @name.levenshtein_distance('Artehur'))
       end
 
-      def test_json
-        skip "Can't be tested on travis"
+      def test_json_create
+        skip 'Known failure: PG::InvalidTextRepresentation (`::jsonb` cast of non-JSON text)' if @env_db == 'postgresql'
+        skip 'Known failure: ToSQL json_value NoMethodError on Integer (is_null)' if $sqlite || @env_db == 'mssql'
         # creation
         assert_equal 'Arthur', t(@arthur, Arel.json(@name))
         assert_equal %w[Arthur Arthur], parse_json(t(@arthur, Arel.json(@name, @name)))
         assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 'ArthurArthur'}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => @name + @name})))
         assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 1}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => 1})))
         assert_equal [{'age' => 21}, {'name' => 'Arthur', 'score' => 65.62}], parse_json(t(@arthur, Arel.json([{age: @age}, {name: @name, score: @score}])))
+      end
 
+      def test_json_aggregate
+        skip 'Known failure: NameError Arel::Visitors::Oracle in mssql GroupConcat' if @env_db == 'mssql'
         # aggregate
         assert_equal ({'5' => 'Lucas', '15' => 'Sophie', '23' => 'Myung', '25' => 'Laure'}),
                      parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16), Arel.json({@age => @name}).group(false)))
@@ -1164,7 +1168,10 @@ module ArelExtensions
 
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_sql
         # puts User.group(:score).where(@age.is_not_null).where(@score == 20.16).select(@score, Arel.json({@age => @name}).group(true,[@age])).to_a
+      end
 
+      def test_json_get
+        skip 'Known failure: postgres ->> returns text, not parsed JSON' if @env_db == 'postgresql'
         skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
         # get
         h1 = Arel.json({@name => @name + @name, @name + '2' => 1})
@@ -1173,12 +1180,23 @@ module ArelExtensions
         assert_equal ({'age' => 21}), parse_json(t(@arthur, h2.get(0)))
         assert_equal 21, parse_json(t(@arthur, h2.get(0).get('age')))
         assert_nil t(@arthur, h2.get('age'))
+      end
+
+      def test_json_set
+        skip 'Known failure: postgres jsonb_set(NULL value) returns NULL' if @env_db == 'postgresql'
+        skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
         # set
+        h1 = Arel.json({@name => @name + @name, @name + '2' => 1})
         assert_equal ({'Arthur' => %w[toto tata], 'Arthur2' => 1}), parse_json(t(@arthur, h1.set(@name, %w[toto tata])))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.set(@name + '3', 2)))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => nil}), parse_json(t(@arthur, h1.set(@name + '3', nil)))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1, 'Arthur3' => {'a' => 2}}), parse_json(t(@arthur, h1.set(@name + '3', {a: 2})))
+      end
+
+      def test_json_merge
+        skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
         # merge
+        h1 = Arel.json({@name => @name + @name, @name + '2' => 1})
         assert_equal ({'Arthur' => %w[toto tata], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.merge({@name => %w[toto tata]}, {@name + '3' => 2})))
         assert_equal ({'Arthur' => %w[toto tata], 'Arthur2' => 1, 'Arthur3' => 2}), parse_json(t(@arthur, h1.merge({@name => %w[toto tata], @name + '3' => 2})))
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1}), parse_json(t(@arthur, h1.merge({})))
