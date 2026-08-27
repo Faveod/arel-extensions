@@ -622,6 +622,10 @@ module ArelExtensions
 
       def json_value(o, v)
         case o.type_of_node(v)
+        when :numeric
+          # A bare numeric literal (e.g. `{ col => 1 }`) is never NULL, so it is
+          # emitted as-is rather than run through `is_null`/`coalesce`.
+          Arel.quoted(v)
         when :string
           Arel.when(v.is_null).then(make_json_null).else(make_json_string(v))
         when :date
