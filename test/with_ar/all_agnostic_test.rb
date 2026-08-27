@@ -260,8 +260,9 @@ module ArelExtensions
         assert_equal 'Camille Camille', t(@camille, @name + ' ' + @name)
         assert_equal 'Laure 2', t(@laure, @name + ' ' + 2)
         assert_equal 'Test Laure', t(@laure, Arel.quoted('Test ') + @name)
+      end
 
-        skip 'No group_concat in SqlServer before 2017' if @env_db == 'mssql'
+      def test_group_concat
         assert_equal 'Lucas Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat(' '))
         assert_equal 'Lucas,Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat(','))
         assert_equal 'Lucas,Sophie', t(User.where(name: %w[Lucas Sophie]), @name.group_concat)
@@ -1157,7 +1158,6 @@ module ArelExtensions
       end
 
       def test_json_aggregate
-        skip 'Known failure: NameError Arel::Visitors::Oracle in mssql GroupConcat' if @env_db == 'mssql'
         # aggregate
         assert_equal ({'5' => 'Lucas', '15' => 'Sophie', '23' => 'Myung', '25' => 'Laure'}),
                      parse_json(t(User.group(:score).where(@age.is_not_null).where(@score == 20.16), Arel.json({@age => @name}).group(false)))

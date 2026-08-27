@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+- Fix a bug (crash) in Group Concat of MSSQL.
+
 ## Release v2.4.0/v1.6.0 (23-12-2025)
 
 - Drop supoprt for Ruby < 2.7.
