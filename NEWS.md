@@ -4,6 +4,8 @@
 
 - Fix a bug (crash) in Group Concat of MSSQL.
 - Fix a crash when building a JSON document from numeric literal values (e.g. `Arel.json(col => 1)`), on sqlite and mssql.
+- MS SQL: string casts and MD5 input now use `varchar(MAX)`, so long strings are
+  no longer truncated at 30 characters (the default when only `varchar` is specified).
 
 ## Release v2.4.0/v1.6.0 (23-12-2025)
 
