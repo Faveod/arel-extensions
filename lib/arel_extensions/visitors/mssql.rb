@@ -647,7 +647,7 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_MD5(o, collector)
-        collector << "LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5',CONVERT(VARCHAR,"
+        collector << "LOWER(CONVERT(NVARCHAR(32),HashBytes('MD5',CONVERT(VARCHAR(MAX),"
         collector = visit o.left, collector
         collector << ')),2))'
         collector
@@ -657,7 +657,7 @@ module ArelExtensions
         as_attr =
           case o.as_attr
           when :string
-            'varchar'
+            'varchar(MAX)'
           when :time
             'time'
           when :date

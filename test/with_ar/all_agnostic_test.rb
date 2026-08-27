@@ -299,6 +299,7 @@ module ArelExtensions
         skip "Sqlite can't do md5" if $sqlite
         assert_equal 'e2cf99ca82a7e829d2a4ac85c48154d0', t(@camille, @name.md5)
         assert_equal 'c3d41bf5efb468a1bcce53bd53726c85', t(@lucas, @name.md5)
+        assert_equal '6eb6a030bcce166534b95bc2ab45d9cf', t(@lucas, Arel.quoted('a' * 50).md5)
       end
 
       def test_locate
@@ -823,6 +824,7 @@ module ArelExtensions
       # TODO; cast types
       def test_cast_types
         assert_equal '5', t(@lucas, @age.cast(:string))
+        assert_equal 'a' * 50, t(@lucas, Arel.quoted('a' * 50).cast(:string))
         skip 'jdbc adapters does not work properly here (v52 works fine)' if RUBY_PLATFORM.match?(/java/i)
         if @env_db == 'mysql' || @env_db == 'postgresql' || @env_db == 'oracle' || @env_db == 'mssql'
           assert_equal 1, t(@laure, Arel.when(@duration.cast(:time).cast(:string).eq('12:42:21')).then(1).else(0)) unless @env_db == 'oracle' || @env_db == 'mssql'
@@ -1153,7 +1155,6 @@ module ArelExtensions
         assert_equal %w[Arthur Arthur], parse_json(t(@arthur, Arel.json(@name, @name)))
         assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 'ArthurArthur'}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => @name + @name})))
         assert_equal ({'Arthur' => 'Arthur', 'Arthur2' => 1}), parse_json(t(@arthur, Arel.json({@name => @name, @name + '2' => 1})))
-        skip 'Known failure: mssql varchar(30) (the default when `varchar` has no explicit size) truncates nested JSON objects' if @env_db == 'mssql'
         assert_equal [{'age' => 21}, {'name' => 'Arthur', 'score' => 65.62}], parse_json(t(@arthur, Arel.json([{age: @age}, {name: @name, score: @score}])))
       end
 
