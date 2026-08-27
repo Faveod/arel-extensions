@@ -625,7 +625,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_GroupConcat(o, collector)
         collector << '(STRING_AGG('
         collector = visit o.left, collector
-        collector << Arel::Visitors::Oracle::COMMA
+        collector << LOADED_VISITOR::COMMA
         sep = o.separator.is_a?(Arel::Nodes::Quoted) ? o.separator.expr : o.separator
         collector =
           if 'NULL' == sep
@@ -636,7 +636,7 @@ module ArelExtensions
         collector << ') WITHIN GROUP (ORDER BY '
         if o.order.present?
           o.order.each_with_index do |order, i|
-            collector << Arel::Visitors::Oracle::COMMA if i != 0
+            collector << LOADED_VISITOR::COMMA if i != 0
             collector = visit order, collector
           end
         else
