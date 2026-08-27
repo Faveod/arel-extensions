@@ -3,6 +3,7 @@
 ## [unreleased]
 
 - Fix a bug (crash) in Group Concat of MSSQL.
+- Fix a crash when building a JSON document from numeric literal values (e.g. `Arel.json(col => 1)`), on sqlite and mssql.
 
 ## Release v2.4.0/v1.6.0 (23-12-2025)
 

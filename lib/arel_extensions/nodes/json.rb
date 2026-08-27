@@ -61,6 +61,8 @@ module ArelExtensions
       def type_of_node(v)
         if v.is_a?(Arel::Attributes::Attribute)
           type_of_attribute(v)
+        elsif v.is_a?(Numeric)
+          :numeric
         elsif v.respond_to?(:return_type)
           v.return_type
         elsif v.nil?
