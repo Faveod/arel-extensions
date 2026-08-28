@@ -10,6 +10,8 @@
   bare `::jsonb` cast), and `json.set(key, nil)` sets the JSON null member instead of the db's NULL.
 - PostgreSQL: an empty JSON array (`Arel.json([])`) is now rendered as `'[]'::jsonb`
   instead of `to_jsonb(array[])`.
+- JSON: Booleans (`true`/`false`) are now supported as JSON values, whether as literals
+  (`Arel.json({ col => true })`) or boolean columns (`Arel.json({ col => bool_col })`).
 
 ## Release v2.4.0/v1.6.0 (23-12-2025)
 

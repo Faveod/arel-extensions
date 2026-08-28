@@ -588,7 +588,7 @@ module ArelExtensions
             if i != 0
               collector << COMMA
             end
-            collector = visit v, collector
+            collector = visit_json_value(o, v, collector)
           end
           collector << ')'
         when Hash
@@ -599,11 +599,29 @@ module ArelExtensions
             end
             collector = visit k, collector
             collector << COMMA
-            collector = visit v, collector
+            collector = visit_json_value(o, v, collector)
           end
           collector << ')'
         else
-          collector = visit o.dict, collector
+          collector = visit_json_value(o, o.dict, collector)
+        end
+        collector
+      end
+
+      # A JSON Boolean must render as `true`/`false`, not the integer `1`/`0` that MySQL
+      # collapses `TRUE`/`FALSE` into inside JSON functions (MariaDB keeps them boolean).
+      def visit_json_value(o, v, collector)
+        if o.boolean_literal?(v)
+          value = v.is_a?(Arel::Nodes::Quoted) ? v.expr : v
+          collector << "JSON_EXTRACT('#{value}', '$')"
+        elsif o.type_of_node(v) == :boolean
+          collector << 'JSON_EXTRACT(CASE WHEN '
+          collector = visit v, collector
+          collector << " IS NULL THEN NULL WHEN "
+          collector = visit v, collector
+          collector << " THEN 'true' ELSE 'false' END, '$')"
+        else
+          collector = visit v, collector
         end
         collector
       end
