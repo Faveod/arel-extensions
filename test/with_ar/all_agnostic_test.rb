@@ -1201,6 +1201,37 @@ module ArelExtensions
         assert_equal ({'Arthur' => 'ArthurArthur', 'Arthur2' => 1}), parse_json(t(@arthur, h1.merge({})))
       end
 
+      def test_json_scalar_values
+        assert_equal 42, parse_json(t(@arthur, Arel.json(42)))
+        assert_equal({}, parse_json(t(@arthur, Arel.json({}))))
+        assert_nil t(@arthur, Arel.json(nil))
+
+        skip 'Known failure: postgres to_jsonb(array[]) cannot determine type of empty array' if @env_db == 'postgresql'
+        assert_equal [], parse_json(t(@arthur, Arel.json([])))
+
+        skip 'Known failure: booleans crash at construction (convert_to_node rejects TrueClass/FalseClass)'
+        assert_equal true, parse_json(t(@arthur, Arel.json(true)))
+        assert_equal ({'Arthur' => false}), parse_json(t(@arthur, Arel.json({@name => false})))
+      end
+
+      def test_json_special_chars
+        assert_equal ({'Arthur' => 'say "hi"'}), parse_json(t(@arthur, Arel.json({@name => 'say "hi"'})))
+        assert_equal ({'Arthur' => 'a\\b'}), parse_json(t(@arthur, Arel.json({@name => 'a\\b'})))
+        assert_equal ({'Arthur' => "line1\nline2"}), parse_json(t(@arthur, Arel.json({@name => "line1\nline2"})))
+        assert_equal ({'we"ird' => 'Arthur'}), parse_json(t(@arthur, Arel.json({'we"ird' => @name})))
+      end
+
+      def test_json_date_values
+        assert_equal ({'Arthur' => '2016-05-23'}), parse_json(t(@arthur, Arel.json({@name => @created_at})))
+        res = parse_json(t(@laure, Arel.json({@name => @duration})))['Laure']
+        assert_equal '12:42:21', res.sub(/\.\d+\z/, '') # MySQL (unlinke MariaDB) adds `.\d+` to a datetime column inside a json.
+
+        # the generic builder's `:datetime` branch is only used by sqlite and mssql.
+        if $sqlite || @env_db == 'mssql'
+          assert_equal ({'Lucas' => '2014-03-03T12:42:00'}), parse_json(t(@lucas, Arel.json({@name => @updated_at})))
+        end
+      end
+
       def test_as_on_everything
         name = @arthur.select(@name.as('NaMe')).first.attributes
         assert_equal 'Arthur', name['NaMe'] || name['name'] # because of Oracle
