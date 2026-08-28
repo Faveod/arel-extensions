@@ -8,6 +8,8 @@
   no longer truncated at 30 characters (the default when only `varchar` is specified).
 - PostgreSQL: JSON creation from non-JSON text now encodes it (`to_jsonb` instead of a
   bare `::jsonb` cast), and `json.set(key, nil)` sets the JSON null member instead of the db's NULL.
+- PostgreSQL: an empty JSON array (`Arel.json([])`) is now rendered as `'[]'::jsonb`
+  instead of `to_jsonb(array[])`.
 
 ## Release v2.4.0/v1.6.0 (23-12-2025)
 
