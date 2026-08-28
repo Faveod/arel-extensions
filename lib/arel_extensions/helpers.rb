@@ -101,6 +101,15 @@ module ArelExtensions
 
     return column_of_via_arel_table(table_name, column_name) if query.nil? # activerecord < 5.0
 
+    # A name that no model declares is not always a table. `Arel::Table.new`
+    # also makes the name of a common table expression. The database has no data
+    # for such a name, thus the reflection fails. On postgres, a failed statement
+    # also stops the transaction. Then all the statements after it fail.
+    #
+    # The schema cache keeps the list of data sources. It does not keep a failed
+    # reflection. Thus this method examines that list first.
+    return nil if model.nil? && !query.call(:data_source_exists?, table_name)
+
     query.call(:columns_hash, table_name)[column_name]
   rescue ActiveRecord::ConnectionNotEstablished
     column_of_via_arel_table(table_name, column_name)

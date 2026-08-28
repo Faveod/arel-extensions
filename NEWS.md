@@ -8,6 +8,10 @@
   used the connection of `ActiveRecord::Base`. If a model connected to a different database,
   that reflection failed. The failure was silent, thus the function lost its type. On postgres,
   the failed statement also stopped the transaction.
+- `column_of` no longer reflects a name that no model declares, if the database has no data
+  for that name. `Arel::Table.new` also makes the name of a common table expression. A
+  reflection on such a name can only fail. The schema cache keeps the list of data sources,
+  thus `column_of` examines that list first.
 
 ## Release v2.5.0/v1.7.0 (02-09-2026)
 
