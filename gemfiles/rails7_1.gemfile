@@ -20,7 +20,7 @@ group :development, :test do
   gem 'pg', '~> 1.5', platforms: [:mri]
   gem 'sqlite3', '~> 1.6', platforms: [:mri]
 
-  gem 'activerecord-sqlserver-adapter', '~> 7.1.0.beta1', platforms: %i[mri mingw x64_mingw mswin]
+  gem 'activerecord-sqlserver-adapter', '~> 7.1.0', platforms: %i[mri mingw x64_mingw mswin]
   gem 'tiny_tds', platforms: %i[mri mingw x64_mingw mswin]
   gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw]
 
