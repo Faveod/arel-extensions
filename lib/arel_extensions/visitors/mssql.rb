@@ -164,7 +164,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Log10(o, collector)
         collector << 'LOG10('
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector << LOADED_VISITOR::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ')'
@@ -174,7 +174,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Power(o, collector)
         collector << 'POWER('
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector << LOADED_VISITOR::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ')'
@@ -208,7 +208,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Repeat(o, collector)
         collector << 'REPLICATE('
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector << LOADED_VISITOR::COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ')'
@@ -344,7 +344,7 @@ module ArelExtensions
         if o.right && !/\A\s\Z/.match(o.right.expr)
           collector << 'dbo.TrimChar('
           collector = visit o.left, collector
-          collector << Arel::Visitors::MSSQL::COMMA
+          collector << LOADED_VISITOR::COMMA
           collector = visit o.right, collector
           collector << ')'
         else
@@ -762,7 +762,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_LevenshteinDistance(o, collector)
         collector << 'dbo.LEVENSHTEIN_DISTANCE('
         collector = visit o.left, collector
-        collector << Arel::Visitors::ToSql::COMMA
+        collector << LOADED_VISITOR::COMMA
         collector = visit o.right, collector
         collector << ')'
         collector
@@ -771,7 +771,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_JsonGet(o, collector)
         collector << 'JSON_VALUE('
         collector = visit o.dict, collector
-        collector << Arel::Visitors::MySQL::COMMA
+        collector << LOADED_VISITOR::COMMA
         if o.key.is_a?(Integer)
           collector << "\"$[#{o.key}]\""
         else
