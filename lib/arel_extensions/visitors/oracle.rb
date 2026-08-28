@@ -30,7 +30,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Log10(o, collector)
         collector << 'LOG('
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ',10)'
@@ -40,7 +40,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Power(o, collector)
         collector << 'POWER('
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ')'
@@ -495,9 +495,9 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Repeat(o, collector)
         collector << 'LPAD('
         collector = visit o.expressions[0], collector # can't put empty string, otherwise it wouldn't work
-        collector << Arel::Visitors::ToSql::COMMA
+        collector << COMMA
         collector = visit o.expressions[1], collector
-        collector << Arel::Visitors::ToSql::COMMA
+        collector << COMMA
         collector = visit o.expressions[0], collector
         collector << ')'
         collector
@@ -718,7 +718,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_LevenshteinDistance(o, collector)
         collector << 'UTL_MATCH.edit_distance('
         collector = visit o.left, collector
-        collector << Arel::Visitors::ToSql::COMMA
+        collector << COMMA
         collector = visit o.right, collector
         collector << ')'
         collector

@@ -53,7 +53,7 @@ module ArelExtensions
           collector << 'json_array('
           o.dict.each.with_index do |v, i|
             if i != 0
-              collector << Arel::Visitors::MySQL::COMMA
+              collector << COMMA
             end
             collector = visit v, collector
           end
@@ -62,7 +62,7 @@ module ArelExtensions
           collector << 'json__object('
           o.dict.each.with_index do |(k, v), i|
             if i != 0
-              collector << Arel::Visitors::MySQL::COMMA
+              collector << COMMA
             end
             collector << 'KEY '
             collector = visit k, collector

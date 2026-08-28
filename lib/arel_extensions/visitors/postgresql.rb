@@ -48,7 +48,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Power(o, collector)
         collector << 'POWER('
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ')'
@@ -58,7 +58,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Log10(o, collector)
         collector << 'LOG('
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ')'
@@ -214,7 +214,7 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Repeat(o, collector)
         collector << 'REPEAT('
         o.expressions.each_with_index { |arg, i|
-          collector << Arel::Visitors::ToSql::COMMA if i != 0
+          collector << COMMA if i != 0
           collector = visit arg, collector
         }
         collector << ')'
@@ -347,14 +347,14 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_RegexpReplace(o, collector)
         collector << 'REGEXP_REPLACE('
         visit o.left, collector
-        collector << Arel::Visitors::ToSql::COMMA
+        collector << COMMA
         tab = o.pattern.inspect + 'g' # Make it always global
         pattern = tab.split('/')[1..-2].join('/')
         flags = tab.split('/')[-1]
         visit Arel.quoted(pattern), collector
-        collector << Arel::Visitors::ToSql::COMMA
+        collector << COMMA
         visit o.substitute, collector
-        collector << Arel::Visitors::ToSql::COMMA
+        collector << COMMA
         visit Arel.quoted(flags + 'g'), collector
         collector << ')'
         collector
@@ -537,7 +537,7 @@ module ArelExtensions
             collector << 'to_jsonb(array['
             o.dict.each.with_index do |v, i|
               if i != 0
-                collector << Arel::Visitors::MySQL::COMMA
+                collector << COMMA
               end
               collector = visit v, collector
             end
@@ -547,10 +547,10 @@ module ArelExtensions
           collector << 'jsonb_build_object('
           o.dict.each.with_index do |(k, v), i|
             if i != 0
-              collector << Arel::Visitors::MySQL::COMMA
+              collector << COMMA
             end
             collector = visit k, collector
-            collector << Arel::Visitors::MySQL::COMMA
+            collector << COMMA
             collector = visit v, collector
           end
           collector << ')'
@@ -594,15 +594,15 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_JsonSet(o, collector)
         collector << 'jsonb_set('
         collector = visit o.dict, collector
-        collector << Arel::Visitors::MySQL::COMMA
+        collector << COMMA
         collector << 'array['
         collector = visit o.key, collector
         collector << ']'
-        collector << Arel::Visitors::MySQL::COMMA
+        collector << COMMA
         collector << 'COALESCE('
         collector = visit o.value, collector
         collector << ", 'null'::jsonb)"
-        collector << Arel::Visitors::MySQL::COMMA
+        collector << COMMA
         collector << 'true)'
         collector
       end
@@ -621,7 +621,7 @@ module ArelExtensions
               end
               collector << 'jsonb_object_agg('
               collector = visit k, collector
-              collector << Arel::Visitors::MySQL::COMMA
+              collector << COMMA
               collector = visit v, collector
               collector << ')'
             end
