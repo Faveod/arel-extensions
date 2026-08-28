@@ -4,6 +4,10 @@
 
 - An attribute from the `arel_table` of a model now gets its type from its type caster. The
   type caster knows that type. Before, `coalesce` and `case` asked the database for it.
+- `column_of` now reflects a table on the database that owns that table. Before, it always
+  used the connection of `ActiveRecord::Base`. If a model connected to a different database,
+  that reflection failed. The failure was silent, thus the function lost its type. On postgres,
+  the failed statement also stopped the transaction.
 
 ## Release v2.5.0/v1.7.0 (02-09-2026)
 
