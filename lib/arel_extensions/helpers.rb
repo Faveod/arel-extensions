@@ -26,6 +26,26 @@ module ArelExtensions
     nil
   end
 
+  # The type of the column that `att` points to.
+  #
+  # A model makes the attributes of its `arel_table` with a type caster. The
+  # type caster knows the type of the column. A query to the database is not
+  # necessary. If the model connects to a different database, the query also
+  # gets the wrong answer.
+  #
+  # A bare `Arel::Table` has no type caster. A common table expression has no
+  # type caster. For these two, only the name of the table is available. The
+  # method must ask the database.
+  def self.type_of(att)
+    if att.respond_to?(:type_caster) && att.able_to_type_cast?
+      att.type_caster&.type
+    elsif att.respond_to?(:relation)
+      column_of(att.relation.table_name, att.name.to_s)&.type
+    end
+  rescue ActiveRecord::ConnectionNotEstablished, ActiveRecord::StatementInvalid
+    nil
+  end
+
   def self.column_of(table_name, column_name)
     pool = ActiveRecord::Base.connection.pool
     use_arel_table = !ActiveRecord::Base.connected? \
