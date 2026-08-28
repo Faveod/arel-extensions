@@ -143,6 +143,39 @@ module ArelExtensions
         assert_equal 'updated_at', Arel.column_of('user_tests', 'updated_at').name, 'An existing column name should be returned'
       end
 
+      # True if `blk` asked the database for a type, false if it used a type caster.
+      def asked_the_database(&blk)
+        original = ArelExtensions.method(:column_of)
+        asked = false
+        ArelExtensions.define_singleton_method(:column_of) { |*args|
+          asked = true
+          original.call(*args)
+        }
+        blk.call
+        asked
+      ensure
+        ArelExtensions.define_singleton_method(:column_of, original)
+      end
+
+      def test_type_of_attribute_asks_the_model_first
+        # `User.arel_table` made `@score`, thus `@score` has a type caster. The
+        # type caster knows the type. A query to the database is not necessary.
+        # If the model connects to a different database, the query also fails.
+        node = nil
+        asked = asked_the_database { node = @score.coalesce(0) }
+
+        assert_equal :decimal, node.return_type, 'The type of a model-backed attribute should be resolved'
+        refute asked, 'The method must not ask the database for a type that the model has'
+      end
+
+      def test_type_of_attribute_falls_back_to_the_database
+        node = nil
+        asked = asked_the_database { node = Arel::Table.new(:user_tests)[:score].coalesce(0) }
+
+        assert_equal :decimal, node.return_type, 'An attribute with no model must still get its type'
+        assert asked, 'Only the database can give the type'
+      end
+
       # Math Functions
       def test_classical_arel
         assert_in_epsilon 42.16, t(@laure, @score + 22), 0.01
