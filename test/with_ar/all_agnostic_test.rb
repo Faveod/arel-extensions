@@ -1149,7 +1149,6 @@ module ArelExtensions
       end
 
       def test_json_create
-        skip 'Known failure: PG::InvalidTextRepresentation (`::jsonb` cast of non-JSON text)' if @env_db == 'postgresql'
         # creation
         assert_equal 'Arthur', t(@arthur, Arel.json(@name))
         assert_equal %w[Arthur Arthur], parse_json(t(@arthur, Arel.json(@name, @name)))
@@ -1184,7 +1183,6 @@ module ArelExtensions
       end
 
       def test_json_set
-        skip 'Known failure: postgres jsonb_set(NULL value) returns NULL' if @env_db == 'postgresql'
         skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
         # set
         h1 = Arel.json({@name => @name + @name, @name + '2' => 1})

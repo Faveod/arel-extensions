@@ -6,6 +6,8 @@
 - Fix a crash when building a JSON document from numeric literal values (e.g. `Arel.json(col => 1)`), on sqlite and mssql.
 - MS SQL: string casts and MD5 input now use `varchar(MAX)`, so long strings are
   no longer truncated at 30 characters (the default when only `varchar` is specified).
+- PostgreSQL: JSON creation from non-JSON text now encodes it (`to_jsonb` instead of a
+  bare `::jsonb` cast), and `json.set(key, nil)` sets the JSON null member instead of the db's NULL.
 
 ## Release v2.4.0/v1.6.0 (23-12-2025)
 
