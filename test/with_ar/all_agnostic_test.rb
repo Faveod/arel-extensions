@@ -52,6 +52,7 @@ module ArelExtensions
           t.column :duration, :time
           t.column :other, :string
           t.column :score, :decimal, precision: 20, scale: 10
+          t.column :enabled, :boolean
         end
         @cnx.drop_table(:product_tests) rescue nil
         @cnx.create_table :product_tests do |t|
@@ -74,9 +75,9 @@ module ArelExtensions
         @lucas = User.where(id: u.id)
         u = User.create age: 15, name: 'Sophie', created_at: d, score: 20.16
         @sophie = User.where(id: u.id)
-        u = User.create age: 20, name: 'Camille', created_at: d, score: -20.16, comments: ''
+        u = User.create age: 20, name: 'Camille', created_at: d, score: -20.16, comments: '', enabled: false
         @camille = User.where(id: u.id)
-        u = User.create age: 21, name: 'Arthur', created_at: d, score: 65.62, comments: 'arrêté'
+        u = User.create age: 21, name: 'Arthur', created_at: d, score: 65.62, comments: 'arrêté', enabled: true
         @arthur = User.where(id: u.id)
         u = User.create age: 23, name: 'Myung', created_at: d, score: 20.16, comments: ' '
         @myung = User.where(id: u.id)
@@ -107,6 +108,7 @@ module ArelExtensions
         @duration = User.arel_table[:duration]
         @price = Product.arel_table[:price]
         @other = User.arel_table[:other]
+        @enabled = User.arel_table[:enabled]
         @not_in_table = User.arel_table[:not_in_table]
 
         @ut = User.arel_table
@@ -1208,9 +1210,12 @@ module ArelExtensions
         assert_equal({}, parse_json(t(@arthur, Arel.json({}))))
         assert_equal [], parse_json(t(@arthur, Arel.json([])))
 
-        skip 'Known failure: booleans crash at construction (convert_to_node rejects TrueClass/FalseClass)'
         assert_equal true, parse_json(t(@arthur, Arel.json(true)))
         assert_equal ({'Arthur' => false}), parse_json(t(@arthur, Arel.json({@name => false})))
+
+        assert_equal ({'Arthur' => true}), parse_json(t(@arthur, Arel.json({@name => @enabled})))
+        assert_equal ({'Camille' => false}), parse_json(t(@camille, Arel.json({@name => @enabled})))
+        assert_equal ({'Lucas' => nil}), parse_json(t(@lucas, Arel.json({@name => @enabled})))
       end
 
       def test_json_special_chars

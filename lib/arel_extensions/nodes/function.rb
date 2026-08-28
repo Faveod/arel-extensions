@@ -73,6 +73,8 @@ module ArelExtensions
           Arel.quoted(object.strftime('%H:%M:%S'), self)
         when MBSTRING, String, Symbol
           Arel.quoted(object.to_s)
+        when TrueClass, FalseClass
+          Arel.quoted(object)
         when Date
           Arel.quoted(object.to_s, self)
         when NilClass

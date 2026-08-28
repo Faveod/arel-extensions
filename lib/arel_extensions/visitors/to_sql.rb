@@ -626,6 +626,15 @@ module ArelExtensions
           # A bare numeric literal (e.g. `{ col => 1 }`) is never NULL, so it is
           # emitted as-is rather than run through `is_null`/`coalesce`.
           Arel.quoted(v)
+        when :boolean
+          # A literal boolean is never NULL: emit the JSON token directly.
+          # A boolean column is null-checked and rendered as true/false. `eq(true)` rather than the
+          # bare column, because T-SQL (mssql) requires a proper boolean predicate in WHEN.
+          if o.boolean_literal?(v)
+            Arel.quoted((v.is_a?(Arel::Nodes::Quoted) ? v.expr : v).to_s)
+          else
+            Arel.when(v.is_null).then(make_json_null).else(Arel.when(v.eq(true)).then('true').else('false'))
+          end
         when :string
           Arel.when(v.is_null).then(make_json_null).else(make_json_string(v))
         when :date
@@ -668,7 +677,7 @@ module ArelExtensions
           res += '}'
           collector = visit res, collector
         else
-          collector = visit o.dict, collector
+          collector = visit(o.boolean_literal?(o.dict) ? Arel.quoted(o.dict.expr.to_s) : o.dict, collector)
         end
         collector
       end

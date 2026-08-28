@@ -58,11 +58,21 @@ module ArelExtensions
         end
       end
 
+      # A boolean literal, either bare (TrueClass/FalseClass) or wrapped in a Quoted node
+      # (which is how `convert_to_node` represents one after construction).
+      def boolean_literal?(v)
+        v.is_a?(TrueClass) \
+          || v.is_a?(FalseClass) \
+          || (v.is_a?(Arel::Nodes::Quoted) && [true, false].include?(v.expr))
+      end
+
       def type_of_node(v)
         if v.is_a?(Arel::Attributes::Attribute)
           type_of_attribute(v)
         elsif v.is_a?(Numeric)
           :numeric
+        elsif boolean_literal?(v)
+          :boolean
         elsif v.respond_to?(:return_type)
           v.return_type
         elsif v.nil?
