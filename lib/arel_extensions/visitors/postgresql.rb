@@ -554,8 +554,17 @@ module ArelExtensions
         when NilClass
           collector << %('null'::jsonb)
         else
-          collector = visit o.dict, collector
-          collector << '::jsonb'
+          if o.dict.is_a?(Arel::Nodes::Quoted) && o.dict.expr.nil?
+            # `Arel.null` must mean the JSON null member, not SQL NULL:
+            # `to_jsonb(NULL)` would raise a polymorphic-type error.
+            collector << %('null'::jsonb)
+          else
+            # `to_jsonb` rather than `::jsonb` so a non-JSON value (e.g. a text column) is
+            # encoded as a JSON string instead of rejected by the server.
+            collector << 'to_jsonb('
+            collector = visit o.dict, collector
+            collector << ')'
+          end
         end
         collector
       end
@@ -584,7 +593,9 @@ module ArelExtensions
         collector = visit o.key, collector
         collector << ']'
         collector << Arel::Visitors::MySQL::COMMA
+        collector << 'COALESCE('
         collector = visit o.value, collector
+        collector << ", 'null'::jsonb)"
         collector << Arel::Visitors::MySQL::COMMA
         collector << 'true)'
         collector
