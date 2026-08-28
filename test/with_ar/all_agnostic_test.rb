@@ -143,6 +143,26 @@ module ArelExtensions
         assert_equal 'updated_at', Arel.column_of('user_tests', 'updated_at').name, 'An existing column name should be returned'
       end
 
+      # The SQL statements that `blk` sends to the database.
+      def statements(&blk)
+        sent = []
+        subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') { |*, payload| sent << payload[:sql] }
+        blk.call
+        sent
+      ensure
+        ActiveSupport::Notifications.unsubscribe(subscriber)
+      end
+
+      def test_column_of_does_not_reflect_a_name_the_database_does_not_have
+        # `Arel::Table.new` also makes the name of a common table expression.
+        # The database has no data for such a name. The cache does not keep a
+        # failed reflection, thus the reflection occurred at each call. The
+        # cache keeps the list of data sources.
+        Arel.column_of('chupa', 'maflavla') # ask once, so the data source list is loaded
+
+        assert_empty(statements { 3.times { Arel.column_of('chupa', 'maflavla') } })
+      end
+
       # True if `blk` asked the database for a type, false if it used a type caster.
       def asked_the_database(&blk)
         original = ArelExtensions.method(:column_of)
