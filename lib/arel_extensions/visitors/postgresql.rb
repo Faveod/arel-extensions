@@ -529,14 +529,20 @@ module ArelExtensions
       def visit_ArelExtensions_Nodes_Json(o, collector)
         case o.dict
         when Array
-          collector << 'to_jsonb(array['
-          o.dict.each.with_index do |v, i|
-            if i != 0
-              collector << Arel::Visitors::MySQL::COMMA
+          if o.dict.empty?
+            # `to_jsonb(array[])` would raise "cannot determine type of empty array";
+            # an empty array is simply the `[]` JSON literal.
+            collector << %('[]'::jsonb)
+          else
+            collector << 'to_jsonb(array['
+            o.dict.each.with_index do |v, i|
+              if i != 0
+                collector << Arel::Visitors::MySQL::COMMA
+              end
+              collector = visit v, collector
             end
-            collector = visit v, collector
+            collector << '])'
           end
-          collector << '])'
         when Hash
           collector << 'jsonb_build_object('
           o.dict.each.with_index do |(k, v), i|

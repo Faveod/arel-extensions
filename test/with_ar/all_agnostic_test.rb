@@ -1202,11 +1202,10 @@ module ArelExtensions
       end
 
       def test_json_scalar_values
-        assert_equal 42, parse_json(t(@arthur, Arel.json(42)))
-        assert_equal({}, parse_json(t(@arthur, Arel.json({}))))
         assert_nil t(@arthur, Arel.json(nil))
 
-        skip 'Known failure: postgres to_jsonb(array[]) cannot determine type of empty array' if @env_db == 'postgresql'
+        assert_equal 42, parse_json(t(@arthur, Arel.json(42)))
+        assert_equal({}, parse_json(t(@arthur, Arel.json({}))))
         assert_equal [], parse_json(t(@arthur, Arel.json([])))
 
         skip 'Known failure: booleans crash at construction (convert_to_node rejects TrueClass/FalseClass)'
