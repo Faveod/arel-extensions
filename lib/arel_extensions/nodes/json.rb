@@ -10,12 +10,16 @@ module ArelExtensions
         JsonMerge.new(args)
       end
 
-      def get(key)
-        JsonGet.new(self, key)
+      def get(path)
+        JsonGet.new(self, path)
       end
 
-      def set(key, value)
-        JsonSet.new(self, key, value)
+      def set(path, value)
+        JsonSet.new(self, path, value)
+      end
+
+      def remove(*paths)
+        JsonRemove.new(self, paths)
       end
 
       def group(as_array = true, orders = nil, distinct: false)
@@ -66,6 +70,11 @@ module ArelExtensions
           || (v.is_a?(Arel::Nodes::Quoted) && [true, false].include?(v.expr))
       end
 
+      # A path is a member name, or an Array of names reaching into a nested document.
+      def convert_to_json_path(path)
+        (path.is_a?(Array) ? path : [path]).map { |segment| convert_to_node(segment) }
+      end
+
       def type_of_node(v)
         if v.is_a?(Arel::Attributes::Attribute)
           type_of_attribute(v)
@@ -111,21 +120,39 @@ module ArelExtensions
     end
 
     class JsonGet < JsonNode
-      attr_accessor :key
+      attr_accessor :path
 
-      def initialize(json, key)
+      def initialize(json, path)
         @dict = json
-        @key = convert_to_node(key)
+        @path = convert_to_json_path(path)
+      end
+
+      # The single segment of a one segment path, the whole path otherwise.
+      def key
+        @path.length == 1 ? @path.first : @path
       end
     end
 
     class JsonSet < JsonNode
-      attr_accessor :key, :value
+      attr_accessor :path, :value
 
-      def initialize(json, key, value)
+      def initialize(json, path, value)
         @dict = json
-        @key = convert_to_node(key)
+        @path = convert_to_json_path(path)
         @value = Json.new(value)
+      end
+
+      def key
+        @path.length == 1 ? @path.first : @path
+      end
+    end
+
+    class JsonRemove < JsonNode
+      attr_accessor :paths
+
+      def initialize(json, paths)
+        @dict = json
+        @paths = paths.map { |path| convert_to_json_path(path) }
       end
     end
   end
