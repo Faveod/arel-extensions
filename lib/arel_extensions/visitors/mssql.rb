@@ -772,7 +772,7 @@ module ArelExtensions
         collector << 'JSON_VALUE('
         collector = visit o.dict, collector
         collector << LOADED_VISITOR::COMMA
-        collector = visit make_mssql_mysql_json_path(o.key), collector
+        collector = visit make_mssql_mysql_json_path(o.path), collector
         collector << ')'
         collector
       end

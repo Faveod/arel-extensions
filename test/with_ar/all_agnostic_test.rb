@@ -1235,6 +1235,41 @@ module ArelExtensions
         assert_raises(ArgumentError) { t(@arthur, h.get(nil)) }
       end
 
+      def test_json_nested_get
+        skip 'Known failure: postgres ->> returns text, not parsed JSON' if @env_db == 'postgresql'
+        skip 'Not Yet Implemented' if $sqlite || @env_db == 'oracle'
+        h = Arel.json({'dynamic_fields' => {'beds' => @name}, 'rooms' => [{'size' => @name + '2'}]})
+        if @env_db == 'mssql'
+          # JSON_VALUE returns a bare scalar rather than json.
+          assert_equal 'Arthur', t(@arthur, h.get(%w[dynamic_fields beds]))
+          assert_equal 'Arthur2', t(@arthur, h.get(['rooms', 0, 'size']))
+        else
+          assert_equal 'Arthur', parse_json(t(@arthur, h.get(%w[dynamic_fields beds])))
+          assert_equal 'Arthur2', parse_json(t(@arthur, h.get(['rooms', 0, 'size'])))
+        end
+        assert_nil t(@arthur, h.get(%w[dynamic_fields missing]))
+      end
+
+      def test_json_nested_set
+        skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
+        h = Arel.json({'dynamic_fields' => {'beds' => @name}, 'top' => @name + '2'})
+        assert_equal ({'dynamic_fields' => {'beds' => 3}, 'top' => 'Arthur2'}),
+                     parse_json(t(@arthur, h.set(%w[dynamic_fields beds], 3)))
+        assert_equal ({'dynamic_fields' => {'beds' => 'Arthur', 'baths' => 4}, 'top' => 'Arthur2'}),
+                     parse_json(t(@arthur, h.set(%w[dynamic_fields baths], 4)))
+      end
+
+      def test_json_remove
+        skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
+        h = Arel.json({'dynamic_fields' => {'beds' => @name, 'baths' => @name + '2'}, 'top' => @name + '3'})
+        assert_equal ({'dynamic_fields' => {'baths' => 'Arthur2'}, 'top' => 'Arthur3'}),
+                     parse_json(t(@arthur, h.remove(%w[dynamic_fields beds])))
+        assert_equal ({'dynamic_fields' => {'baths' => 'Arthur2'}}),
+                     parse_json(t(@arthur, h.remove(%w[dynamic_fields beds], 'top')))
+        assert_equal ({'dynamic_fields' => {'beds' => 'Arthur', 'baths' => 'Arthur2'}, 'top' => 'Arthur3'}),
+                     parse_json(t(@arthur, h.remove))
+      end
+
       def test_json_merge
         skip 'Not Yet Implemented' if $sqlite || %w[oracle mssql].include?(@env_db)
         # merge

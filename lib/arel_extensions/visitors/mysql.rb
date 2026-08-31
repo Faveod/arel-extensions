@@ -642,7 +642,7 @@ module ArelExtensions
         collector << 'JSON_EXTRACT('
         collector = visit o.dict, collector
         collector << COMMA
-        collector = visit make_mssql_mysql_json_path(o.key), collector
+        collector = visit make_mssql_mysql_json_path(o.path), collector
         collector << ')'
         collector
       end
@@ -651,9 +651,22 @@ module ArelExtensions
         collector << 'JSON_SET('
         collector = visit o.dict, collector
         collector << COMMA
-        collector = visit make_mssql_mysql_json_path(o.key), collector
+        collector = visit make_mssql_mysql_json_path(o.path), collector
         collector << COMMA
         collector = visit o.value, collector
+        collector << ')'
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_JsonRemove(o, collector)
+        return visit o.dict, collector if o.paths.empty?
+
+        collector << 'JSON_REMOVE('
+        collector = visit o.dict, collector
+        o.paths.each do |path|
+          collector << COMMA
+          collector = visit make_mssql_mysql_json_path(path), collector
+        end
         collector << ')'
         collector
       end
