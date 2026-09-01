@@ -72,7 +72,7 @@ module ArelExtensions
       if start.is_a?(String) || start.is_a?(Symbol)
         send(start)
       elsif start.is_a?(Range)
-        ArelExtensions::Nodes::Substring.new [self, start.begin + 1, start.end - start.begin + 1]
+        ArelExtensions::Nodes::Substring.new [self, start]
       elsif start.is_a?(Integer) && !end_
         ArelExtensions::Nodes::Substring.new [self, start + 1, 1]
       elsif start.is_a?(Integer)

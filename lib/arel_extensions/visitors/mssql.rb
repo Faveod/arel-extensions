@@ -328,6 +328,8 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Substring(o, collector)
+        return visit(o.range_substring_node, collector) if o.range?
+
         collector << 'SUBSTRING('
         collector = visit o.expressions[0], collector
         collector << LOADED_VISITOR::COMMA

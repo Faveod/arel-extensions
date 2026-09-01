@@ -145,6 +145,8 @@ module ArelExtensions
       end
 
       def visit_ArelExtensions_Nodes_Substring(o, collector)
+        return visit(o.range_substring_node, collector) if o.range?
+
         collector << 'SUBSTRING('
         o.expressions.each_with_index { |arg, i|
           collector << COMMA if i != 0

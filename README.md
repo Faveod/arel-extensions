@@ -345,7 +345,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <th class="tg-ffjm" rowspan="17"><div>String functions</div></th>
+    <th class="tg-ffjm" rowspan="21"><div>String functions</div></th>
     <td class="tg-yw4l">CONCAT<br>column + "string"</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -490,13 +490,22 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">SUBSTRING<br/>column[1..2]<br/>column.substring(1)<br/>column.substring(1, 1)</td>
+    <td class="tg-yw4l">SUBSTRING (start/length)<br/>column.substring(1)<br/>column.substring(1, 1)<br/>column[1]<br/>column[0, 2]</td>
     <td class="ok">✔</td>
     <td class="tg-j6lv">SUBSTR()</td>
     <td class="tg-j6lv">SUBSTR()</td>
     <td class="tg-j6lv">SUBSTR()</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">SUBSTRING (Ruby range slicing)<br/>column[1..2]<br/>column[-2..]<br/>column[..2]<br/>⚠️ empty-string results read as NULL on Oracle</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="ok">✔</td>
+    <td class="tg-j6lv">not implemented</td>
   </tr>
   <tr>
     <td class="tg-yw4l">TRIM (leading)<br>column.trim("LEADING","M")</td>
