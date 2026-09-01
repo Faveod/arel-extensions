@@ -12,6 +12,7 @@
   instead of `to_jsonb(array[])`.
 - JSON: Booleans (`true`/`false`) are now supported as JSON values, whether as literals
   (`Arel.json({ col => true })`) or boolean columns (`Arel.json({ col => bool_col })`).
+- String slicing: the `[range..]` syntax, and calls to `substring` now behave exactly as in Ruby and MySQL, notably handling negative and beginless/endless indices.
 
 ## Release v2.4.0/v1.6.0 (23-12-2025)
 

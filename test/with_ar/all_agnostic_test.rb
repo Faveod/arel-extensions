@@ -327,12 +327,94 @@ module ArelExtensions
         else
           assert_equal('', t(@lucas, @name[42]))
         end
-        assert_equal 'Lu', t(@lucas, @name[0, 2])
-        assert_equal 'Lu', t(@lucas, @name[0..1])
 
         # substring should accept string function
         assert_equal 'Ce', t(@camille, @name.substring(1, 1).concat('e'))
         assert_equal 'Ce', t(@camille, @name.substring(1, 1) + 'e')
+      end
+
+      def assert_substring(expected, scope, node)
+        expected = nil if expected == '' && @env_db == 'oracle'
+        actual = t(scope, node)
+        # Ruby 3.0+ requires assert_nil
+        expected.nil? ? assert_nil(actual) : assert_equal(expected, actual)
+      end
+
+      def test_substring_range
+        # exclusive end
+        assert_substring 'uc', @lucas, @name[1...3]
+        assert_substring 'uca', @lucas, @name[1...-1]
+
+        # boundary: begin exactly at length is valid (empty result),
+        # begin one past length is out of range (nil)
+        assert_substring '', @lucas, @name[5..6]
+        assert_substring nil, @lucas, @name[6..7]
+        assert_substring nil, @lucas, @name[100..200]
+        assert_substring nil, @lucas, @name[-100..-1]
+
+        # reversed / empty-result ranges, same-sign and mixed-sign
+        assert_substring '', @lucas, @name[3..1]
+        assert_substring '', @lucas, @name[-3..1]
+
+        # singleton slices
+        assert_substring 'L', @lucas, @name[0..0]
+        assert_substring 's', @lucas, @name[4..4]
+
+        # a second fixture, sanity-checking against a longer string
+        assert_substring 'mil', @camille, @name[2..4]
+        assert_substring 'lle', @camille, @name[-3..-1]
+
+        # NULL column
+        assert_nil t(@all_nil, @name[0..2])
+
+        # trailing whitespace
+        assert_substring ' ', @esme2, @name[4..4]
+        assert_substring 'esmé ', @esme2, @name[0..-1]
+
+        # passing a Range and an explicit length together is contradictory.
+        assert_raises(ArgumentError) { @name.substring(1..2, 5) }
+
+      end
+
+      def endless_range_supported?
+        Range.new(0, nil)
+        true
+      rescue ArgumentError
+        false
+      end
+
+      def beginless_range_supported?
+        Range.new(nil, 0)
+        true
+      rescue ArgumentError
+        false
+      end
+
+      def test_substring_range_endless
+        skip 'endless ranges not supported on this interpreter' if !endless_range_supported?
+
+        assert_substring 'as', @lucas, @name[Range.new(-2, nil)]
+        assert_substring 'Lucas', @lucas, @name[Range.new(-5, nil)]  # begin == -length: still in range
+        assert_substring nil, @lucas, @name[Range.new(-6, nil)]      # begin == -length - 1: out of range
+        assert_substring nil, @lucas, @name[Range.new(-100, nil)]
+
+        assert_nil t(@all_nil, @name[Range.new(-2, nil)])
+        assert_substring ' ', @esme2, @name[Range.new(-1, nil)]
+
+        assert_substring 'as', @lucas, @name.substring(Range.new(-2, nil))
+      end
+
+      def test_substring_range_beginless
+        skip 'beginless ranges not supported on this interpreter' if !beginless_range_supported?
+
+        assert_substring 'Luc', @lucas, @name[Range.new(nil, 2)]
+        assert_substring 'Lucas', @lucas, @name[Range.new(nil, -1)]
+        assert_substring 'Luca', @lucas, @name[Range.new(nil, -2)]
+
+        assert_nil t(@all_nil, @name[Range.new(nil, 3)])
+        assert_substring 'esmé', @esme2, @name[Range.new(nil, 3)]
+
+        assert_substring 'Luc', @lucas, @name.substring(Range.new(nil, 2))
       end
 
       def test_find_in_set
