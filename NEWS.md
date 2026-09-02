@@ -2,6 +2,9 @@
 
 ## [unreleased]
 
+## Release v2.5.0/v1.7.0 (02-09-2026)
+
+- Fix a typo preventing optimizer hints from being applied on SELECT in MySQL.
 - Fix a bug (crash) in Group Concat of MSSQL.
 - Fix a crash when building a JSON document from numeric literal values (e.g. `Arel.json(col => 1)`), on sqlite and mssql.
 - MS SQL: string casts and MD5 input now use `varchar(MAX)`, so long strings are
