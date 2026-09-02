@@ -38,12 +38,7 @@ module ArelExtensions
       when Arel::Nodes::Function
         Arel.grouping(Arel::Nodes::Addition.new(self, other))
       else
-        col =
-          if is_a?(Arel::Attribute) && respond_to?(:type_caster) && able_to_type_cast?
-            type_caster
-          elsif respond_to?(:relation)
-            Arel.column_of(relation.table_name, name.to_s)
-          end
+        col = ArelExtensions.type_source_of(self)
         if col
           arg = col.type
           if arg == :integer || !arg
@@ -83,23 +78,13 @@ module ArelExtensions
       when Arel::Nodes::Function
         Arel.grouping(Arel::Nodes::Subtraction.new(self, Arel.quoted(other)))
       else
-        col =
-          if is_a?(Arel::Attribute) && respond_to?(:type_caster) && able_to_type_cast?
-            type_caster
-          elsif respond_to?(:relation)
-            Arel.column_of(relation.table_name, name.to_s)
-          end
+        col = ArelExtensions.type_source_of(self)
         if col
           arg = col.type
           if %i[date datetime].include?(arg)
             case other
             when Arel::Attributes::Attribute
-              col2 =
-                if other.is_a?(Arel::Attribute) && other.respond_to?(:type_caster) && other.able_to_type_cast?
-                  other.type_caster
-                elsif other.respond_to?(:relation)
-                  Arel.column_of(other.relation.table_name, other.name.to_s)
-                end
+              col2 = ArelExtensions.type_source_of(other)
               if col2
                 arg2 = col2.type
                 if %i[date datetime].include?(arg2)
