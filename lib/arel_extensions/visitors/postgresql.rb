@@ -589,23 +589,51 @@ module ArelExtensions
 
       def visit_ArelExtensions_Nodes_JsonGet(o, collector)
         collector = visit o.dict, collector
-        collector << ' ->> '
-        visit o.key, collector
+        if o.path.length == 1
+          collector << ' ->> '
+          visit o.path.first, collector
+        else
+          collector << ' #>> '
+          visit_jsonb_path o.path, collector
+        end
       end
 
       def visit_ArelExtensions_Nodes_JsonSet(o, collector)
         collector << 'jsonb_set('
         collector = visit o.dict, collector
         collector << COMMA
-        collector << 'array['
-        collector = visit o.key, collector
-        collector << ']'
+        collector = visit_jsonb_path o.path, collector
         collector << COMMA
         collector << 'COALESCE('
         collector = visit o.value, collector
         collector << ", 'null'::jsonb)"
         collector << COMMA
         collector << 'true)'
+        collector
+      end
+
+      def visit_ArelExtensions_Nodes_JsonRemove(o, collector)
+        return visit o.dict, collector if o.paths.empty?
+
+        # `#-` takes one path, so removals are chained.
+        o.paths.length.times { collector << '(' }
+        collector = visit o.dict, collector
+        o.paths.each do |path|
+          collector << ' #- '
+          collector = visit_jsonb_path path, collector
+          collector << ')'
+        end
+        collector
+      end
+
+      # A jsonb path is a text[], so an array index is rendered as text: array[0] is an int[].
+      def visit_jsonb_path(path, collector)
+        collector << 'array['
+        path.each_with_index do |segment, i|
+          collector << COMMA if i != 0
+          collector = visit(segment.is_a?(Integer) ? Arel.quoted(segment.to_s) : segment, collector)
+        end
+        collector << ']'
         collector
       end
 
