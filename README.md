@@ -760,10 +760,19 @@ User.connection.execute(insert_manager.to_sql)
 ## Version Compatibility
 
 <table>
-  <tr><th>Ruby</th> <th>Rails</th>    <th>Arel Extensions</th></tr>
-  <tr><td>3.1</td>  <td>6.1</td>      <td>2</td></tr>
-  <tr><td>3.0</td>  <td>6.1</td>      <td>2</td></tr>
-  <tr><td>2.7</td>  <td>6.1, 6.0</td> <td>2</td></tr>
-  <tr><td>2.5</td>  <td>6.1, 6.0</td> <td>2</td></tr>
-  <tr><td>2.5</td>  <td>5.2</td>      <td>1</td></tr>
+  <tr><th>Ruby</th>        <th>Rails</th>                          <th>Arel Extensions</th></tr>
+  <tr><td>3.4</td>         <td>8.1, 8.0, 7.2, 7.1, 7.0, 6.1</td>    <td>2</td></tr>
+  <tr><td>3.3</td>         <td>8.1, 8.0, 7.2, 7.1, 7.0, 6.1</td>    <td>2</td></tr>
+  <tr><td>3.2</td>         <td>8.1, 8.0, 7.2, 7.1, 7.0, 6.1, 6.0</td> <td>2</td></tr>
+  <tr><td>3.1</td>         <td>7.2, 7.1, 7.0, 6.1, 6.0</td>         <td>2</td></tr>
+  <tr><td>3.0</td>         <td>7.1, 7.0, 6.1</td>                   <td>2</td></tr>
+  <tr><td>2.7</td>         <td>7.1, 7.0, 6.1, 6.0</td>               <td>2</td></tr>
+  <tr><td>2.7</td>         <td>5.2</td>                              <td>1</td></tr>
+  <tr><td>JRuby 9.3, 9.2</td> <td>6.1, 6.0</td>                     <td>2</td></tr>
+  <tr><td>JRuby 9.3, 9.2</td> <td>5.2</td>                          <td>1</td></tr>
 </table>
+
+This table is generated from the `job_test_to_sql` matrix in [`.github/workflows/ruby.yml`](.github/workflows/ruby.yml).
+
+The DB-specific CI jobs (SQLite, PostgreSQL, MySQL, MSSQL) test a similar but not
+always identical matrix. Check that workflow file for the exact combination covering your target database.
