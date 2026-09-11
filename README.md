@@ -348,10 +348,10 @@ User.connection.execute(insert_manager.to_sql)
     <th class="tg-ffjm" rowspan="21"><div>String functions</div></th>
     <td class="tg-yw4l">CONCAT<br>column + "string"</td>
     <td class="ok">✔</td>
-    <td class="ok">✔</td>
+    <td class="tg-j6lv">||</td>
     <td class="tg-j6lv"> ||</td>
+    <td class="tg-j6lv">||</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">+</td>
     <td class="ok">✔</td>
   </tr>
   <tr>
@@ -367,9 +367,9 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">ILIKE (in Arel6)<br/>column.imatches('%pattern')</td>
     <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
     <td class="ok">✔</td>
-    <td class="ok">✔</td>
+    <td class="tg-j6lv">COLLATE + LIKE</td>
     <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
-    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="tg-j6lv">COLLATE + LIKE</td>
     <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
   </tr>
   <tr>
@@ -396,7 +396,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">LEN()</td>
+    <td class="tg-j6lv">DATALENGTH() ratio</td>
     <td class="ok">✔</td>
   </tr>
   <tr>
@@ -428,7 +428,7 @@ User.connection.execute(insert_manager.to_sql)
   </tr>
   <tr>
     <td class="tg-yw4l">Matching Case Insensitive<br>column.imatches('blah')</td>
-    <td class="ok">not supported</td>
+    <td class="ok">✔</td>
     <td class="tg-j6lv">✔</td>
     <td class="tg-j6lv">✔</td>
     <td class="ok">✔</td>
