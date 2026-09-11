@@ -24,10 +24,15 @@ module ArelExtensions
 
     # *FindInSet function .......
     def &(other)
-      ArelExtensions::Nodes::FindInSet.new [
-        Arel.quoted(other.is_a?(Integer) ? other.to_s : other),
-        self
-      ]
+      if other.is_a?(Array)
+        clauses = other.map { |v| (self & v).gt(0) }
+        clauses.empty? ? Arel.false : clauses.reduce(&:or)
+      else
+        ArelExtensions::Nodes::FindInSet.new [
+          Arel.quoted(other.is_a?(Integer) ? other.to_s : other),
+          self
+        ]
+      end
     end
 
     # LENGTH function returns the length (bytewise) of the value in a text field.

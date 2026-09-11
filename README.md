@@ -92,7 +92,7 @@ t[:price].format_number("%07.2f €","fr_FR")
 # => COALESCE(my_table.name, 'default')
 
 (t[:name].blank).to_sql
-# => TRIM(TRIM(TRIM(COALESCE(my_table.name, '')), '\t'), '\n') = ''
+# => LENGTH(TRIM(COALESCE(my_table.name, ''))) = 0
 
 (t[:name] =~ /\A[a-d_]+/).to_sql
 # => my_table.name REGEXP '^[a-d_]+'
@@ -124,7 +124,7 @@ Other functions: SOUNDEX, LENGTH, REPLACE, LOCATE, SUBSTRING, TRIM
 # => FIND_IN_SET('3', my_table.list)
 
 (t[:list] & [2,3]).to_sql
-# => FIND_IN_SET('2', my_table.list) OR FIND_IN_SET('3', my_table.list)
+# => (FIND_IN_SET('2', my_table.list) > 0) OR (FIND_IN_SET('3', my_table.list) > 0)
 ```
 
 
@@ -132,7 +132,7 @@ Other functions: SOUNDEX, LENGTH, REPLACE, LOCATE, SUBSTRING, TRIM
 
 ```ruby
 (t[:birthdate] + 10.years).to_sql
-# => ADDDATE(my_table.birthdate, INTERVAL 10 YEAR)
+# => DATE_ADD(my_table.birthdate, INTERVAL 10 year) ## MySQL
 
 ((t[:birthdate] - Date.today) * -1).to_sql
 # => DATEDIFF(my_table.birthdate, '2017-01-01') * -1
@@ -294,7 +294,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">CEIL<br>column.ceil</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">CASE + CAST</td>
+    <td class="tg-j6lv">CASE + ROUND</td>
     <td class="ok">✔</td>
     <td class="tg-j6lv">CEILING()</td>
     <td class="tg-j6lv">CEILING()</td>
@@ -303,7 +303,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">FLOOR<br>column.floor</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">CASE + CAST</td>
+    <td class="tg-j6lv">CASE + ROUND</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -348,10 +348,10 @@ User.connection.execute(insert_manager.to_sql)
     <th class="tg-ffjm" rowspan="21"><div>String functions</div></th>
     <td class="tg-yw4l">CONCAT<br>column + "string"</td>
     <td class="ok">✔</td>
-    <td class="ok">✔</td>
+    <td class="tg-j6lv">||</td>
     <td class="tg-j6lv"> ||</td>
+    <td class="tg-j6lv">||</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">+</td>
     <td class="ok">✔</td>
   </tr>
   <tr>
@@ -367,9 +367,9 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">ILIKE (in Arel6)<br/>column.imatches('%pattern')</td>
     <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
     <td class="ok">✔</td>
-    <td class="ok">✔</td>
+    <td class="tg-j6lv">COLLATE + LIKE</td>
     <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
-    <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
+    <td class="tg-j6lv">COLLATE + LIKE</td>
     <td class="tg-j6lv">LOWER() LIKE LOWER()</td>
   </tr>
   <tr>
@@ -396,7 +396,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">LEN()</td>
+    <td class="tg-j6lv">DATALENGTH() ratio</td>
     <td class="ok">✔</td>
   </tr>
   <tr>
@@ -428,7 +428,7 @@ User.connection.execute(insert_manager.to_sql)
   </tr>
   <tr>
     <td class="tg-yw4l">Matching Case Insensitive<br>column.imatches('blah')</td>
-    <td class="ok">not supported</td>
+    <td class="ok">✔</td>
     <td class="tg-j6lv">✔</td>
     <td class="tg-j6lv">✔</td>
     <td class="ok">✔</td>
@@ -445,7 +445,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-j6lv">?</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">NOT_REGEXP<br>column != "pattern"</td>
+    <td class="tg-yw4l">NOT_REGEXP<br>column !~ /pattern/</td>
     <td class="ok">✔</td>
     <td class="ok">✔<br></td>
     <td class="tg-3oug">require pcre.so</td>
@@ -454,7 +454,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">REGEXP<br>column =~ "pattern"<br></td>
+    <td class="tg-yw4l">REGEXP<br>column =~ /pattern/<br></td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="tg-3oug">require pcre.so</td>
@@ -654,7 +654,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">==<br>column == integer</td>
+    <td class="tg-yw4l">==<br>column == integer<br>⚠️ deprecated, prefer column.eq(integer)</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -663,7 +663,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">!=<br>column != integer</td>
+    <td class="tg-yw4l">!=<br>column != integer<br>⚠️ deprecated, prefer column.not_eq(integer)</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -760,10 +760,19 @@ User.connection.execute(insert_manager.to_sql)
 ## Version Compatibility
 
 <table>
-  <tr><th>Ruby</th> <th>Rails</th>    <th>Arel Extensions</th></tr>
-  <tr><td>3.1</td>  <td>6.1</td>      <td>2</td></tr>
-  <tr><td>3.0</td>  <td>6.1</td>      <td>2</td></tr>
-  <tr><td>2.7</td>  <td>6.1, 6.0</td> <td>2</td></tr>
-  <tr><td>2.5</td>  <td>6.1, 6.0</td> <td>2</td></tr>
-  <tr><td>2.5</td>  <td>5.2</td>      <td>1</td></tr>
+  <tr><th>Ruby</th>        <th>Rails</th>                          <th>Arel Extensions</th></tr>
+  <tr><td>3.4</td>         <td>8.1, 8.0, 7.2, 7.1, 7.0, 6.1</td>    <td>2</td></tr>
+  <tr><td>3.3</td>         <td>8.1, 8.0, 7.2, 7.1, 7.0, 6.1</td>    <td>2</td></tr>
+  <tr><td>3.2</td>         <td>8.1, 8.0, 7.2, 7.1, 7.0, 6.1, 6.0</td> <td>2</td></tr>
+  <tr><td>3.1</td>         <td>7.2, 7.1, 7.0, 6.1, 6.0</td>         <td>2</td></tr>
+  <tr><td>3.0</td>         <td>7.1, 7.0, 6.1</td>                   <td>2</td></tr>
+  <tr><td>2.7</td>         <td>7.1, 7.0, 6.1, 6.0</td>               <td>2</td></tr>
+  <tr><td>2.7</td>         <td>5.2</td>                              <td>1</td></tr>
+  <tr><td>JRuby 9.3, 9.2</td> <td>6.1, 6.0</td>                     <td>2</td></tr>
+  <tr><td>JRuby 9.3, 9.2</td> <td>5.2</td>                          <td>1</td></tr>
 </table>
+
+This table is generated from the `job_test_to_sql` matrix in [`.github/workflows/ruby.yml`](.github/workflows/ruby.yml).
+
+The DB-specific CI jobs (SQLite, PostgreSQL, MySQL, MSSQL) test a similar but not
+always identical matrix. Check that workflow file for the exact combination covering your target database.

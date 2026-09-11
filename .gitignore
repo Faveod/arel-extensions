@@ -4,6 +4,7 @@
 *.swp
 *.vendor
 .bundle
+.vendor
 config/database.yml
 coverage/*
 debug.log
