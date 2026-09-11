@@ -92,7 +92,7 @@ t[:price].format_number("%07.2f €","fr_FR")
 # => COALESCE(my_table.name, 'default')
 
 (t[:name].blank).to_sql
-# => TRIM(TRIM(TRIM(COALESCE(my_table.name, '')), '\t'), '\n') = ''
+# => LENGTH(TRIM(COALESCE(my_table.name, ''))) = 0
 
 (t[:name] =~ /\A[a-d_]+/).to_sql
 # => my_table.name REGEXP '^[a-d_]+'
