@@ -445,7 +445,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-j6lv">?</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">NOT_REGEXP<br>column != "pattern"</td>
+    <td class="tg-yw4l">NOT_REGEXP<br>column !~ /pattern/</td>
     <td class="ok">✔</td>
     <td class="ok">✔<br></td>
     <td class="tg-3oug">require pcre.so</td>
@@ -454,7 +454,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">REGEXP<br>column =~ "pattern"<br></td>
+    <td class="tg-yw4l">REGEXP<br>column =~ /pattern/<br></td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="tg-3oug">require pcre.so</td>
