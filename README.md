@@ -654,7 +654,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">==<br>column == integer</td>
+    <td class="tg-yw4l">==<br>column == integer<br>⚠️ deprecated, prefer column.eq(integer)</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
@@ -663,7 +663,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="ok">✔</td>
   </tr>
   <tr>
-    <td class="tg-yw4l">!=<br>column != integer</td>
+    <td class="tg-yw4l">!=<br>column != integer<br>⚠️ deprecated, prefer column.not_eq(integer)</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
