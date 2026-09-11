@@ -484,6 +484,16 @@ module ArelExtensions
         assert_equal 5, t(@neg, @comments & @other)
       end
 
+      def test_find_in_set_any
+        skip "Sqlite version can't load extension for find_in_set" if $sqlite && $load_extension_disabled
+        skip 'SQL Server does not know about FIND_IN_SET' if @env_db == 'mssql'
+        # @neg's comments is '1,22,3,42,2': matches as soon as one of the values is in the list.
+        assert_equal @neg.pluck(:id), User.where(@comments & [2, 99]).pluck(:id)
+        assert_equal @neg.pluck(:id), User.where(@comments & [99, 3]).pluck(:id)
+        assert_equal [], User.where(@comments & [99, 100]).pluck(:id) # not found
+        assert_equal [], User.where(@comments & []).pluck(:id) # no candidate can ever match
+      end
+
       def test_string_comparators
         # skip "Oracle can't use math operators to compare strings" if @env_db == 'oracle' # use GREATEST ?
         skip "SQL Server can't use math operators to compare strings" if @env_db == 'mssql' # use GREATEST ?

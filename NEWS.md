@@ -33,6 +33,12 @@
   `String` patterns and `regexp_replace` are unaffected.
 - SQLite: `=~` / `!~` no longer crash with `no string` when the compared column is `NULL`;
   such rows are now excluded, matching the other databases.
+- `find_in_set` for all databases is now supports arrays:
+  ```ruby
+  (t[:list] & [2,3]).to_sql
+  # => (FIND_IN_SET('2', my_table.list) > 0) OR (FIND_IN_SET('3', my_table.list) > 0)
+  ```
+  It was previously reported in [README.md](README.md) to work, but in reality it never did.
 
 ## Release v2.5.0/v1.7.0 (02-09-2026)
 

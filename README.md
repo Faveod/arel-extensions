@@ -124,7 +124,7 @@ Other functions: SOUNDEX, LENGTH, REPLACE, LOCATE, SUBSTRING, TRIM
 # => FIND_IN_SET('3', my_table.list)
 
 (t[:list] & [2,3]).to_sql
-# => FIND_IN_SET('2', my_table.list) OR FIND_IN_SET('3', my_table.list)
+# => (FIND_IN_SET('2', my_table.list) > 0) OR (FIND_IN_SET('3', my_table.list) > 0)
 ```
 
 
