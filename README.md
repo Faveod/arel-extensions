@@ -132,7 +132,7 @@ Other functions: SOUNDEX, LENGTH, REPLACE, LOCATE, SUBSTRING, TRIM
 
 ```ruby
 (t[:birthdate] + 10.years).to_sql
-# => ADDDATE(my_table.birthdate, INTERVAL 10 YEAR)
+# => DATE_ADD(my_table.birthdate, INTERVAL 10 year) ## MySQL
 
 ((t[:birthdate] - Date.today) * -1).to_sql
 # => DATEDIFF(my_table.birthdate, '2017-01-01') * -1
@@ -294,7 +294,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">CEIL<br>column.ceil</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">CASE + CAST</td>
+    <td class="tg-j6lv">CASE + ROUND</td>
     <td class="ok">✔</td>
     <td class="tg-j6lv">CEILING()</td>
     <td class="tg-j6lv">CEILING()</td>
@@ -303,7 +303,7 @@ User.connection.execute(insert_manager.to_sql)
     <td class="tg-yw4l">FLOOR<br>column.floor</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
-    <td class="tg-j6lv">CASE + CAST</td>
+    <td class="tg-j6lv">CASE + ROUND</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
     <td class="ok">✔</td>
