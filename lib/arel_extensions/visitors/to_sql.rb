@@ -23,6 +23,25 @@ module ArelExtensions
         Arel.quoted('null')
       end
 
+      # Builds a json path for MySQL and MSSQL: $."name", or $[0] for an array index.
+      # The name is always quoted because a bare $.name is only legal when it looks like an
+      # identifier.
+      def make_mssql_mysql_json_path(key)
+        case key
+        when Integer
+          Arel.quoted("$[#{key}]")
+        when Arel::Nodes::Quoted, Arel::Attributes::Attribute, Arel::Nodes::Node
+          name = key.expr if key.is_a?(Arel::Nodes::Quoted)
+          if name.is_a?(String) || name.is_a?(Symbol)
+            Arel.quoted(%($."#{name.to_s.gsub(/["\\]/) { |c| "\\#{c}" }}"))
+          else
+            Arel.quoted('$."') + key + Arel.quoted('"')
+          end
+        else
+          raise ArgumentError, "json path: unsupported member #{key.inspect}"
+        end
+      end
+
       # Math Functions
       def visit_ArelExtensions_Nodes_Abs(o, collector)
         collector << 'ABS('
