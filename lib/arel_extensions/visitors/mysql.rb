@@ -737,11 +737,7 @@ module ArelExtensions
         collector << 'JSON_EXTRACT('
         collector = visit o.dict, collector
         collector << COMMA
-        if o.key.is_a?(Integer)
-          collector << "\"$[#{o.key}]\""
-        else
-          collector = visit Arel.quoted('$.') + o.key, collector
-        end
+        collector = visit make_mssql_mysql_json_path(o.key), collector
         collector << ')'
         collector
       end
@@ -750,11 +746,7 @@ module ArelExtensions
         collector << 'JSON_SET('
         collector = visit o.dict, collector
         collector << COMMA
-        if o.key.is_a?(Integer)
-          collector << "\"$[#{o.key}]\""
-        else
-          collector = visit Arel.quoted('$.') + o.key, collector
-        end
+        collector = visit make_mssql_mysql_json_path(o.key), collector
         collector << COMMA
         collector = visit o.value, collector
         collector << ')'
